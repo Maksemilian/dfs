@@ -1,0 +1,30 @@
+#ifndef STREAM_SOCKET_H
+#define STREAM_SOCKET_H
+
+#include <QObject>
+
+class QTcpSocket;
+
+class RingPacketBuffer;
+class Packet;
+
+class DdcStreamClient:public QObject
+{
+    Q_OBJECT
+public:
+    DdcStreamClient(qintptr handle,RingPacketBuffer *ringPacketBuffer);
+    ~DdcStreamClient();
+
+    Q_SIGNAL void finished();
+    Q_SLOT void start();
+    void stop();
+private:
+    void write(Packet &packet);
+private:
+    QScopedPointer<QTcpSocket> m_socket;
+    int socketDescriptor;
+    RingPacketBuffer *ringPacketBuffer;
+    std::atomic<bool> startStream;
+};
+
+#endif // STREAM_SOCKET_H

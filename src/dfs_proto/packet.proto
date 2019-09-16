@@ -1,0 +1,21 @@
+syntax ="proto3";
+
+message Packet{
+uint32 block_number=1;
+
+uint32 ddc1_frequency=2;
+uint32 attenuator =3;
+uint32 block_size=4;
+
+uint32 device_count=5;
+uint32 sample_rate =6;
+
+uint32 time_of_week=7;
+uint32 week_number=8;
+
+double ddc_sample_counter=9;
+uint64 adc_period_counter=10;
+
+repeated float sample=11; 
+}
+

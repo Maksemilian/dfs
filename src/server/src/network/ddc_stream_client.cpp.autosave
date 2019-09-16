@@ -1,0 +1,57 @@
+#include <QTcpSocket>
+#include <QDataStream>
+#include <QByteArray>
+
+#include "packet.pb.h"
+
+#include "src/receiver/ring_packet_buffer.h"
+
+#include "ddc_stream_client.h"
+
+DdcStreamClient::DdcStreamClient(qintptr handle, RingPacketBuffer *ringPacketBuffer):
+    socketDescriptor(handle),ringPacketBuffer(ringPacketBuffer),startStream(false){}
+
+void DdcStreamClient::start(){
+    qDebug("START STREAM WRITER");
+    m_socket.reset(new QTcpSocket);
+    m_socket->setSocketDescriptor(socketDescriptor);
+    startStream=true;
+    Packet packet;
+    while(startStream){
+       bool readed= ringPacketBuffer->pop(packet);
+       if(readed)write(packet);
+    }
+     emit finished();
+}
+
+void DdcStreamClient:: stop(){
+     qDebug("STOP STREAM WRITER");
+     startStream=false;
+}
+
+void DdcStreamClient::write(Packet &packet){
+    int packetByteSize=packet.ByteSize();
+    char buf[packetByteSize];
+    packet.SerializeToArray((void*)buf,packetByteSize);
+
+    QByteArray ba;
+    QDataStream out(&ba,QIODevice::WriteOnly);
+
+    out<<packetByteSize;
+    m_socket->write(ba);
+    m_socket->flush();
+
+    qint64 writeRes=0,bytesWriten=0;
+
+    while (startStream&& bytesWriten != packetByteSize ){
+        writeRes = m_socket->write( ((char*)buf) + bytesWriten, packetByteSize - bytesWriten );
+        bytesWriten += writeRes;
+    }
+    ///qDebug()<<"StreamWriter"<<packet.block_number()<<packet.bits_per_samples()<<packet.ByteSize()<<socket->isOpen()<<socket->isWritable();
+}
+
+DdcStreamClient::~DdcStreamClient(){
+    //socket->deleteLater();
+}
+
+///*************DEL******************
