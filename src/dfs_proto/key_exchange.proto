@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+enum SessionType
+{
+   SESSION_UNKNOWN=0;
+   SESSION_COMMAND=1;
+   SESSION_SIGNAL_STREAM=2;
+   SESSION_SIGNAL_FILE_TRANSFER=3;
+
+   SESSIOM_TYPE_ALL=7;
+}
+
+enum Method
+{
+ METHOD_UNKNOWN=0;
+ METHOD_ADDRESS=1;
+ METHOD_RANDOW_VALUE=2;
+}
+
+message ClientHello
+{
+    Method method=1;
+    string user_name=2;
+}
+
+message ServerKeyExchange
+{
+    Method method=1;
+    uint32 user_key=2;
+}
+
+message ClientKeyExchange
+{
+    Method method=1;
+    uint32 user_key=2;
+}
+
+message ServerSessionChange
+{
+    SessionType session_type=1;
+}
+
+message ClientSessionChange
+{
+    SessionType session_type=1;
+}
+

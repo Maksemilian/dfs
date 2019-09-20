@@ -5,7 +5,10 @@ SUBDIRS += \
           src/client  \
           src/server  \
           src/common \
-          src/dfs_proto
+          src/dfs_proto \
+          tests/network
+
+
 
 #client.depends = common
 #client.depends = dfs_proto

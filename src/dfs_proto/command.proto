@@ -1,6 +1,7 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          syntax = "proto3";
 
-enum CommandType{
+enum CommandType
+{
 	SET_POWER_OFF = 0;
 	SET_POWER_ON=1;
 	SET_ATTENUATOR = 2;
@@ -15,12 +16,14 @@ enum CommandType{
      STOP_DDC1=11;
 	}
 
-message Preselectors{
+message Preselectors
+{
 uint32 low_frequency=1;
 uint32 high_frequency=2;
 }
 
-message Command{
+message Command
+{
 CommandType command_type=1;
 
 uint32 attenuator=2;
@@ -37,12 +40,14 @@ bool start_ddc1=9;
 uint32 samples_per_buffer=10;
 }
 
-message Answer{
+message Answer
+{
 CommandType type=1;
 bool succesed=2;
 }
 
-message ConnectRequest{
+message ConnectRequest
+{
 enum Type{
 CT_COMMAND=0;
 CT_STREAM=1;
@@ -51,7 +56,8 @@ CT_FILE=2;
 Type type=1;
 }
 
-message FileRequest{
+message FileRequest
+{
 enum Type{
 TYPE_LOAD=0;
 TYPE_REMOVE=1;

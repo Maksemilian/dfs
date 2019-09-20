@@ -20,7 +20,7 @@ QT -= gui
 #documentation.files = $$files(*.h)
 #INSTALLS += documentation
 
-CONFIG += c++11
+CONFIG += c++14
 
 TARGET = commonlib
 TEMPLATE = lib
@@ -28,11 +28,17 @@ CONFIG += staticlib
 
 DESTDIR =$${LIBS_PATH}/common/lib
 
-INCLUDEPATH += $${LIBS_PATH}/proto/include
-LIBS += $${LIBS_PATH}/dfs_proto/lib
+INCLUDEPATH += $${LIBS_PATH}/google/include
+LIBS +=$${LIBS_PATH}/google/lib
 
-INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
-LIBS += $${LIBS_PATH}/dfs_proto/lib
+LIBS+= -lprotobuf
+
+INCLUDEPATH += $${LIBS_PATH}/proto/include
+LIBS += $${LIBS_PATH}/proto/lib
+
+#INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
+#LIBS += $${LIBS_PATH}/dfs_proto/lib
+
 
 #INCLUDEPATH += "C:\Qt\include\google\protobuf_3_4_1"
 #INCLUDEPATH += "C:\Qt\include\google\protobuf_3_7_1"
@@ -54,50 +60,60 @@ LIBS += $${LIBS_PATH}/dfs_proto/lib
 ## Указываем путь, куда копировать файлы
 #common_incl.path = $${LIBS_PATH}/common/include
 
-#********copy
-copytarget.path    = $${LIBS_PATH}/common/include
-copytarget.files  += $$files($${PWD}/*.h)
-## wildcard for filename1 filename2 filename3 ...
+headers.path = $${LIBS_PATH}/common/include
+headers.files   += $$files($${PWD}/*.pb.h)
+INSTALLS       += headers
 
-#message("found files for copytarget: "$$copytarget.files)
-win32: copytarget.files ~= s,/,\\,g
+#*************************  COPY INCLUDE *************************
+#copytarget.path    = $${LIBS_PATH}/common/include
+#copytarget.files  += $$files($${PWD}/*.h)
+### wildcard for filename1 filename2 filename3 ...
 
-## === copy compiler for makefile ===
-DIR_INCL=include
+##message("found files for copytarget: "$$copytarget.files)
+#win32: copytarget.files ~= s,/,\\,g
 
-DirSep = /
-win32: DirSep = \\
+### === copy compiler for makefile ===
+#DIR_INCL=include
 
-for(f,copytarget.files) tmp += $${f} ## make absolute paths
-copycompiler.input        = tmp
+#DirSep = /
+#win32: DirSep = \\
 
-#message("Input: " $$copycompiler.input)
-isEmpty(DESTDIR):DESTDIR=.
-copycompiler.output       = $$DESTDIR$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-#copycompiler.output       = $$DESTDIR$$DirSep$$DIR_INCL$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-message("copycompiler.output: " $$copycompiler.output)
+#for(f,copytarget.files) tmp += $${f} ## make absolute paths
+#copycompiler.input        = tmp
 
-copycompiler.commands     = $(COPY_FILE) ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+##message("Input: " $$copycompiler.input)
+#isEmpty(DESTDIR):DESTDIR=.
+#copycompiler.output       = $$DESTDIR$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+##copycompiler.output       = $$DESTDIR$$DirSep$$DIR_INCL$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+#message("copycompiler.output: " $$copycompiler.output)
 
-copycompiler.CONFIG       = no_link no_clean
-## other CONFIG options are: depends explicit_dependencies target_predeps
+#copycompiler.commands     = $(COPY_FILE) ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
 
-copycompiler.variable_out = QMAKE_DISTCLEAN
-QMAKE_EXTRA_COMPILERS += copycompiler
+#copycompiler.CONFIG       = no_link no_clean
+### other CONFIG options are: depends explicit_dependencies target_predeps
 
-## == makefile copy target ===
-copyfiles.recurse_target = compiler_copycompiler_make_all
-copyfiles.depends        = $$copyfiles.recurse_target
-copyfiles.CONFIG        += recursive
-QMAKE_EXTRA_TARGETS += copyfiles
-POST_TARGETDEPS     += copyfiles ## copy files after source compilation
+#copycompiler.variable_out = QMAKE_DISTCLEAN
+#QMAKE_EXTRA_COMPILERS += copycompiler
 
-INSTALLS += copytarget
+### == makefile copy target ===
+#copyfiles.recurse_target = compiler_copycompiler_make_all
+#copyfiles.depends        = $$copyfiles.recurse_target
+#copyfiles.CONFIG        += recursive
+#QMAKE_EXTRA_TARGETS += copyfiles
+#POST_TARGETDEPS     += copyfiles ## copy files after source compilation
+
+#INSTALLS += copytarget
 
 
 SOURCES += peer_wire_client.cpp \
+    channel.cpp \
+    channel_client.cpp \
+    channel_host.cpp
 
 HEADERS += peer_wire_client.h \
-           ring_packet_buffer.h
+           ring_packet_buffer.h \
+    channel.h \
+    channel_client.h \
+    channel_host.h
 
 DEFINES += QT_DEPRECATED_WARNINGS
