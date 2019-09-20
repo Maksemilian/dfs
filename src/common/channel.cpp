@@ -99,6 +99,7 @@ void Channel::onMessageReceive()
     ba.resize(static_cast<int>(answerSize));
     readDataFromBuffer(ba.data(),ba.size());
     internalMessageReceive(ba);
+    //TODO СДЕЛАТЬ ОСВОБОЖДЕНИЕ БУФЕРА
 //    internalMessageReceive(incomingBuffer);
 }
 
