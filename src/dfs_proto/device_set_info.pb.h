@@ -220,6 +220,138 @@ class DeviceInfo :
 };
 // -------------------------------------------------------------------
 
+class DeviceSetInfo :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:DeviceSetInfo) */ {
+ public:
+  DeviceSetInfo();
+  virtual ~DeviceSetInfo();
+
+  DeviceSetInfo(const DeviceSetInfo& from);
+
+  inline DeviceSetInfo& operator=(const DeviceSetInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  DeviceSetInfo(DeviceSetInfo&& from) noexcept
+    : DeviceSetInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline DeviceSetInfo& operator=(DeviceSetInfo&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return default_instance().GetDescriptor();
+  }
+  static const DeviceSetInfo& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const DeviceSetInfo* internal_default_instance() {
+    return reinterpret_cast<const DeviceSetInfo*>(
+               &_DeviceSetInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  void Swap(DeviceSetInfo* other);
+  friend void swap(DeviceSetInfo& a, DeviceSetInfo& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline DeviceSetInfo* New() const final {
+    return CreateMaybeMessage<DeviceSetInfo>(nullptr);
+  }
+
+  DeviceSetInfo* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<DeviceSetInfo>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const DeviceSetInfo& from);
+  void MergeFrom(const DeviceSetInfo& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DeviceSetInfo* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .DeviceInfo device_info = 1;
+  int device_info_size() const;
+  void clear_device_info();
+  static const int kDeviceInfoFieldNumber = 1;
+  ::DeviceInfo* mutable_device_info(int index);
+  ::google::protobuf::RepeatedPtrField< ::DeviceInfo >*
+      mutable_device_info();
+  const ::DeviceInfo& device_info(int index) const;
+  ::DeviceInfo* add_device_info();
+  const ::google::protobuf::RepeatedPtrField< ::DeviceInfo >&
+      device_info() const;
+
+  // uint32 signal_port = 2;
+  void clear_signal_port();
+  static const int kSignalPortFieldNumber = 2;
+  ::google::protobuf::uint32 signal_port() const;
+  void set_signal_port(::google::protobuf::uint32 value);
+
+  // uint32 file_port = 3;
+  void clear_file_port();
+  static const int kFilePortFieldNumber = 3;
+  ::google::protobuf::uint32 file_port() const;
+  void set_file_port(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:DeviceSetInfo)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::DeviceInfo > device_info_;
+  ::google::protobuf::uint32 signal_port_;
+  ::google::protobuf::uint32 file_port_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_device_5fset_5finfo_2eproto;
+};
+// -------------------------------------------------------------------
+
 class SignalFileInfo :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:SignalFileInfo) */ {
  public:
@@ -258,7 +390,7 @@ class SignalFileInfo :
                &_SignalFileInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   void Swap(SignalFileInfo* other);
   friend void swap(SignalFileInfo& a, SignalFileInfo& b) {
@@ -349,138 +481,6 @@ class SignalFileInfo :
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::uint32 size_;
   ::google::protobuf::uint32 ddc_frequency_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_device_5fset_5finfo_2eproto;
-};
-// -------------------------------------------------------------------
-
-class DeviceSetInfo :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:DeviceSetInfo) */ {
- public:
-  DeviceSetInfo();
-  virtual ~DeviceSetInfo();
-
-  DeviceSetInfo(const DeviceSetInfo& from);
-
-  inline DeviceSetInfo& operator=(const DeviceSetInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  DeviceSetInfo(DeviceSetInfo&& from) noexcept
-    : DeviceSetInfo() {
-    *this = ::std::move(from);
-  }
-
-  inline DeviceSetInfo& operator=(DeviceSetInfo&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const DeviceSetInfo& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const DeviceSetInfo* internal_default_instance() {
-    return reinterpret_cast<const DeviceSetInfo*>(
-               &_DeviceSetInfo_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
-
-  void Swap(DeviceSetInfo* other);
-  friend void swap(DeviceSetInfo& a, DeviceSetInfo& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline DeviceSetInfo* New() const final {
-    return CreateMaybeMessage<DeviceSetInfo>(nullptr);
-  }
-
-  DeviceSetInfo* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<DeviceSetInfo>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const DeviceSetInfo& from);
-  void MergeFrom(const DeviceSetInfo& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(DeviceSetInfo* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // repeated .DeviceInfo device_info = 1;
-  int device_info_size() const;
-  void clear_device_info();
-  static const int kDeviceInfoFieldNumber = 1;
-  ::DeviceInfo* mutable_device_info(int index);
-  ::google::protobuf::RepeatedPtrField< ::DeviceInfo >*
-      mutable_device_info();
-  const ::DeviceInfo& device_info(int index) const;
-  ::DeviceInfo* add_device_info();
-  const ::google::protobuf::RepeatedPtrField< ::DeviceInfo >&
-      device_info() const;
-
-  // uint32 signal_port = 2;
-  void clear_signal_port();
-  static const int kSignalPortFieldNumber = 2;
-  ::google::protobuf::uint32 signal_port() const;
-  void set_signal_port(::google::protobuf::uint32 value);
-
-  // uint32 file_port = 3;
-  void clear_file_port();
-  static const int kFilePortFieldNumber = 3;
-  ::google::protobuf::uint32 file_port() const;
-  void set_file_port(::google::protobuf::uint32 value);
-
-  // @@protoc_insertion_point(class_scope:DeviceSetInfo)
- private:
-  class HasBitSetters;
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::DeviceInfo > device_info_;
-  ::google::protobuf::uint32 signal_port_;
-  ::google::protobuf::uint32 file_port_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_device_5fset_5finfo_2eproto;
 };
@@ -749,6 +749,68 @@ inline void DeviceInfo::set_allocated_interface_type(::std::string* interface_ty
 
 // -------------------------------------------------------------------
 
+// DeviceSetInfo
+
+// repeated .DeviceInfo device_info = 1;
+inline int DeviceSetInfo::device_info_size() const {
+  return device_info_.size();
+}
+inline void DeviceSetInfo::clear_device_info() {
+  device_info_.Clear();
+}
+inline ::DeviceInfo* DeviceSetInfo::mutable_device_info(int index) {
+  // @@protoc_insertion_point(field_mutable:DeviceSetInfo.device_info)
+  return device_info_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::DeviceInfo >*
+DeviceSetInfo::mutable_device_info() {
+  // @@protoc_insertion_point(field_mutable_list:DeviceSetInfo.device_info)
+  return &device_info_;
+}
+inline const ::DeviceInfo& DeviceSetInfo::device_info(int index) const {
+  // @@protoc_insertion_point(field_get:DeviceSetInfo.device_info)
+  return device_info_.Get(index);
+}
+inline ::DeviceInfo* DeviceSetInfo::add_device_info() {
+  // @@protoc_insertion_point(field_add:DeviceSetInfo.device_info)
+  return device_info_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::DeviceInfo >&
+DeviceSetInfo::device_info() const {
+  // @@protoc_insertion_point(field_list:DeviceSetInfo.device_info)
+  return device_info_;
+}
+
+// uint32 signal_port = 2;
+inline void DeviceSetInfo::clear_signal_port() {
+  signal_port_ = 0u;
+}
+inline ::google::protobuf::uint32 DeviceSetInfo::signal_port() const {
+  // @@protoc_insertion_point(field_get:DeviceSetInfo.signal_port)
+  return signal_port_;
+}
+inline void DeviceSetInfo::set_signal_port(::google::protobuf::uint32 value) {
+  
+  signal_port_ = value;
+  // @@protoc_insertion_point(field_set:DeviceSetInfo.signal_port)
+}
+
+// uint32 file_port = 3;
+inline void DeviceSetInfo::clear_file_port() {
+  file_port_ = 0u;
+}
+inline ::google::protobuf::uint32 DeviceSetInfo::file_port() const {
+  // @@protoc_insertion_point(field_get:DeviceSetInfo.file_port)
+  return file_port_;
+}
+inline void DeviceSetInfo::set_file_port(::google::protobuf::uint32 value) {
+  
+  file_port_ = value;
+  // @@protoc_insertion_point(field_set:DeviceSetInfo.file_port)
+}
+
+// -------------------------------------------------------------------
+
 // SignalFileInfo
 
 // string name = 1;
@@ -830,68 +892,6 @@ inline void SignalFileInfo::set_ddc_frequency(::google::protobuf::uint32 value) 
   
   ddc_frequency_ = value;
   // @@protoc_insertion_point(field_set:SignalFileInfo.ddc_frequency)
-}
-
-// -------------------------------------------------------------------
-
-// DeviceSetInfo
-
-// repeated .DeviceInfo device_info = 1;
-inline int DeviceSetInfo::device_info_size() const {
-  return device_info_.size();
-}
-inline void DeviceSetInfo::clear_device_info() {
-  device_info_.Clear();
-}
-inline ::DeviceInfo* DeviceSetInfo::mutable_device_info(int index) {
-  // @@protoc_insertion_point(field_mutable:DeviceSetInfo.device_info)
-  return device_info_.Mutable(index);
-}
-inline ::google::protobuf::RepeatedPtrField< ::DeviceInfo >*
-DeviceSetInfo::mutable_device_info() {
-  // @@protoc_insertion_point(field_mutable_list:DeviceSetInfo.device_info)
-  return &device_info_;
-}
-inline const ::DeviceInfo& DeviceSetInfo::device_info(int index) const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfo.device_info)
-  return device_info_.Get(index);
-}
-inline ::DeviceInfo* DeviceSetInfo::add_device_info() {
-  // @@protoc_insertion_point(field_add:DeviceSetInfo.device_info)
-  return device_info_.Add();
-}
-inline const ::google::protobuf::RepeatedPtrField< ::DeviceInfo >&
-DeviceSetInfo::device_info() const {
-  // @@protoc_insertion_point(field_list:DeviceSetInfo.device_info)
-  return device_info_;
-}
-
-// uint32 signal_port = 2;
-inline void DeviceSetInfo::clear_signal_port() {
-  signal_port_ = 0u;
-}
-inline ::google::protobuf::uint32 DeviceSetInfo::signal_port() const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfo.signal_port)
-  return signal_port_;
-}
-inline void DeviceSetInfo::set_signal_port(::google::protobuf::uint32 value) {
-  
-  signal_port_ = value;
-  // @@protoc_insertion_point(field_set:DeviceSetInfo.signal_port)
-}
-
-// uint32 file_port = 3;
-inline void DeviceSetInfo::clear_file_port() {
-  file_port_ = 0u;
-}
-inline ::google::protobuf::uint32 DeviceSetInfo::file_port() const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfo.file_port)
-  return file_port_;
-}
-inline void DeviceSetInfo::set_file_port(::google::protobuf::uint32 value) {
-  
-  file_port_ = value;
-  // @@protoc_insertion_point(field_set:DeviceSetInfo.file_port)
 }
 
 // -------------------------------------------------------------------

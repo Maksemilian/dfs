@@ -1,11 +1,13 @@
 #include "channel.h"
 
 #include <QDataStream>
+#include <QHostAddress>
 
 Channel::Channel(QObject *parent)
     : QObject(parent),_socket(std::make_unique<QTcpSocket>())
 {
     connect(_socket.get(),&QTcpSocket::readyRead,this,&Channel::onReadyRead);
+    connect(_socket.get(),&QTcpSocket::disconnected,this,&Channel::finished);
 }
 
 Channel::Channel(qintptr _handle,QObject *parent)
@@ -14,9 +16,14 @@ Channel::Channel(qintptr _handle,QObject *parent)
     _socket->setSocketDescriptor(_handle);
 }
 
+QHostAddress Channel::peerAddress()
+{
+    return _socket->peerAddress();
+}
+
 void Channel::writeToConnection(const QByteArray &commandData)
 {
-//    qDebug()<<"Channel::writeToConnection";
+    //    qDebug()<<"Channel::writeToConnection";
     int byteSize=commandData.size();
     QByteArray baSize;
     QDataStream out(&baSize,QIODevice::WriteOnly);
@@ -37,7 +44,7 @@ qint64 Channel::writeToSocket(qint64 bytes)
     qint64 totalWritten = 0;
     do {
         qint64 written =_socket->write(outgoingBuffer.constData(),
-                                      qMin<qint64>(bytes - totalWritten, outgoingBuffer.size()));
+                                       qMin<qint64>(bytes - totalWritten, outgoingBuffer.size()));
         if (written <= 0)
             return totalWritten ? totalWritten : written;
 
@@ -94,18 +101,23 @@ qint64 Channel::socketBytesAvailable()
 
 void Channel::onMessageReceive()
 {
-//    qDebug()<<"Channel::answerSize"<<answerSize;
-    QByteArray ba;
-    ba.resize(static_cast<int>(answerSize));
-    readDataFromBuffer(ba.data(),ba.size());
-    internalMessageReceive(ba);
+    //    qDebug()<<"Channel::answerSize"<<answerSize;
+    QByteArray buffer;
+    buffer.resize(static_cast<int>(answerSize));
+    readDataFromBuffer(buffer.data(),buffer.size());
+
+    if(keyExchangeState==KeyExchangeState::DONE){
+        emit messageReceived(buffer);
+    }else {
+        internalMessageReceive(buffer);
+    }
     //TODO СДЕЛАТЬ ОСВОБОЖДЕНИЕ БУФЕРА
-//    internalMessageReceive(incomingBuffer);
+    //    internalMessageReceive(incomingBuffer);
 }
 
 void Channel::onReadyRead()
 {
-//    qDebug()<<"Channel::onReadyRead"<<answerSize;
+    //    qDebug()<<"Channel::onReadyRead"<<answerSize;
     //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
     if(answerSize==0&&
             socketBytesAvailable()>=sizeof(int)){

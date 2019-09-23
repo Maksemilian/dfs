@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+
+package proto.receiver;
+
+enum CommandType
+{
+SET_POWER_OFF = 0;
+SET_POWER_ON=1;
+SET_ATTENUATOR = 2;
+SET_PRESELECTORS = 3;
+SET_PREAMPLIFIER_ENABLED=4;
+SET_ADC_NOICE_BLANKER_ENABLED=5;
+SET_ADC_NOICE_BLANKER_THRESHOLD=6;
+SET_DDC1_FREQUENCY = 7;
+SET_DDC1_TYPE=8;
+SET_SETTINGS=9;
+START_DDC1=10;
+STOP_DDC1=11;
+}
+
+message Preselectors
+{
+uint32 low_frequency=1;
+uint32 high_frequency=2;
+}
+
+message Command
+{
+CommandType command_type=1;
+
+uint32 attenuator=2;
+Preselectors preselectors=3;
+bool preamplifier_enebled=4;
+
+bool adc_noice_blanker_enebled=5;
+bytes adc_noice_blanker_threshold=6;
+
+uint32 ddc1_frequency=7;
+uint32 ddc1_type=8;
+
+bool start_ddc1=9;
+uint32 samples_per_buffer=10;
+}
+
+message DeviceInfo
+{
+string serial_number=1;
+fixed32 ddc_type_count=2;
+fixed32 channel_count=3;
+string interface_type=4;
+}
+
+message DeviceSetInfo
+{
+repeated DeviceInfo device_info=1;
+}
+
+message Answer
+{
+CommandType type=1;
+bool succesed=2;
+}
+
+message HostToClient
+{
+DeviceSetInfo device_set_info=1;
+Answer command_answer=2;
+}
+
+message ClientToHost
+{
+Command command=1;
+}

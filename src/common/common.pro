@@ -61,7 +61,7 @@ LIBS += $${LIBS_PATH}/proto/lib
 #common_incl.path = $${LIBS_PATH}/common/include
 
 headers.path = $${LIBS_PATH}/common/include
-headers.files   += $$files($${PWD}/*.pb.h)
+headers.files   += $$files($${PWD}/*.h)
 INSTALLS       += headers
 
 #*************************  COPY INCLUDE *************************

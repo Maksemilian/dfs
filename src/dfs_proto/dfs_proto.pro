@@ -79,15 +79,15 @@ HEADERS += \
     command.pb.h \
     device_set_info.pb.h \
     packet.pb.h \
-    key_exchange.pb.h
-#    TEST.pb.h
+    key_exchange.pb.h \
+    receiver.pb.h
 
 SOURCES += \
     command.pb.cc \
     device_set_info.pb.cc \
     packet.pb.cc \
-    key_exchange.pb.cc
-#    TEST.pb.cc
+    key_exchange.pb.cc \
+    receiver.pb.cc
 
 #****************** copy 1
 
@@ -244,6 +244,7 @@ DISTFILES += \
     command.proto \
     device_set_info.proto \
     packet.proto \
-    key_exchange.proto
+    key_exchange.proto \
+    receiver.proto
 
 

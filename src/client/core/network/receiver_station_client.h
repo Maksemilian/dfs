@@ -2,7 +2,7 @@
 #define RECEIVER_STATION_CLIENT_H
 
 #include "interface/i_stream_reader.h"
-
+#include "receiver.pb.h"
 struct DeviceSetSettings;
 
 class ReceiverStationClient;
@@ -71,7 +71,7 @@ public:
     void startLoadingFiles(const QStringList &fileNames);
     void stopLoadingFiles();
 
-    const DeviceSetInfo &getDeviceSetInfo()const;
+    const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
     QStringList getCurrentDeviceSetReceiversNames();
     QHostAddress getPeerAddress();
@@ -93,11 +93,12 @@ Q_SIGNALS:
     Q_SIGNAL void receivedFileSize(int fileIndex,qint64 fullSize);
     Q_SIGNAL void bytesProgressFile(int fileIndex, qint64 bytesReaded,qint64 bitesSize);
 private:
-    const QByteArray serializeCommandToByteArray(const Command &command);
+//    const QByteArray serializeCommandToByteArray(const Command &command);
+    const QByteArray serializeCommandToByteArray(const proto::receiver::Command &command);
     void writeToConnection(const QByteArray &commandData);
 
-    void sheduleTransfer();
-    void analyseResponse(const Answer &answer);
+//    void sheduleTransfer();
+    void readAnswerPacket(const proto::receiver::Answer&answer);
 //WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
     void setCurrentCommandType(quint32 type);
 
@@ -105,9 +106,10 @@ private:
     void stopDDC1StreamReader();
 
 private Q_SLOTS:
-    Q_SLOT void transfer();
-    Q_SLOT void onReadyReadInfo();
-    Q_SLOT void onReadyReadAnswer();
+//    Q_SLOT void transfer();
+//    Q_SLOT void onReadyReadInfo();
+//    Q_SLOT void onReadyReadAnswer();
+    Q_SLOT void onMessageReceived(const QByteArray &buffer);
 private:
     struct Impl;
     std::unique_ptr<Impl> d;

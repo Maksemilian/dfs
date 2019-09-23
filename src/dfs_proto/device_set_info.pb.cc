@@ -22,14 +22,14 @@ class DeviceInfoDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<DeviceInfo> _instance;
 } _DeviceInfo_default_instance_;
-class SignalFileInfoDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<SignalFileInfo> _instance;
-} _SignalFileInfo_default_instance_;
 class DeviceSetInfoDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<DeviceSetInfo> _instance;
 } _DeviceSetInfo_default_instance_;
+class SignalFileInfoDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<SignalFileInfo> _instance;
+} _SignalFileInfo_default_instance_;
 class SignalDirectoryInfoDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<SignalDirectoryInfo> _instance;
@@ -48,20 +48,6 @@ static void InitDefaultsDeviceInfo_device_5fset_5finfo_2eproto() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_DeviceInfo_device_5fset_5finfo_2eproto =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsDeviceInfo_device_5fset_5finfo_2eproto}, {}};
 
-static void InitDefaultsSignalFileInfo_device_5fset_5finfo_2eproto() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::_SignalFileInfo_default_instance_;
-    new (ptr) ::SignalFileInfo();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::SignalFileInfo::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_SignalFileInfo_device_5fset_5finfo_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSignalFileInfo_device_5fset_5finfo_2eproto}, {}};
-
 static void InitDefaultsDeviceSetInfo_device_5fset_5finfo_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -76,6 +62,20 @@ static void InitDefaultsDeviceSetInfo_device_5fset_5finfo_2eproto() {
 ::google::protobuf::internal::SCCInfo<1> scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsDeviceSetInfo_device_5fset_5finfo_2eproto}, {
       &scc_info_DeviceInfo_device_5fset_5finfo_2eproto.base,}};
+
+static void InitDefaultsSignalFileInfo_device_5fset_5finfo_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_SignalFileInfo_default_instance_;
+    new (ptr) ::SignalFileInfo();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::SignalFileInfo::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_SignalFileInfo_device_5fset_5finfo_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSignalFileInfo_device_5fset_5finfo_2eproto}, {}};
 
 static void InitDefaultsSignalDirectoryInfo_device_5fset_5finfo_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -94,8 +94,8 @@ static void InitDefaultsSignalDirectoryInfo_device_5fset_5finfo_2eproto() {
 
 void InitDefaults_device_5fset_5finfo_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceInfo_device_5fset_5finfo_2eproto.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_SignalFileInfo_device_5fset_5finfo_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SignalFileInfo_device_5fset_5finfo_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_SignalDirectoryInfo_device_5fset_5finfo_2eproto.base);
 }
 
@@ -114,14 +114,6 @@ const ::google::protobuf::uint32 TableStruct_device_5fset_5finfo_2eproto::offset
   PROTOBUF_FIELD_OFFSET(::DeviceInfo, channel_count_),
   PROTOBUF_FIELD_OFFSET(::DeviceInfo, interface_type_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, name_),
-  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, size_),
-  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, ddc_frequency_),
-  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::DeviceSetInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -129,6 +121,14 @@ const ::google::protobuf::uint32 TableStruct_device_5fset_5finfo_2eproto::offset
   PROTOBUF_FIELD_OFFSET(::DeviceSetInfo, device_info_),
   PROTOBUF_FIELD_OFFSET(::DeviceSetInfo, signal_port_),
   PROTOBUF_FIELD_OFFSET(::DeviceSetInfo, file_port_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, name_),
+  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, size_),
+  PROTOBUF_FIELD_OFFSET(::SignalFileInfo, ddc_frequency_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::SignalDirectoryInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -138,15 +138,15 @@ const ::google::protobuf::uint32 TableStruct_device_5fset_5finfo_2eproto::offset
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::DeviceInfo)},
-  { 9, -1, sizeof(::SignalFileInfo)},
-  { 17, -1, sizeof(::DeviceSetInfo)},
+  { 9, -1, sizeof(::DeviceSetInfo)},
+  { 17, -1, sizeof(::SignalFileInfo)},
   { 25, -1, sizeof(::SignalDirectoryInfo)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_DeviceInfo_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::_SignalFileInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_DeviceSetInfo_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_SignalFileInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_SignalDirectoryInfo_default_instance_),
 };
 
@@ -160,11 +160,11 @@ const char descriptor_table_protodef_device_5fset_5finfo_2eproto[] =
   "\n\025device_set_info.proto\"j\n\nDeviceInfo\022\025\n"
   "\rserial_number\030\001 \001(\t\022\026\n\016ddc_type_count\030\002"
   " \001(\007\022\025\n\rchannel_count\030\003 \001(\007\022\026\n\016interface"
-  "_type\030\004 \001(\t\"C\n\016SignalFileInfo\022\014\n\004name\030\001 "
-  "\001(\t\022\014\n\004size\030\002 \001(\r\022\025\n\rddc_frequency\030\003 \001(\r"
-  "\"Y\n\rDeviceSetInfo\022 \n\013device_info\030\001 \003(\0132\013"
-  ".DeviceInfo\022\023\n\013signal_port\030\002 \001(\r\022\021\n\tfile"
-  "_port\030\003 \001(\r\"@\n\023SignalDirectoryInfo\022)\n\020si"
+  "_type\030\004 \001(\t\"Y\n\rDeviceSetInfo\022 \n\013device_i"
+  "nfo\030\001 \003(\0132\013.DeviceInfo\022\023\n\013signal_port\030\002 "
+  "\001(\r\022\021\n\tfile_port\030\003 \001(\r\"C\n\016SignalFileInfo"
+  "\022\014\n\004name\030\001 \001(\t\022\014\n\004size\030\002 \001(\r\022\025\n\rddc_freq"
+  "uency\030\003 \001(\r\"@\n\023SignalDirectoryInfo\022)\n\020si"
   "gnal_file_info\030\001 \003(\0132\017.SignalFileInfob\006p"
   "roto3"
   ;
@@ -645,6 +645,379 @@ void DeviceInfo::InternalSwap(DeviceInfo* other) {
 
 // ===================================================================
 
+void DeviceSetInfo::InitAsDefaultInstance() {
+}
+class DeviceSetInfo::HasBitSetters {
+ public:
+};
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int DeviceSetInfo::kDeviceInfoFieldNumber;
+const int DeviceSetInfo::kSignalPortFieldNumber;
+const int DeviceSetInfo::kFilePortFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+DeviceSetInfo::DeviceSetInfo()
+  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:DeviceSetInfo)
+}
+DeviceSetInfo::DeviceSetInfo(const DeviceSetInfo& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(nullptr),
+      device_info_(from.device_info_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&signal_port_, &from.signal_port_,
+    static_cast<size_t>(reinterpret_cast<char*>(&file_port_) -
+    reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
+  // @@protoc_insertion_point(copy_constructor:DeviceSetInfo)
+}
+
+void DeviceSetInfo::SharedCtor() {
+  ::google::protobuf::internal::InitSCC(
+      &scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto.base);
+  ::memset(&signal_port_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&file_port_) -
+      reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
+}
+
+DeviceSetInfo::~DeviceSetInfo() {
+  // @@protoc_insertion_point(destructor:DeviceSetInfo)
+  SharedDtor();
+}
+
+void DeviceSetInfo::SharedDtor() {
+}
+
+void DeviceSetInfo::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const DeviceSetInfo& DeviceSetInfo::default_instance() {
+  ::google::protobuf::internal::InitSCC(&::scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void DeviceSetInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:DeviceSetInfo)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  device_info_.Clear();
+  ::memset(&signal_port_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&file_port_) -
+      reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* DeviceSetInfo::_InternalParse(const char* begin, const char* end, void* object,
+                  ::google::protobuf::internal::ParseContext* ctx) {
+  auto msg = static_cast<DeviceSetInfo*>(object);
+  ::google::protobuf::int32 size; (void)size;
+  int depth; (void)depth;
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
+  auto ptr = begin;
+  while (ptr < end) {
+    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
+    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    switch (tag >> 3) {
+      // repeated .DeviceInfo device_info = 1;
+      case 1: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
+        do {
+          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+          parser_till_end = ::DeviceInfo::_InternalParse;
+          object = msg->add_device_info();
+          if (size > end - ptr) goto len_delim_till_end;
+          ptr += size;
+          GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
+              {parser_till_end, object}, ptr - size, ptr));
+          if (ptr >= end) break;
+        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 10 && (ptr += 1));
+        break;
+      }
+      // uint32 signal_port = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
+        msg->set_signal_port(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 file_port = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
+        msg->set_file_port(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->EndGroup(tag);
+          return ptr;
+        }
+        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
+          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
+        ptr = res.first;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
+        if (res.second) return ptr;
+      }
+    }  // switch
+  }  // while
+  return ptr;
+len_delim_till_end:
+  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
+                               {parser_till_end, object}, size);
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool DeviceSetInfo::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:DeviceSetInfo)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .DeviceInfo device_info = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_device_info()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 signal_port = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &signal_port_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 file_port = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &file_port_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:DeviceSetInfo)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:DeviceSetInfo)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void DeviceSetInfo::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:DeviceSetInfo)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .DeviceInfo device_info = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->device_info_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->device_info(static_cast<int>(i)),
+      output);
+  }
+
+  // uint32 signal_port = 2;
+  if (this->signal_port() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->signal_port(), output);
+  }
+
+  // uint32 file_port = 3;
+  if (this->file_port() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->file_port(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:DeviceSetInfo)
+}
+
+::google::protobuf::uint8* DeviceSetInfo::InternalSerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:DeviceSetInfo)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .DeviceInfo device_info = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->device_info_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->device_info(static_cast<int>(i)), target);
+  }
+
+  // uint32 signal_port = 2;
+  if (this->signal_port() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->signal_port(), target);
+  }
+
+  // uint32 file_port = 3;
+  if (this->file_port() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->file_port(), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:DeviceSetInfo)
+  return target;
+}
+
+size_t DeviceSetInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:DeviceSetInfo)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .DeviceInfo device_info = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->device_info_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->device_info(static_cast<int>(i)));
+    }
+  }
+
+  // uint32 signal_port = 2;
+  if (this->signal_port() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->signal_port());
+  }
+
+  // uint32 file_port = 3;
+  if (this->file_port() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->file_port());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void DeviceSetInfo::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:DeviceSetInfo)
+  GOOGLE_DCHECK_NE(&from, this);
+  const DeviceSetInfo* source =
+      ::google::protobuf::DynamicCastToGenerated<DeviceSetInfo>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:DeviceSetInfo)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:DeviceSetInfo)
+    MergeFrom(*source);
+  }
+}
+
+void DeviceSetInfo::MergeFrom(const DeviceSetInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:DeviceSetInfo)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  device_info_.MergeFrom(from.device_info_);
+  if (from.signal_port() != 0) {
+    set_signal_port(from.signal_port());
+  }
+  if (from.file_port() != 0) {
+    set_file_port(from.file_port());
+  }
+}
+
+void DeviceSetInfo::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:DeviceSetInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void DeviceSetInfo::CopyFrom(const DeviceSetInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:DeviceSetInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DeviceSetInfo::IsInitialized() const {
+  return true;
+}
+
+void DeviceSetInfo::Swap(DeviceSetInfo* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void DeviceSetInfo::InternalSwap(DeviceSetInfo* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  CastToBase(&device_info_)->InternalSwap(CastToBase(&other->device_info_));
+  swap(signal_port_, other->signal_port_);
+  swap(file_port_, other->file_port_);
+}
+
+::google::protobuf::Metadata DeviceSetInfo::GetMetadata() const {
+  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_device_5fset_5finfo_2eproto);
+  return ::file_level_metadata_device_5fset_5finfo_2eproto[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void SignalFileInfo::InitAsDefaultInstance() {
 }
 class SignalFileInfo::HasBitSetters {
@@ -1035,379 +1408,6 @@ void SignalFileInfo::InternalSwap(SignalFileInfo* other) {
 
 // ===================================================================
 
-void DeviceSetInfo::InitAsDefaultInstance() {
-}
-class DeviceSetInfo::HasBitSetters {
- public:
-};
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int DeviceSetInfo::kDeviceInfoFieldNumber;
-const int DeviceSetInfo::kSignalPortFieldNumber;
-const int DeviceSetInfo::kFilePortFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-DeviceSetInfo::DeviceSetInfo()
-  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:DeviceSetInfo)
-}
-DeviceSetInfo::DeviceSetInfo(const DeviceSetInfo& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(nullptr),
-      device_info_(from.device_info_) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&signal_port_, &from.signal_port_,
-    static_cast<size_t>(reinterpret_cast<char*>(&file_port_) -
-    reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
-  // @@protoc_insertion_point(copy_constructor:DeviceSetInfo)
-}
-
-void DeviceSetInfo::SharedCtor() {
-  ::google::protobuf::internal::InitSCC(
-      &scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto.base);
-  ::memset(&signal_port_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&file_port_) -
-      reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
-}
-
-DeviceSetInfo::~DeviceSetInfo() {
-  // @@protoc_insertion_point(destructor:DeviceSetInfo)
-  SharedDtor();
-}
-
-void DeviceSetInfo::SharedDtor() {
-}
-
-void DeviceSetInfo::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
-}
-const DeviceSetInfo& DeviceSetInfo::default_instance() {
-  ::google::protobuf::internal::InitSCC(&::scc_info_DeviceSetInfo_device_5fset_5finfo_2eproto.base);
-  return *internal_default_instance();
-}
-
-
-void DeviceSetInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:DeviceSetInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  device_info_.Clear();
-  ::memset(&signal_port_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&file_port_) -
-      reinterpret_cast<char*>(&signal_port_)) + sizeof(file_port_));
-  _internal_metadata_.Clear();
-}
-
-#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-const char* DeviceSetInfo::_InternalParse(const char* begin, const char* end, void* object,
-                  ::google::protobuf::internal::ParseContext* ctx) {
-  auto msg = static_cast<DeviceSetInfo*>(object);
-  ::google::protobuf::int32 size; (void)size;
-  int depth; (void)depth;
-  ::google::protobuf::uint32 tag;
-  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
-  auto ptr = begin;
-  while (ptr < end) {
-    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
-    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-    switch (tag >> 3) {
-      // repeated .DeviceInfo device_info = 1;
-      case 1: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 10) goto handle_unusual;
-        do {
-          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-          parser_till_end = ::DeviceInfo::_InternalParse;
-          object = msg->add_device_info();
-          if (size > end - ptr) goto len_delim_till_end;
-          ptr += size;
-          GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
-              {parser_till_end, object}, ptr - size, ptr));
-          if (ptr >= end) break;
-        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 10 && (ptr += 1));
-        break;
-      }
-      // uint32 signal_port = 2;
-      case 2: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
-        msg->set_signal_port(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      // uint32 file_port = 3;
-      case 3: {
-        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
-        msg->set_file_port(::google::protobuf::internal::ReadVarint(&ptr));
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
-        break;
-      }
-      default: {
-      handle_unusual:
-        if ((tag & 7) == 4 || tag == 0) {
-          ctx->EndGroup(tag);
-          return ptr;
-        }
-        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
-          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
-        ptr = res.first;
-        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
-        if (res.second) return ptr;
-      }
-    }  // switch
-  }  // while
-  return ptr;
-len_delim_till_end:
-  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
-                               {parser_till_end, object}, size);
-}
-#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-bool DeviceSetInfo::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:DeviceSetInfo)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated .DeviceInfo device_info = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (10 & 0xFF)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-                input, add_device_info()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // uint32 signal_port = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &signal_port_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      // uint32 file_port = 3;
-      case 3: {
-        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
-                 input, &file_port_)));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:DeviceSetInfo)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:DeviceSetInfo)
-  return false;
-#undef DO_
-}
-#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-
-void DeviceSetInfo::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:DeviceSetInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // repeated .DeviceInfo device_info = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->device_info_size()); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1,
-      this->device_info(static_cast<int>(i)),
-      output);
-  }
-
-  // uint32 signal_port = 2;
-  if (this->signal_port() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->signal_port(), output);
-  }
-
-  // uint32 file_port = 3;
-  if (this->file_port() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->file_port(), output);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        _internal_metadata_.unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:DeviceSetInfo)
-}
-
-::google::protobuf::uint8* DeviceSetInfo::InternalSerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:DeviceSetInfo)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // repeated .DeviceInfo device_info = 1;
-  for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->device_info_size()); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageToArray(
-        1, this->device_info(static_cast<int>(i)), target);
-  }
-
-  // uint32 signal_port = 2;
-  if (this->signal_port() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->signal_port(), target);
-  }
-
-  // uint32 file_port = 3;
-  if (this->file_port() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->file_port(), target);
-  }
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:DeviceSetInfo)
-  return target;
-}
-
-size_t DeviceSetInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:DeviceSetInfo)
-  size_t total_size = 0;
-
-  if (_internal_metadata_.have_unknown_fields()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        _internal_metadata_.unknown_fields());
-  }
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated .DeviceInfo device_info = 1;
-  {
-    unsigned int count = static_cast<unsigned int>(this->device_info_size());
-    total_size += 1UL * count;
-    for (unsigned int i = 0; i < count; i++) {
-      total_size +=
-        ::google::protobuf::internal::WireFormatLite::MessageSize(
-          this->device_info(static_cast<int>(i)));
-    }
-  }
-
-  // uint32 signal_port = 2;
-  if (this->signal_port() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt32Size(
-        this->signal_port());
-  }
-
-  // uint32 file_port = 3;
-  if (this->file_port() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt32Size(
-        this->file_port());
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
-}
-
-void DeviceSetInfo::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:DeviceSetInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  const DeviceSetInfo* source =
-      ::google::protobuf::DynamicCastToGenerated<DeviceSetInfo>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:DeviceSetInfo)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:DeviceSetInfo)
-    MergeFrom(*source);
-  }
-}
-
-void DeviceSetInfo::MergeFrom(const DeviceSetInfo& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:DeviceSetInfo)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  device_info_.MergeFrom(from.device_info_);
-  if (from.signal_port() != 0) {
-    set_signal_port(from.signal_port());
-  }
-  if (from.file_port() != 0) {
-    set_file_port(from.file_port());
-  }
-}
-
-void DeviceSetInfo::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:DeviceSetInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void DeviceSetInfo::CopyFrom(const DeviceSetInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:DeviceSetInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool DeviceSetInfo::IsInitialized() const {
-  return true;
-}
-
-void DeviceSetInfo::Swap(DeviceSetInfo* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void DeviceSetInfo::InternalSwap(DeviceSetInfo* other) {
-  using std::swap;
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  CastToBase(&device_info_)->InternalSwap(CastToBase(&other->device_info_));
-  swap(signal_port_, other->signal_port_);
-  swap(file_port_, other->file_port_);
-}
-
-::google::protobuf::Metadata DeviceSetInfo::GetMetadata() const {
-  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_device_5fset_5finfo_2eproto);
-  return ::file_level_metadata_device_5fset_5finfo_2eproto[kIndexInFileMessages];
-}
-
-
-// ===================================================================
-
 void SignalDirectoryInfo::InitAsDefaultInstance() {
 }
 class SignalDirectoryInfo::HasBitSetters {
@@ -1692,11 +1692,11 @@ namespace protobuf {
 template<> PROTOBUF_NOINLINE ::DeviceInfo* Arena::CreateMaybeMessage< ::DeviceInfo >(Arena* arena) {
   return Arena::CreateInternal< ::DeviceInfo >(arena);
 }
-template<> PROTOBUF_NOINLINE ::SignalFileInfo* Arena::CreateMaybeMessage< ::SignalFileInfo >(Arena* arena) {
-  return Arena::CreateInternal< ::SignalFileInfo >(arena);
-}
 template<> PROTOBUF_NOINLINE ::DeviceSetInfo* Arena::CreateMaybeMessage< ::DeviceSetInfo >(Arena* arena) {
   return Arena::CreateInternal< ::DeviceSetInfo >(arena);
+}
+template<> PROTOBUF_NOINLINE ::SignalFileInfo* Arena::CreateMaybeMessage< ::SignalFileInfo >(Arena* arena) {
+  return Arena::CreateInternal< ::SignalFileInfo >(arena);
 }
 template<> PROTOBUF_NOINLINE ::SignalDirectoryInfo* Arena::CreateMaybeMessage< ::SignalDirectoryInfo >(Arena* arena) {
   return Arena::CreateInternal< ::SignalDirectoryInfo >(arena);
