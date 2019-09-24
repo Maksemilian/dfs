@@ -9,11 +9,14 @@ class Channel:public QObject
     Q_OBJECT
 public:
     enum  KeyExchangeState {HELLO=0,KEY_EXCHANGE=1,SESSION=2,DONE=3};
+    enum  ChannelState { NOT_CONNECTED,CONNECTED,ESTABLISHED};
     Channel(QObject*parent=nullptr);
     Channel(qintptr handle,QObject *parent=nullptr);
     void writeToConnection(const QByteArray &commandData);
+    inline ChannelState state(){return  _channelState ;}
     QHostAddress peerAddress();
     ~Channel();
+    bool waitChannel(int msec);
 signals:
     void messageReceived(const QByteArray &buffer);
     void finished();
@@ -36,6 +39,7 @@ private:
 protected:
     std::unique_ptr<QTcpSocket> _socket;
     KeyExchangeState keyExchangeState=KeyExchangeState::HELLO;
+    ChannelState _channelState=ChannelState::NOT_CONNECTED;
 private:
     QByteArray incomingBuffer;
     QByteArray outgoingBuffer;

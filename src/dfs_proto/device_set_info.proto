@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-message DeviceInfo
+message DeviceInfoT
 {
 string serial_number=1;
 fixed32 ddc_type_count=2;
@@ -8,21 +8,21 @@ fixed32 channel_count=3;
 string interface_type=4;
 }
 
-message DeviceSetInfo
+message DeviceSetInfoT
 {
-repeated DeviceInfo device_info=1;
+repeated DeviceInfoT device_info=1;
 uint32 signal_port=2;
 uint32 file_port=3;
 }
 
-message SignalFileInfo
+message SignalFileInfoT
 {
 string name=1;
 uint32 size=2;
 uint32 ddc_frequency=3;
 }
 
-message SignalDirectoryInfo
+message SignalDirectoryInfoT
 {
-repeated SignalFileInfo signal_file_info=1;
+repeated SignalFileInfoT signal_file_info=1;
 }

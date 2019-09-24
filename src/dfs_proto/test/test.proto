@@ -1,0 +1,7 @@
+syntax ="proto3";
+
+message T
+{
+uint32 v1=1;
+uint32 v2=2;
+}

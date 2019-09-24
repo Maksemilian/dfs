@@ -31,8 +31,8 @@ INCLUDEPATH += $${LIBS_PATH}/proto/include
 #DEPENDPATH += $${LIBS_PATH}/proto/include
 INCLUDEPATH += $${LIBS_PATH}/common/include
 
-LIBS += -L$${LIBS_PATH}/proto/lib
 LIBS += -L$${LIBS_PATH}/common/lib
+LIBS += -L$${LIBS_PATH}/proto/lib
 
 #LIBS += -L$${LIBS_PATH}/server/proto/lib
 
@@ -56,9 +56,9 @@ LIBS += -L$${LIBS_PATH}/common/lib
 LIBS += -L$${LIBS_PATH}/winradio/lib
 LIBS += -L$${LIBS_PATH}/google/lib
 
+LIBS += -lcommonlib$${LIB_SUFFIX}
 LIBS += -ldfs_proto$${LIB_SUFFIX}
 LIBS += -lprotobuf$${LIB_SUFFIX}
-LIBS += -lcommonlib$${LIB_SUFFIX}
 
 #LIBS += -lprotobuf-18
 

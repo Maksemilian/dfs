@@ -71,13 +71,14 @@ protobuf_lib.CONFIG += combine target_predeps
 QMAKE_EXTRA_COMPILERS +=protobuf_lib
 
 #****************** copy 2 ВО ВРЕМЯ ЗАПУСКА APP КОМИТИТЬ
-headers.path = $${LIBS_PATH}/proto/include
-headers.files   += $$files($${PWD}/*.pb.h)
-INSTALLS       += headers
+#headers.path = $${LIBS_PATH}/proto/include
+#headers.files   += $$files($${PWD}/*.pb.h)
+#INSTALLS       += headers
 
 HEADERS += \
     command.pb.h \
     device_set_info.pb.h \
+#test.pb.h \
     packet.pb.h \
     key_exchange.pb.h \
     receiver.pb.h
@@ -85,10 +86,17 @@ HEADERS += \
 SOURCES += \
     command.pb.cc \
     device_set_info.pb.cc \
+#test.pb.cc \
     packet.pb.cc \
     key_exchange.pb.cc \
     receiver.pb.cc
 
+#DISTFILES += \
+#    device_set_info.proto \
+#    packet.proto \
+#    key_exchange.proto \
+#    receiver.proto
+#    command.proto
 #****************** copy 1
 
 ## Добавляем модуль file_copies
@@ -240,11 +248,6 @@ SOURCES += \
 ###lib.variable_out = PRE_TARGETDEPS
 ##QMAKE_EXTRA_COMPILERS +=libt
 
-DISTFILES += \
-    command.proto \
-    device_set_info.proto \
-    packet.proto \
-    key_exchange.proto \
-    receiver.proto
+
 
 

@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <QObject>
+#include "receiver.pb.h"
 
 class CohG35DeviceSet;
 class Command;
@@ -26,16 +27,15 @@ public:
     bool setupNewDeviceSet(quint32 deviceSetIndex);
 
     Q_SIGNAL void stationDisconnected();
-private:
-    Q_SLOT void onReadyRead();
-    Q_SLOT void onDisconnected();
-
+private slots:
+    void onDisconnected();
+    void onMessageReceived(const QByteArray &buffer);
 private:
     void sendDeviceSetInfo(quint16 signalPort=8000,quint16 filePort=7000);
     void sendStateWorkingCommand(quint32 type,bool state);
 
-    void parseMessage(const QByteArray &baCommand);
-    CohG35DeviceSetSettings extractSettingsFromCommand(const Command &command);
+    void readCommanPacket(const proto::receiver::Command &command);
+    CohG35DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 
     QByteArray serializeMessage(const google::protobuf::Message &message);
     void writeMessage(const google::protobuf::Message &message);

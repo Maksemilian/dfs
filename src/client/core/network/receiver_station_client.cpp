@@ -4,7 +4,7 @@
 
 #include "peer_wire_client.h"
 #include "channel.h"
-#include "channel_client.h"
+#include "channel_host.h"
 
 #include "packet.pb.h"
 #include "device_set_info.pb.h"
@@ -29,7 +29,7 @@
 //**************************************** Receiver Station Client*****************************************
 
 const QByteArray ReceiverStationClient::serializeCommandToByteArray(
-        const proto::receiver::Command &command)
+        const google::protobuf::Message &command)
 {
     //        qDebug()<<"Serialize B"<<command.ByteSize();
     std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
@@ -40,15 +40,12 @@ const QByteArray ReceiverStationClient::serializeCommandToByteArray(
 
 struct ReceiverStationClient::Impl
 {
-    //    Impl():channel(std::make_unique<PeerWireClient>())
-    Impl(qintptr socketDescriptor):channel(std::make_unique<ChannelClient>(socketDescriptor))
+    Impl(qintptr socketDescriptor):channel(std::make_unique<ChannelHost>(socketDescriptor))
     {
     }
     std::unique_ptr<StreamReader>streamReader;
-    std::unique_ptr<ChannelClient> channel;
+    std::unique_ptr<ChannelHost> channel;
     proto::receiver::DeviceSetInfo info;
-    //    std::unique_ptr<PeerWireClient> channel;
-//    DeviceSetInfo info;
     qint64 answerSize=0;
     QMap<quint32,bool>map;
     QList<FileLoader*>fileLoaders;
@@ -56,21 +53,18 @@ struct ReceiverStationClient::Impl
 
 ReceiverStationClient::ReceiverStationClient(qintptr socketDescriptor, QObject *parent):
     QObject(parent),
-    d(std::make_unique<Impl>())
+    d(std::make_unique<Impl>(socketDescriptor))
 {
-    //    d->channel->setSocketDescriptor(socketDescriptor);
-    //    connect(d->channel.get(),&PeerWireClient::readyRead,this,&ReceiverStationClient::onReadyReadInfo);
-    //    connect(d->channel.get(),&PeerWireClient::disconnected,this,&ReceiverStationClient::disconnected);
-    connect(d->channel.get(),&ChannelClient::messageReceived,this,&ReceiverStationClient::onMessageReceived);
-    connect(d->channel.get(),&ChannelClient::finished,this,&ReceiverStationClient::disconnected);
+    connect(d->channel.get(),&ChannelHost::messageReceived,
+            this,&ReceiverStationClient::onMessageReceived);
+
+    connect(d->channel.get(),&ChannelHost::finished,
+            this,&ReceiverStationClient::disconnected);
 
     connect(this,&ReceiverStationClient::deviceSetReadyForUse,
             this,&ReceiverStationClient::connected);
 
     connect(this,&ReceiverStationClient::deviceSetChangeBandwith,[this]{
-        //        qDebug()<<"DDC1 BUFFER RESET";
-        //        d->ddcBuffer->reset();
-        //        d->streamReader->bufferReset();
         d->streamReader->resetBuffer();
     });
 
@@ -88,12 +82,6 @@ ReceiverStationClient::~ReceiverStationClient()
     qDebug("STOP STREAM DESTR");
 }
 
-
-void ReceiverStationClient::sheduleTransfer()
-{
-    QTimer::singleShot(100, this, SLOT(transfer()));
-}
-
 QString ReceiverStationClient::getCurrentDeviceSetName()
 {
     QString deviceSetName="DS#";
@@ -109,8 +97,9 @@ QString ReceiverStationClient::getCurrentDeviceSetName()
 
 void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
 {
+    qDebug()<<"ReceiverStationClient::onMessageReceived";
     proto::receiver::HostToClient hostToClient;
-    if(hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
+    if(!hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
         qDebug()<<"ERROR PARSE HOST_TO_CLIENT_MESSAGE";
         return;
     }
@@ -120,83 +109,10 @@ void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
       readAnswerPacket(commandAnswer);
     }else if (hostToClient.has_device_set_info()) {
       d->info=hostToClient.device_set_info();
+      emit deviceSetReadyForUse();
     }else qDebug()<<"ERROR MESSAGE RECEIVE";
 }
-/*
-void ReceiverStationClient::onReadyReadInfo()
-{
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;
-    if(d->answerSize==0){
-        if(d->channel->socketBytesAvailable()>=sizeof(int)){
-            d->channel->readFromSocket(sizeof(int));
-            char buf[sizeof(int)];
-            d->channel->readDataFromBuffer(buf,sizeof(int));
-            bool ok;
-            d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-            //qDebug()<<"Size"<<size;
-        }
-    }else{
-        if(d->channel->socketBytesAvailable()>0){
-            qint64 bytes=d->channel->readFromSocket(d->answerSize);
-            if(bytes==d->answerSize){
-                qDebug()<<"onReadyReadInfo"<<d->answerSize;
-                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-                //                char data[d->answerSize];
-                d->channel->readDataFromBuffer(data.data(),d->answerSize);
-                d->info.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
 
-                d->answerSize=0;
-                isTakeAnswer=true;
-
-                disconnect(d->channel.get(),&PeerWireClient::readyRead,this,&ReceiverStationClient::onReadyReadInfo);
-
-                emit deviceSetReadyForUse();
-                //emit stationDataReady(socket->peerAddress(),socket->peerPort(),info);
-                //qDebug()<<"Answer"<<answer.type();
-            }
-        }
-    }
-    if(!isTakeAnswer)onReadyReadInfo();
-}
-*/
-/*
-void ReceiverStationClient::transfer()
-{
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
-    if(d->answerSize==0&&
-            d->channel->socketBytesAvailable()>=sizeof(int)){
-
-        d->channel->readFromSocket(sizeof(int));
-        char buf[sizeof(int)];
-        d->channel->readDataFromBuffer(buf,sizeof(int));
-        bool ok;
-        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-        //qDebug()<<"Size"<<size;
-    }else if(d->channel->socketBytesAvailable()>0){
-        qint64 bytes=d->channel->readFromSocket(d->answerSize);
-        if(bytes==d->answerSize){
-            //qDebug("Rec");
-            try{
-                qDebug()<<"AS:"<<d->answerSize;
-                Answer answer;
-                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-                d->channel->readDataFromBuffer(data.data(),d->answerSize);
-                answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
-                d->answerSize=0;
-                isTakeAnswer=true;
-                //qDebug()<<"Answer"<<answer.type();
-                readAnswerPacket(answer);
-            } catch (const std::bad_alloc& err) {
-                qDebug()<<"EXCEPTION"<<err.what()<<"AS:"<<d->answerSize;
-            }
-        }
-    }
-
-    if(!isTakeAnswer) sheduleTransfer();
-}
-*/
 void ReceiverStationClient::setCurrentCommandType(quint32 type)
 {
     for(auto it=d->map.begin();it!=d->map.end();it++)
@@ -248,8 +164,6 @@ void ReceiverStationClient::readAnswerPacket(const proto::receiver::Answer &answ
         case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
             qDebug()<< "SETED_FREQUENCY";
             setCurrentCommandType(proto::receiver::CommandType::SET_DDC1_FREQUENCY);
-            //            d->map[DeviceSetSettingsGetable::ET_RESTART_DDC1]=true;
-            //            test(DeviceSetSettingsGetable::ET_RESTART_DDC1);
             break;
         case proto::receiver::CommandType::SET_DDC1_TYPE:
             setCurrentCommandType(proto::receiver::CommandType::SET_DDC1_TYPE);
@@ -266,46 +180,15 @@ void ReceiverStationClient::readAnswerPacket(const proto::receiver::Answer &answ
             setCurrentCommandType(proto::receiver::CommandType::STOP_DDC1);
             emit ddc1StreamStoped();
             break;
-        case proto::receiver::CommandType::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
-        case proto::receiver::CommandType::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
+        case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
+        case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
             break;
         }
     }else{
         qWarning()<<"ERROR RESPONSE"<<answer.type();
     }
 }
-/*
-void ReceiverStationClient::onReadyReadAnswer()
-{
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;
-    if(d->answerSize==0&&
-            d->channel->socketBytesAvailable()>=sizeof(int)){
 
-        d->channel->readFromSocket(sizeof(int));
-        char buf[sizeof(int)];
-        d->channel->readDataFromBuffer(buf,sizeof(int));
-        bool ok;
-        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-        //qDebug()<<"Size"<<size;
-    }else if(d->channel->socketBytesAvailable()>0){
-        qint64 bytes=d->channel->readFromSocket(d->answerSize);
-        if(bytes==d->answerSize){
-            //qDebug("Rec");
-            qDebug()<<"onReadyReadAnswer"<<d->answerSize;
-            Answer answer;
-            std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-            d->channel->readDataFromBuffer(data.data(),d->answerSize);
-            answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
-            d->answerSize=0;
-            isTakeAnswer=true;
-            //qDebug()<<"Answer"<<answer.type();
-        }
-    }
-
-    if(!isTakeAnswer)onReadyReadAnswer();
-}
-*/
 bool ReceiverStationClient::checkStateCommand(quint32 type)
 {
     qDebug()<<"EQU CHECK COMMAND"<<type<<d->map[type];
@@ -315,8 +198,15 @@ bool ReceiverStationClient::checkStateCommand(quint32 type)
     return false;
 }
 
+void ReceiverStationClient::sendCommand(proto::receiver::Command &command)
+{
+       proto::receiver::ClientToHost clientToHost;
+       clientToHost.set_allocated_command(&command);
+       d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
+}
 
-//************************************COMMAND SENDING*****************************************
+//***************************** COMMAND SENDING ***************************
+
 void ReceiverStationClient::setSettings(const DeviceSetSettings &settings)
 {
     proto::receiver::Command command;
@@ -340,8 +230,7 @@ void ReceiverStationClient::setSettings(const DeviceSetSettings &settings)
     command.set_samples_per_buffer(settings.samplesPerBuffer);
     command.set_ddc1_frequency(settings.frequency);
 
-    sheduleTransfer();
-    d->channel->writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setPower(bool state)
@@ -349,49 +238,34 @@ void ReceiverStationClient::setPower(bool state)
     proto::receiver::Command command;
     state ? command.set_command_type(proto::receiver::SET_POWER_ON):
             command.set_command_type(proto::receiver::SET_POWER_OFF);
-
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
-    //qDebug()<<"SEND_SET_POWER"<<command.ByteSize()<<command.power();
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setAttenuator(quint32 attenuator)
 {
-    //    qDebug()<<"Set atten start";
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ATTENUATOR);
     command.set_attenuator(attenuator);
-
-    //    qDebug()<<"timer transefer";
-    sheduleTransfer();
-    //    qDebug()<<"Write to connection";
-    writeToConnection(serializeCommandToByteArray(command));
-    //    qDebug()<<"Set atten stop";
+    sendCommand(command);
 }
 
 void ReceiverStationClient::startDDC1Stream(quint32 samplesPerBuffer)
 {
-    //type=CommandType::START_DDC1;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::START_DDC1);
     command.set_samples_per_buffer(samplesPerBuffer);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::stopDDC1Stream()
 {
-    //type=CommandType::STOP_DDC1;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::STOP_DDC1);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
-    //qDebug("SEND_COMMAND_STOP_DDC1");
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency)
 {
-    //type=CommandType::SET_PRESELECTORS;
     proto::receiver::Command command;
     //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
     proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
@@ -399,98 +273,50 @@ void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFre
     preselectors->set_high_frequency(highFrequency);
     command.set_command_type(proto::receiver::SET_PRESELECTORS);
     command.set_allocated_preselectors(preselectors);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setAdcNoiceBlankerEnabled(bool state)
 {
-    //type=CommandType::SET_ADC_NOICE_BLANKER_ENABLED;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
     command.set_adc_noice_blanker_enebled(state);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setAdcNoiceBlankerThreshold(quint16 threshold)
 {
-    //type=CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD;
     proto::receiver::Command command;
     void *value=&threshold;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
     command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setPreamplifierEnabled(bool state)
 {
-    //type=CommandType::SET_PREAMPLIFIER_ENABLED;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
     command.set_preamplifier_enebled(state);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setDDC1Frequency(quint32 ddc1Frequency)
 {
-    //type=CommandType::SET_DDC1_FREQUENCY;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
     command.set_ddc1_frequency(ddc1Frequency);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
-    //qDebug("Set DDC1 Frequency");
+    sendCommand(command);
 }
 
 void ReceiverStationClient::setDDC1Type(quint32 typeIndex)
 {
-    //type=CommandType::SET_DDC1_TYPE;
-    //    qDebug()<<"Type Index"<<typeIndex;
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_TYPE);
     command.set_ddc1_type(typeIndex);
-    //    command.set_samples_per_buffer(samplesPerBuffer);
-    sheduleTransfer();
-    writeToConnection(serializeCommandToByteArray(command));
+    sendCommand(command);
 }
 
-//const QByteArray ReceiverStationClient::serializeCommandToByteArray(
-//        const proto::receiver::Command &command)
-//{
-//    //        qDebug()<<"Serialize B"<<command.ByteSize();
-//    std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
-//    command.SerializeToArray(static_cast<void*>(bytesArray.data()),command.ByteSize());
-//    //        qDebug()<<"Serialize E";
-//    return QByteArray(bytesArray.data(),command.ByteSize());
-//}
-/*
-void ReceiverStationClient::writeToConnection(const QByteArray &commandData)
-{
-    //currentState=CT_NONE;
-    //        qDebug()<<"Write to con B";
-    int byteSize=commandData.size();
-    QByteArray baSize;
-    QDataStream out(&baSize,QIODevice::WriteOnly);
-    out<<byteSize;
-    //        qDebug()<<"Write to con timer Transfer"<<byteSize;
-    sheduleTransfer();
-
-    //        qDebug()<<"Write to con socket byte size_1"<<baSize.size();
-    qint64 bytesSize=d->channel->writeDataToBuffer(baSize.constData(),baSize.size());
-    //        qDebug()<<"Write to con socket byte size_2"<<byteSize;
-    d->channel->writeToSocket(bytesSize);
-
-    //        qDebug()<<"Write to con socket command_1";
-    bytesSize=d->channel->writeDataToBuffer(commandData.constData(),commandData.size());
-    //        qDebug()<<"Write to con socket command_2";
-    d->channel->writeToSocket(bytesSize);
-    d->channel->flush();
-    //        qDebug()<<"Write to con E";
-}
-*/
 QString ReceiverStationClient::getStationAddress()
 {
     return QHostAddress(getPeerAddress().toIPv4Address()).toString();
@@ -507,7 +333,7 @@ QStringList ReceiverStationClient::getCurrentDeviceSetReceiversNames()
     return receiversNames;
 }
 
-
+//******************* START DDC STREAM ***********************
 
 bool ReceiverStationClient::readDDC1StreamData(Packet &data)
 {
@@ -544,6 +370,7 @@ QHostAddress ReceiverStationClient::getPeerAddress()
 
 const proto::receiver::DeviceSetInfo & ReceiverStationClient::getDeviceSetInfo() const
 { return d->info; }
+
 
 //******************** LOAD FILES *****************************
 
@@ -728,3 +555,115 @@ void StreamReader::run()
 */
     qDebug()<<"THREAD_STREAM_READER*******END DDC STREAM";
 }
+
+//************************** DEL *************************
+/*
+void ReceiverStationClient::onReadyReadInfo()
+{
+    bool isTakeAnswer=false;
+    //static qint64 answerSize=0;
+    if(d->answerSize==0){
+        if(d->channel->socketBytesAvailable()>=sizeof(int)){
+            d->channel->readFromSocket(sizeof(int));
+            char buf[sizeof(int)];
+            d->channel->readDataFromBuffer(buf,sizeof(int));
+            bool ok;
+            d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
+            //qDebug()<<"Size"<<size;
+        }
+    }else{
+        if(d->channel->socketBytesAvailable()>0){
+            qint64 bytes=d->channel->readFromSocket(d->answerSize);
+            if(bytes==d->answerSize){
+                qDebug()<<"onReadyReadInfo"<<d->answerSize;
+                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
+                //                char data[d->answerSize];
+                d->channel->readDataFromBuffer(data.data(),d->answerSize);
+                d->info.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
+
+                d->answerSize=0;
+                isTakeAnswer=true;
+
+                disconnect(d->channel.get(),&PeerWireClient::readyRead,this,&ReceiverStationClient::onReadyReadInfo);
+
+                emit deviceSetReadyForUse();
+                //emit stationDataReady(socket->peerAddress(),socket->peerPort(),info);
+                //qDebug()<<"Answer"<<answer.type();
+            }
+        }
+    }
+    if(!isTakeAnswer)onReadyReadInfo();
+}
+*/
+/*
+ *
+void ReceiverStationClient::transfer()
+{
+    bool isTakeAnswer=false;
+    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
+    if(d->answerSize==0&&
+            d->channel->socketBytesAvailable()>=sizeof(int)){
+
+        d->channel->readFromSocket(sizeof(int));
+        char buf[sizeof(int)];
+        d->channel->readDataFromBuffer(buf,sizeof(int));
+        bool ok;
+        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
+        //qDebug()<<"Size"<<size;
+    }else if(d->channel->socketBytesAvailable()>0){
+        qint64 bytes=d->channel->readFromSocket(d->answerSize);
+        if(bytes==d->answerSize){
+            //qDebug("Rec");
+            try{
+                qDebug()<<"AS:"<<d->answerSize;
+                Answer answer;
+                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
+                d->channel->readDataFromBuffer(data.data(),d->answerSize);
+                answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
+                d->answerSize=0;
+                isTakeAnswer=true;
+                //qDebug()<<"Answer"<<answer.type();
+                readAnswerPacket(answer);
+            } catch (const std::bad_alloc& err) {
+                qDebug()<<"EXCEPTION"<<err.what()<<"AS:"<<d->answerSize;
+            }
+        }
+    }
+
+    if(!isTakeAnswer) sheduleTransfer();
+}
+
+
+void ReceiverStationClient::onReadyReadAnswer()
+{
+    bool isTakeAnswer=false;
+    //static qint64 answerSize=0;
+    if(d->answerSize==0&&
+            d->channel->socketBytesAvailable()>=sizeof(int)){
+
+        d->channel->readFromSocket(sizeof(int));
+        char buf[sizeof(int)];
+        d->channel->readDataFromBuffer(buf,sizeof(int));
+        bool ok;
+        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
+        //qDebug()<<"Size"<<size;
+    }else if(d->channel->socketBytesAvailable()>0){
+        qint64 bytes=d->channel->readFromSocket(d->answerSize);
+        if(bytes==d->answerSize){
+            //qDebug("Rec");
+            qDebug()<<"onReadyReadAnswer"<<d->answerSize;
+            Answer answer;
+            std::vector<char>data(static_cast<unsigned int>(d->answerSize));
+            d->channel->readDataFromBuffer(data.data(),d->answerSize);
+            answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
+            d->answerSize=0;
+            isTakeAnswer=true;
+            //qDebug()<<"Answer"<<answer.type();
+        }
+    }
+
+    if(!isTakeAnswer)onReadyReadAnswer();
+}
+
+*/
+

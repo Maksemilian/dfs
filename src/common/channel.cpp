@@ -4,7 +4,8 @@
 #include <QHostAddress>
 
 Channel::Channel(QObject *parent)
-    : QObject(parent),_socket(std::make_unique<QTcpSocket>())
+    : QObject(parent),
+      _socket(std::make_unique<QTcpSocket>())
 {
     connect(_socket.get(),&QTcpSocket::readyRead,this,&Channel::onReadyRead);
     connect(_socket.get(),&QTcpSocket::disconnected,this,&Channel::finished);
@@ -16,6 +17,11 @@ Channel::Channel(qintptr _handle,QObject *parent)
     _socket->setSocketDescriptor(_handle);
 }
 
+bool Channel::waitChannel(int msec)
+{
+    return _socket->waitForConnected(msec)?true:false;
+}
+
 QHostAddress Channel::peerAddress()
 {
     return _socket->peerAddress();
@@ -23,7 +29,7 @@ QHostAddress Channel::peerAddress()
 
 void Channel::writeToConnection(const QByteArray &commandData)
 {
-    //    qDebug()<<"Channel::writeToConnection";
+        qDebug()<<"Channel::writeToConnection"<<commandData.size();
     int byteSize=commandData.size();
     QByteArray baSize;
     QDataStream out(&baSize,QIODevice::WriteOnly);
@@ -107,8 +113,10 @@ void Channel::onMessageReceive()
     readDataFromBuffer(buffer.data(),buffer.size());
 
     if(keyExchangeState==KeyExchangeState::DONE){
+        qDebug()<<"WORK_MES"<<buffer.size();
         emit messageReceived(buffer);
     }else {
+        qDebug()<<"SESSION_MES"<<buffer.size();
         internalMessageReceive(buffer);
     }
     //TODO СДЕЛАТЬ ОСВОБОЖДЕНИЕ БУФЕРА

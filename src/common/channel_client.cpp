@@ -1,6 +1,7 @@
 #include "channel_client.h"
 
-#include "command.pb.h"
+//#include "command.pb.h"
+
 #include "key_exchange.pb.h"
 
 #include "google/protobuf/message.h"
@@ -21,7 +22,8 @@ const QByteArray serializeMessage(const google::protobuf::Message &message)
 }
 
 ChannelClient::ChannelClient(QObject *parent)
-    :Channel (parent),sessionType(SessionType::SESSION_COMMAND)
+    :Channel (parent),
+      sessionType(SessionType::SESSION_COMMAND)
 {
     connect(_socket.get(),&QTcpSocket::connected,this,&ChannelClient::onConnected);
 }
@@ -33,7 +35,7 @@ ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,par
 
 void ChannelClient::connectToHost(const QString &address, quint16 port)
 {
-    qDebug()<<"ChannelClient::connectToHost"<<address<<port;
+    qDebug()<<"ChannelClient::connectToHost"<<address<<port<<keyExchangeState;
     _socket->connectToHost(address,port);
 }
 
@@ -45,8 +47,9 @@ void ChannelClient::readServerKeyExchange(const QByteArray &buffer)
         return;
     }
 
-//    qDebug()<<"KEY_EXCHANGE : Host - > Client"<<serverKeyExchange.method()
-//           <<serverKeyExchange.user_key().data();
+    qDebug()<<"KEY_EXCHANGE : Host - > Client"<<
+              serverKeyExchange.method()
+           <<serverKeyExchange.user_key();
 
     user_key=serverKeyExchange.user_key();
 
@@ -61,16 +64,22 @@ void ChannelClient::readServerKeyExchange(const QByteArray &buffer)
 
 void ChannelClient::readServerSessionChange(const QByteArray &buffer)
 {
+    keyExchangeState=KeyExchangeState::SESSION;
     ServerSessionChange serverSessionChange;
     if(!serverSessionChange.ParseFromArray(buffer.constData(),buffer.size())){
          qDebug()<<"ERROR PARSE SERVER_SESSION_CHANGE"<<buffer.size();
          return;
     }
 
+    qDebug()<<"SESSION_CHANGE : Host - > Client";
+
     ClientSessionChange clientSessionChange;
     clientSessionChange.set_session_type(sessionType);
-    keyExchangeState=KeyExchangeState::SESSION;
+    keyExchangeState=KeyExchangeState::DONE;
     writeToConnection(serializeMessage(clientSessionChange));
+    _channelState=ChannelState::ESTABLISHED;
+    //TODO ДОРАБОТАТЬ ВЫЗОВ CONNECTED
+    emit connected();
 }
 
 void ChannelClient::internalMessageReceive(const QByteArray &buffer)
@@ -90,6 +99,7 @@ void ChannelClient::internalMessageReceive(const QByteArray &buffer)
 
 void ChannelClient::onConnected()
 {
+    _channelState=ChannelState::CONNECTED;
     qDebug()<<"ChannnelClient::onConneted send HELLO";
     ClientHello clientHello;
     clientHello.set_method(Method::METHOD_ADDRESS);

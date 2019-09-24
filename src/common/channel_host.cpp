@@ -35,7 +35,7 @@ void ChannelHost::readClientHello(const QByteArray &buffer)
         qDebug()<<"ERROR PARSE CLIENT_HELLO"<<clientHello.method();
         return;
     }
-    //    qDebug()<<"HELLO:Client - > Host"<<clientHello.method();
+    qDebug()<<"HELLO:Client - > Host"<<clientHello.method();
     switch (clientHello.method()) {
     case Method::METHOD_ADDRESS:
         user_key=QHostAddress(clientHello.user_name().data()).toIPv4Address();
@@ -60,7 +60,7 @@ void ChannelHost::readClientKeyExchange(const QByteArray &buffer)
         qDebug()<<"ERROR PARSE CLIENT_KEY_ECHANGE";
         return;
     }
-    //    qDebug()<<"KEY_ECHANGE:Client - > Host";
+        qDebug()<<"KEY_ECHANGE:Client - > Host";
 
     if(clientKeyExchange.user_key()!=user_key){
         qDebug()<<"ERROR CLIENT_KEY AND SERVER NOT EQUAL";

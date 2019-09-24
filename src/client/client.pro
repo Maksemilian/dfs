@@ -55,8 +55,8 @@ LIBS += -L$${LIBS_PATH}/ipp/lib
 LIBS += -L$${LIBS_PATH}/plot/lib
 LIBS += -L$${LIBS_PATH}/google/lib
 
-LIBS += -ldfs_proto$${LIB_SUFFIX}
 LIBS += -lcommonlib$${LIB_SUFFIX} #Если не поставить перед protobuf то куча ошибок undefine reference
+LIBS += -ldfs_proto$${LIB_SUFFIX}
 LIBS += -lqcustomplot$${LIB_SUFFIX}2
 LIBS += -lprotobuf$${LIB_SUFFIX}
 LIBS += -lippi -lipps -lippcore -lippvm

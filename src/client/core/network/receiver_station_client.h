@@ -77,7 +77,7 @@ public:
     QHostAddress getPeerAddress();
     QString getStationAddress();
 
-Q_SIGNALS:
+signals:
     void connected();
     void disconnected();
 
@@ -90,26 +90,20 @@ Q_SIGNALS:
     void ddc1StreamStarted();
     void ddc1StreamStoped();
 
-    Q_SIGNAL void receivedFileSize(int fileIndex,qint64 fullSize);
-    Q_SIGNAL void bytesProgressFile(int fileIndex, qint64 bytesReaded,qint64 bitesSize);
+    void receivedFileSize(int fileIndex,qint64 fullSize);
+    void bytesProgressFile(int fileIndex, qint64 bytesReaded,qint64 bitesSize);
 private:
-//    const QByteArray serializeCommandToByteArray(const Command &command);
-    const QByteArray serializeCommandToByteArray(const proto::receiver::Command &command);
-    void writeToConnection(const QByteArray &commandData);
-
-//    void sheduleTransfer();
+    void sendCommand(proto::receiver::Command &command);
+    const QByteArray serializeCommandToByteArray(const google::protobuf::Message &command);
     void readAnswerPacket(const proto::receiver::Answer&answer);
 //WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
     void setCurrentCommandType(quint32 type);
 
+
     void startDDC1StreamReader();
     void stopDDC1StreamReader();
-
-private Q_SLOTS:
-//    Q_SLOT void transfer();
-//    Q_SLOT void onReadyReadInfo();
-//    Q_SLOT void onReadyReadAnswer();
-    Q_SLOT void onMessageReceived(const QByteArray &buffer);
+private slots:
+    void onMessageReceived(const QByteArray &buffer);
 private:
     struct Impl;
     std::unique_ptr<Impl> d;
