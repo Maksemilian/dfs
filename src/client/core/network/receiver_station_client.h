@@ -3,38 +3,16 @@
 
 #include "interface/i_stream_reader.h"
 #include "receiver.pb.h"
+
 struct DeviceSetSettings;
 
 class ReceiverStationClient;
-class RingPacketBuffer;
 
-class Packet;
 
-class Command;
-class Answer;
-class DeviceSetInfo;
-
-class QHostAddress;
 class QHostAddress;
 class QByteArray;
 
-class StreamReader:IStreamRead
-{
-public:
-    StreamReader(const QHostAddress &address,quint16 port,
-                 const std::shared_ptr<RingPacketBuffer>&streamBuffer);
-    bool readDDC1StreamData(Packet&data) override;
-    void start();
-    void stop();
-    void resetBuffer();
-private:
-    void run();
-private:
-    struct Impl;
-    std::unique_ptr<Impl>d;
-};
-
-class ReceiverStationClient: public QObject,public IStreamRead
+class ReceiverStationClient: public QObject
 {
     Q_OBJECT
     enum ReceiverStationError{
@@ -47,7 +25,7 @@ class ReceiverStationClient: public QObject,public IStreamRead
     static const int BUFFER_SIZE=4;
 public:
     ReceiverStationClient(qintptr socketDescriptor,QObject *parent=nullptr);
-    ~ReceiverStationClient()override;
+    ~ReceiverStationClient();
 
     void setSettings(const DeviceSetSettings &settings);
 
@@ -64,7 +42,6 @@ public:
     void startDDC1Stream(quint32 samplesPerBuffer);
     void stopDDC1Stream();
 
-    bool readDDC1StreamData(Packet &data)override;
     //WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
     bool checkStateCommand(quint32 type);
 
@@ -74,7 +51,6 @@ public:
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
     QStringList getCurrentDeviceSetReceiversNames();
-    QHostAddress getPeerAddress();
     QString getStationAddress();
 
 signals:
@@ -98,10 +74,6 @@ private:
     void readAnswerPacket(const proto::receiver::Answer&answer);
 //WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
     void setCurrentCommandType(quint32 type);
-
-
-    void startDDC1StreamReader();
-    void stopDDC1StreamReader();
 private slots:
     void onMessageReceived(const QByteArray &buffer);
 private:

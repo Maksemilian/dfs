@@ -215,8 +215,9 @@ void SyncManager::start(quint32 ddcFrequency,quint32 sampleRate, quint32 blockSi
     //    qDebug()<<"ET_SYNC"<<"SR:"<<sampleRate<<"BS:"<<blockSize;
 
     StreamReadablePair streamReadablePair;
-    streamReadablePair.first=listeners.first();
-    streamReadablePair.second=listeners.last();
+    //TODO ВОЗНИКАЕТ ОШИБКА ЕСЛИ РАСКОМИТИТЬ
+//    streamReadablePair.first=listeners.first();
+//    streamReadablePair.second=listeners.last();
     sync.start(streamReadablePair,ddcFrequency,sampleRate,blockSize);
 
     emit syncStarted();
@@ -253,6 +254,50 @@ bool SyncManager::waitCommandState(quint32 type)
 
     return stateSuccessPower;
 }
+//TODO ДОБАВИТЬ СОЗДАНИЕ ДДС ПОТОКОВ
+/*
+//******************* START DDC STREAM ***********************
+
+connect(this,&ReceiverStationClient::deviceSetChangeBandwith,[this]{
+        d->streamReader->resetBuffer();
+    });
+
+    connect(this,&ReceiverStationClient::ddc1StreamStarted,
+            this,&ReceiverStationClient::startDDC1StreamReader);
+
+    connect(this,&ReceiverStationClient::ddc1StreamStoped,
+            this,&ReceiverStationClient::stopDDC1StreamReader);
+
+
+bool ReceiverStationClient::readDDC1StreamData(Packet &data)
+{
+    return   d->streamReader->readDDC1StreamData(data);
+}
+
+void ReceiverStationClient::startDDC1StreamReader()
+{
+    if(d->streamReader.get()==nullptr){
+        //        d->streamReader.reset(new SignalStreamReader(BUFFER_SIZE,getPeerAddress(),
+        //                                                     static_cast<unsigned short>(getDeviceSetInfo().signal_port())));
+        d->streamReader.reset(new StreamReader(getPeerAddress(),
+                                               8000,//TODO ЗАМЕНИТ НА КОНСТАНТУ
+                                               std::make_shared<RingPacketBuffer>(BUFFER_SIZE)));
+
+    }
+    //    d->streamReader->startDDC1Stream();
+    d->streamReader->start();
+}
+
+void ReceiverStationClient::stopDDC1StreamReader()
+{
+    if(d->streamReader.get()!=nullptr){
+        //        d->streamReader->stopDDC1Stream();
+        //        d->streamReader->bufferReset();
+        d->streamReader->stop();
+        d->streamReader->resetBuffer();
+    }
+}
+*/
 
 void SyncManager::sendSuccessSignal(quint32 commandType)
 {

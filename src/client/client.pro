@@ -99,7 +99,8 @@ HEADERS += \
     ui/plot/elips_plot.h \
     ui/main_window.h \
     ui/main_window_settings.h \
-    core/network/file_loader.h
+    core/network/file_loader.h \
+    core/network/stream_clieint.h
 
 SOURCES += \
     core/network/receiver_station_client.cpp \
@@ -122,7 +123,8 @@ SOURCES += \
     interface/interface_toolbar.cpp \
     ui/main_window_settings.cpp \
     main.cpp \
-    core/network/file_loader.cpp
+    core/network/file_loader.cpp \
+    core/network/stream_clieint.cpp
 
 FORMS += \
     ui/main_window.ui \
