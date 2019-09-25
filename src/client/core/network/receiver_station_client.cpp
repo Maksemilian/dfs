@@ -2,16 +2,9 @@
 
 #include "interface/i_device_set_settings.h"
 
-#include "peer_wire_client.h"
-#include "channel.h"
-#include "channel_host.h"
+#include "channel_client.h"
 
-#include "packet.pb.h"
-#include "device_set_info.pb.h"
-//#include "command.pb.h"
 #include "receiver.pb.h"
-
-#include "ring_packet_buffer.h"
 #include "file_loader.h"
 
 #include <string>
@@ -40,27 +33,32 @@ const QByteArray ReceiverStationClient::serializeCommandToByteArray(
 
 struct ReceiverStationClient::Impl
 {
-    Impl(qintptr socketDescriptor):channel(std::make_unique<ChannelHost>(socketDescriptor))
+    Impl():channel(std::make_unique<ChannelClient>())
     {
     }
-    std::unique_ptr<ChannelHost> channel;
+    std::unique_ptr<ChannelClient> channel;
     proto::receiver::DeviceSetInfo info;
     QMap<quint32,bool>map;
     QList<FileLoader*>fileLoaders;
 };
 
-ReceiverStationClient::ReceiverStationClient(qintptr socketDescriptor, QObject *parent):
+ReceiverStationClient::ReceiverStationClient(QObject *parent):
     QObject(parent),
-    d(std::make_unique<Impl>(socketDescriptor))
+    d(std::make_unique<Impl>())
 {
-    connect(d->channel.get(),&ChannelHost::messageReceived,
+    connect(d->channel.get(),&ChannelClient::messageReceived,
             this,&ReceiverStationClient::onMessageReceived);
 
-    connect(d->channel.get(),&ChannelHost::finished,
+    connect(d->channel.get(),&ChannelClient::finished,
             this,&ReceiverStationClient::disconnected);
 
     connect(this,&ReceiverStationClient::deviceSetReadyForUse,
             this,&ReceiverStationClient::connected);
+}
+
+void ReceiverStationClient::connectToHost(const QHostAddress &address, quint16 port)
+{
+    d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
 }
 
 ReceiverStationClient::~ReceiverStationClient(){}
@@ -92,6 +90,7 @@ void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
       readAnswerPacket(commandAnswer);
     }else if (hostToClient.has_device_set_info()) {
       d->info=hostToClient.device_set_info();
+      qDebug()<<"DeviceSetReadyForUse";
       emit deviceSetReadyForUse();
     }else qDebug()<<"ERROR MESSAGE RECEIVE";
 }
@@ -226,6 +225,7 @@ void ReceiverStationClient::setPower(bool state)
 
 void ReceiverStationClient::setAttenuator(quint32 attenuator)
 {
+    qDebug()<<"Set Attenuator";
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ATTENUATOR);
     command.set_attenuator(attenuator);
@@ -249,6 +249,7 @@ void ReceiverStationClient::stopDDC1Stream()
 
 void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency)
 {
+    qDebug()<<"Set Pres";
     proto::receiver::Command command;
     //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
     proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
@@ -278,6 +279,7 @@ void ReceiverStationClient::setAdcNoiceBlankerThreshold(quint16 threshold)
 
 void ReceiverStationClient::setPreamplifierEnabled(bool state)
 {
+    qDebug()<<"Set Pream";
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
     command.set_preamplifier_enebled(state);

@@ -81,6 +81,7 @@ public:
         return inst;
     }
     int countStation();
+    void connectToStation(const QHostAddress &address,quint16 port);
 
     void setBroadcastDDC1Frequency(quint32 ddc1Frequency);
     void setBroadcastAttenuator(quint32 attenuationLevel);
@@ -145,7 +146,8 @@ private:
     void sendErrorString(quint32 commandType);
 private:
     QTime  checkTimer;
-    QMap<qintptr,SptrReceiverStationClient>listeners;
+    QMap<quint32,SptrReceiverStationClient>listeners;
+//    QMap<QString,SptrReceiverStationClient>listenersT;
     SyncPairChannel sync;
 };
 

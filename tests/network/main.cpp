@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
 
     ChannelClient *client=new ChannelClient;
-    client->connectToHost("192.168.10.11",port);
+    client->connectToHost("192.168.10.11",port,SessionType::SESSION_COMMAND);
     ServerKeyExchange serverKeyExchange;
     ClientKeyExchange clientKeyExchange;
     ServerSessionChange serverSessionChange;

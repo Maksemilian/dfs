@@ -8,6 +8,8 @@
 #include <QQueue>
 #include <QMutex>
 
+#include "receiver_station_client.h"
+
 class PeerWireClient;
 class RingPacketBuffer;
 class CohG35DeviceSet;
@@ -16,6 +18,7 @@ class StreamServer;
 
 class StreamFile;
 class StreamDDC1;
+class ChannelHost;
 
 class StreamAnalizator :public QObject{
     Q_OBJECT
@@ -49,16 +52,25 @@ class StreamServer:public QTcpServer
 
 public:
     StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet);
-    ~StreamServer();
+    ~StreamServer()override;
 
     void stopStreamDDC1();
     void stopStreamFile();
     void addStreamDDC1(StreamDDC1*streamDDC1);
     void addFileStream(StreamFile *fileStream);
     std::shared_ptr<RingPacketBuffer>getDDC1Buffer();
+signals:
+    void newChannelReady();
 private:
-    void incomingConnection(qintptr handle);
+    void incomingConnection(qintptr handle) override;
+    void onChannelReady();
+    void onNewConnection();
+    void createSession(ChannelHost*channelHost);
 private:
+    QList<ChannelHost*>_pendingChannelsList;
+    QList<ChannelHost*>_readyChannelsList;
+    ReceiverStationClient *_client;
+
     StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;
     QList<StreamFile*>fileStreamList;

@@ -101,6 +101,7 @@ MainWindow:: MainWindow(QWidget *parent):
 
     //TODO UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
+    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
 }
 
 MainWindow::~MainWindow()

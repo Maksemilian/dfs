@@ -10,6 +10,7 @@ class ChannelHost:public Channel
 public:
     ChannelHost(QObject *parent=nullptr);
     ChannelHost(qintptr handle,QObject *parent=nullptr);
+    inline SessionType sessionType(){return _sessionType;}
 signals:
     void keyExchangedFinished();
 private:
@@ -19,8 +20,8 @@ private:
     void readClientSession(const QByteArray &buffer);
 
 private:
-    quint32 user_key;
-    SessionType sessionType=SessionType::SESSION_UNKNOWN;
+    quint32 _userKey;
+    SessionType _sessionType=SessionType::SESSION_UNKNOWN;
 };
 
 #endif // CHANNEL_HOST_H

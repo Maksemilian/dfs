@@ -6,6 +6,7 @@
 #include "peer_wire_client.h"
 #include "stream_ddc1.h"
 #include "stream_file.h"
+#include "channel_host.h"
 
 #include "command.pb.h"
 
@@ -18,14 +19,72 @@
 StreamServer::StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet):
     deviceSet(deviceSet)
 {
-    streamAnalizator=new StreamAnalizator(this);
-    streamAnalizator->start();
+    //    streamAnalizator=new StreamAnalizator(this);
+    //    streamAnalizator->start();
+    connect(this,&StreamServer::newChannelReady,
+            this,&StreamServer::onNewConnection);
 }
 
 void StreamServer::incomingConnection(qintptr handle)
 {
-    qDebug()<<"===============incomingConnection handle"<<handle;
-    streamAnalizator->pushSocketSescriptor(handle);
+    //    qDebug()<<"===============incomingConnection handle"<<handle;
+    //    streamAnalizator->pushSocketSescriptor(handle);
+    ChannelHost *channelHost=new ChannelHost(handle);
+    connect(channelHost,&ChannelHost::keyExchangedFinished,this,&StreamServer::onChannelReady);
+    _pendingChannelsList.append(channelHost);
+}
+
+void StreamServer::onChannelReady()
+{
+    qDebug()<<"Server::onChannelReady";
+
+    auto it=_pendingChannelsList.begin();
+    while (it!=_pendingChannelsList.end()) {
+        ChannelHost* networkChannel=*it;
+
+        if(!networkChannel)
+        {
+            it =_pendingChannelsList.erase(it);
+        }
+        else if(networkChannel->state()==ChannelHost::ESTABLISHED)
+        {
+            it =_pendingChannelsList.erase(it);
+            //            qDebug()<<networkChannel<<*it;
+            _readyChannelsList.append(networkChannel);
+            emit newChannelReady();
+        }
+        else
+        {
+            it++;
+        }
+    }
+}
+
+void StreamServer::onNewConnection()
+{
+    qDebug()<<"Server::onNewConnection";
+
+    while (!_readyChannelsList.isEmpty()) {
+        ChannelHost* networkChannel=_readyChannelsList.front();
+        qDebug()<<networkChannel->sessionType();
+        if(networkChannel){
+            qDebug()<<"Create Session";
+            createSession(networkChannel);
+            _readyChannelsList.pop_front();
+        }else {
+            qDebug()<<"NULLPTR SESSION TYPE";
+        }
+    }
+}
+
+void StreamServer::createSession(ChannelHost *channelHost)
+{
+    if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
+        _client=new ReceiverStationClient(channelHost);
+        _client->sendDeviceSetInfo();
+    }else {
+        qDebug()<<"ERROR SESSION TYPE";
+    }
 }
 
 void StreamServer::addStreamDDC1(StreamDDC1 *stream)

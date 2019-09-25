@@ -11,7 +11,28 @@ const quint16 SyncManager::TIME_SINGLE_SHOT=200;
 
 SyncManager::SyncManager()
 {
-    listen(QHostAddress::Any,LISTEN_PORT);
+    //    listen(QHostAddress::Any,LISTEN_PORT);
+}
+
+void SyncManager::connectToStation(const QHostAddress &address, quint16 port)
+{
+    auto deleter=[](ReceiverStationClient *client){
+        client->deleteLater();
+    };
+    SptrReceiverStationClient stationClient(new ReceiverStationClient(),deleter);
+
+    //    listeners<<stationClient;
+        listeners.insert(address.toIPv4Address(),stationClient);
+//    listenersT.insert(address.toString(),stationClient);
+    Q_ASSERT_X(stationClient,"MainWindow::onStaionReadyForUse","station id null");
+
+    connect(stationClient.get(),&ReceiverStationClient::connected,
+            this,&SyncManager::onStationReady);
+
+    connect(stationClient.get(),&ReceiverStationClient::disconnected,
+            this,&SyncManager::onStationDisconnected);
+
+    stationClient->connectToHost(address,port);
 }
 
 int SyncManager::countStation()
@@ -21,27 +42,28 @@ int SyncManager::countStation()
 
 void SyncManager::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug()<<"Receiver Client connected:"<<socketDescriptor;
-    auto deleter=[](ReceiverStationClient *client){
-        client->deleteLater();
-    };
+    //    qDebug()<<"Receiver Client connected:"<<socketDescriptor;
+    //    auto deleter=[](ReceiverStationClient *client){
+    //        client->deleteLater();
+    //    };
 
-    SptrReceiverStationClient stationClient(new ReceiverStationClient(socketDescriptor),deleter);
+    //    SptrReceiverStationClient stationClient(new ReceiverStationClient(socketDescriptor),deleter);
 
-    //    listeners<<stationClient;
-    listeners.insert(socketDescriptor,stationClient);
+    //    //    listeners<<stationClient;
+    //    listeners.insert(socketDescriptor,stationClient);
 
-    Q_ASSERT_X(stationClient,"MainWindow::onStaionReadyForUse","station id null");
+    //    Q_ASSERT_X(stationClient,"MainWindow::onStaionReadyForUse","station id null");
 
-    connect(stationClient.get(),&ReceiverStationClient::connected,
-            this,&SyncManager::onStationReady);
+    //    connect(stationClient.get(),&ReceiverStationClient::connected,
+    //            this,&SyncManager::onStationReady);
 
-    connect(stationClient.get(),&ReceiverStationClient::disconnected,
-            this,&SyncManager::onStationDisconnected);
+    //    connect(stationClient.get(),&ReceiverStationClient::disconnected,
+    //            this,&SyncManager::onStationDisconnected);
 }
 
 void SyncManager::onStationReady()
 {
+    qDebug()<<"On Station Ready";
     ReceiverStationClient *connectedStation=qobject_cast<ReceiverStationClient*>(sender());
     if(connectedStation){
         auto ptr =  std::find_if(begin(listeners), end(listeners),
@@ -65,6 +87,30 @@ void SyncManager::onStationReady()
         qDebug()<<"********************SyncManager station ready"
                <<ptr.key()<<ptr->use_count()<<countStation();
     }
+//    qDebug()<<"On Station Ready";
+//    ReceiverStationClient *connectedStation=qobject_cast<ReceiverStationClient*>(sender());
+//    if(connectedStation){
+//        auto ptr =  std::find_if(begin(listeners), end(listeners),
+//                                 [&](SptrReceiverStationClient const& current)
+//        {
+//                return current.get() == connectedStation;
+//    });
+
+//        QStringList receiveresNames=(*ptr)->getCurrentDeviceSetReceiversNames();
+
+//        if(countStation()>=SyncManager::MIN_NUMBER_STATIONS_FOR_SYNC){
+//            emit syncReady();
+//            qDebug()<<"Sync Ready";
+//        }
+
+//        emit stationConnected(ptr.key(),
+//                              (*ptr)->getStationAddress(),
+//                              QString::number(SERVER_STREAM_PORT),
+//                              receiveresNames);
+
+//        qDebug()<<"********************SyncManager station ready"
+//               <<ptr.key()<<ptr->use_count()<<countStation();
+//    }
 }
 
 void SyncManager::onStationDisconnected()
@@ -216,8 +262,8 @@ void SyncManager::start(quint32 ddcFrequency,quint32 sampleRate, quint32 blockSi
 
     StreamReadablePair streamReadablePair;
     //TODO ВОЗНИКАЕТ ОШИБКА ЕСЛИ РАСКОМИТИТЬ
-//    streamReadablePair.first=listeners.first();
-//    streamReadablePair.second=listeners.last();
+    //    streamReadablePair.first=listeners.first();
+    //    streamReadablePair.second=listeners.last();
     sync.start(streamReadablePair,ddcFrequency,sampleRate,blockSize);
 
     emit syncStarted();

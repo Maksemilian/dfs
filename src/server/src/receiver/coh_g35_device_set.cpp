@@ -3,7 +3,7 @@
 #include "src/tsip/time_reader.h"
 #include "ring_packet_buffer.h"
 #include "signal_file_writer.h"
-
+#include "device_set_selector.h"
 #include "packet.pb.h"
 
 #include <QTimer>
@@ -35,24 +35,25 @@ QString CohG35DeviceSet::getDeviceSetName(){
             deviceSetName+="_";
         }
     }
-//    G3XDDC_DDC_INFO info;
-//    for (int i=0;i<deviceInfo[0].DDCTypeCount;i++) {
-//        deviceSet->GetDDCInfo(i,&info);
-//        qDebug()<<info.Bandwidth<<info.SampleRate;
-//    }
+    //    G3XDDC_DDC_INFO info;
+    //    for (int i=0;i<deviceInfo[0].DDCTypeCount;i++) {
+    //        deviceSet->GetDDCInfo(i,&info);
+    //        qDebug()<<info.Bandwidth<<info.SampleRate;
+    //    }
     return deviceSetName;
 }
 
-bool CohG35DeviceSet::setUpDeviceSet(ICohG35DDCDeviceSet *deviceSet){
+bool CohG35DeviceSet::setUpDeviceSet(quint32 numberDeviceSet){
+    ICohG35DDCDeviceSet *deviceSet=DeviceSetSelector::selectDeviceSet(numberDeviceSet);
     if(deviceSet){
         deviceSet->SetCallback(this);
         this->deviceSet=deviceSet;
         signalFileWriter->createMainDirectory(getDeviceSetName());
         //       signalFileWriter->createWorkDirectory(QDate::currentDate().toString("dd.MM.yyyy"));
         return true;
-    }else {
-        return false;
     }
+
+    return false;
 }
 
 void CohG35DeviceSet::resetData(){
@@ -67,7 +68,7 @@ void CohG35DeviceSet::resetData(){
 void CohG35DeviceSet::freeResource(){
     if(deviceSet!=nullptr){
         deviceSet->Release();
-//        delete ddc1Buffer;
+        //        delete ddc1Buffer;
     }
 }
 
@@ -334,9 +335,9 @@ void CohG35DeviceSet::showPacket(Packet &packet){
 
     qDebug()<<"DDC_CALLBACK:"
            <<packet.block_number()
-         <<packet.block_size()
-        <<packet.sample_rate()
-          ///<<packet.ByteSize()
-       <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
-      <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
+          <<packet.block_size()
+         <<packet.sample_rate()
+           ///<<packet.ByteSize()
+        <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
+       <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
 }

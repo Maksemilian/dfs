@@ -24,7 +24,7 @@ class ReceiverStationClient: public QObject
     };
     static const int BUFFER_SIZE=4;
 public:
-    ReceiverStationClient(qintptr socketDescriptor,QObject *parent=nullptr);
+    ReceiverStationClient(QObject *parent=nullptr);
     ~ReceiverStationClient();
 
     void setSettings(const DeviceSetSettings &settings);
@@ -52,7 +52,7 @@ public:
     QString getCurrentDeviceSetName();
     QStringList getCurrentDeviceSetReceiversNames();
     QString getStationAddress();
-
+    void connectToHost(const QHostAddress &address,quint16 port);
 signals:
     void connected();
     void disconnected();

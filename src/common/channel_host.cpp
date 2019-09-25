@@ -31,6 +31,7 @@ ChannelHost::ChannelHost(qintptr handle,QObject *parent)
 void ChannelHost::readClientHello(const QByteArray &buffer)
 {
     ClientHello clientHello;
+    _channelState=Channel::CONNECTED;
     if(!clientHello.ParseFromArray(buffer.constData(),buffer.size())){
         qDebug()<<"ERROR PARSE CLIENT_HELLO"<<clientHello.method();
         return;
@@ -38,7 +39,7 @@ void ChannelHost::readClientHello(const QByteArray &buffer)
     qDebug()<<"HELLO:Client - > Host"<<clientHello.method();
     switch (clientHello.method()) {
     case Method::METHOD_ADDRESS:
-        user_key=QHostAddress(clientHello.user_name().data()).toIPv4Address();
+        _userKey=QHostAddress(clientHello.user_name().data()).toIPv4Address();
         break;
     case Method::METHOD_RANDOW_VALUE: break;
     default:break;
@@ -46,7 +47,7 @@ void ChannelHost::readClientHello(const QByteArray &buffer)
 
     ServerKeyExchange serverKeyExchange;
     serverKeyExchange.set_method(clientHello.method());
-    serverKeyExchange.set_user_key(user_key);
+    serverKeyExchange.set_user_key(_userKey);
 
     keyExchangeState=KeyExchangeState::KEY_EXCHANGE;
 
@@ -62,7 +63,7 @@ void ChannelHost::readClientKeyExchange(const QByteArray &buffer)
     }
         qDebug()<<"KEY_ECHANGE:Client - > Host";
 
-    if(clientKeyExchange.user_key()!=user_key){
+    if(clientKeyExchange.user_key()!=_userKey){
         qDebug()<<"ERROR CLIENT_KEY AND SERVER NOT EQUAL";
         return;
     }
@@ -87,9 +88,10 @@ void ChannelHost::readClientSession(const QByteArray &buffer)
             clientSessionChange.session_type()==SessionType::SESSION_SIGNAL_STREAM||
             clientSessionChange.session_type()==SessionType::SESSION_SIGNAL_FILE_TRANSFER
             ){
-        sessionType=clientSessionChange.session_type();
+        _sessionType=clientSessionChange.session_type();
         keyExchangeState=KeyExchangeState::DONE;
-        qDebug()<<"SESSION DONE "<<user_key<<sessionType;
+        qDebug()<<"SESSION DONE "<<_userKey<<_sessionType;
+        _channelState=Channel::ESTABLISHED;
         emit keyExchangedFinished();
     }else {
         qDebug()<<"ERROR SESSION TYPE";

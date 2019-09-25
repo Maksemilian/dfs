@@ -1,17 +1,14 @@
 #ifndef RECEIVER_STATION_CLIENT_H
 #define RECEIVER_STATION_CLIENT_H
 
-#include <google/protobuf/message.h>
-#include <memory>
-
-#include <QObject>
 #include "receiver.pb.h"
 
-class CohG35DeviceSet;
-class Command;
-class PeerWireClient;
+#include <memory>
+#include <google/protobuf/message.h>
+#include <QObject>
+
 class CohG35DeviceSetSettings;
-class QHostAddress;
+class ChannelHost;
 
 class ReceiverStationClient:public QObject
 {
@@ -20,19 +17,17 @@ class ReceiverStationClient:public QObject
     static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
-    ReceiverStationClient(quint16 signalPort,quint16 filePort);
+    ReceiverStationClient(ChannelHost*channelHost);
     ~ReceiverStationClient();
 
-    bool connectToHost(const QHostAddress &address,quint16 port);
-    bool setupNewDeviceSet(quint32 deviceSetIndex);
-
     Q_SIGNAL void stationDisconnected();
+    void sendDeviceSetInfo();
+
 private slots:
     void onDisconnected();
     void onMessageReceived(const QByteArray &buffer);
 private:
-    void sendDeviceSetInfo(quint16 signalPort=8000,quint16 filePort=7000);
-    void sendStateWorkingCommand(quint32 type,bool state);
+    void sendCommandAnswer(const proto::receiver::Answer &commandAnswer);
 
     void readCommanPacket(const proto::receiver::Command &command);
     CohG35DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);

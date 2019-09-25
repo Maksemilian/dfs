@@ -56,7 +56,7 @@ public:
 
     void reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sampePerBuffer,bool writeToFile=false);
 
-    bool setUpDeviceSet(ICohG35DDCDeviceSet *deviceSet);
+    bool setUpDeviceSet(quint32 numberDeviceSet);
     COH_G35DDC_DEVICE_SET getDeviceSetInfo();
     std::shared_ptr<RingPacketBuffer>getDdc1Buffer(){
         return ddc1Buffer;

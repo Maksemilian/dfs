@@ -125,7 +125,7 @@ void Channel::onMessageReceive()
 
 void Channel::onReadyRead()
 {
-    //    qDebug()<<"Channel::onReadyRead"<<answerSize;
+     qDebug()<<"Channel::onReadyRead"<<answerSize;
     //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
     if(answerSize==0&&
             socketBytesAvailable()>=sizeof(int)){
