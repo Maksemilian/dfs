@@ -62,7 +62,9 @@ ReceiverStationClient::ReceiverStationClient(qintptr socketDescriptor, QObject *
     connect(this,&ReceiverStationClient::deviceSetReadyForUse,
             this,&ReceiverStationClient::connected);
 }
+
 ReceiverStationClient::~ReceiverStationClient(){}
+
 QString ReceiverStationClient::getCurrentDeviceSetName()
 {
     QString deviceSetName="DS#";

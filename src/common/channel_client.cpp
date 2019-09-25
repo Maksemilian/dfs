@@ -22,8 +22,7 @@ const QByteArray serializeMessage(const google::protobuf::Message &message)
 }
 
 ChannelClient::ChannelClient(QObject *parent)
-    :Channel (parent),
-      sessionType(SessionType::SESSION_COMMAND)
+    :Channel (parent)
 {
     connect(_socket.get(),&QTcpSocket::connected,this,&ChannelClient::onConnected);
 }
@@ -33,9 +32,10 @@ ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,par
 
 }
 
-void ChannelClient::connectToHost(const QString &address, quint16 port)
+void ChannelClient::connectToHost(const QString &address, quint16 port,SessionType sesionType)
 {
     qDebug()<<"ChannelClient::connectToHost"<<address<<port<<keyExchangeState;
+    _sessionType=sesionType;
     _socket->connectToHost(address,port);
 }
 
@@ -51,11 +51,11 @@ void ChannelClient::readServerKeyExchange(const QByteArray &buffer)
               serverKeyExchange.method()
            <<serverKeyExchange.user_key();
 
-    user_key=serverKeyExchange.user_key();
+    _userKey=serverKeyExchange.user_key();
 
     ClientKeyExchange clientKeyExchange;
     clientKeyExchange.set_method(serverKeyExchange.method());
-    clientKeyExchange.set_user_key(user_key);
+    clientKeyExchange.set_user_key(_userKey);
 
     keyExchangeState=KeyExchangeState::KEY_EXCHANGE;
 
@@ -74,7 +74,7 @@ void ChannelClient::readServerSessionChange(const QByteArray &buffer)
     qDebug()<<"SESSION_CHANGE : Host - > Client";
 
     ClientSessionChange clientSessionChange;
-    clientSessionChange.set_session_type(sessionType);
+    clientSessionChange.set_session_type(_sessionType);
     keyExchangeState=KeyExchangeState::DONE;
     writeToConnection(serializeMessage(clientSessionChange));
     _channelState=ChannelState::ESTABLISHED;

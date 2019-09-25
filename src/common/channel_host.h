@@ -20,7 +20,7 @@ private:
 
 private:
     quint32 user_key;
-    SessionType sessionType;
+    SessionType sessionType=SessionType::SESSION_UNKNOWN;
 };
 
 #endif // CHANNEL_HOST_H

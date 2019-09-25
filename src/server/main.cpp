@@ -64,7 +64,8 @@ int main(int argc, char *argv[])
     qDebug()<<"ReconnectTime"
            <<parser.value(reconnectTimeOption).toInt()<<" sec"
           <<reconnectTimeInMs<<"ms";
-    createInstance=reinterpret_cast<G3XDDCAPI_CREATE_INSTANCE>(library.resolve("CreateInstance"));
+    createInstance=reinterpret_cast<G3XDDCAPI_CREATE_INSTANCE>
+            (library.resolve("CreateInstance"));
 
     if(!createInstance){
         qDebug()<<"Failed to load G35DDCAPI.dll!";

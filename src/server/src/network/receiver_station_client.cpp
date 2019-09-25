@@ -104,7 +104,7 @@ bool ReceiverStationClient::connectToHost(const QHostAddress &address, quint16 p
     //! главного потока при старте второй станции из-за метода waitForFinished
 
     if(d->channel->state()==Channel::NOT_CONNECTED){
-        d->channel->connectToHost(address.toString(),port);
+        d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
         return d->channel->waitChannel(5000);
     }else if(d->channel->state()==Channel::ESTABLISHED){
         qDebug()<<"CHANNEL_ESTABLISHED";

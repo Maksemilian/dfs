@@ -11,7 +11,7 @@ public:
     ChannelClient(QObject *parent=nullptr);
     ChannelClient(qintptr handle,QObject *parent=nullptr);
     ~ChannelClient()override;
-    void connectToHost(const QString &address,quint16 port);
+    void connectToHost(const QString &address,quint16 port,SessionType sesionType);
 signals:
     void connected();
 private:
@@ -21,8 +21,8 @@ private:
 private slots:
     void onConnected();
 private:
-    quint32 user_key;
-    SessionType sessionType;
+    quint32 _userKey;
+    SessionType _sessionType=SessionType::SESSION_UNKNOWN;
 };
 
 #endif // CHANNEL_CLIENT_H
