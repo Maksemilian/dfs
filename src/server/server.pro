@@ -76,26 +76,26 @@ LIBS += -lprotobuf$${LIB_SUFFIX}
 
 #LIBS += -L"C:\Qt\QtProject\build-common-Desktop_Qt_5_9_1_MinGW_32bit-Debug\debug" -lcommonlib
 
-HEADERS += src/receiver/device_set_selector.h \
-    src/tsip/parser.h \
-    src/tsip/time_reader.h \
-    src/network/receiver_station_client.h \
-    src/receiver/coh_g35_device_set.h \
-    src/receiver/signal_file_writer.h \
-    src/network/stream_ddc1.h \
-    src/network/stream_file.h \
-    src/network/stream_server.h
+HEADERS += receiver/device_set_selector.h \
+    tsip/parser.h \
+    tsip/time_reader.h \
+    network/receiver_station_client.h \
+    receiver/coh_g35_device_set.h \
+    receiver/signal_file_writer.h \
+    network/stream_ddc1.h \
+    network/stream_file.h \
+    network/stream_server.h
 
 SOURCES += main.cpp \
-    src/receiver/device_set_selector.cpp \
-    src/tsip/parser.cpp \
-    src/tsip/time_reader.cpp \
-    src/network/receiver_station_client.cpp \
-    src/receiver/coh_g35_device_set.cpp \
-    src/receiver/signal_file_writer.cpp \
-    src/network/stream_ddc1.cpp \
-    src/network/stream_file.cpp \
-    src/network/stream_server.cpp
+    receiver/device_set_selector.cpp \
+    tsip/parser.cpp \
+    tsip/time_reader.cpp \
+    network/receiver_station_client.cpp \
+    receiver/coh_g35_device_set.cpp \
+    receiver/signal_file_writer.cpp \
+    network/stream_ddc1.cpp \
+    network/stream_file.cpp \
+    network/stream_server.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
