@@ -2,17 +2,16 @@
     error( "Couldn't find the common.pri file!" )
 }
 
+##****************** copy 2 ВО ВРЕМЯ ЗАПУСКА APP КОМИТИТЬ
+
+#headers.path = $${LIBS_PATH}/dfs_proto/include
+#headers.files   += $$files($${PWD}/*.pb.h)
+#INSTALLS       += headers
+
 TARGET = dfs_proto
 TEMPLATE = aux
 
-#TEMPLATE = lib
-#CONFIG += staticlib
-#CONFIG -= debug_and_release debug_and_release_target
-#CONFIG +=no_link
 PROTOS = $$files(*.proto)
-#P_T = $$files(*.cpp)
-#P_H = $$files(*.pb.h)
-#P_CC = $$files(*.pb.cc)
 
 PROTOBUF_DIR = C:/third_party/protobuf
 GPP_DIR =C:/msys64/mingw32
@@ -25,8 +24,6 @@ PROTOC = $${PROTOBUF_DIR}/bin/protoc.exe
 GPP =$${GPP_DIR}/bin/g++.exe
 
 OBJECTS_DIR = obj
-#PROTO_INCLUDE = include
-#PROTO_SOURCE = source
 
 protobuf_decl.name = protobuf headers
 protobuf_decl.input = PROTOS
@@ -70,15 +67,11 @@ protobuf_lib.CONFIG += combine target_predeps
 
 QMAKE_EXTRA_COMPILERS +=protobuf_lib
 
-#****************** copy 2 ВО ВРЕМЯ ЗАПУСКА APP КОМИТИТЬ
-#headers.path = $${LIBS_PATH}/proto/include
-#headers.files   += $$files($${PWD}/*.pb.h)
-#INSTALLS       += headers
+
 
 HEADERS += \
     command.pb.h \
     device_set_info.pb.h \
-#test.pb.h \
     packet.pb.h \
     key_exchange.pb.h \
     receiver.pb.h
@@ -86,7 +79,6 @@ HEADERS += \
 SOURCES += \
     command.pb.cc \
     device_set_info.pb.cc \
-#test.pb.cc \
     packet.pb.cc \
     key_exchange.pb.cc \
     receiver.pb.cc

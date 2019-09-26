@@ -1,6 +1,6 @@
 #include "coh_g35_device_set.h"
 
-#include "src/tsip/time_reader.h"
+#include "tsip/time_reader.h"
 #include "ring_packet_buffer.h"
 #include "signal_file_writer.h"
 #include "device_set_selector.h"

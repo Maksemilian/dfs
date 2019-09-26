@@ -1,7 +1,7 @@
-#include "src/network/receiver_station_client.h"
+#include "network/receiver_station_client.h"
 
-#include "src/receiver/device_set_selector.h"
-#include "src/network/stream_server.h"
+#include "receiver/device_set_selector.h"
+#include "network/stream_server.h"
 
 #include <QCoreApplication>
 #include <QLibrary>

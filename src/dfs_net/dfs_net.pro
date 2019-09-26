@@ -2,40 +2,44 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-#PROJECT_ROOT_PATH = $${PWD}/
+headers.path = $${LIBS_PATH}/dfs_net/include
+headers.files   += $$files($${PWD}/*.h)
+INSTALLS       += headers
 
-CONFIG(debug, debug|release) {
-    BUILD_FLAG = debug
-    LIB_SUFFIX = d
-} else {
-    BUILD_FLAG = release
-}
-
-#LIBS_PATH = $${PROJECT_ROOT_PATH}/lib
 QT += core
 QT += network
 QT -= gui
 
-#documentation.path = $${PWD}/include
-#documentation.files = $$files(*.h)
-#INSTALLS += documentation
-
-CONFIG += c++14
-
 TARGET = dfs_net
 TEMPLATE = lib
+
 CONFIG += staticlib
+CONFIG += c++14
 
 DESTDIR =$${LIBS_PATH}/dfs_net/lib
 
 INCLUDEPATH += $${LIBS_PATH}/google/include
-LIBS +=$${LIBS_PATH}/google/lib
-
-LIBS+= -lprotobuf
-
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
-LIBS += $${LIBS_PATH}/dfs_proto/lib
 
+LIBS += $${LIBS_PATH}/google/lib -lprotobuf
+LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
+
+HEADERS += \
+    peer_wire_client.h \
+    ring_packet_buffer.h \
+    channel.h \
+    channel_client.h \
+    channel_host.h
+
+SOURCES += \
+    peer_wire_client.cpp \
+    channel.cpp \
+    channel_client.cpp \
+    channel_host.cpp
+
+DEFINES += QT_DEPRECATED_WARNINGS
+
+#************** DEL ***************
 #INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 #LIBS += $${LIBS_PATH}/dfs_proto/lib
 
@@ -60,11 +64,8 @@ LIBS += $${LIBS_PATH}/dfs_proto/lib
 ## Указываем путь, куда копировать файлы
 #common_incl.path = $${LIBS_PATH}/common/include
 
-headers.path = $${LIBS_PATH}/common/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
-
 #*************************  COPY INCLUDE *************************
+
 #copytarget.path    = $${LIBS_PATH}/common/include
 #copytarget.files  += $$files($${PWD}/*.h)
 ### wildcard for filename1 filename2 filename3 ...
@@ -105,15 +106,4 @@ INSTALLS       += headers
 #INSTALLS += copytarget
 
 
-SOURCES += peer_wire_client.cpp \
-    channel.cpp \
-    channel_client.cpp \
-    channel_host.cpp
 
-HEADERS += peer_wire_client.h \
-           ring_packet_buffer.h \
-    channel.h \
-    channel_client.h \
-    channel_host.h
-
-DEFINES += QT_DEPRECATED_WARNINGS
