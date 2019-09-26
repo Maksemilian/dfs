@@ -2,9 +2,9 @@ TEMPLATE = subdirs
 
 
 SUBDIRS += \
-          src/client  \
+          src/dfs_client  \
           src/dfs_server  \
-          src/common \
+          src/dfs_net \
           src/dfs_proto \
           tests/test_dfs_net
 

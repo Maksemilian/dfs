@@ -27,12 +27,12 @@ INCLUDEPATH += $${LIBS_PATH}/google/include
 #PRE_TARGETDEPS +=$${LIBS_PATH}/proto/lib/libdfs_proto.a
 
 
-INCLUDEPATH += $${LIBS_PATH}/proto/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 #DEPENDPATH += $${LIBS_PATH}/proto/include
-INCLUDEPATH += $${LIBS_PATH}/common/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_common/include
 
-LIBS += -L$${LIBS_PATH}/common/lib
-LIBS += -L$${LIBS_PATH}/proto/lib
+LIBS += -L$${LIBS_PATH}/dfs_common/lib
+LIBS += -L$${LIBS_PATH}/dfs_proto/lib
 
 #LIBS += -L$${LIBS_PATH}/server/proto/lib
 
@@ -56,7 +56,8 @@ LIBS += -L$${LIBS_PATH}/proto/lib
 LIBS += -L$${LIBS_PATH}/winradio/lib
 LIBS += -L$${LIBS_PATH}/google/lib
 
-LIBS += -lcommonlib$${LIB_SUFFIX}
+#LIBS += -lcommonlib$${LIB_SUFFIX}
+LIBS += -ldfs_net$${LIB_SUFFIX}
 LIBS += -ldfs_proto$${LIB_SUFFIX}
 LIBS += -lprotobuf$${LIB_SUFFIX}
 

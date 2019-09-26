@@ -22,19 +22,19 @@ QT -= gui
 
 CONFIG += c++14
 
-TARGET = commonlib
+TARGET = dfs_net
 TEMPLATE = lib
 CONFIG += staticlib
 
-DESTDIR =$${LIBS_PATH}/common/lib
+DESTDIR =$${LIBS_PATH}/dfs_net/lib
 
 INCLUDEPATH += $${LIBS_PATH}/google/include
 LIBS +=$${LIBS_PATH}/google/lib
 
 LIBS+= -lprotobuf
 
-INCLUDEPATH += $${LIBS_PATH}/proto/include
-LIBS += $${LIBS_PATH}/proto/lib
+INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
+LIBS += $${LIBS_PATH}/dfs_proto/lib
 
 #INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 #LIBS += $${LIBS_PATH}/dfs_proto/lib

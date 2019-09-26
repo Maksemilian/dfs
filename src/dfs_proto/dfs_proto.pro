@@ -59,7 +59,7 @@ QMAKE_EXTRA_COMPILERS +=protobuf_obj
 
 protobuf_lib.name=proto lib
 protobuf_lib.input = OBJECTS
-protobuf_lib.output = $${LIBS_PATH}/proto/lib/libdfs_proto.a
+protobuf_lib.output = $${LIBS_PATH}/dfs_proto/lib/libdfs_proto.a
 protobuf_lib.commands = ar -cr ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
 #без этой строки
 protobuf_lib.CONFIG += combine target_predeps

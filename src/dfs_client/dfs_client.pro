@@ -34,9 +34,9 @@ INCLUDEPATH += $${LIBS_PATH}/plot/include
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
 
-INCLUDEPATH += $${LIBS_PATH}/proto/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 #DEPENDPATH += $${LIBS_PATH}/proto/include
-INCLUDEPATH += $${LIBS_PATH}/common/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_common/include
 #при добавлении нижней строки происходит error
 #:-1: ошибка: cannot open output file release/ProcessingSignalClient.exe: Permission denied
 
@@ -47,16 +47,18 @@ INCLUDEPATH += $${LIBS_PATH}/common/include
 #LIBS += -L$${LIBS_PATH}/client/proto/lib
 #PRE_TARGETDEPS +=$${LIBS_PATH}/common/lib/libcommonlib.a
 #PRE_TARGETDEPS +=$${LIBS_PATH}/proto/lib/libdfs_proto.a
-LIBS += -L$${LIBS_PATH}/common/lib
-LIBS += -L$${LIBS_PATH}/proto/lib
+LIBS += -L$${LIBS_PATH}/dfs_common/lib
+LIBS += -L$${LIBS_PATH}/dfs_proto/lib
 
 
 LIBS += -L$${LIBS_PATH}/ipp/lib
 LIBS += -L$${LIBS_PATH}/plot/lib
 LIBS += -L$${LIBS_PATH}/google/lib
 
-LIBS += -lcommonlib$${LIB_SUFFIX} #Если не поставить перед protobuf то куча ошибок undefine reference
+#LIBS += -lcommonlib$${LIB_SUFFIX} #Если не поставить перед protobuf то куча ошибок undefine reference
+LIBS += -ldfs_net$${LIB_SUFFIX}
 LIBS += -ldfs_proto$${LIB_SUFFIX}
+
 LIBS += -lqcustomplot$${LIB_SUFFIX}2
 LIBS += -lprotobuf$${LIB_SUFFIX}
 LIBS += -lippi -lipps -lippcore -lippvm
