@@ -6,7 +6,7 @@ SUBDIRS += \
           src/server  \
           src/common \
           src/dfs_proto \
-          tests/network
+          tests/test_dfs_net
 
 
 
