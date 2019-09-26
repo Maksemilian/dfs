@@ -27,7 +27,7 @@ private slots:
     void onDisconnected();
     void onMessageReceived(const QByteArray &buffer);
 private:
-    void sendCommandAnswer(const proto::receiver::Answer &commandAnswer);
+    void sendCommandAnswer(proto::receiver::Answer *commandAnswer);
 
     void readCommanPacket(const proto::receiver::Command &command);
     CohG35DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);

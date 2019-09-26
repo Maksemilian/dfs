@@ -39,6 +39,10 @@ TimerCommand::~TimerCommand(){}
 ReceiverCommand::ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :TimerCommand (),syncManager(syncManager),subject(subject)
 {
+    connect(syncManager,&SyncManager::commandSucessed,[this]{
+        done=true;
+        this->subject->setArrowCursor();
+    });
 }
 
 ReceiverCommand::~ReceiverCommand()=default;
@@ -63,11 +67,11 @@ void AddTaskCommand::execute()
 SyncStartCommand::SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :ReceiverCommand (syncManager,subject)
 {
-    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"SyncStartCommand::SyncStartCommand";
-    });
+//    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
+//        done=true;
+//        this->subject->setArrowCursor();
+//        qDebug()<<"SyncStartCommand::SyncStartCommand";
+//    });
 }
 
 void SyncStartCommand::execute()
@@ -84,11 +88,11 @@ void SyncStartCommand::execute()
 SyncStopCommand::SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :ReceiverCommand (syncManager,subject)
 {
-    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"SyncStopCommand::SyncStopCommand";
-    });
+//    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
+//        done=true;
+//        this->subject->setArrowCursor();
+//        qDebug()<<"SyncStopCommand::SyncStopCommand";
+//    });
 }
 
 void SyncStopCommand::execute()
@@ -100,14 +104,7 @@ void SyncStopCommand::execute()
 //************************* ATT
 
 AttenuatorCommand::AttenuatorCommand(SyncManager*syncManager,IDeviceSetSettings*subject):
-    ReceiverCommand(syncManager,subject)
-{
-    connect(syncManager,&SyncManager::changedAttenuator,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        //        qDebug()<<"PowerCommandOn::PowerCommandOn/";
-    });
-}
+    ReceiverCommand(syncManager,subject){}
 
 void AttenuatorCommand::execute()
 {
@@ -118,14 +115,7 @@ void AttenuatorCommand::execute()
 //************************* PRES
 
 PreselectorCommand::PreselectorCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)
-{
-    connect(syncManager,&SyncManager::changedPrelector,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOn::PowerCommandOn";
-    });
-}
+    : ReceiverCommand(syncManager,subject){}
 
 void PreselectorCommand::execute()
 {
@@ -137,13 +127,7 @@ void PreselectorCommand::execute()
 //************************* PREAM
 
 PreamplifireCommand::PreamplifireCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::changedPreamplifierEnabled,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOn::PowerCommandOn";
-    });
-}
+    : ReceiverCommand(syncManager,subject)    {}
 
 void PreamplifireCommand::execute()
 {
@@ -154,13 +138,7 @@ void PreamplifireCommand::execute()
 //************************* ADC EN
 
 AdcEnabledCommand::AdcEnabledCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::changedAdcEnabled,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOn::PowerCommandOn";
-    });
-}
+    : ReceiverCommand(syncManager,subject)    {}
 
 void  AdcEnabledCommand::execute()
 {
@@ -171,13 +149,7 @@ void  AdcEnabledCommand::execute()
 //************************* ADC THR
 
 AdcThresholdCommand::AdcThresholdCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::changedAdcThreshold,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOn::PowerCommandOn";
-    });
-}
+    : ReceiverCommand(syncManager,subject)    {}
 
 void AdcThresholdCommand::execute()
 {
@@ -188,14 +160,7 @@ void AdcThresholdCommand::execute()
 //************************* POWER ON
 
 PowerCommandOn::PowerCommandOn(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {
-
-    connect(syncManager,&SyncManager::settedPowerOn,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOn::PowerCommandOn";
-    });
-}
+    : ReceiverCommand(syncManager,subject)    {}
 
 void PowerCommandOn::execute()
 {
@@ -207,14 +172,7 @@ void PowerCommandOn::execute()
 //************************* POWER OFF
 
 PowerCommandOff::PowerCommandOff(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {
-
-    connect(syncManager,&SyncManager::settedPowerOff,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-        qDebug()<<"PowerCommandOff::PowerCommandOff";
-    });
-}
+    : ReceiverCommand(syncManager,subject)    {}
 
 void PowerCommandOff::execute()
 {
@@ -227,10 +185,6 @@ void PowerCommandOff::execute()
 
 SettingsCommand::SettingsCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::settedSettings,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
 }
 
 void SettingsCommand::execute()
@@ -246,12 +200,7 @@ void SettingsCommand::execute()
 //************************* START DDC
 
 StartDDC1Command::StartDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::startedDdc1,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
+    :ReceiverCommand(syncManager,subject)    {}
 
 void StartDDC1Command::execute()
 {
@@ -263,12 +212,7 @@ void StartDDC1Command::execute()
 //************************* STOP DDC
 
 StopDDC1Command::StopDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::stopedDdc1,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
+    :ReceiverCommand(syncManager,subject)    {}
 
 void StopDDC1Command::execute()
 {
@@ -280,12 +224,7 @@ void StopDDC1Command::execute()
 //************************* RESTART
 
 SetDDC1TypeCommand::SetDDC1TypeCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::changedDDC1Type,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
+    :ReceiverCommand(syncManager,subject)    {}
 
 void SetDDC1TypeCommand::execute()
 {
@@ -297,12 +236,7 @@ void SetDDC1TypeCommand::execute()
 //************************* FREQ
 
 FrequencyCommand::FrequencyCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {
-    connect(syncManager,&SyncManager::changedDDC1Freq,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
+    :ReceiverCommand(syncManager,subject)    {}
 
 void FrequencyCommand::execute()
 {

@@ -1,13 +1,11 @@
 #include "receiver_station_client.h"
 
+//TODO НУЖЕН ТОЛЬКО ДЛЯ СТРУКТУРЫ DeviceSetSettings
 #include "interface/i_device_set_settings.h"
 
 #include "channel_client.h"
 
 #include "receiver.pb.h"
-#include "file_loader.h"
-
-#include <string>
 
 #include <QByteArray>
 #include <QDataStream>
@@ -18,16 +16,13 @@
 
 #include <QHostAddress>
 
-
 //**************************************** Receiver Station Client*****************************************
 
 const QByteArray ReceiverStationClient::serializeCommandToByteArray(
         const google::protobuf::Message &command)
 {
-    //        qDebug()<<"Serialize B"<<command.ByteSize();
     std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
     command.SerializeToArray(static_cast<void*>(bytesArray.data()),command.ByteSize());
-    //        qDebug()<<"Serialize E";
     return QByteArray(bytesArray.data(),command.ByteSize());
 }
 
@@ -37,9 +32,8 @@ struct ReceiverStationClient::Impl
     {
     }
     std::unique_ptr<ChannelClient> channel;
-    proto::receiver::DeviceSetInfo info;
-    QMap<quint32,bool>map;
-    QList<FileLoader*>fileLoaders;
+    QQueue<proto::receiver::CommandType>commandQueue;
+    proto::receiver::DeviceSetInfo currentDeviceSetInfo;
 };
 
 ReceiverStationClient::ReceiverStationClient(QObject *parent):
@@ -56,6 +50,25 @@ ReceiverStationClient::ReceiverStationClient(QObject *parent):
             this,&ReceiverStationClient::connected);
 }
 
+const proto::receiver::DeviceSetInfo & ReceiverStationClient::getDeviceSetInfo() const
+{ return d->currentDeviceSetInfo; }
+
+QString ReceiverStationClient::getStationAddress()
+{
+    return QHostAddress(d->channel->peerAddress().toIPv4Address()).toString();
+}
+
+QStringList ReceiverStationClient::getCurrentDeviceSetReceiversNames()
+{
+    QStringList receiversNames;
+
+    const proto::receiver::DeviceSetInfo &deviceSetInfo=getDeviceSetInfo();
+    for(int i=0;i<deviceSetInfo.device_info_size();i++){
+        receiversNames<<deviceSetInfo.device_info(i).serial_number().data();
+    }
+    return receiversNames;
+}
+
 void ReceiverStationClient::connectToHost(const QHostAddress &address, quint16 port)
 {
     d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
@@ -66,10 +79,10 @@ ReceiverStationClient::~ReceiverStationClient(){}
 QString ReceiverStationClient::getCurrentDeviceSetName()
 {
     QString deviceSetName="DS#";
-    for (int i=0;i<d->info.device_info_size();i++){
-        deviceSetName+=d->info.device_info(i).serial_number().data();
-        qDebug()<<QString(d->info.device_info(i).serial_number().data());
-        if(i!=d->info.device_info_size()-1){
+    for (int i=0;i<d->currentDeviceSetInfo.device_info_size();i++){
+        deviceSetName+=d->currentDeviceSetInfo.device_info(i).serial_number().data();
+        qDebug()<<QString(d->currentDeviceSetInfo.device_info(i).serial_number().data());
+        if(i!=d->currentDeviceSetInfo.device_info_size()-1){
             deviceSetName+="_";
         }
     }
@@ -86,105 +99,89 @@ void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
     }
 
     if(hostToClient.has_command_answer()){
-      proto::receiver::Answer commandAnswer= hostToClient.command_answer();
-      readAnswerPacket(commandAnswer);
+        proto::receiver::Answer commandAnswer= hostToClient.command_answer();
+        readAnswerPacket(commandAnswer);
     }else if (hostToClient.has_device_set_info()) {
-      d->info=hostToClient.device_set_info();
-      qDebug()<<"DeviceSetReadyForUse";
-      emit deviceSetReadyForUse();
+        d->currentDeviceSetInfo=hostToClient.device_set_info();
+        qDebug()<<"DeviceSetReadyForUse";
+        emit deviceSetReadyForUse();
     }else qDebug()<<"ERROR MESSAGE RECEIVE";
-}
-
-void ReceiverStationClient::setCurrentCommandType(quint32 type)
-{
-    for(auto it=d->map.begin();it!=d->map.end();it++)
-        it.value()=false;
-
-    d->map[type]=true;
 }
 
 void ReceiverStationClient::readAnswerPacket(const proto::receiver::Answer &answer)
 {
+    if(d->commandQueue.isEmpty()){
+        qDebug()<<"ERROR QUEUE IS EMPTY";
+        return;
+    }
+
+    if(answer.type()!=d->commandQueue.head()){
+        qDebug()<<"ERROR Answer type";
+        return;
+    }
+
     if(answer.succesed()){
-        //qDebug()<<"ANSWER"<<answer.type()<<answer.succesed();
         switch (answer.type()) {
         case proto::receiver::CommandType::SET_POWER_OFF:
             qDebug()<<"SETED_POWER_OFF";
-            setCurrentCommandType(proto::receiver::CommandType::SET_POWER_OFF);
-            emit deviceSetPowerSetted(false);
+//            emit deviceSetPowerSetted(false);
             break;
         case proto::receiver::CommandType::SET_POWER_ON:
             qDebug()<<"SETED_POWER_ON";
-            setCurrentCommandType(proto::receiver::CommandType::SET_POWER_ON);
-            emit deviceSetPowerSetted(true);
+//            emit deviceSetPowerSetted(true);
             break;
         case proto::receiver::CommandType::SET_SETTINGS:
-//            qDebug()<<"SETED_SETTINGS:"<<d->channel->peerAddress()<<d->channel->peerPort();
-            setCurrentCommandType(proto::receiver::CommandType::SET_SETTINGS);
-            emit deviceSetSettingsSetted();
+            qDebug()<<"SETED_SETTINGS:";
+//            emit deviceSetSettingsSetted();
             break;
         case proto::receiver::CommandType::SET_ATTENUATOR:
             qDebug()<< "SETED_ATTENUATOR";
-            setCurrentCommandType(proto::receiver::CommandType::SET_ATTENUATOR);
             break;
         case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
             qDebug()<< "SETED_PREAMPLIFIER_ENABLED";
-            setCurrentCommandType(proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED);
             break;
         case proto::receiver::CommandType::SET_PRESELECTORS:
             qDebug()<< "SETED_PRESELECTORS";
-            setCurrentCommandType(proto::receiver::CommandType::SET_PRESELECTORS);
             break;
         case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
             qDebug()<< "SETED_NOICE_BLANKER_ENABLED";
-            setCurrentCommandType(proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED);
             break;
         case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
             qDebug()<< "SETED_ADC_NOICE_BLANKER_THRESHOLD";
-            setCurrentCommandType(proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD);
             break;
         case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
             qDebug()<< "SETED_FREQUENCY";
-            setCurrentCommandType(proto::receiver::CommandType::SET_DDC1_FREQUENCY);
             break;
         case proto::receiver::CommandType::SET_DDC1_TYPE:
-            setCurrentCommandType(proto::receiver::CommandType::SET_DDC1_TYPE);
-            emit deviceSetChangeBandwith();
             qDebug()<< "SETED_DDC1_TYPE";
+//            emit deviceSetChangeBandwith();
             break;
         case proto::receiver::CommandType::START_DDC1:
-//            qDebug()<<"STARTED_DDC1:"<<d->channel->peerAddress()<<d->channel->peerPort();
-            setCurrentCommandType(proto::receiver::CommandType::START_DDC1);
+            qDebug()<<"STARTED_DDC1:";
             emit ddc1StreamStarted();
             break;
         case proto::receiver::CommandType::STOP_DDC1:
-//            qDebug()<<"STOPED_DDC1:"<<d->channel->peerAddress()<<d->channel->peerPort();
-            setCurrentCommandType(proto::receiver::CommandType::STOP_DDC1);
+            qDebug()<<"STOPED_DDC1:";
             emit ddc1StreamStoped();
             break;
         case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
         case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
             break;
         }
+        emit commandSuccessed();
     }else{
         qWarning()<<"ERROR RESPONSE"<<answer.type();
+        emit commandFailed(errorString(answer.type()));
     }
-}
 
-bool ReceiverStationClient::checkStateCommand(quint32 type)
-{
-    qDebug()<<"EQU CHECK COMMAND"<<type<<d->map[type];
-    if(d->map.contains(type)){
-        return d->map[type];
-    }
-    return false;
+    d->commandQueue.dequeue();
 }
 
 void ReceiverStationClient::sendCommand(proto::receiver::Command &command)
 {
-       proto::receiver::ClientToHost clientToHost;
-       clientToHost.set_allocated_command(&command);
-       d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
+    proto::receiver::ClientToHost clientToHost;
+    clientToHost.set_allocated_command(&command);
+    d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
 }
 
 //***************************** COMMAND SENDING ***************************
@@ -212,6 +209,7 @@ void ReceiverStationClient::setSettings(const DeviceSetSettings &settings)
     command.set_samples_per_buffer(settings.samplesPerBuffer);
     command.set_ddc1_frequency(settings.frequency);
 
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -220,6 +218,7 @@ void ReceiverStationClient::setPower(bool state)
     proto::receiver::Command command;
     state ? command.set_command_type(proto::receiver::SET_POWER_ON):
             command.set_command_type(proto::receiver::SET_POWER_OFF);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -229,6 +228,7 @@ void ReceiverStationClient::setAttenuator(quint32 attenuator)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ATTENUATOR);
     command.set_attenuator(attenuator);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -237,6 +237,7 @@ void ReceiverStationClient::startDDC1Stream(quint32 samplesPerBuffer)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::START_DDC1);
     command.set_samples_per_buffer(samplesPerBuffer);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -244,6 +245,7 @@ void ReceiverStationClient::stopDDC1Stream()
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::STOP_DDC1);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -257,6 +259,7 @@ void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFre
     preselectors->set_high_frequency(highFrequency);
     command.set_command_type(proto::receiver::SET_PRESELECTORS);
     command.set_allocated_preselectors(preselectors);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -265,6 +268,7 @@ void ReceiverStationClient::setAdcNoiceBlankerEnabled(bool state)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
     command.set_adc_noice_blanker_enebled(state);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -274,6 +278,7 @@ void ReceiverStationClient::setAdcNoiceBlankerThreshold(quint16 threshold)
     void *value=&threshold;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
     command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -283,6 +288,7 @@ void ReceiverStationClient::setPreamplifierEnabled(bool state)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
     command.set_preamplifier_enebled(state);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -291,6 +297,7 @@ void ReceiverStationClient::setDDC1Frequency(quint32 ddc1Frequency)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
     command.set_ddc1_frequency(ddc1Frequency);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -299,60 +306,84 @@ void ReceiverStationClient::setDDC1Type(quint32 typeIndex)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_TYPE);
     command.set_ddc1_type(typeIndex);
+    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
-const proto::receiver::DeviceSetInfo & ReceiverStationClient::getDeviceSetInfo() const
-{ return d->info; }
-
-
-//******************** LOAD FILES *****************************
-
-void ReceiverStationClient::startLoadingFiles(const QStringList &fileNames)
+QString ReceiverStationClient::errorString(proto::receiver::CommandType commandType)
 {
-    //TODO СДЕЛАТЬ ЗАГРУЗКУ МНОЖЕСТВА FILES
-    if(!d->fileLoaders.isEmpty())return;
-
-    qDebug()<<"START LOADING FILES";
-    d->fileLoaders<<new FileLoader(d->channel->peerAddress(),8000,fileNames);
-    connect(d->fileLoaders.first(),&FileLoader::fullSizeFile,
-            this,&ReceiverStationClient::receivedFileSize);
-
-    connect(d->fileLoaders.first(),&FileLoader::bytesProgressFile,
-            this,&ReceiverStationClient::bytesProgressFile);
-
-    connect(d->fileLoaders.first(),&FileLoader::finished,
-            this,&ReceiverStationClient::stopLoadingFiles);
-
-    d->fileLoaders.first()->start();
-}
-
-void ReceiverStationClient::stopLoadingFiles()
-{
-    d->fileLoaders.first()->stop();
-    d->fileLoaders.removeFirst();
-    qDebug()<<"STOP LOADING FILES";
-}
-
-QString ReceiverStationClient::getStationAddress()
-{
-    return QHostAddress(d->channel->peerAddress().toIPv4Address()).toString();
-}
-
-QStringList ReceiverStationClient::getCurrentDeviceSetReceiversNames()
-{
-    QStringList receiversNames;
-
-    const proto::receiver::DeviceSetInfo &deviceSetInfo=getDeviceSetInfo();
-    for(int i=0;i<deviceSetInfo.device_info_size();i++){
-        receiversNames<<deviceSetInfo.device_info(i).serial_number().data();
+    switch (commandType) {
+    case proto::receiver::CommandType::SET_POWER_ON:
+        return "ERROR Command Power on";
+    case proto::receiver::CommandType::SET_POWER_OFF:
+        return "ERROR Command Power off ";
+    case proto::receiver::CommandType::SET_SETTINGS:
+        return "ERROR Command Power set settings";
+    case proto::receiver::START_DDC1:
+        return"ERROR Command Power start ddc1";
+    case proto::receiver::STOP_DDC1:
+        return"ERROR Command Power stop ddc1";
+    case proto::receiver::SET_DDC1_TYPE:
+        return "ERROR Command Power set ddc1 type";
+    case proto::receiver::SET_DDC1_FREQUENCY:
+        return "ERROR Change Freq";
+    case proto::receiver::SET_PRESELECTORS:
+        return "ERROR Presselector check";
+    case proto::receiver::SET_PREAMPLIFIER_ENABLED:
+        return "ERROR Pream check";
+    case proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED:
+        return"ERROR ADC ENABLED CHECK";
+    case proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD:
+        return"ERROR ADC THRESHOLD CHECK";
+    case proto::receiver::SET_ATTENUATOR:
+        return "ERROR ATTENUATOR CHECK";
+    default:return "UNKNOWN KOMMAND";
     }
-    return receiversNames;
 }
-
-
 
 //************************** DEL *************************
+
+//void ReceiverStationClient::setCurrentCommandType(quint32 type)
+//{
+//    for(auto it=d->map.begin();it!=d->map.end();it++)
+//        it.value()=false;
+
+//    d->map[type]=true;
+//}
+//bool ReceiverStationClient::checkStateCommand(quint32 type)
+//{
+//    qDebug()<<"EQU CHECK COMMAND"<<type<<d->map[type];
+//    if(d->map.contains(type)){
+//        return d->map[type];
+//    }
+//    return false;
+//}
+
+//void ReceiverStationClient::startLoadingFiles(const QStringList &fileNames)
+//{
+//    //TODO СДЕЛАТЬ ЗАГРУЗКУ МНОЖЕСТВА FILES
+//    if(!d->fileLoaders.isEmpty())return;
+
+//    qDebug()<<"START LOADING FILES";
+//    d->fileLoaders<<new FileLoader(d->channel->peerAddress(),8000,fileNames);
+//    connect(d->fileLoaders.first(),&FileLoader::fullSizeFile,
+//            this,&ReceiverStationClient::receivedFileSize);
+
+//    connect(d->fileLoaders.first(),&FileLoader::bytesProgressFile,
+//            this,&ReceiverStationClient::bytesProgressFile);
+
+//    connect(d->fileLoaders.first(),&FileLoader::finished,
+//            this,&ReceiverStationClient::stopLoadingFiles);
+
+//    d->fileLoaders.first()->start();
+//}
+
+//void ReceiverStationClient::stopLoadingFiles()
+//{
+//    d->fileLoaders.first()->stop();
+//    d->fileLoaders.removeFirst();
+//    qDebug()<<"STOP LOADING FILES";
+//}
 /*
 void ReceiverStationClient::onReadyReadInfo()
 {

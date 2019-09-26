@@ -1,28 +1,16 @@
 #ifndef RECEIVER_STATION_CLIENT_H
 #define RECEIVER_STATION_CLIENT_H
 
-#include "interface/i_stream_reader.h"
 #include "receiver.pb.h"
+#include <QObject>
 
 struct DeviceSetSettings;
 
-class ReceiverStationClient;
-
-
 class QHostAddress;
-class QByteArray;
 
 class ReceiverStationClient: public QObject
 {
     Q_OBJECT
-    enum ReceiverStationError{
-        RSE_ATTENUATOR,
-        RSE_POWER,
-        RSE_SETTINGS,
-        RSE_START_DDC1,
-        RSE_STOP_DDC1
-    };
-    static const int BUFFER_SIZE=4;
 public:
     ReceiverStationClient(QObject *parent=nullptr);
     ~ReceiverStationClient();
@@ -42,14 +30,9 @@ public:
     void startDDC1Stream(quint32 samplesPerBuffer);
     void stopDDC1Stream();
 
-    //WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
-    bool checkStateCommand(quint32 type);
-
-    void startLoadingFiles(const QStringList &fileNames);
-    void stopLoadingFiles();
-
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
+
     QStringList getCurrentDeviceSetReceiversNames();
     QString getStationAddress();
     void connectToHost(const QHostAddress &address,quint16 port);
@@ -57,23 +40,19 @@ signals:
     void connected();
     void disconnected();
 
+    void commandSuccessed();
+    void commandFailed(const QString &errorString);
     void deviceSetReadyForUse();
-
-    void deviceSetPowerSetted(bool state);
-    void deviceSetSettingsSetted();
-    void deviceSetChangeBandwith();
 
     void ddc1StreamStarted();
     void ddc1StreamStoped();
 
-    void receivedFileSize(int fileIndex,qint64 fullSize);
-    void bytesProgressFile(int fileIndex, qint64 bytesReaded,qint64 bitesSize);
 private:
     void sendCommand(proto::receiver::Command &command);
-    const QByteArray serializeCommandToByteArray(const google::protobuf::Message &command);
     void readAnswerPacket(const proto::receiver::Answer&answer);
-//WARNING СЮДА ПЕРЕДАЕТСЯ ТИП КОМАНДЫ
-    void setCurrentCommandType(quint32 type);
+    //TODO ТАКАЯ ЖЕ КОМАНДА ЕСТЬ НА СТОРОНЕ СЕРВЕРА
+    const QByteArray serializeCommandToByteArray(const google::protobuf::Message &command);
+    QString errorString(proto::receiver::CommandType commandType);
 private slots:
     void onMessageReceived(const QByteArray &buffer);
 private:

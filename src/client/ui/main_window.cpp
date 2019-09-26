@@ -87,17 +87,17 @@ MainWindow:: MainWindow(QWidget *parent):
     syncManager->addSumDivUpdater(elipsPlot);
 
     //************** OTHER ******************
-    connect(syncManager,&SyncManager::syncReady,
-            this,&MainWindow::showReceiverSettingsTool);
+//    connect(syncManager,&SyncManager::syncReady,
+//            this,&MainWindow::showReceiverSettingsTool);
+showReceiverSettingsTool();
+//    connect(syncManager,&SyncManager::syncNotReady,
+//            this,&MainWindow::hideReceiverSettingsTool);
 
-    connect(syncManager,&SyncManager::syncNotReady,
-            this,&MainWindow::hideReceiverSettingsTool);
-
-    connect(syncManager,&SyncManager::syncReady,
-            widgetDirector,&WidgetDirector::enable);
-
-    connect(syncManager,&SyncManager::syncNotReady,
-            widgetDirector,&WidgetDirector::disable);
+//    connect(syncManager,&SyncManager::syncReady,
+//            widgetDirector,&WidgetDirector::enable);
+widgetDirector->enable();
+//    connect(syncManager,&SyncManager::syncNotReady,
+//            widgetDirector,&WidgetDirector::disable);
 
     //TODO UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
@@ -141,9 +141,10 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
     macroFreq->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
     macroFreq->addCommand(FactoryCommand::getFrequencyCommand(syncManager,this));
     macroFreq->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+    //TODO УБРАНЫ КОМАНДЫ СИНХРОНИЗАЦИИ
+//    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
-    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
+//    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     leDDC1Frequency =new FrequencyLineEdit(this,topToolBar);
     leDDC1Frequency->setUserData(USER_DATA_ID,macroFreq);
@@ -154,7 +155,7 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
     macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
     macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(syncManager,this));
     macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+//    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
     cbDDC1Bandwith=new BandwithComboBox(this,topToolBar);
     cbDDC1Bandwith->setUserData(USER_DATA_ID,macroBandwith);

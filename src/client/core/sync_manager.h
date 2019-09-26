@@ -9,7 +9,7 @@
 
 #include <QTimer>
 #include <QTime>
-
+#include <QQueue>
 using PairUInt32=QPair<quint32,quint32>;
 
 Q_DECLARE_METATYPE(PairUInt32);
@@ -50,7 +50,7 @@ private:
     int stationCounter=0;
 };
 
-class SyncManager:public QTcpServer
+class SyncManager:public QObject
 {
     Q_OBJECT
 
@@ -69,10 +69,6 @@ class SyncManager:public QTcpServer
     static const int MIN_NUMBER_STATIONS_FOR_SYNC=1;
 
 private:
-    void incomingConnection(qintptr socketDescriptor) override;
-
-    Q_SLOT void onStationReady();
-    Q_SLOT void onStationDisconnected();
 
     SyncManager();
 public:
@@ -97,58 +93,29 @@ public:
     void startBroadcastDDC1(quint32 samplePerBuffer);
     void stopBroadcastDDC1();
 
+    //УБРАТЬ НИЖНИЕ МЕТОДЫ
     void start(quint32 ddcFrequency,quint32 sampleRate,quint32 blockSize);
     void stop();
-
     void loadBroacastFile(const QString &taskName,const QDate &taskDate);
-
     void addSyncSignalUpdater(ISyncSignalUpdate *updater);
     void addSumDivUpdater(ISumDivSignalUpdate *updater);
+signals:
+    void taskSize(const QString &taskName,qint64 taskSize);
+    void stationConnected(qintptr id,const QString &addr,const QString &port,
+                          const QStringList &deviceSetNameList);
+    void stationDisconnected(qintptr id);
 
-Q_SIGNALS:
-    Q_SIGNAL void settedSettings();
-
-    Q_SIGNAL void settedPowerOn();
-    Q_SIGNAL void settedPowerOff();
-
-    Q_SIGNAL void changedAttenuator();
-    Q_SIGNAL void changedPrelector();
-    Q_SIGNAL void changedAdcEnabled();
-    Q_SIGNAL void changedAdcThreshold();
-    Q_SIGNAL void changedPreamplifierEnabled();
-    Q_SIGNAL void changedDDC1Freq();
-    Q_SIGNAL void changedDDC1Type();
-
-    Q_SIGNAL void startedDdc1();
-    Q_SIGNAL void stopedDdc1();
-
-    Q_SIGNAL void syncStarted();
-    Q_SIGNAL void syncStoped();
-
-    Q_SIGNAL void syncReady();
-    Q_SIGNAL void syncNotReady();
-    Q_SIGNAL void taskSize(const QString &taskName,qint64 taskSize);
-    Q_SIGNAL void stationConnected(qintptr id,const QString &addr,const QString &port,
-                                   const QStringList &deviceSetNameList);
-
-    Q_SIGNAL void stationDisconnected(qintptr id);
-
-    Q_SIGNAL void commandError(const QString &commandError);
-
-    Q_SIGNAL void taskLoadingProgress(qint64 bytesReaded,qint64 bytesSize);
-
+    void commandError(const QString &commandError);
+    void commandSucessed();
+private slots:
+    void onStationReady();
+    void onStationDisconnected();
+    void onCommandFailed(const QString &error);
+    void onCommandSuccesed();
 private:
-    // В ДАННЫЕ МЕТОДЫ ПЕРЕДАЕТСЯ ТИП КОМАНДЫ CommandType
-    void checkReceiverStationCommand(quint32 type);
-    bool waitCommandState(quint32 type);
-
-    void sendSuccessSignal(quint32 commandType);
-    void sendErrorString(quint32 commandType);
-private:
-    QTime  checkTimer;
     QMap<quint32,SptrReceiverStationClient>listeners;
-//    QMap<QString,SptrReceiverStationClient>listenersT;
     SyncPairChannel sync;
+    QQueue<int>commandQueue;
 };
 
 #endif // SYNC_MANAGER_H

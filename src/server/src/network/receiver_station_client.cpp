@@ -101,12 +101,12 @@ void ReceiverStationClient::sendDeviceSetInfo()
     writeMessage(hostToClient);
 }
 
-void ReceiverStationClient::sendCommandAnswer(const proto::receiver::Answer &commandAnswer)
+void ReceiverStationClient::sendCommandAnswer( proto::receiver::Answer *commandAnswer)
 {
     proto::receiver::HostToClient hostToClient;
 
-    qDebug()<<"Answer"<<commandAnswer.type()<<commandAnswer.succesed();
-    hostToClient.set_allocated_command_answer(&const_cast<proto::receiver::Answer&>(commandAnswer));
+    qDebug()<<"Answer"<<commandAnswer->type()<<commandAnswer->succesed();
+    hostToClient.set_allocated_command_answer(commandAnswer);
     writeMessage(hostToClient);
 }
 
@@ -198,8 +198,8 @@ void ReceiverStationClient::readCommanPacket(const proto::receiver::Command &com
         qDebug()<<"Wrong Command Type"<<command.command_type();
         break;
     }
-    proto::receiver::Answer answer;
-    answer.set_type(command.command_type());
-    answer.set_succesed(succesed);
+    proto::receiver::Answer *answer=new proto::receiver::Answer;
+    answer->set_type(command.command_type());
+    answer->set_succesed(succesed);
     sendCommandAnswer(answer);
 }
