@@ -80,7 +80,7 @@ void StreamServer::onNewConnection()
 void StreamServer::createSession(ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
-        _client=new ReceiverStationClient(channelHost);
+        _client=new DeviceSetClient(channelHost);
         _client->sendDeviceSetInfo();
     }else {
         qDebug()<<"ERROR SESSION TYPE";

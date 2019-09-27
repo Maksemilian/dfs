@@ -6,7 +6,7 @@
 
 //******************ReceiverStationClient***********************
 
-struct ReceiverStationClient::Impl
+struct DeviceSetClient::Impl
 {
     Impl(ChannelHost *channel):
         channel(channel),
@@ -17,27 +17,27 @@ struct ReceiverStationClient::Impl
     std::shared_ptr<CohG35DeviceSet>cohG35DeviceSet;
 };
 
-ReceiverStationClient::ReceiverStationClient(ChannelHost*channelHost)
+DeviceSetClient::DeviceSetClient(ChannelHost*channelHost)
     : d(std::make_unique<Impl>(channelHost))
 {
     qDebug()<<"Create ReceiverStationClient";
 
     connect(d->channel.get(),&Channel::finished,
-            this,&ReceiverStationClient::onDisconnected);
+            this,&DeviceSetClient::onDisconnected);
 
     connect(d->channel.get(),&Channel::messageReceived,
-            this,&ReceiverStationClient::onMessageReceived);
+            this,&DeviceSetClient::onMessageReceived);
 
     //TODO сделать по запросу от клиента
     d->cohG35DeviceSet->setUpDeviceSet(0);
 }
 
-ReceiverStationClient::~ReceiverStationClient()
+DeviceSetClient::~DeviceSetClient()
 {
     d->cohG35DeviceSet->stopDDC1();
 }
 
-QByteArray ReceiverStationClient::serializeMessage(const google::protobuf::Message &message)
+QByteArray DeviceSetClient::serializeMessage(const google::protobuf::Message &message)
 {
     int  byteSize= message.ByteSize();
     //    char bytesArray[byteSize];
@@ -49,7 +49,7 @@ QByteArray ReceiverStationClient::serializeMessage(const google::protobuf::Messa
 }
 
 
-CohG35DeviceSetSettings ReceiverStationClient::extractSettingsFromCommand(
+CohG35DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
         const proto::receiver::Command &command)
 {
     CohG35DeviceSetSettings settings;
@@ -68,13 +68,13 @@ CohG35DeviceSetSettings ReceiverStationClient::extractSettingsFromCommand(
     return settings;
 }
 
-void ReceiverStationClient::onDisconnected()
+void DeviceSetClient::onDisconnected()
 {
     d->cohG35DeviceSet->stopDDC1();
     emit stationDisconnected();
 }
 
-void ReceiverStationClient::sendDeviceSetInfo()
+void DeviceSetClient::sendDeviceSetInfo()
 {
     COH_G35DDC_DEVICE_SET deviceSetInfos= d->cohG35DeviceSet->getDeviceSetInfo();
     proto::receiver::DeviceSetInfo *deviceSetInfo=new proto::receiver::DeviceSetInfo;
@@ -101,7 +101,7 @@ void ReceiverStationClient::sendDeviceSetInfo()
     writeMessage(hostToClient);
 }
 
-void ReceiverStationClient::sendCommandAnswer( proto::receiver::Answer *commandAnswer)
+void DeviceSetClient::sendCommandAnswer( proto::receiver::Answer *commandAnswer)
 {
     proto::receiver::HostToClient hostToClient;
 
@@ -110,14 +110,14 @@ void ReceiverStationClient::sendCommandAnswer( proto::receiver::Answer *commandA
     writeMessage(hostToClient);
 }
 
-void ReceiverStationClient::writeMessage(const google::protobuf::Message &message)
+void DeviceSetClient::writeMessage(const google::protobuf::Message &message)
 {
     qDebug()<<"Message MES"<<message.ByteSize();
     d->channel->writeToConnection(serializeMessage(message));
 }
 
 
-void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
+void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
 {
     qDebug()<<"Message Received";
     proto::receiver::ClientToHost clientToHost;
@@ -133,7 +133,7 @@ void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
 
 //********************SWITCH COMMAND*******************
 
-void ReceiverStationClient::readCommanPacket(const proto::receiver::Command &command){
+void DeviceSetClient::readCommanPacket(const proto::receiver::Command &command){
     bool succesed=false;
     switch(command.command_type()){
     case proto::receiver::CommandType::SET_POWER_OFF:

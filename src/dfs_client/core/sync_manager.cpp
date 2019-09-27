@@ -1,10 +1,10 @@
 #include "sync_manager.h"
-#include "core/network/receiver_station_client.h"
+#include "core/network/device_set_client.h"
 #include "command.pb.h"
 
 #include <QDebug>
 
-#include <core/network/receiver_station_client.h>
+#include <core/network/device_set_client.h>
 
 const quint16 SyncManager::TIME_WAIT_RESPONCE=10000;
 const quint16 SyncManager::TIME_SINGLE_SHOT=200;
@@ -15,24 +15,24 @@ SyncManager::SyncManager()
 
 void SyncManager::connectToStation(const QHostAddress &address, quint16 port)
 {
-    auto deleter=[](ReceiverStationClient *client){
+    auto deleter=[](DeviceSetClient *client){
         client->deleteLater();
     };
-    SptrReceiverStationClient stationClient(new ReceiverStationClient(),deleter);
-    connect(stationClient.get(),&ReceiverStationClient::commandSuccessed,
+    SptrReceiverStationClient stationClient(new DeviceSetClient(),deleter);
+    connect(stationClient.get(),&DeviceSetClient::commandSuccessed,
             this,&SyncManager::onCommandSuccesed);
     //    listeners<<stationClient;
     listeners.insert(address.toIPv4Address(),stationClient);
     //    listenersT.insert(address.toString(),stationClient);
     Q_ASSERT_X(stationClient,"MainWindow::onStaionReadyForUse","station id null");
 
-    connect(stationClient.get(),&ReceiverStationClient::connected,
+    connect(stationClient.get(),&DeviceSetClient::connected,
             this,&SyncManager::onStationReady);
 
-    connect(stationClient.get(),&ReceiverStationClient::disconnected,
+    connect(stationClient.get(),&DeviceSetClient::disconnected,
             this,&SyncManager::onStationDisconnected);
 
-    connect(stationClient.get(),&ReceiverStationClient::commandFailed,
+    connect(stationClient.get(),&DeviceSetClient::commandFailed,
             this,&SyncManager::onCommandFailed);
 
     stationClient->connectToHost(address,port);
@@ -47,7 +47,7 @@ int SyncManager::countStation()
 void SyncManager::onStationReady()
 {
     qDebug()<<"On Station Ready";
-    ReceiverStationClient *connectedStation=qobject_cast<ReceiverStationClient*>(sender());
+    DeviceSetClient *connectedStation=qobject_cast<DeviceSetClient*>(sender());
     if(connectedStation){
         auto ptr =  std::find_if(begin(listeners), end(listeners),
                                  [&](SptrReceiverStationClient const& current)
@@ -69,7 +69,7 @@ void SyncManager::onStationReady()
 
 void SyncManager::onStationDisconnected()
 {
-    ReceiverStationClient *disconnectedStation=qobject_cast<ReceiverStationClient*>(sender());
+    DeviceSetClient *disconnectedStation=qobject_cast<DeviceSetClient*>(sender());
     if(disconnectedStation){
         auto ptr =
                 std::find_if(begin(listeners), end(listeners),
@@ -87,7 +87,7 @@ void SyncManager::onStationDisconnected()
 
 void SyncManager::onCommandFailed(const QString &error)
 {
-    ReceiverStationClient*client=qobject_cast<ReceiverStationClient*>(sender());
+    DeviceSetClient*client=qobject_cast<DeviceSetClient*>(sender());
     if(client)
         qDebug()<<client->getStationAddress()<<error;
 }

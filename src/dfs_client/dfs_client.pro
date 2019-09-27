@@ -38,7 +38,6 @@ HEADERS += \
     interface/i_stream_reader.h \
     interface/i_sygnal_update.h \
     interface/i_toolbar.h \
-    core/network/receiver_station_client.h \
     core/network/signal_sync.h \
     core/command/factory_command.h \
     core/command/command_hierarch.h \
@@ -59,10 +58,10 @@ HEADERS += \
     ui/main_window.h \
     ui/main_window_settings.h \
     core/network/file_loader.h \
-    core/network/stream_clieint.h
+    core/network/stream_clieint.h \
+    core/network/device_set_client.h
 
 SOURCES += \
-    core/network/receiver_station_client.cpp \
     core/command/factory_command.cpp \
     core/command/command_hierarch.cpp \
     core/sync_pair_channel.cpp \
@@ -83,7 +82,8 @@ SOURCES += \
     ui/main_window_settings.cpp \
     main.cpp \
     core/network/file_loader.cpp \
-    core/network/stream_clieint.cpp
+    core/network/stream_clieint.cpp \
+    core/network/device_set_client.cpp
 
 FORMS += \
     ui/main_window.ui \

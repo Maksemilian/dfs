@@ -17,8 +17,8 @@ Q_DECLARE_METATYPE(PairUInt32);
 class ISyncSignalUpdate;
 class ISumDivSignalUpdate;
 
-class ReceiverStationClient;
-using SptrReceiverStationClient=std::shared_ptr<ReceiverStationClient>;
+class DeviceSetClient;
+using SptrReceiverStationClient=std::shared_ptr<DeviceSetClient>;
 
 
 class Task:public QObject

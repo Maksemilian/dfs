@@ -8,12 +8,12 @@ struct DeviceSetSettings;
 
 class QHostAddress;
 
-class ReceiverStationClient: public QObject
+class DeviceSetClient: public QObject
 {
     Q_OBJECT
 public:
-    ReceiverStationClient(QObject *parent=nullptr);
-    ~ReceiverStationClient();
+    DeviceSetClient(QObject *parent=nullptr);
+    ~DeviceSetClient();
 
     void setSettings(const DeviceSetSettings &settings);
 

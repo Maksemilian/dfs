@@ -1,6 +1,6 @@
 #include "file_loader.h"
 
-#include "receiver_station_client.h"
+#include "device_set_client.h"
 
 #include "interface/i_device_set_settings.h"
 

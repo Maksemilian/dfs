@@ -69,7 +69,7 @@ private:
 private:
     QList<ChannelHost*>_pendingChannelsList;
     QList<ChannelHost*>_readyChannelsList;
-    ReceiverStationClient *_client;
+    DeviceSetClient *_client;
 
     StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;

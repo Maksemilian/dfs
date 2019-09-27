@@ -10,15 +10,15 @@
 class CohG35DeviceSetSettings;
 class ChannelHost;
 
-class ReceiverStationClient:public QObject
+class DeviceSetClient:public QObject
 {
     Q_OBJECT
 
     static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
-    ReceiverStationClient(ChannelHost*channelHost);
-    ~ReceiverStationClient();
+    DeviceSetClient(ChannelHost*channelHost);
+    ~DeviceSetClient();
 
     Q_SIGNAL void stationDisconnected();
     void sendDeviceSetInfo();
