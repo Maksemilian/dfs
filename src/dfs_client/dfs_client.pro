@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 TEMPLATE = app
 TARGET = Client
 CONFIG +=console
-
+CONFIG += c++14
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 
@@ -59,7 +59,9 @@ HEADERS += \
     ui/main_window_settings.h \
     core/network/file_loader.h \
     core/network/stream_clieint.h \
-    core/network/device_set_client.h
+    core/network/device_set_client.h \
+    ui/device_set_widget.h \
+    ui/device_set_widget_list.h
 
 SOURCES += \
     core/command/factory_command.cpp \
@@ -83,7 +85,9 @@ SOURCES += \
     main.cpp \
     core/network/file_loader.cpp \
     core/network/stream_clieint.cpp \
-    core/network/device_set_client.cpp
+    core/network/device_set_client.cpp \
+    ui/device_set_widget.cpp \
+    ui/device_set_widget_list.cpp
 
 FORMS += \
     ui/main_window.ui \

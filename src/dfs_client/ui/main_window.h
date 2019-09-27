@@ -35,7 +35,7 @@ class ChannelPlot;
 class ElipsPlot ;
 
 class WidgetDirector ;
-
+class DeviceSetListWidget ;
 class MainWindow : public QMainWindow,
         public IDeviceSetSettings
 {
@@ -116,6 +116,7 @@ private:
     ElipsPlot *elipsPlot;//right dock idget
 
     WidgetDirector *widgetDirector;
+    DeviceSetListWidget *deviceSetListWidget;
 };
 
 

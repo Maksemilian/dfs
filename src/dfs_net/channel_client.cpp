@@ -34,7 +34,7 @@ ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,par
 
 void ChannelClient::connectToHost(const QString &address, quint16 port,SessionType sesionType)
 {
-    qDebug()<<"ChannelClient::connectToHost"<<address<<port<<keyExchangeState;
+    qDebug()<<"ChannelClient::connectToHost"<<address<<port<<sesionType;
     _sessionType=sesionType;
     _socket->connectToHost(address,port);
 }

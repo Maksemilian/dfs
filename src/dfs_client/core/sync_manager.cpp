@@ -19,6 +19,7 @@ void SyncManager::connectToStation(const QHostAddress &address, quint16 port)
         client->deleteLater();
     };
     SptrReceiverStationClient stationClient(new DeviceSetClient(),deleter);
+
     connect(stationClient.get(),&DeviceSetClient::commandSuccessed,
             this,&SyncManager::onCommandSuccesed);
     //    listeners<<stationClient;
@@ -26,7 +27,7 @@ void SyncManager::connectToStation(const QHostAddress &address, quint16 port)
     //    listenersT.insert(address.toString(),stationClient);
     Q_ASSERT_X(stationClient,"MainWindow::onStaionReadyForUse","station id null");
 
-    connect(stationClient.get(),&DeviceSetClient::connected,
+    connect(stationClient.get(),&DeviceSetClient::deviceSetReady,
             this,&SyncManager::onStationReady);
 
     connect(stationClient.get(),&DeviceSetClient::disconnected,
@@ -55,7 +56,7 @@ void SyncManager::onStationReady()
                 return current.get() == connectedStation;
     });
 
-        QStringList receiveresNames=(*ptr)->getCurrentDeviceSetReceiversNames();
+        QStringList receiveresNames=(*ptr)->receiverNameList();
 
         emit stationConnected(ptr.key(),
                               (*ptr)->getStationAddress(),

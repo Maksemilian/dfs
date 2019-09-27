@@ -1,4 +1,4 @@
-#include "receiver_station_client.h"
+#include "device_set_client.h"
 
 //TODO НУЖЕН ТОЛЬКО ДЛЯ СТРУКТУРЫ DeviceSetSettings
 #include "interface/i_device_set_settings.h"
@@ -18,7 +18,7 @@
 
 //**************************************** Receiver Station Client*****************************************
 
-const QByteArray ReceiverStationClient::serializeCommandToByteArray(
+const QByteArray DeviceSetClient::serializeCommandToByteArray(
         const google::protobuf::Message &command)
 {
     std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
@@ -26,7 +26,7 @@ const QByteArray ReceiverStationClient::serializeCommandToByteArray(
     return QByteArray(bytesArray.data(),command.ByteSize());
 }
 
-struct ReceiverStationClient::Impl
+struct DeviceSetClient::Impl
 {
     Impl():channel(std::make_unique<ChannelClient>())
     {
@@ -36,47 +36,47 @@ struct ReceiverStationClient::Impl
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
 };
 
-ReceiverStationClient::ReceiverStationClient(QObject *parent):
+DeviceSetClient::DeviceSetClient(QObject *parent):
     QObject(parent),
     d(std::make_unique<Impl>())
 {
     connect(d->channel.get(),&ChannelClient::messageReceived,
-            this,&ReceiverStationClient::onMessageReceived);
+            this,&DeviceSetClient::onMessageReceived);
 
     connect(d->channel.get(),&ChannelClient::finished,
-            this,&ReceiverStationClient::disconnected);
+            this,&DeviceSetClient::disconnected);
 
-    connect(this,&ReceiverStationClient::deviceSetReadyForUse,
-            this,&ReceiverStationClient::connected);
+//    connect(this,&DeviceSetClient::deviceSetReady,
+//            this,&DeviceSetClient::connected);
 }
 
-const proto::receiver::DeviceSetInfo & ReceiverStationClient::getDeviceSetInfo() const
+const proto::receiver::DeviceSetInfo & DeviceSetClient::getDeviceSetInfo() const
 { return d->currentDeviceSetInfo; }
 
-QString ReceiverStationClient::getStationAddress()
+QString DeviceSetClient::getStationAddress()
 {
     return QHostAddress(d->channel->peerAddress().toIPv4Address()).toString();
 }
 
-QStringList ReceiverStationClient::getCurrentDeviceSetReceiversNames()
+QStringList DeviceSetClient::receiverNameList()
 {
-    QStringList receiversNames;
+    QStringList receiverNameList;
 
     const proto::receiver::DeviceSetInfo &deviceSetInfo=getDeviceSetInfo();
     for(int i=0;i<deviceSetInfo.device_info_size();i++){
-        receiversNames<<deviceSetInfo.device_info(i).serial_number().data();
+        receiverNameList<<deviceSetInfo.device_info(i).serial_number().data();
     }
-    return receiversNames;
+    return receiverNameList;
 }
 
-void ReceiverStationClient::connectToHost(const QHostAddress &address, quint16 port)
+void DeviceSetClient::connectToHost(const QHostAddress &address, quint16 port)
 {
     d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
 }
 
-ReceiverStationClient::~ReceiverStationClient(){}
+DeviceSetClient::~DeviceSetClient(){}
 
-QString ReceiverStationClient::getCurrentDeviceSetName()
+QString DeviceSetClient::getCurrentDeviceSetName()
 {
     QString deviceSetName="DS#";
     for (int i=0;i<d->currentDeviceSetInfo.device_info_size();i++){
@@ -89,7 +89,7 @@ QString ReceiverStationClient::getCurrentDeviceSetName()
     return deviceSetName;
 }
 
-void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
+void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
 {
     qDebug()<<"ReceiverStationClient::onMessageReceived";
     proto::receiver::HostToClient hostToClient;
@@ -104,11 +104,11 @@ void ReceiverStationClient::onMessageReceived(const QByteArray &buffer)
     }else if (hostToClient.has_device_set_info()) {
         d->currentDeviceSetInfo=hostToClient.device_set_info();
         qDebug()<<"DeviceSetReadyForUse";
-        emit deviceSetReadyForUse();
+        emit deviceSetReady();
     }else qDebug()<<"ERROR MESSAGE RECEIVE";
 }
 
-void ReceiverStationClient::readAnswerPacket(const proto::receiver::Answer &answer)
+void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
 {
     if(d->commandQueue.isEmpty()){
         qDebug()<<"ERROR QUEUE IS EMPTY";
@@ -177,7 +177,7 @@ void ReceiverStationClient::readAnswerPacket(const proto::receiver::Answer &answ
     d->commandQueue.dequeue();
 }
 
-void ReceiverStationClient::sendCommand(proto::receiver::Command &command)
+void DeviceSetClient::sendCommand(proto::receiver::Command &command)
 {
     proto::receiver::ClientToHost clientToHost;
     clientToHost.set_allocated_command(&command);
@@ -186,7 +186,7 @@ void ReceiverStationClient::sendCommand(proto::receiver::Command &command)
 
 //***************************** COMMAND SENDING ***************************
 
-void ReceiverStationClient::setSettings(const DeviceSetSettings &settings)
+void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
@@ -213,7 +213,7 @@ void ReceiverStationClient::setSettings(const DeviceSetSettings &settings)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setPower(bool state)
+void DeviceSetClient::setPower(bool state)
 {
     proto::receiver::Command command;
     state ? command.set_command_type(proto::receiver::SET_POWER_ON):
@@ -222,7 +222,7 @@ void ReceiverStationClient::setPower(bool state)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setAttenuator(quint32 attenuator)
+void DeviceSetClient::setAttenuator(quint32 attenuator)
 {
     qDebug()<<"Set Attenuator";
     proto::receiver::Command command;
@@ -232,7 +232,7 @@ void ReceiverStationClient::setAttenuator(quint32 attenuator)
     sendCommand(command);
 }
 
-void ReceiverStationClient::startDDC1Stream(quint32 samplesPerBuffer)
+void DeviceSetClient::startDDC1Stream(quint32 samplesPerBuffer)
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::START_DDC1);
@@ -241,7 +241,7 @@ void ReceiverStationClient::startDDC1Stream(quint32 samplesPerBuffer)
     sendCommand(command);
 }
 
-void ReceiverStationClient::stopDDC1Stream()
+void DeviceSetClient::stopDDC1Stream()
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::STOP_DDC1);
@@ -249,7 +249,7 @@ void ReceiverStationClient::stopDDC1Stream()
     sendCommand(command);
 }
 
-void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency)
+void DeviceSetClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency)
 {
     qDebug()<<"Set Pres";
     proto::receiver::Command command;
@@ -263,7 +263,7 @@ void ReceiverStationClient::setPreselectors(quint32 lowFrequency,quint32 highFre
     sendCommand(command);
 }
 
-void ReceiverStationClient::setAdcNoiceBlankerEnabled(bool state)
+void DeviceSetClient::setAdcNoiceBlankerEnabled(bool state)
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
@@ -272,7 +272,7 @@ void ReceiverStationClient::setAdcNoiceBlankerEnabled(bool state)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setAdcNoiceBlankerThreshold(quint16 threshold)
+void DeviceSetClient::setAdcNoiceBlankerThreshold(quint16 threshold)
 {
     proto::receiver::Command command;
     void *value=&threshold;
@@ -282,7 +282,7 @@ void ReceiverStationClient::setAdcNoiceBlankerThreshold(quint16 threshold)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setPreamplifierEnabled(bool state)
+void DeviceSetClient::setPreamplifierEnabled(bool state)
 {
     qDebug()<<"Set Pream";
     proto::receiver::Command command;
@@ -292,7 +292,7 @@ void ReceiverStationClient::setPreamplifierEnabled(bool state)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setDDC1Frequency(quint32 ddc1Frequency)
+void DeviceSetClient::setDDC1Frequency(quint32 ddc1Frequency)
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
@@ -301,7 +301,7 @@ void ReceiverStationClient::setDDC1Frequency(quint32 ddc1Frequency)
     sendCommand(command);
 }
 
-void ReceiverStationClient::setDDC1Type(quint32 typeIndex)
+void DeviceSetClient::setDDC1Type(quint32 typeIndex)
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_TYPE);
@@ -310,7 +310,7 @@ void ReceiverStationClient::setDDC1Type(quint32 typeIndex)
     sendCommand(command);
 }
 
-QString ReceiverStationClient::errorString(proto::receiver::CommandType commandType)
+QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 {
     switch (commandType) {
     case proto::receiver::CommandType::SET_POWER_ON:

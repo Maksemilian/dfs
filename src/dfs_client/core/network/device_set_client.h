@@ -33,7 +33,7 @@ public:
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
 
-    QStringList getCurrentDeviceSetReceiversNames();
+    QStringList receiverNameList();
     QString getStationAddress();
     void connectToHost(const QHostAddress &address,quint16 port);
 signals:
@@ -42,7 +42,7 @@ signals:
 
     void commandSuccessed();
     void commandFailed(const QString &errorString);
-    void deviceSetReadyForUse();
+    void deviceSetReady();
 
     void ddc1StreamStarted();
     void ddc1StreamStoped();

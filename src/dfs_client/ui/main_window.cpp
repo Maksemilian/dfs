@@ -18,7 +18,8 @@
 
 #include "ui/plot/channel_plot.h"
 #include "ui/plot/elips_plot.h"
-
+#include "device_set_widget.h"
+#include "device_set_widget_list.h"
 #include <QDockWidget>
 #include <QCheckBox>
 #include <QDebug>
@@ -36,21 +37,27 @@ MainWindow:: MainWindow(QWidget *parent):
     //    syncManager=new SyncManager;
     //TODO FIX THIS CODE
     syncManager=&SyncManager::instance();
+
+    deviceSetListWidget=new DeviceSetListWidget;
+
+    setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
+    deviceSetListWidget->addDeviceSetWidget(
+                new DeviceSetWidget("192.168.10.11",9000));
     //************** WIDGET DIRECTOR ******************
 
-    widgetDirector=new WidgetDirector;
-    setLeftDockWidget(widgetDirector,"Widget Director");
+//    widgetDirector=new WidgetDirector;
+//    setLeftDockWidget(widgetDirector,"Widget Director");
 
-    connect(syncManager,&SyncManager::stationConnected,
-            widgetDirector,&WidgetDirector::createStationData);
+//    connect(syncManager,&SyncManager::stationConnected,
+//            widgetDirector,&WidgetDirector::createStationData);
 
-    connect(syncManager,&SyncManager::stationDisconnected,
-            widgetDirector,&WidgetDirector::removeStationData);
+//    connect(syncManager,&SyncManager::stationDisconnected,
+//            widgetDirector,&WidgetDirector::removeStationData);
 
-    connect(syncManager,&SyncManager::commandError,[this](const QString &error){
-        setArrowCursor();
-        QMessageBox::warning(this,"Command Error",error);
-    });
+//    connect(syncManager,&SyncManager::commandError,[this](const QString &error){
+//        setArrowCursor();
+//        QMessageBox::warning(this,"Command Error",error);
+//    });
     //************SETTING TOOLBAR***************
     //****TOP
 
@@ -83,8 +90,8 @@ MainWindow:: MainWindow(QWidget *parent):
 
     //************** SUBSCRIBE ****************
 
-    syncManager->addSyncSignalUpdater(channelPlot);
-    syncManager->addSumDivUpdater(elipsPlot);
+//    syncManager->addSyncSignalUpdater(channelPlot);
+//    syncManager->addSumDivUpdater(elipsPlot);
 
     //************** OTHER ******************
 //    connect(syncManager,&SyncManager::syncReady,
@@ -95,13 +102,13 @@ showReceiverSettingsTool();
 
 //    connect(syncManager,&SyncManager::syncReady,
 //            widgetDirector,&WidgetDirector::enable);
-widgetDirector->enable();
+//widgetDirector->enable();
 //    connect(syncManager,&SyncManager::syncNotReady,
 //            widgetDirector,&WidgetDirector::disable);
-
+deviceSetListWidget->connectToSelectedDeviceSet();
     //TODO UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
-    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
+//    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
 }
 
 MainWindow::~MainWindow()
@@ -188,7 +195,7 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     macroCommand->addCommand(FactoryCommand::getSettingsCommand(syncManager,this));
     macroCommand->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
     macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
-    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
+//    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     pbPower->setUserData(USER_DATA_POWER_ON,macroCommand);
 
