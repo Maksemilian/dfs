@@ -36,6 +36,7 @@ public:
     QStringList receiverNameList();
     QString getStationAddress();
     void connectToHost(const QHostAddress &address,quint16 port);
+    void sendCommand(const proto::receiver::Command &command);
 signals:
     void connected();
     void disconnected();
@@ -48,7 +49,6 @@ signals:
     void ddc1StreamStoped();
 
 private:
-    void sendCommand(proto::receiver::Command &command);
     void readAnswerPacket(const proto::receiver::Answer&answer);
     //TODO ТАКАЯ ЖЕ КОМАНДА ЕСТЬ НА СТОРОНЕ СЕРВЕРА
     const QByteArray serializeCommandToByteArray(const google::protobuf::Message &command);

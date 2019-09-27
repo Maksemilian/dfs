@@ -4,7 +4,8 @@
 
 #include "interface/i_device_set_settings.h"
 #include "ui/db/widget_director.h"
-
+#include "receiver.pb.h"
+#include "interface/ideviceset.h"
 
 AbstractCommand::AbstractCommand(){}
 
@@ -44,6 +45,25 @@ ReceiverCommand::ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subj
         this->subject->setArrowCursor();
     });
 }
+
+#include "ui/device_set_widget_list.h"
+
+ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :TimerCommand (),_iDeviceSet(iDeviceSet),subject(subject)
+{
+    DeviceSetListWidget*d=dynamic_cast<DeviceSetListWidget*>(iDeviceSet);
+
+    connect(d,&DeviceSetListWidget::commandSucessed,[this]{
+        done=true;
+        this->subject->setArrowCursor();
+    });
+
+//    connect(_iDeviceSet,&IDeviceSet::commandSucessed,[this]{
+//        done=true;
+//        this->subject->setArrowCursor();
+//    });
+}
+
 
 ReceiverCommand::~ReceiverCommand()=default;
 
@@ -106,10 +126,19 @@ void SyncStopCommand::execute()
 AttenuatorCommand::AttenuatorCommand(SyncManager*syncManager,IDeviceSetSettings*subject):
     ReceiverCommand(syncManager,subject){}
 
+AttenuatorCommand::AttenuatorCommand(IDeviceSet*syncManager,IDeviceSetSettings*subject):
+    ReceiverCommand(syncManager,subject){}
+
 void AttenuatorCommand::execute()
 {
+    qDebug()<<"Set Attenuator";
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_ATTENUATOR);
+    command.set_attenuator(subject->getAttenuator());
+
     subject->setWaitCursor();
-    syncManager->setBroadcastAttenuator(subject->getAttenuator());
+    _iDeviceSet->setCommand(command);
+//    syncManager->setBroadcastAttenuator(subject->getAttenuator());
 }
 
 //************************* PRES

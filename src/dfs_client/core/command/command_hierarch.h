@@ -7,8 +7,9 @@
 #include <QTime>
 #include <QDebug>
 
-class SyncManager;
 class IDeviceSetSettings;
+class IDeviceSet;
+class SyncManager;
 class WidgetDirector;
 
 class AbstractCommand
@@ -39,9 +40,11 @@ class ReceiverCommand:public TimerCommand
 {
 public:
      ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+     ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
      ~ReceiverCommand();
 protected:
     SyncManager*syncManager;
+    IDeviceSet*_iDeviceSet;
     IDeviceSetSettings*subject;
 };
 
@@ -74,6 +77,8 @@ class AttenuatorCommand:public ReceiverCommand
 {
 public:
     AttenuatorCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+    AttenuatorCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
+    AttenuatorCommand();
     void execute()override;
 };
 

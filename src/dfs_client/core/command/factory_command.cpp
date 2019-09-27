@@ -8,6 +8,12 @@ AttenuatorCommand* FactoryCommand::getAttenuatorCommand(SyncManager *syncManager
     return new AttenuatorCommand(syncManager,subject);
 }
 
+AttenuatorCommand* FactoryCommand::getAttenuatorCommand(IDeviceSet *iDeviceSet, IDeviceSetSettings *subject)
+{
+    return new AttenuatorCommand(iDeviceSet,subject);
+}
+
+
 PreselectorCommand* FactoryCommand::getPreselectorCommand(SyncManager *syncManager,IDeviceSetSettings *subject)
 {
     return new PreselectorCommand(syncManager,subject);

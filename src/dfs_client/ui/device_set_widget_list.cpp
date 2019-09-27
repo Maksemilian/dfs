@@ -12,8 +12,27 @@ DeviceSetListWidget::DeviceSetListWidget()
             this,&DeviceSetListWidget::onStationItemSelected);
 }
 
+void DeviceSetListWidget::setCommand(const proto::receiver::Command &command)
+{
+    QList<QListWidgetItem*> itemList=selectedItems();
+    for(QListWidgetItem*item:itemList){
+        DeviceSetWidget*widget=qobject_cast<DeviceSetWidget*>(itemWidget(item));
+        if(widget){
+            widget->setDeviceSetCommand(command);
+            counter++;
+        }
+    }
+}
+
 void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
 {
+    connect(deviceSetWidget,&DeviceSetWidget::commandSuccessed,
+            [this]{
+        if((--counter)==0){
+            qDebug()<<"ALL COMMAND SUCCESSED";
+            emit this->commandSucessed();
+        }
+    });
     QListWidgetItem *stationPanelItem = new QListWidgetItem(this);
     stationPanelItem->setSizeHint(deviceSetWidget->sizeHint());
     stationPanelItem->setSelected(true);

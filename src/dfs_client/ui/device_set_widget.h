@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <memory>
 #include "core/network/device_set_client.h"
+#include "receiver.pb.h"
 
 class QLabel;
 class QComboBox;
@@ -17,6 +18,9 @@ public:
     void setAddres(const QString &address,quint16 port);
     QString address();
     quint16 port();
+    void setDeviceSetCommand(const proto::receiver::Command &command);
+signals:
+    void commandSuccessed();
 public slots:
     void connectToDeviceSet();
 private slots:

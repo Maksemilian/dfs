@@ -27,6 +27,9 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     connect(_deviceSetClient.get(),&DeviceSetClient::deviceSetReady,
             this,&DeviceSetWidget::onDeviceSetReady);
 
+    connect(_deviceSetClient.get(),&DeviceSetClient::commandSuccessed,
+            this,&DeviceSetWidget::commandSuccessed);
+
     connect(_deviceSetClient.get(),&DeviceSetClient::disconnected,
             this,&DeviceSetWidget::onDeviceSetDisconnected);
 
@@ -56,6 +59,11 @@ void DeviceSetWidget::onDeviceSetCommandFailed(const QString &errorString)
 {
 qDebug()<<errorString;
 //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОШИБКИ
+}
+
+void DeviceSetWidget::setDeviceSetCommand(const proto::receiver::Command &command)
+{
+    _deviceSetClient->sendCommand(command);
 }
 
 void DeviceSetWidget::setAddres(const QString &address, quint16 port)

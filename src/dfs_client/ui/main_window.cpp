@@ -208,11 +208,13 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
 
     //attenuator BUTTON
     pbAttenuatorEnable=new SwitchButton("Atten Enable","Atten Disable",false,this,bottomToolBar);
-    pbAttenuatorEnable->setUserData(USER_DATA_ID,FactoryCommand::getAttenuatorCommand(syncManager,this));
+    pbAttenuatorEnable->setUserData(USER_DATA_ID,
+                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
 
     //attenuator COMBO BOX
     cbAttenuationLevel=new AttenuatorComboBox(this,bottomToolBar);
-    cbAttenuationLevel->setUserData(USER_DATA_ID,FactoryCommand::getAttenuatorCommand(syncManager,this));
+    cbAttenuationLevel->setUserData(USER_DATA_ID,//TODO SYNC MANAGER
+                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
 
     //preamplifier BUTTON
     pbPreamplifierEnable=new SwitchButton("Pream Enable","Pream Disable",false,this,bottomToolBar);

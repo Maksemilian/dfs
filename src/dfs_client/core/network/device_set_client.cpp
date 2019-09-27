@@ -177,10 +177,11 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
     d->commandQueue.dequeue();
 }
 
-void DeviceSetClient::sendCommand(proto::receiver::Command &command)
+void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
 {
+    d->commandQueue.enqueue(command.command_type());
     proto::receiver::ClientToHost clientToHost;
-    clientToHost.set_allocated_command(&command);
+    clientToHost.set_allocated_command(&const_cast<proto::receiver::Command&>(command));
     d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
 }
 
@@ -209,7 +210,7 @@ void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
     command.set_samples_per_buffer(settings.samplesPerBuffer);
     command.set_ddc1_frequency(settings.frequency);
 
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -218,7 +219,7 @@ void DeviceSetClient::setPower(bool state)
     proto::receiver::Command command;
     state ? command.set_command_type(proto::receiver::SET_POWER_ON):
             command.set_command_type(proto::receiver::SET_POWER_OFF);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -228,7 +229,7 @@ void DeviceSetClient::setAttenuator(quint32 attenuator)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ATTENUATOR);
     command.set_attenuator(attenuator);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -237,7 +238,7 @@ void DeviceSetClient::startDDC1Stream(quint32 samplesPerBuffer)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::START_DDC1);
     command.set_samples_per_buffer(samplesPerBuffer);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -245,7 +246,7 @@ void DeviceSetClient::stopDDC1Stream()
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::STOP_DDC1);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -259,7 +260,7 @@ void DeviceSetClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency
     preselectors->set_high_frequency(highFrequency);
     command.set_command_type(proto::receiver::SET_PRESELECTORS);
     command.set_allocated_preselectors(preselectors);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -268,7 +269,7 @@ void DeviceSetClient::setAdcNoiceBlankerEnabled(bool state)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
     command.set_adc_noice_blanker_enebled(state);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -278,7 +279,7 @@ void DeviceSetClient::setAdcNoiceBlankerThreshold(quint16 threshold)
     void *value=&threshold;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
     command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -288,7 +289,7 @@ void DeviceSetClient::setPreamplifierEnabled(bool state)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
     command.set_preamplifier_enebled(state);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -297,7 +298,7 @@ void DeviceSetClient::setDDC1Frequency(quint32 ddc1Frequency)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
     command.set_ddc1_frequency(ddc1Frequency);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 
@@ -306,7 +307,7 @@ void DeviceSetClient::setDDC1Type(quint32 typeIndex)
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DDC1_TYPE);
     command.set_ddc1_type(typeIndex);
-    d->commandQueue.enqueue(command.command_type());
+//    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
 

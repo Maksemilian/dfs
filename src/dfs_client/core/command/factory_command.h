@@ -2,6 +2,8 @@
 #define FACTORY_COMMAND_H
 
 class IDeviceSetSettings ;
+class IDeviceSet;
+
 class WidgetDirector;
 class MacroCommand;
 
@@ -40,6 +42,7 @@ public:
     static AdcEnabledCommand *getAdcEnabledCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
     static AdcThresholdCommand *getAdcThresholdCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
     static AttenuatorCommand *getAttenuatorCommand(SyncManager *syncManager,  IDeviceSetSettings *subject);
+    static AttenuatorCommand *getAttenuatorCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
 
     static PowerCommandOn *getPowerComandOn(SyncManager *syncManager,IDeviceSetSettings *subject);
     static PowerCommandOff *getPowerComandOff(SyncManager *syncManager,IDeviceSetSettings *subject);

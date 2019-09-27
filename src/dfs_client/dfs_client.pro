@@ -61,7 +61,8 @@ HEADERS += \
     core/network/stream_clieint.h \
     core/network/device_set_client.h \
     ui/device_set_widget.h \
-    ui/device_set_widget_list.h
+    ui/device_set_widget_list.h \
+    interface/ideviceset.h
 
 SOURCES += \
     core/command/factory_command.cpp \
