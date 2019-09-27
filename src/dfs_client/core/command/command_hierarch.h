@@ -12,7 +12,7 @@ class IDeviceSet;
 class SyncManager;
 class WidgetDirector;
 
-class AbstractCommand
+class AbstractCommand:public QObjectUserData
 {
 public:
       AbstractCommand();
@@ -21,7 +21,7 @@ public:
 };
 
 
-class TimerCommand:public QObject,public QObjectUserData,public AbstractCommand
+class TimerCommand:public QObject,public AbstractCommand
 {
     Q_OBJECT
 public:
@@ -46,6 +46,7 @@ protected:
     SyncManager*syncManager;
     IDeviceSet*_iDeviceSet;
     IDeviceSetSettings*subject;
+
 };
 
 class AddTaskCommand:public TimerCommand
@@ -76,7 +77,6 @@ public:
 class AttenuatorCommand:public ReceiverCommand
 {
 public:
-    AttenuatorCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
     AttenuatorCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     AttenuatorCommand();
     void execute()override;
@@ -86,9 +86,7 @@ public:
 class PreselectorCommand:public ReceiverCommand
 {
 public:
-
-    PreselectorCommand(SyncManager*syncManager,IDeviceSetSettings *subject);
-
+    PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -96,16 +94,15 @@ public:
 class PreamplifireCommand:public ReceiverCommand
 {
 public:
-    PreamplifireCommand(SyncManager*syncManager,IDeviceSetSettings *subject);
+    PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
-
 };
 
 //************************* ADC ENABLED
 class AdcEnabledCommand:public ReceiverCommand
 {
 public:
-    AdcEnabledCommand(SyncManager*syncManager,IDeviceSetSettings *subject);
+    AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -113,7 +110,7 @@ public:
 class AdcThresholdCommand:public ReceiverCommand
 {
 public:
-    AdcThresholdCommand(SyncManager*syncManager,IDeviceSetSettings *subject);
+    AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -121,7 +118,7 @@ public:
 class PowerCommandOn:public ReceiverCommand
 {
 public:
-    PowerCommandOn(SyncManager*syncManager,IDeviceSetSettings *subject);
+    PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -129,7 +126,7 @@ public:
 class PowerCommandOff:public ReceiverCommand
 {
 public:
-    PowerCommandOff(SyncManager*syncManager,IDeviceSetSettings *subject);
+    PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -137,7 +134,7 @@ public:
 class SettingsCommand:public ReceiverCommand
 {
 public:
-    SettingsCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+    SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute()override;
 };
 
@@ -145,7 +142,7 @@ public:
 class StartDDC1Command:public ReceiverCommand
 {
 public:
-    StartDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject);
+    StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute() override;
 };
 
@@ -153,7 +150,7 @@ public:
 class StopDDC1Command:public ReceiverCommand
 {
 public:
-    StopDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject);
+    StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute() override;
 };
 
@@ -161,8 +158,7 @@ public:
 class SetDDC1TypeCommand:public ReceiverCommand
 {
 public:
-    SetDDC1TypeCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
-
+    SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute() override;
 };
 
@@ -170,24 +166,25 @@ public:
 class FrequencyCommand:public ReceiverCommand
 {
 public:
-    FrequencyCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+    FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute() override;
 };
 //************************* MACRO
-class MacroCommand:public TimerCommand
+class MacroCommand:public AbstractCommand
 {
-    static const int WAIT_TIME_MS=3000;
+//    static const int WAIT_TIME_MS=3000;
 public:
     MacroCommand();
-    void onTimerTimeout()override;
+//    void onTimerTimeout()override;
     void execute()override;
-    void addCommand(TimerCommand*command);
-    void removeCommand(TimerCommand*command);
+    void addCommand(ReceiverCommand*command);
+    void removeCommand(ReceiverCommand*command);
 private:
-    void stop();
-    int commandCounter=0;
-    QList<TimerCommand*>commands;
-    QTime waitTime;
+    QList<ReceiverCommand*>_commands;
+//    void stop();
+//    int commandCounter=0;
+//    QList<TimerCommand*>commands;
+//    QTime waitTime;
 };
 
 #endif // COMMAND_HIERARCH_H

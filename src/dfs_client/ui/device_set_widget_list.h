@@ -1,18 +1,19 @@
 #ifndef DEVICE_SET_WIDGET_LIST_H
 #define DEVICE_SET_WIDGET_LIST_H
 
-#include <QListWidget>
 
 #include "receiver.pb.h"
 #include "interface/ideviceset.h"
 
+#include <QListWidget>
+#include <QQueue>
 class DeviceSetWidget;
 
 class DeviceSetListWidget : public QListWidget,public IDeviceSet
 {
     Q_OBJECT
 public:
-    DeviceSetListWidget();
+    DeviceSetListWidget(QWidget*parent=nullptr);
     void addDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void setCommand(const proto::receiver::Command &command)override;
@@ -23,7 +24,10 @@ public slots:
 private slots:
     void onStationItemSelected(QListWidgetItem *item);
 private:
-    int counter=0;
+    void setAllDeviceSet(const proto::receiver::Command &command);
+private:
+    int _counter=0;
+    QQueue<proto::receiver::Command>_commandQueue;
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

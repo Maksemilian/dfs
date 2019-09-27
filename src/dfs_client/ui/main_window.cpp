@@ -38,7 +38,7 @@ MainWindow:: MainWindow(QWidget *parent):
     //TODO FIX THIS CODE
     syncManager=&SyncManager::instance();
 
-    deviceSetListWidget=new DeviceSetListWidget;
+    deviceSetListWidget=new DeviceSetListWidget(this);
 
     setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
     deviceSetListWidget->addDeviceSetWidget(
@@ -144,10 +144,10 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
 
     //DDC1 Frequency
     MacroCommand *macroFreq=FactoryCommand::getMacroCommand();
-    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
+//    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
+    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget,this));
+    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
     //TODO УБРАНЫ КОМАНДЫ СИНХРОНИЗАЦИИ
 //    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
@@ -158,10 +158,10 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
 
     //DDC1 Bandwith
     MacroCommand *macroBandwith=FactoryCommand::getMacroCommand();
-    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
+//    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
+    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(deviceSetListWidget,this));
+    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
 //    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
     cbDDC1Bandwith=new BandwithComboBox(this,topToolBar);
@@ -191,18 +191,18 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     pbPower=new SwitchButton("On","Off",false,this,bottomToolBar);
 
     MacroCommand*macroCommand=FactoryCommand::getMacroCommand();
-    macroCommand->addCommand(FactoryCommand::getPowerComandOn(syncManager,this));
-    macroCommand->addCommand(FactoryCommand::getSettingsCommand(syncManager,this));
-    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
-    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+    macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget,this));
+    macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget,this));
+    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
+//    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 //    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     pbPower->setUserData(USER_DATA_POWER_ON,macroCommand);
 
     MacroCommand*mc=FactoryCommand::getMacroCommand();
-    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    mc->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
-    mc->addCommand(FactoryCommand::getPowerComandOff(syncManager,this));
+//    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
+    mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget,this));
 
     pbPower->setUserData(USER_DATA_POWER_OFF,mc);
 
@@ -218,24 +218,24 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
 
     //preamplifier BUTTON
     pbPreamplifierEnable=new SwitchButton("Pream Enable","Pream Disable",false,this,bottomToolBar);
-    pbPreamplifierEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreamplifireCommand(syncManager,this));
+    pbPreamplifierEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreamplifireCommand(deviceSetListWidget,this));
 
     //preseector BUTTON
     pbPreselectorEnable=new SwitchButton("Pres Enable","Pres Disable",false,this,bottomToolBar);
-    pbPreselectorEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(syncManager,this));
+    pbPreselectorEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
 
     //preseector LOW FREQUENCY COMBO BOX
     preselectorWidget=new PreselectorWidget(this,bottomToolBar);
-    preselectorWidget->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(syncManager,this));
+    preselectorWidget->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
 
     //ADC NOICE BLANKER BUTTON
     pbAdcNoiceBlanckerEnabled=new SwitchButton("ADC Enable","ADC Disable",false,this,bottomToolBar);
-    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID,FactoryCommand::getAdcEnabledCommand(syncManager,this));
+    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID,FactoryCommand::getAdcEnabledCommand(deviceSetListWidget,this));
 
     //ADC NOICE BLANKER LENE EDIT
     leAdcNoiceBlanckerThreshold=new ToolBarLineEdit(this,bottomToolBar);
     leAdcNoiceBlanckerThreshold->setFixedWidth(100);
-    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID,FactoryCommand::getAdcThresholdCommand(syncManager,this));
+    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID,FactoryCommand::getAdcThresholdCommand(deviceSetListWidget,this));
     // End Widgets
 
     bottomToolBar->addWidget(pbAttenuatorEnable);

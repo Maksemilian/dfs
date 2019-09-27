@@ -51,17 +51,17 @@ ReceiverCommand::ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subj
 ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
     :TimerCommand (),_iDeviceSet(iDeviceSet),subject(subject)
 {
-    DeviceSetListWidget*d=dynamic_cast<DeviceSetListWidget*>(iDeviceSet);
+    //    DeviceSetListWidget*d=dynamic_cast<DeviceSetListWidget*>(iDeviceSet);
 
-    connect(d,&DeviceSetListWidget::commandSucessed,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
+    //    connect(d,&DeviceSetListWidget::commandSucessed,[this]{
+    //        done=true;
+    //        this->subject->setArrowCursor();
+    //    });
 
-//    connect(_iDeviceSet,&IDeviceSet::commandSucessed,[this]{
-//        done=true;
-//        this->subject->setArrowCursor();
-//    });
+    //    connect(_iDeviceSet,&IDeviceSet::commandSucessed,[this]{
+    //        done=true;
+    //        this->subject->setArrowCursor();
+    //    });
 }
 
 
@@ -87,11 +87,11 @@ void AddTaskCommand::execute()
 SyncStartCommand::SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :ReceiverCommand (syncManager,subject)
 {
-//    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
-//        done=true;
-//        this->subject->setArrowCursor();
-//        qDebug()<<"SyncStartCommand::SyncStartCommand";
-//    });
+    //    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
+    //        done=true;
+    //        this->subject->setArrowCursor();
+    //        qDebug()<<"SyncStartCommand::SyncStartCommand";
+    //    });
 }
 
 void SyncStartCommand::execute()
@@ -99,7 +99,7 @@ void SyncStartCommand::execute()
     subject->setWaitCursor();
     qDebug()<<"SR:"<<subject->getSampleRateForBandwith()<<"SB:"<< subject->getSamplesPerBuffer();
     syncManager->start(subject->getDDC1Frequency(),
-                subject->getSampleRateForBandwith(),
+                       subject->getSampleRateForBandwith(),
                        subject->getSamplesPerBuffer());
 }
 
@@ -108,11 +108,11 @@ void SyncStartCommand::execute()
 SyncStopCommand::SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
     :ReceiverCommand (syncManager,subject)
 {
-//    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
-//        done=true;
-//        this->subject->setArrowCursor();
-//        qDebug()<<"SyncStopCommand::SyncStopCommand";
-//    });
+    //    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
+    //        done=true;
+    //        this->subject->setArrowCursor();
+    //        qDebug()<<"SyncStopCommand::SyncStopCommand";
+    //    });
 }
 
 void SyncStopCommand::execute()
@@ -123,11 +123,12 @@ void SyncStopCommand::execute()
 
 //************************* ATT
 
-AttenuatorCommand::AttenuatorCommand(SyncManager*syncManager,IDeviceSetSettings*subject):
-    ReceiverCommand(syncManager,subject){}
+
 
 AttenuatorCommand::AttenuatorCommand(IDeviceSet*syncManager,IDeviceSetSettings*subject):
-    ReceiverCommand(syncManager,subject){}
+    ReceiverCommand(syncManager,subject){
+
+}
 
 void AttenuatorCommand::execute()
 {
@@ -136,188 +137,233 @@ void AttenuatorCommand::execute()
     command.set_command_type(proto::receiver::SET_ATTENUATOR);
     command.set_attenuator(subject->getAttenuator());
 
-    subject->setWaitCursor();
+    //    subject->setWaitCursor();
     _iDeviceSet->setCommand(command);
-//    syncManager->setBroadcastAttenuator(subject->getAttenuator());
+    //    syncManager->setBroadcastAttenuator(subject->getAttenuator());
 }
 
 //************************* PRES
 
-PreselectorCommand::PreselectorCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject){}
+PreselectorCommand::PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject){}
 
 void PreselectorCommand::execute()
 {
-    subject->setWaitCursor();
-    syncManager->setBroadcastPreselector(subject->getPreselectors().first,
-                                         subject->getPreselectors().second);
+    qDebug()<<"Set Pres";
+    proto::receiver::Command command;
+    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
+    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
+    preselectors->set_low_frequency(subject->getPreselectors().first);
+    preselectors->set_high_frequency(subject->getPreselectors().second);
+    command.set_command_type(proto::receiver::SET_PRESELECTORS);
+    command.set_allocated_preselectors(preselectors);
+
+    _iDeviceSet->setCommand(command);
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastPreselector(subject->getPreselectors().first,
+    //                                         subject->getPreselectors().second);
 }
 
 //************************* PREAM
 
-PreamplifireCommand::PreamplifireCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {}
+PreamplifireCommand::PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PreamplifireCommand::execute()
 {
-    subject->setWaitCursor();
-    syncManager->setBroadcastPreamplifierEnabled(subject->getPreamplifierEnabled());
+    qDebug()<<"Set Pream";
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
+    command.set_preamplifier_enebled(subject->getPreamplifierEnabled());
+
+    _iDeviceSet->setCommand(command);
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastPreamplifierEnabled(subject->getPreamplifierEnabled());
+    //
 }
 
 //************************* ADC EN
 
-AdcEnabledCommand::AdcEnabledCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {}
+AdcEnabledCommand::AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject)    {}
 
 void  AdcEnabledCommand::execute()
 {
-    subject->setWaitCursor();
-    syncManager->setBroadcastAdcEnabled(subject->getAdcNoiceBlankerEnabled());
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
+    command.set_adc_noice_blanker_enebled(subject->getAdcNoiceBlankerEnabled());
+    _iDeviceSet->setCommand(command);
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastAdcEnabled(subject->getAdcNoiceBlankerEnabled());
 }
 
 //************************* ADC THR
 
-AdcThresholdCommand::AdcThresholdCommand(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {}
+AdcThresholdCommand::AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject)    {}
 
 void AdcThresholdCommand::execute()
 {
-    subject->setWaitCursor();
-    syncManager->setBroadcastAdcThreshold(subject->getAdcNoiceBlankerThreshold());
+    quint16 thr=subject->getAdcNoiceBlankerThreshold();
+    proto::receiver::Command command;
+    void *value=&thr;
+    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
+    command.set_adc_noice_blanker_threshold(value,sizeof(thr));
+    _iDeviceSet->setCommand(command);
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastAdcThreshold(subject->getAdcNoiceBlankerThreshold());
 }
 
 //************************* POWER ON
 
-PowerCommandOn::PowerCommandOn(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {}
+PowerCommandOn::PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PowerCommandOn::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->setBroadcastPowerOn();
+    qDebug()<<"Set Pream";
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_POWER_ON);
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastPowerOn();
 }
 
 //************************* POWER OFF
 
-PowerCommandOff::PowerCommandOff(SyncManager*syncManager,IDeviceSetSettings *subject)
-    : ReceiverCommand(syncManager,subject)    {}
+PowerCommandOff::PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PowerCommandOff::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->setBroadcastPowerOff();
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_POWER_OFF);
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastPowerOff();
 }
 
 //************************* SETTINGS
 
-SettingsCommand::SettingsCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {
+SettingsCommand::SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :ReceiverCommand(iDeviceSet,subject)    {
 }
 
 void SettingsCommand::execute()
 {
-    done=false;
-    QVariant v;
-    v.setValue(subject->getSettings());
+    DeviceSetSettings settings=subject->getSettings();
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
 
-    subject->setWaitCursor();
-    syncManager->setBroadcastSettings(subject->getSettings());
+    command.set_attenuator(settings.attenuator);
+    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
+    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
+    preselectors->set_low_frequency(settings.preselectors.first);
+    preselectors->set_high_frequency(settings.preselectors.second);
+    command.set_allocated_preselectors(preselectors);
+
+    command.set_preamplifier_enebled(settings.preamplifier);
+    command.set_adc_noice_blanker_enebled(settings.adcEnabled);
+
+    quint16 threshold=settings.threshold;
+    void *value=&threshold;
+    command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
+
+    command.set_ddc1_type(settings.ddcType);
+    command.set_samples_per_buffer(settings.samplesPerBuffer);
+    command.set_ddc1_frequency(settings.frequency);
+    _iDeviceSet->setCommand(command);
+//    done=false;
+//    QVariant v;
+//    v.setValue(subject->getSettings());
+
+//    subject->setWaitCursor();
+//    syncManager->setBroadcastSettings(subject->getSettings());
 }
 
 //************************* START DDC
 
-StartDDC1Command::StartDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {}
+StartDDC1Command::StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :ReceiverCommand(iDeviceSet,subject)    {}
 
 void StartDDC1Command::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->startBroadcastDDC1(subject->getSamplesPerBuffer());
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::START_DDC1);
+    command.set_samples_per_buffer(subject->getSamplesPerBuffer());
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->startBroadcastDDC1(subject->getSamplesPerBuffer());
 }
 
 //************************* STOP DDC
 
-StopDDC1Command::StopDDC1Command(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {}
+StopDDC1Command::StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :ReceiverCommand(iDeviceSet,subject)    {}
 
 void StopDDC1Command::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->stopBroadcastDDC1();
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::STOP_DDC1);
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->stopBroadcastDDC1();
 }
 
 //************************* RESTART
 
-SetDDC1TypeCommand::SetDDC1TypeCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {}
+SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :ReceiverCommand(iDeviceSet,subject)    {}
 
 void SetDDC1TypeCommand::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->setBroadcastDDC1Type(subject->getDDC1Type());
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_DDC1_TYPE);
+    command.set_ddc1_type(subject->getDDC1Type());
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastDDC1Type(subject->getDDC1Type());
 }
 
 //************************* FREQ
 
-FrequencyCommand::FrequencyCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand(syncManager,subject)    {}
+FrequencyCommand::FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+    :ReceiverCommand(iDeviceSet,subject)    {}
 
 void FrequencyCommand::execute()
 {
-    done=false;
-    subject->setWaitCursor();
-    syncManager->setBroadcastDDC1Frequency(subject->getDDC1Frequency());
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
+    command.set_ddc1_frequency(subject->getDDC1Frequency());
+    _iDeviceSet->setCommand(command);
+    //    done=false;
+    //    subject->setWaitCursor();
+    //    syncManager->setBroadcastDDC1Frequency(subject->getDDC1Frequency());
 }
 
 //************************* MACRO
 
 MacroCommand::MacroCommand(){}
 
-void MacroCommand::onTimerTimeout()
-{
-    if(commands[commandCounter]->isDone()){
-        commandCounter++;
-
-        if(commandCounter<commands.size()){
-            waitTime.start();
-            commands[commandCounter]->execute();
-            qDebug()<<"*************MACRO EXEC";
-        }else {
-            qDebug()<<"*********************STOP MACRO";
-            stop();
-        }
-    }else if (waitTime.elapsed()>WAIT_TIME_MS) {
-        qDebug()<<"*********************ERROR MACRO COMMAND";
-        stop();
-    }
-}
-
-void MacroCommand::stop()
-{
-    commandCounter=0;
-    timer.stop();
-}
-
 void MacroCommand::execute()
 {
     qDebug()<<"====================MackroCommand EXEC";
-    timer.start(TimerCommand::TIMER_TIMEOUT);
-    waitTime.start();
-    commands[commandCounter]->execute();
+
+    for(ReceiverCommand*rc:_commands)
+        rc->execute();
 }
 
-void MacroCommand::addCommand(TimerCommand*command)
+void MacroCommand::addCommand(ReceiverCommand*command)
 {
-    commands<<command;
+    _commands<<command;
 }
 
-void MacroCommand::removeCommand(TimerCommand*command)
+void MacroCommand::removeCommand(ReceiverCommand*command)
 {
-    commands.removeOne(command);
+    _commands.removeOne(command);
 }
-
