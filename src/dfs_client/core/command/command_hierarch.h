@@ -36,10 +36,9 @@ protected:
     bool done;
 };
 
-class ReceiverCommand:public TimerCommand
+class ReceiverCommand:public AbstractCommand
 {
 public:
-     ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
      ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
      ~ReceiverCommand();
 protected:
@@ -49,30 +48,30 @@ protected:
 
 };
 
-class AddTaskCommand:public TimerCommand
-{
-public:
-    AddTaskCommand(WidgetDirector*widgetDirector,IDeviceSetSettings*subkect);
-    void execute()override;
-private:
-    WidgetDirector*wd;
-    IDeviceSetSettings*subject;
-};
+//class AddTaskCommand:public TimerCommand
+//{
+//public:
+//    AddTaskCommand(WidgetDirector*widgetDirector,IDeviceSetSettings*subkect);
+//    void execute()override;
+//private:
+//    WidgetDirector*wd;
+//    IDeviceSetSettings*subject;
+//};
 
-class SyncStartCommand:public ReceiverCommand
-{
-public:
-    SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
-    void execute()override;
-};
+//class SyncStartCommand:public ReceiverCommand
+//{
+//public:
+//    SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+//    void execute()override;
+//};
 
 
-class SyncStopCommand:public ReceiverCommand
-{
-public:
-    SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
-    void execute()override;
-};
+//class SyncStopCommand:public ReceiverCommand
+//{
+//public:
+//    SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
+//    void execute()override;
+//};
 //************************* ATTENUATOR
 class AttenuatorCommand:public ReceiverCommand
 {

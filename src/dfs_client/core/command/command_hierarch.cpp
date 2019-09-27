@@ -37,89 +37,70 @@ void TimerCommand::setDone(bool done)
 
 TimerCommand::~TimerCommand(){}
 
-ReceiverCommand::ReceiverCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :TimerCommand (),syncManager(syncManager),subject(subject)
-{
-    connect(syncManager,&SyncManager::commandSucessed,[this]{
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
 
 #include "ui/device_set_widget_list.h"
 
 ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
-    :TimerCommand (),_iDeviceSet(iDeviceSet),subject(subject)
+    :AbstractCommand (),_iDeviceSet(iDeviceSet),subject(subject)
 {
-    //    DeviceSetListWidget*d=dynamic_cast<DeviceSetListWidget*>(iDeviceSet);
-
-    //    connect(d,&DeviceSetListWidget::commandSucessed,[this]{
-    //        done=true;
-    //        this->subject->setArrowCursor();
-    //    });
-
-    //    connect(_iDeviceSet,&IDeviceSet::commandSucessed,[this]{
-    //        done=true;
-    //        this->subject->setArrowCursor();
-    //    });
 }
 
 
 ReceiverCommand::~ReceiverCommand()=default;
 
-AddTaskCommand::AddTaskCommand(WidgetDirector *widgetDirector,IDeviceSetSettings*subject)
-    :TimerCommand (),wd(widgetDirector),subject(subject)
-{
-    QObject::connect(wd,&WidgetDirector::taskAdded,[this](){
-        done=true;
-        this->subject->setArrowCursor();
-    });
-}
+//AddTaskCommand::AddTaskCommand(WidgetDirector *widgetDirector,IDeviceSetSettings*subject)
+//    :TimerCommand (),wd(widgetDirector),subject(subject)
+//{
+////    QObject::connect(wd,&WidgetDirector::taskAdded,[this](){
+////        done=true;
+////        this->subject->setArrowCursor();
+////    });
+//}
 
-void AddTaskCommand::execute()
-{
-    subject->setWaitCursor();
-    wd->onAddSelectedTask(QString::number(subject->getDDC1Frequency()),QDateTime::currentDateTime());
-}
+//void AddTaskCommand::execute()
+//{
+//    subject->setWaitCursor();
+//    wd->onAddSelectedTask(QString::number(subject->getDDC1Frequency()),QDateTime::currentDateTime());
+//}
 
-//************************* SYNC START
+////************************* SYNC START
 
-SyncStartCommand::SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand (syncManager,subject)
-{
-    //    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
-    //        done=true;
-    //        this->subject->setArrowCursor();
-    //        qDebug()<<"SyncStartCommand::SyncStartCommand";
-    //    });
-}
+//SyncStartCommand::SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
+//    :ReceiverCommand (syncManager,subject)
+//{
+//    //    QObject::connect(syncManager,&SyncManager::syncStarted,[this]{
+//    //        done=true;
+//    //        this->subject->setArrowCursor();
+//    //        qDebug()<<"SyncStartCommand::SyncStartCommand";
+//    //    });
+//}
 
-void SyncStartCommand::execute()
-{
-    subject->setWaitCursor();
-    qDebug()<<"SR:"<<subject->getSampleRateForBandwith()<<"SB:"<< subject->getSamplesPerBuffer();
-    syncManager->start(subject->getDDC1Frequency(),
-                       subject->getSampleRateForBandwith(),
-                       subject->getSamplesPerBuffer());
-}
+//void SyncStartCommand::execute()
+//{
+//    subject->setWaitCursor();
+//    qDebug()<<"SR:"<<subject->getSampleRateForBandwith()<<"SB:"<< subject->getSamplesPerBuffer();
+//    syncManager->start(subject->getDDC1Frequency(),
+//                       subject->getSampleRateForBandwith(),
+//                       subject->getSamplesPerBuffer());
+//}
 
-//************************* SYNC STOP
+////************************* SYNC STOP
 
-SyncStopCommand::SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
-    :ReceiverCommand (syncManager,subject)
-{
-    //    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
-    //        done=true;
-    //        this->subject->setArrowCursor();
-    //        qDebug()<<"SyncStopCommand::SyncStopCommand";
-    //    });
-}
+//SyncStopCommand::SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject)
+//    :ReceiverCommand (syncManager,subject)
+//{
+//    //    QObject::connect(syncManager,&SyncManager::syncStoped,[this]{
+//    //        done=true;
+//    //        this->subject->setArrowCursor();
+//    //        qDebug()<<"SyncStopCommand::SyncStopCommand";
+//    //    });
+//}
 
-void SyncStopCommand::execute()
-{
-    subject->setWaitCursor();
-    syncManager->stop();
-}
+//void SyncStopCommand::execute()
+//{
+//    subject->setWaitCursor();
+//    syncManager->stop();
+//}
 
 //************************* ATT
 
