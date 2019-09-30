@@ -1,6 +1,6 @@
-#include "device_set_widget_list.h"
+#include "client_device_set_widget_list.h"
 
-#include "device_set_widget.h"
+#include "client_device_set_widget.h"
 
 #include <QDebug>
 #include <QVBoxLayout>

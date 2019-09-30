@@ -3,23 +3,25 @@
 
 #include "main_window_settings.h"
 
-#include "core/command/factory_command.h"
-#include "core/command/command_hierarch.h"
+#include "command_factory.h"
+#include "command_hierarch.h"
 
-#include "core/sync_manager.h"
+#include "sync_manager.h"
 
-#include "tool/frequency_line_edit.h"
-#include "tool/preselector_widget.h"
-#include "tool/switch_button.h"
-#include "tool/widgets.h"
+#include "tool_frequency_line_edit.h"
+#include "tool_preselector_widget.h"
+#include "tool_switch_button.h"
+#include "tool_widgets.h"
 
 #include "ui/db/receiver_station_panel.h"
 #include "ui/db/widget_director.h"
 
-#include "ui/plot/channel_plot.h"
-#include "ui/plot/elips_plot.h"
-#include "device_set_widget.h"
-#include "device_set_widget_list.h"
+#include "plot_channel.h"
+#include "plot_elipse.h"
+
+#include "client_device_set_widget.h"
+#include "client_device_set_widget_list.h"
+
 #include <QDockWidget>
 #include <QCheckBox>
 #include <QDebug>

@@ -1,7 +1,7 @@
 #ifndef STREAM_CLIEINT_H
 #define STREAM_CLIEINT_H
 
-#include "interface/i_stream_reader.h"
+#include "i_stream_reader.h"
 struct DeviceSetSettings;
 
 class RingPacketBuffer;

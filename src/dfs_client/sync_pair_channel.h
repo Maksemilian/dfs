@@ -1,7 +1,7 @@
 #ifndef SYNC_PAIR_CHANNEL_H
 #define SYNC_PAIR_CHANNEL_H
 
-#include "interface/i_stream_reader.h"
+#include "i_stream_reader.h"
 
 #include "ippbase.h"
 

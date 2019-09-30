@@ -2,7 +2,7 @@
 
 #include "client_device_set.h"
 
-#include "interface/i_device_set_settings.h"
+#include "i_device_set_settings.h"
 
 #include "peer_wire_client.h"
 

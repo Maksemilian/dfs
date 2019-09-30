@@ -1,7 +1,7 @@
 #ifndef SWITCH_BUTTON_H
 #define SWITCH_BUTTON_H
 
-#include "interface/i_toolbar.h"
+#include "i_toolbar.h"
 
 #include <QPushButton>
 

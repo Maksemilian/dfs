@@ -1,7 +1,7 @@
 #ifndef SYNC_MANAGER_H
 #define SYNC_MANAGER_H
 
-#include "interface/i_device_set_settings.h"
+#include "i_device_set_settings.h"
 
 #include "sync_pair_channel.h"
 

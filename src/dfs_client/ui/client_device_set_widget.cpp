@@ -1,6 +1,6 @@
 #include "client_device_set_widget.h"
 
-#include "core/network/device_set_client.h"
+#include "client_device_set.h"
 
 #include <QGridLayout>
 #include <QLabel>

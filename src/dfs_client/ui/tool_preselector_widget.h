@@ -1,7 +1,7 @@
 #ifndef PRESELECTOR_WIDGET_H
 #define PRESELECTOR_WIDGET_H
 
-#include "interface/i_toolbar.h"
+#include "i_toolbar.h"
 
 #include <QWidget>
 class QComboBox;

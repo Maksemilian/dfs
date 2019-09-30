@@ -1,10 +1,9 @@
 #include "sync_manager.h"
-#include "core/network/device_set_client.h"
 #include "command.pb.h"
 
 #include <QDebug>
 
-#include <core/network/device_set_client.h>
+#include "client_device_set.h"
 
 const quint16 SyncManager::TIME_WAIT_RESPONCE=10000;
 const quint16 SyncManager::TIME_SINGLE_SHOT=200;

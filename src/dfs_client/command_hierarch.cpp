@@ -1,7 +1,7 @@
 #include "command_hierarch.h"
 
-#include "interface/i_device_set_settings.h"
-#include "interface/ideviceset.h"
+#include "i_device_set_settings.h"
+#include "i_deviceset.h"
 
 #include "receiver.pb.h"
 

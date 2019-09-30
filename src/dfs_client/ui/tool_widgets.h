@@ -1,7 +1,7 @@
 #ifndef WIDGETS_H
 #define WIDGETS_H
 
-#include "interface/i_toolbar.h"
+#include "i_toolbar.h"
 
 #include <QComboBox>
 #include <QHBoxLayout>

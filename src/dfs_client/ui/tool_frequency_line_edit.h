@@ -1,7 +1,7 @@
 #ifndef FREQUENCY_LINE_EDIT_H
 #define FREQUENCY_LINE_EDIT_H
 
-#include "interface/i_toolbar.h"
+#include "i_toolbar.h"
 
 #include <QLineEdit>
 

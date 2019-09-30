@@ -4,8 +4,8 @@
 #include "receiver_station_panel.h"
 #include "sync_task_view.h"
 
-#include "core/db/data_base.h"
-#include "core/sync_manager.h"
+#include "db.h""
+#include "sync_manager.h"
 
 #include <QPushButton>
 #include <QTextBrowser>

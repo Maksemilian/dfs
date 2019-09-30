@@ -1,5 +1,4 @@
 #include "tool_frequency_line_edit.h"
-#include "ui/tool/frequency_line_edit.h"
 
 #include <QKeyEvent>
 #include <QDebug>

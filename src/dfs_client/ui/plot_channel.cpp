@@ -1,5 +1,6 @@
 #include "plot_channel.h"
-#include "interface/i_sygnal_update.h"
+#include "i_sygnal_update.h"
+
 const int ChannelPlot::GRAPH_COLORS_COUNT=4;
 
 const QColor ChannelPlot::graphColors[ChannelPlot::GRAPH_COLORS_COUNT]={

@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <memory>
-#include "core/network/device_set_client.h"
+
+#include "client_device_set.h"
 #include "receiver.pb.h"
 
 class QLabel;

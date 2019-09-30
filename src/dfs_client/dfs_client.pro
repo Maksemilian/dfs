@@ -12,6 +12,7 @@ DEFINES +=QT_MESSAGELOGCONTEXT
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
+
 TEMPLATE = app
 TARGET = Client
 CONFIG +=console

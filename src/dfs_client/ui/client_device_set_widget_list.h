@@ -3,7 +3,7 @@
 
 
 #include "receiver.pb.h"
-#include "interface/ideviceset.h"
+#include "i_deviceset.h"
 
 #include <QListWidget>
 #include <QQueue>

@@ -1,7 +1,7 @@
 #ifndef ELIPS_PLOT_H
 #define ELIPS_PLOT_H
 
-#include "interface/i_sygnal_update.h"
+#include "i_sygnal_update.h"
 
 #include "qcustomplot.h"
 #include <QMutex>

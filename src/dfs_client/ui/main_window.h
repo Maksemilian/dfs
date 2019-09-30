@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "interface/i_device_set_settings.h"
+#include "i_device_set_settings.h"
 #include "main_window_settings.h"
 
 #include <QMainWindow>

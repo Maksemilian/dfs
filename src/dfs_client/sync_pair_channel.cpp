@@ -1,6 +1,6 @@
 #include "sync_pair_channel.h"
 
-#include "interface/i_sygnal_update.h"
+#include "i_sygnal_update.h"
 
 #include "packet.pb.h"
 
