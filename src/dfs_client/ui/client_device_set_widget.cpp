@@ -1,4 +1,4 @@
-#include "device_set_widget.h"
+#include "client_device_set_widget.h"
 
 #include "core/network/device_set_client.h"
 

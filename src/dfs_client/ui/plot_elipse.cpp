@@ -1,4 +1,4 @@
-#include "elips_plot.h"
+#include "plot_elipse.h"
 #include <QPointF>
 
 const QColor ElipsPlot::greenColor= QColor(0,255,0);

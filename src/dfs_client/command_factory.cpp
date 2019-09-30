@@ -1,4 +1,4 @@
-#include "factory_command.h"
+#include "command_factory.h"
 #include "command_hierarch.h"
 
 FactoryCommand::FactoryCommand()=default;

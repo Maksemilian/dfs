@@ -1,4 +1,4 @@
-#include "channel_plot.h"
+#include "plot_channel.h"
 #include "interface/i_sygnal_update.h"
 const int ChannelPlot::GRAPH_COLORS_COUNT=4;
 

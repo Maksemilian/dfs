@@ -1,4 +1,4 @@
-#include "device_set_client.h"
+#include "client_device_set.h"
 
 //TODO НУЖЕН ТОЛЬКО ДЛЯ СТРУКТУРЫ DeviceSetSettings
 #include "interface/i_device_set_settings.h"

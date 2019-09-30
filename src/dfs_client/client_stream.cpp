@@ -1,4 +1,4 @@
-#include "stream_clieint.h"
+#include "client_stream.h"
 
 #include "ring_packet_buffer.h"
 #include "peer_wire_client.h"

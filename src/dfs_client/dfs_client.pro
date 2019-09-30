@@ -39,56 +39,55 @@ HEADERS += \
     interface/i_sygnal_update.h \
     interface/i_toolbar.h \
     core/network/signal_sync.h \
-    core/command/factory_command.h \
-    core/command/command_hierarch.h \
-    core/db/data_base.h \
-    core/sync_pair_channel.h \
-    core/sync_manager.h \
-    ui/tool/frequency_line_edit.h \
-    ui/tool/switch_button.h \
-    ui/tool/preselector_widget.h \
-    ui/tool/widgets.h \
+    command_hierarch.h \
+    sync_pair_channel.h \
+    sync_manager.h \
     ui/db/widget_director.h \
     ui/db/list_station_panel_widget.h \
     ui/db/receiver_station_panel.h \
     ui/db/sync_task_view.h \
-    ui/plot/monitoring_signal.h \
-    ui/plot/channel_plot.h \
-    ui/plot/elips_plot.h \
     ui/main_window.h \
     ui/main_window_settings.h \
-    core/network/file_loader.h \
-    core/network/stream_clieint.h \
-    core/network/device_set_client.h \
-    ui/device_set_widget.h \
-    ui/device_set_widget_list.h \
-    interface/ideviceset.h
+    interface/i_deviceset.h \
+    ui/plot_elipse.h \
+    ui/plot_channel.h \
+    ui/tool_frequency_line_edit.h \
+    ui/tool_widgets.h \
+    ui/tool_switch_button.h \
+    ui/tool_preselector_widget.h \
+    command_factory.h \
+    db.h \
+    client_device_set.h \
+    client_file_loader.h \
+    client_stream.h \
+    ui/client_device_set_widget.h \
+    ui/client_device_set_widget_list.h
 
 SOURCES += \
-    core/command/factory_command.cpp \
-    core/command/command_hierarch.cpp \
-    core/sync_pair_channel.cpp \
-    core/db/data_base.cpp \
-    core/sync_manager.cpp \
+    command_hierarch.cpp \
+    command_factory.cpp \
+    sync_pair_channel.cpp \
+    sync_manager.cpp \
     ui/db/sync_task_view.cpp \
     ui/db/list_station_panel_widget.cpp \
     ui/db/receiver_station_panel.cpp \
     ui/db/widget_director.cpp \
-    ui/tool/frequency_line_edit.cpp \
-    ui/tool/switch_button.cpp \
-    ui/tool/preselector_widget.cpp \
-    ui/tool/widgets.cpp \
-    ui/plot/channel_plot.cpp \
-    ui/plot/elips_plot.cpp \
     ui/main_window.cpp \
     interface/interface_toolbar.cpp \
     ui/main_window_settings.cpp \
+    ui/plot_elipse.cpp \
+    ui/plot_channel.cpp \
+    ui/tool_widgets.cpp \
+    ui/tool_switch_button.cpp \
+    ui/tool_preselector_widget.cpp \
+    ui/tool_frequency_line_edit.cpp \
+    db.cpp \
     main.cpp \
-    core/network/file_loader.cpp \
-    core/network/stream_clieint.cpp \
-    core/network/device_set_client.cpp \
-    ui/device_set_widget.cpp \
-    ui/device_set_widget_list.cpp
+    ui/client_device_set_widget.cpp \
+    ui/client_device_set_widget_list.cpp \
+    client_device_set.cpp \
+    client_file_loader.cpp \
+    client_stream.cpp
 
 FORMS += \
     ui/main_window.ui \

@@ -1,5 +1,5 @@
-#include "widgets.h"
-#include "frequency_line_edit.h"
+#include "tool_widgets.h"
+#include "tool_frequency_line_edit.h"
 
 const int BandwithComboBox::BANDWITH_SIZE=12;//MAX BANDWITH SIZE = 33 IT DO NOT USE;
 

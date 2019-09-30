@@ -1,4 +1,4 @@
-#include "switch_button.h"
+#include "tool_switch_button.h"
 
 #include <QStateMachine>
 #include <QDebug>

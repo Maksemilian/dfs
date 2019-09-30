@@ -1,5 +1,5 @@
-#include "preselector_widget.h"
-#include "frequency_line_edit.h"
+#include "tool_preselector_widget.h"
+#include "tool_frequency_line_edit.h"
 
 #include <QHBoxLayout>
 #include <QComboBox>
