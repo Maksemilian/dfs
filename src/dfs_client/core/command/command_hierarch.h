@@ -3,14 +3,10 @@
 
 #include <QObjectUserData>
 
-#include <QTimer>
-#include <QTime>
 #include <QDebug>
 
 class IDeviceSetSettings;
 class IDeviceSet;
-class SyncManager;
-class WidgetDirector;
 
 class AbstractCommand:public QObjectUserData
 {
@@ -20,58 +16,16 @@ public:
       virtual void execute()=0;
 };
 
-
-class TimerCommand:public QObject,public AbstractCommand
-{
-    Q_OBJECT
-public:
-    static const int TIMER_TIMEOUT=200;
-    TimerCommand();
-    virtual ~TimerCommand();
-    virtual void onTimerTimeout();
-    bool isDone();
-    void setDone(bool done);
-protected:
-    QTimer timer;
-    bool done;
-};
-
 class ReceiverCommand:public AbstractCommand
 {
 public:
      ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
      ~ReceiverCommand();
 protected:
-    SyncManager*syncManager;
     IDeviceSet*_iDeviceSet;
     IDeviceSetSettings*subject;
-
 };
 
-//class AddTaskCommand:public TimerCommand
-//{
-//public:
-//    AddTaskCommand(WidgetDirector*widgetDirector,IDeviceSetSettings*subkect);
-//    void execute()override;
-//private:
-//    WidgetDirector*wd;
-//    IDeviceSetSettings*subject;
-//};
-
-//class SyncStartCommand:public ReceiverCommand
-//{
-//public:
-//    SyncStartCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
-//    void execute()override;
-//};
-
-
-//class SyncStopCommand:public ReceiverCommand
-//{
-//public:
-//    SyncStopCommand(SyncManager*syncManager,IDeviceSetSettings*subject);
-//    void execute()override;
-//};
 //************************* ATTENUATOR
 class AttenuatorCommand:public ReceiverCommand
 {
@@ -82,6 +36,7 @@ public:
 };
 
 //************************* PRESELECTORS
+
 class PreselectorCommand:public ReceiverCommand
 {
 public:
@@ -90,6 +45,7 @@ public:
 };
 
 //************************* PREAM
+
 class PreamplifireCommand:public ReceiverCommand
 {
 public:
@@ -98,6 +54,7 @@ public:
 };
 
 //************************* ADC ENABLED
+
 class AdcEnabledCommand:public ReceiverCommand
 {
 public:
@@ -106,6 +63,7 @@ public:
 };
 
 //************************* ADC THRESHOLD
+
 class AdcThresholdCommand:public ReceiverCommand
 {
 public:
@@ -114,6 +72,7 @@ public:
 };
 
 //************************* POWER ON
+
 class PowerCommandOn:public ReceiverCommand
 {
 public:
@@ -122,6 +81,7 @@ public:
 };
 
 //************************* POWER OFF
+
 class PowerCommandOff:public ReceiverCommand
 {
 public:
@@ -130,6 +90,7 @@ public:
 };
 
 //************************* SETTINGS
+
 class SettingsCommand:public ReceiverCommand
 {
 public:
@@ -146,6 +107,7 @@ public:
 };
 
 //************************* STOP DDC1
+
 class StopDDC1Command:public ReceiverCommand
 {
 public:
@@ -154,6 +116,7 @@ public:
 };
 
 //************************* RESTART
+
 class SetDDC1TypeCommand:public ReceiverCommand
 {
 public:
@@ -162,28 +125,25 @@ public:
 };
 
 //************************* FREQ
+
 class FrequencyCommand:public ReceiverCommand
 {
 public:
     FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject);
     void execute() override;
 };
+
 //************************* MACRO
+
 class MacroCommand:public AbstractCommand
 {
-//    static const int WAIT_TIME_MS=3000;
 public:
     MacroCommand();
-//    void onTimerTimeout()override;
     void execute()override;
     void addCommand(ReceiverCommand*command);
     void removeCommand(ReceiverCommand*command);
 private:
     QList<ReceiverCommand*>_commands;
-//    void stop();
-//    int commandCounter=0;
-//    QList<TimerCommand*>commands;
-//    QTime waitTime;
 };
 
 #endif // COMMAND_HIERARCH_H
