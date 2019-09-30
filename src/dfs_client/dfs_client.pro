@@ -34,10 +34,10 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 #or  -ldfs_proto$${LIB_SUFFIX} то куча ошибок undefine reference
 
 HEADERS += \
-    interface/i_device_set_settings.h \
-    interface/i_stream_reader.h \
-    interface/i_sygnal_update.h \
-    interface/i_toolbar.h \
+    i_device_set_settings.h \
+    i_stream_reader.h \
+    i_sygnal_update.h \
+    i_toolbar.h \
     core/network/signal_sync.h \
     command_hierarch.h \
     sync_pair_channel.h \
@@ -73,7 +73,6 @@ SOURCES += \
     ui/db/receiver_station_panel.cpp \
     ui/db/widget_director.cpp \
     ui/main_window.cpp \
-    interface/interface_toolbar.cpp \
     ui/main_window_settings.cpp \
     ui/plot_elipse.cpp \
     ui/plot_channel.cpp \
@@ -87,7 +86,8 @@ SOURCES += \
     ui/client_device_set_widget_list.cpp \
     client_device_set.cpp \
     client_file_loader.cpp \
-    client_stream.cpp
+    client_stream.cpp \
+    i_toolbar.cpp
 
 FORMS += \
     ui/main_window.ui \
