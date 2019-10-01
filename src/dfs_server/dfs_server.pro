@@ -30,26 +30,26 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 #LIBS += -ldfs_proto$${LIB_SUFFIX}
 #LIBS += -lprotobuf$${LIB_SUFFIX}
 
-HEADERS += receiver/device_set_selector.h \
-    tsip/parser.h \
-    tsip/time_reader.h \
-    network/receiver_station_client.h \
-    receiver/coh_g35_device_set.h \
-    receiver/signal_file_writer.h \
-    network/stream_ddc1.h \
-    network/stream_file.h \
-    network/stream_server.h
+HEADERS += device_set_selector.h \
+    host_stream_ddc1.h \
+    host_stream_file.h \
+    host_server.h \
+    host_device_set.h \
+    tsip_reader.h \
+    tsip_parser.h \
+    device_set_signal_file_writer.h \
+    device_set_coh_g35.h
 
 SOURCES += main.cpp \
-    receiver/device_set_selector.cpp \
-    tsip/parser.cpp \
-    tsip/time_reader.cpp \
-    network/receiver_station_client.cpp \
-    receiver/coh_g35_device_set.cpp \
-    receiver/signal_file_writer.cpp \
-    network/stream_ddc1.cpp \
-    network/stream_file.cpp \
-    network/stream_server.cpp
+    device_set_selector.cpp \
+    host_device_set.cpp \
+    host_stream_ddc1.cpp \
+    host_stream_file.cpp \
+    host_server.cpp \
+    tsip_reader.cpp \
+    tsip_parser.cpp \
+    device_set_coh_g35.cpp \
+    device_set_signal_file_writer.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings

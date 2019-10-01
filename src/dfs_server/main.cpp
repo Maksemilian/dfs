@@ -1,7 +1,7 @@
-#include "network/receiver_station_client.h"
+#include "device_set_coh_g35.h"
 
-#include "receiver/device_set_selector.h"
-#include "network/stream_server.h"
+#include "device_set_selector.h"
+#include "host_server.h"
 
 #include <QCoreApplication>
 #include <QLibrary>
