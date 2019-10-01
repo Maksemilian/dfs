@@ -1,8 +1,6 @@
 #include "ui_main_window.h"
 #include "main_window.h"
 
-#include "main_window_settings.h"
-
 #include "command_factory.h"
 #include "command_hierarch.h"
 
@@ -44,19 +42,19 @@ MainWindow:: MainWindow(QWidget *parent):
                 new DeviceSetWidget("192.168.10.11",9000));
     //************** WIDGET DIRECTOR ******************
 
-//    widgetDirector=new WidgetDirector;
-//    setLeftDockWidget(widgetDirector,"Widget Director");
+    //    widgetDirector=new WidgetDirector;
+    //    setLeftDockWidget(widgetDirector,"Widget Director");
 
-//    connect(syncManager,&SyncManager::stationConnected,
-//            widgetDirector,&WidgetDirector::createStationData);
+    //    connect(syncManager,&SyncManager::stationConnected,
+    //            widgetDirector,&WidgetDirector::createStationData);
 
-//    connect(syncManager,&SyncManager::stationDisconnected,
-//            widgetDirector,&WidgetDirector::removeStationData);
+    //    connect(syncManager,&SyncManager::stationDisconnected,
+    //            widgetDirector,&WidgetDirector::removeStationData);
 
-//    connect(syncManager,&SyncManager::commandError,[this](const QString &error){
-//        setArrowCursor();
-//        QMessageBox::warning(this,"Command Error",error);
-//    });
+    //    connect(syncManager,&SyncManager::commandError,[this](const QString &error){
+    //        setArrowCursor();
+    //        QMessageBox::warning(this,"Command Error",error);
+    //    });
     //************SETTING TOOLBAR***************
     //****TOP
 
@@ -89,25 +87,25 @@ MainWindow:: MainWindow(QWidget *parent):
 
     //************** SUBSCRIBE ****************
 
-//    syncManager->addSyncSignalUpdater(channelPlot);
-//    syncManager->addSumDivUpdater(elipsPlot);
+    //    syncManager->addSyncSignalUpdater(channelPlot);
+    //    syncManager->addSumDivUpdater(elipsPlot);
 
     //************** OTHER ******************
-//    connect(syncManager,&SyncManager::syncReady,
-//            this,&MainWindow::showReceiverSettingsTool);
-showReceiverSettingsTool();
-//    connect(syncManager,&SyncManager::syncNotReady,
-//            this,&MainWindow::hideReceiverSettingsTool);
+    //    connect(syncManager,&SyncManager::syncReady,
+    //            this,&MainWindow::showReceiverSettingsTool);
+    showReceiverSettingsTool();
+    //    connect(syncManager,&SyncManager::syncNotReady,
+    //            this,&MainWindow::hideReceiverSettingsTool);
 
-//    connect(syncManager,&SyncManager::syncReady,
-//            widgetDirector,&WidgetDirector::enable);
-//widgetDirector->enable();
-//    connect(syncManager,&SyncManager::syncNotReady,
-//            widgetDirector,&WidgetDirector::disable);
-deviceSetListWidget->connectToSelectedDeviceSet();
+    //    connect(syncManager,&SyncManager::syncReady,
+    //            widgetDirector,&WidgetDirector::enable);
+    //widgetDirector->enable();
+    //    connect(syncManager,&SyncManager::syncNotReady,
+    //            widgetDirector,&WidgetDirector::disable);
+    deviceSetListWidget->connectToSelectedDeviceSet();
     //TODO UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
-//    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
+    //    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
 }
 
 MainWindow::~MainWindow()
@@ -143,25 +141,25 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
 
     //DDC1 Frequency
     MacroCommand *macroFreq=FactoryCommand::getMacroCommand();
-//    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    //    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
     macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
     macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget,this));
     macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
     //TODO УБРАНЫ КОМАНДЫ СИНХРОНИЗАЦИИ
-//    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+    //    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
-//    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
+    //    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     leDDC1Frequency =new FrequencyLineEdit(this,topToolBar);
     leDDC1Frequency->setUserData(USER_DATA_ID,macroFreq);
 
     //DDC1 Bandwith
     MacroCommand *macroBandwith=FactoryCommand::getMacroCommand();
-//    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    //    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
     macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
     macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(deviceSetListWidget,this));
     macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
-//    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+    //    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
     cbDDC1Bandwith=new BandwithComboBox(this,topToolBar);
     cbDDC1Bandwith->setUserData(USER_DATA_ID,macroBandwith);
@@ -193,13 +191,13 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget,this));
     macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget,this));
     macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
-//    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
+    //    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
+    //    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     pbPower->setUserData(USER_DATA_POWER_ON,macroCommand);
 
     MacroCommand*mc=FactoryCommand::getMacroCommand();
-//    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
+    //    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
     mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
     mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget,this));
 
@@ -497,13 +495,13 @@ void MainWindow::saveSetting()
 
         s.beginGroup("ddc1");
         s.setValue("frequency",leDDC1Frequency->getFrequencyValueInHz());
-        s.setValue("type_index",cbDDC1Bandwith->getCurrentBandwith());
+        s.setValue("type_index",cbDDC1Bandwith->currentTypeIndex());
         s.setValue("samples_per_buffer",cbSamplesPerBuffer->samplesPerBuffer());
         s.endGroup();
         s.sync();
     }else  qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
 }
-
+/*
 void MainWindow::setSettings(const MainWindowSettings::Data &receiverSettings)
 {
     pbAttenuatorEnable->setCurrentState(receiverSettings.attenuatorEnable);
@@ -524,7 +522,7 @@ void MainWindow::setSettings(const MainWindowSettings::Data &receiverSettings)
     cbDDC1Bandwith->setCurrentIndex(static_cast<int>(receiverSettings.ddc1TypeIndex));
     cbSamplesPerBuffer->setCurrentText(QString::number(receiverSettings.samplesPerBuffer));
 }
-
+*/
 //************************** TEST ********************
 //    macroFreq->addCommand(FactoryCommand::getSettingsCommand(syncManager,this));
 //    macroFreq->addCommand(FactoryCommand::getRestartDdc1Command(syncManager,this));

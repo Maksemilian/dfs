@@ -47,7 +47,6 @@ HEADERS += \
     ui/db/receiver_station_panel.h \
     ui/db/sync_task_view.h \
     ui/main_window.h \
-    ui/main_window_settings.h \
     interface/i_deviceset.h \
     ui/plot_elipse.h \
     ui/plot_channel.h \
@@ -72,7 +71,6 @@ SOURCES += \
     ui/db/receiver_station_panel.cpp \
     ui/db/widget_director.cpp \
     ui/main_window.cpp \
-    ui/main_window_settings.cpp \
     ui/plot_elipse.cpp \
     ui/plot_channel.cpp \
     ui/tool_widgets.cpp \

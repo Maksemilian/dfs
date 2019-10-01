@@ -2,7 +2,6 @@
 #define MAIN_WINDOW_H
 
 #include "i_device_set_settings.h"
-#include "main_window_settings.h"
 
 #include <QMainWindow>
 #include <QMap>
@@ -84,9 +83,7 @@ private:
 
     //MAIN WINDOW SETTINGS
     void loadSettings();
-    void setSettings(const MainWindowSettings::Data &receiverSettings);
     void saveSetting();
-
 private:
     Ui::MainWindow *ui;
 
