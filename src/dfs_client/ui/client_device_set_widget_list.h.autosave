@@ -2,7 +2,6 @@
 #define DEVICE_SET_WIDGET_LIST_H
 
 
-#include "receiver.pb.h"
 #include "i_deviceset.h"
 
 #include <QListWidget>
@@ -11,7 +10,6 @@
 class DeviceSetWidget;
 class QPushButton;
 class DeviceSetListWidget :
-//        public QListWidget,
         public QWidget,
         public IDeviceSet
 {

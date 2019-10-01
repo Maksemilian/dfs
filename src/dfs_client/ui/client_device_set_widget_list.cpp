@@ -9,7 +9,6 @@
 #include <QMessageBox>
 
 DeviceSetListWidget::DeviceSetListWidget(QWidget *parent)
-//    :QListWidget (parent)
     :QWidget(parent),_deviceSetListWidget(new QListWidget(this))
 {
     setLayout(new QVBoxLayout);
@@ -21,7 +20,6 @@ DeviceSetListWidget::DeviceSetListWidget(QWidget *parent)
     layout()->addWidget(_deviceSetListWidget);
     layout()->addWidget(_pbAddDeviceSetWidget);
     layout()->addWidget(_pbRemoveDeviceSetWidget);
-
 
     connect(_deviceSetListWidget,&QListWidget::itemClicked,
             this,&DeviceSetListWidget::onStationItemSelected);
@@ -60,20 +58,10 @@ void DeviceSetListWidget::setCommand(const proto::receiver::Command &command)
     if(parentWidget()->parentWidget())
         parentWidget()->parentWidget()->setCursor(Qt::WaitCursor);
 
-    if(_counter>0){
-        _commandQueue.enqueue(command);
-        return;
-    }
-    //TODO ВАРИАНТ НИЖЕ ДАЕТ КРАХ ПРОГРАММЫ
-    //    if(_commandQueue.isEmpty()){
-    //        _commandQueue.enqueue(command);
-    //    }else {
-    //        _commandQueue.enqueue(command);
-    //        return;
-    //    }
+    if(_commandQueue.isEmpty())
+        setAllDeviceSet(command);
 
-    //            command.command_type()!=_commandQueue.head().command_type())
-    setAllDeviceSet(command);
+    _commandQueue.enqueue(command);
 }
 
 void DeviceSetListWidget::setAllDeviceSet(const proto::receiver::Command &command)
@@ -81,10 +69,8 @@ void DeviceSetListWidget::setAllDeviceSet(const proto::receiver::Command &comman
     QList<QListWidgetItem*> itemList=_deviceSetListWidget->selectedItems();
     for(QListWidgetItem*item:itemList){
         DeviceSetWidget*widget=qobject_cast<DeviceSetWidget*>(_deviceSetListWidget->itemWidget(item));
-        if(widget){
+        if(widget)
             widget->setDeviceSetCommand(command);
-            _counter++;
-        }
     }
 }
 
@@ -92,25 +78,15 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
 {
     connect(deviceSetWidget,&DeviceSetWidget::commandSuccessed,
             [this]{
-        if((--_counter)==0){
-            qDebug()<<"ALL COMMAND SUCCESSED";
-            if(parentWidget()->parentWidget())
+            const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
+            if(!_commandQueue.isEmpty()&&
+                    _commandQueue.head().command_type()!=successedCommand.command_type()){
+                setAllDeviceSet(_commandQueue.head());
+            }else if(parentWidget()->parentWidget()){
                 parentWidget()->parentWidget()->setCursor(Qt::ArrowCursor);
-
-            if(!_commandQueue.isEmpty())
-                setAllDeviceSet(_commandQueue.dequeue());
-        }
-        //        qDebug()<<"Here_1";
-        //        const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
-        //        qDebug()<<"Here_2";
-        //        if(!_commandQueue.isEmpty()&&
-        //                _commandQueue.head().command_type()
-        //                !=successedCommand.command_type()){
-        //            setAllDeviceSet(_commandQueue.head());
-        //        }else if(parentWidget()->parentWidget()){
-        //            parentWidget()->parentWidget()->setCursor(Qt::ArrowCursor);
-        //        }
+            }
     });
+
     QListWidgetItem *stationPanelItem = new QListWidgetItem(_deviceSetListWidget);
     stationPanelItem->setSizeHint(deviceSetWidget->sizeHint());
     stationPanelItem->setSelected(true);
@@ -150,9 +126,6 @@ void DeviceSetListWidget::onStationItemSelected(QListWidgetItem *item)
     }else {
         _pbRemoveDeviceSetWidget->setEnabled(true);
     }
-    //    DeviceSetListWidget*panel=
-    //            qobject_cast<DeviceSetWidget*>(itemWidget(item));
-    //    if(panel) emit receiverStationPanelSelected(panel,item->isSelected());
 }
 
 void DeviceSetListWidget::connectToSelectedDeviceSet()

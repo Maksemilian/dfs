@@ -181,7 +181,8 @@ void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
 {
     d->commandQueue.enqueue(command.command_type());
     proto::receiver::ClientToHost clientToHost;
-    clientToHost.set_allocated_command(&const_cast<proto::receiver::Command&>(command));
+    //TODO ПОНЯТЬ КАК РАБОТАЕТ
+    clientToHost.mutable_command()->CopyFrom(command);
     d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
 }
 
