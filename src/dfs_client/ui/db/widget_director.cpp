@@ -4,8 +4,7 @@
 #include "receiver_station_panel.h"
 #include "sync_task_view.h"
 
-#include "db.h""
-#include "sync_manager.h"
+#include "db.h"
 
 #include <QPushButton>
 #include <QTextBrowser>
@@ -127,13 +126,13 @@ WidgetDirector::WidgetDirector(QWidget*parent)
     pbLoadTask->setEnabled(false);
     pbRemoveTask->setEnabled(false);
 
-    connect(&SyncManager::instance(),&SyncManager::taskSize,
-            [this](const QString &taskName,qint64 taskSize)
-    {
-        qDebug()<<"Task Name"<<taskName<<"Task Size"<<taskSize;
-        taskView->setProgressBarDelegateForRow(taskView->selectedRow());
-        this->taskUpdater->start(taskSize);
-    });
+//    connect(&SyncManager::instance(),&SyncManager::taskSize,
+//            [this](const QString &taskName,qint64 taskSize)
+//    {
+//        qDebug()<<"Task Name"<<taskName<<"Task Size"<<taskSize;
+//        taskView->setProgressBarDelegateForRow(taskView->selectedRow());
+//        this->taskUpdater->start(taskSize);
+//    });
 
     connect(pbLoadTask,&QPushButton::clicked,
             this,&WidgetDirector::onLoadSelectedTask);
@@ -252,7 +251,7 @@ void WidgetDirector::onLoadSelectedTask()
         taskView->update();
     });
 
-    SyncManager::instance().loadBroacastFile(name,dateTime.date());
+//    SyncManager::instance().loadBroacastFile(name,dateTime.date());
 }
 
 void WidgetDirector::onRemoveSelectedTask()

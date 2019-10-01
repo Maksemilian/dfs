@@ -6,8 +6,6 @@
 #include "command_factory.h"
 #include "command_hierarch.h"
 
-#include "sync_manager.h"
-
 #include "tool_frequency_line_edit.h"
 #include "tool_preselector_widget.h"
 #include "tool_switch_button.h"
@@ -38,7 +36,6 @@ MainWindow:: MainWindow(QWidget *parent):
 
     //    syncManager=new SyncManager;
     //TODO FIX THIS CODE
-    syncManager=&SyncManager::instance();
 
     deviceSetListWidget=new DeviceSetListWidget(this);
 

@@ -8,24 +8,24 @@
 
 struct DeviceSetClient::Impl
 {
-    Impl(ChannelHost *channel):
+    Impl(net::ChannelHost *channel):
         channel(channel),
         cohG35DeviceSet(std::make_shared<CohG35DeviceSet>())
     {}
 
-    std::unique_ptr<ChannelHost> channel=nullptr;
+    std::unique_ptr<net::ChannelHost> channel=nullptr;
     std::shared_ptr<CohG35DeviceSet>cohG35DeviceSet;
 };
 
-DeviceSetClient::DeviceSetClient(ChannelHost*channelHost)
+DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
     : d(std::make_unique<Impl>(channelHost))
 {
     qDebug()<<"Create ReceiverStationClient";
 
-    connect(d->channel.get(),&Channel::finished,
+    connect(d->channel.get(),&net::Channel::finished,
             this,&DeviceSetClient::onDisconnected);
 
-    connect(d->channel.get(),&Channel::messageReceived,
+    connect(d->channel.get(),&net::Channel::messageReceived,
             this,&DeviceSetClient::onMessageReceived);
 
     //TODO сделать по запросу от клиента

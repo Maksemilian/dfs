@@ -1,10 +1,12 @@
 #ifndef RECEIVER_STATION_CLIENT_H
 #define RECEIVER_STATION_CLIENT_H
 
+#include "channel_host.h"
+
 #include "receiver.pb.h"
 
-#include <memory>
 #include <google/protobuf/message.h>
+#include <memory>
 #include <QObject>
 
 class CohG35DeviceSetSettings;
@@ -17,7 +19,7 @@ class DeviceSetClient:public QObject
     static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
-    DeviceSetClient(ChannelHost*channelHost);
+    DeviceSetClient(net::ChannelHost*channelHost);
     ~DeviceSetClient();
 
     Q_SIGNAL void stationDisconnected();

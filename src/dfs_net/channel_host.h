@@ -4,6 +4,8 @@
 #include "channel.h"
 #include "key_exchange.pb.h"
 
+namespace net {
+
 class ChannelHost:public Channel
 {
     Q_OBJECT
@@ -24,4 +26,5 @@ private:
     SessionType _sessionType=SessionType::SESSION_UNKNOWN;
 };
 
+}
 #endif // CHANNEL_HOST_H

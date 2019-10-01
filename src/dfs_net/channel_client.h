@@ -4,6 +4,8 @@
 #include "channel.h"
 #include "key_exchange.pb.h"
 
+namespace net {
+
 class ChannelClient:public Channel
 {
     Q_OBJECT
@@ -24,5 +26,5 @@ private:
     quint32 _userKey;
     SessionType _sessionType=SessionType::SESSION_UNKNOWN;
 };
-
+}
 #endif // CHANNEL_CLIENT_H

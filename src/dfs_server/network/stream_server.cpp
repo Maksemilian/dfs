@@ -29,8 +29,8 @@ void StreamServer::incomingConnection(qintptr handle)
 {
     //    qDebug()<<"===============incomingConnection handle"<<handle;
     //    streamAnalizator->pushSocketSescriptor(handle);
-    ChannelHost *channelHost=new ChannelHost(handle);
-    connect(channelHost,&ChannelHost::keyExchangedFinished,this,&StreamServer::onChannelReady);
+    net::ChannelHost *channelHost=new net::ChannelHost(handle);
+    connect(channelHost,&net::ChannelHost::keyExchangedFinished,this,&StreamServer::onChannelReady);
     _pendingChannelsList.append(channelHost);
 }
 
@@ -40,13 +40,13 @@ void StreamServer::onChannelReady()
 
     auto it=_pendingChannelsList.begin();
     while (it!=_pendingChannelsList.end()) {
-        ChannelHost* networkChannel=*it;
+        net::ChannelHost* networkChannel=*it;
 
         if(!networkChannel)
         {
             it =_pendingChannelsList.erase(it);
         }
-        else if(networkChannel->state()==ChannelHost::ESTABLISHED)
+        else if(networkChannel->state()==net::ChannelHost::ESTABLISHED)
         {
             it =_pendingChannelsList.erase(it);
             //            qDebug()<<networkChannel<<*it;
@@ -65,7 +65,7 @@ void StreamServer::onNewConnection()
     qDebug()<<"Server::onNewConnection";
 
     while (!_readyChannelsList.isEmpty()) {
-        ChannelHost* networkChannel=_readyChannelsList.front();
+        net::ChannelHost* networkChannel=_readyChannelsList.front();
         qDebug()<<networkChannel->sessionType();
         if(networkChannel){
             qDebug()<<"Create Session";
@@ -77,7 +77,7 @@ void StreamServer::onNewConnection()
     }
 }
 
-void StreamServer::createSession(ChannelHost *channelHost)
+void StreamServer::createSession(net::ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
         _client=new DeviceSetClient(channelHost);
