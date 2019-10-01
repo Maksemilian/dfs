@@ -2,7 +2,8 @@
 
 #include <QDebug>
 
-MainWindowSettings::MainWindowSettings(const QString &filePath):QSettings(filePath,QSettings::IniFormat)
+MainWindowSettings::MainWindowSettings(const QString &filePath):
+    QSettings(filePath,QSettings::IniFormat)
 {
 }
 

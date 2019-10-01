@@ -73,6 +73,10 @@ ToolBarLineEdit::ToolBarLineEdit(MainWindow*mainWindow,QWidget*parent)
     });
 }
 
+quint16 ToolBarLineEdit::getValue()
+{
+    return  text().toUShort();
+}
 
 ToolBarComboBox::ToolBarComboBox(MainWindow*mainWindow,QWidget*parent)
     :QComboBox(parent),IToolBarWidget(mainWindow)
@@ -105,6 +109,10 @@ BandwithComboBox::BandwithComboBox(MainWindow*mainWindow,QWidget*parent)
     });
 }
 
+quint32 BandwithComboBox::currentTypeIndex()
+{
+    return static_cast<quint32>(currentIndex());
+}
 
 SampleRateComboBox::SampleRateComboBox(MainWindow*mainWindow,QWidget*parent)
     :ToolBarComboBox (mainWindow,parent)
@@ -122,6 +130,11 @@ SampleRateComboBox::SampleRateComboBox(MainWindow*mainWindow,QWidget*parent)
     });
 }
 
+quint32 SampleRateComboBox::samplesPerBuffer()
+{
+    return currentText().toUInt();
+}
+
 AttenuatorComboBox::AttenuatorComboBox(MainWindow*mainWindow,QWidget*parent)
     :ToolBarComboBox (mainWindow,parent)
 {
@@ -129,4 +142,9 @@ AttenuatorComboBox::AttenuatorComboBox(MainWindow*mainWindow,QWidget*parent)
         addItem(QString::number(attenuatorArray[i])+" Db");
 }
 
-
+quint32 AttenuatorComboBox::getAttenuationLevel()
+{
+    QString attetuatorText=currentText();
+    //TODO СДЕЛАТЬ ПРОВЕРКУ
+    return  attetuatorText.left(attetuatorText.indexOf(' ')).toUInt();
+}

@@ -426,46 +426,82 @@ void MainWindow::setArrowCursor()
 
 void MainWindow::loadSettings()
 {
-    QFile file(QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME);
-    if(file.exists()){
-        MainWindowSettings settingsHandler(file.fileName());
-        MainWindowSettings::Data receiverSettings=settingsHandler.load();
-        setSettings(receiverSettings);
-    }else   qDebug()<<"FILE "<<file.fileName()<<"isn't exist";
+    QString  settingsFileName=QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME;
+    if(QFile::exists(settingsFileName)){
+        QSettings s(settingsFileName,QSettings::IniFormat);
+        s.beginGroup("attenuator");
+
+        pbAttenuatorEnable->setCurrentState(s.value("enable").toBool());
+        cbAttenuationLevel->setCurrentText(QString::number(s.value("attenuation_level_db").toUInt())+" Db");
+
+        s.endGroup();
+
+        s.beginGroup("preselectors");
+
+        QPair<quint32,quint32>preselectors;
+        preselectors.first=s.value("low_frequency").toUInt();
+        preselectors.second=s.value("high_frequency").toUInt();
+
+        cbAttenuationLevel->setEnabled(s.value("enable").toBool());
+        pbPreselectorEnable->setCurrentState(s.value("enable").toBool());
+        preselectorWidget->setWidgetData(preselectors);
+
+        s.endGroup();
+
+        s.beginGroup("preamplifier");
+        pbPreamplifierEnable->setCurrentState(s.value("enabled").toBool());
+        s.endGroup();
+
+        s.beginGroup("adc_noice_blanker");
+        QPair<quint32,quint32>adcNoiceBlanker;
+        adcNoiceBlanker.first=s.value("enabled").toBool();
+        adcNoiceBlanker.second=s.value("threshold").toUInt();
+
+        leAdcNoiceBlanckerThreshold->setText(QString::number(adcNoiceBlanker.second));
+        leAdcNoiceBlanckerThreshold->setEnabled(adcNoiceBlanker.first);
+
+        s.endGroup();
+
+        s.beginGroup("ddc1");
+        leDDC1Frequency->setFrequencyValueInHz(s.value("frequency").toUInt());
+        cbDDC1Bandwith->setCurrentIndex(static_cast<int>(s.value("type_index").toUInt()));
+        cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
+        s.endGroup();
+    }else   qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
 }
 
 void MainWindow::saveSetting()
 {
-    MainWindowSettings::Data receiverSettings;
-    QString attetuatorText=cbAttenuationLevel->currentText();
-    receiverSettings.attenuatorEnable=pbAttenuatorEnable->currentState();
-    receiverSettings.attenuator=attetuatorText.left(attetuatorText.indexOf(' ')).toUInt();
+    QString  settingsFileName=QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME;
+    if(QFile::exists(settingsFileName)){
+        QSettings s(settingsFileName,QSettings::IniFormat);
+        s.beginGroup("attenuator");
+        s.setValue("enable",pbAttenuatorEnable->currentState());
+        s.setValue("attenuation_level_db",cbAttenuationLevel->getAttenuationLevel());
+        s.endGroup();
 
-    receiverSettings.preselectorsEnable=pbPreselectorEnable->currentState();
-    QPair<quint32,quint32>pair=preselectorWidget->getPreselectors();
+        s.beginGroup("preselectors");
+        s.setValue("enable",pbPreselectorEnable->currentState());
+        s.setValue("low_frequency",preselectorWidget->getPreselectors().first);
+        s.setValue("high_frequency",preselectorWidget->getPreselectors().second);
+        s.endGroup();
 
-    receiverSettings.preselectors.first=pair.first;
-    receiverSettings.preselectors.second=pair.second;
-    //    qDebug()<<lowFrequency<<highFrequency;
-    receiverSettings.preamplifierEnable=pbPreamplifierEnable->currentState();
+        s.beginGroup("preamplifier");
+        s.setValue("enabled",pbPreamplifierEnable->currentState());
+        s.endGroup();
 
-    quint16 threashold=leAdcNoiceBlanckerThreshold->text().toUShort();
-    receiverSettings.adcNoiceBlanker.first=pbAdcNoiceBlanckerEnabled->currentState();
-    receiverSettings.adcNoiceBlanker.second=threashold;
+        s.beginGroup("adc_noice_blanker");
+        s.setValue("enabled",pbAdcNoiceBlanckerEnabled->currentState());
+        s.setValue("threshold",leAdcNoiceBlanckerThreshold->getValue());
+        s.endGroup();
 
-    quint32 frequency=leDDC1Frequency->getFrequencyValueInHz();
-    //qDebug()<<"Freq"<<frequency;
-    receiverSettings.ddc1Frequency=frequency;
-    receiverSettings.ddc1TypeIndex=static_cast<quint32>(cbDDC1Bandwith->currentIndex());
-    receiverSettings.samplesPerBuffer=cbSamplesPerBuffer->currentText().toUInt();
-
-    QFile file(QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME);
-
-    if(file.exists()){
-        MainWindowSettings settingsHandler(file.fileName());
-        settingsHandler.save(receiverSettings);
-    }else  qDebug()<<"FILE "<<file.fileName()<<"isn't exist";
-
+        s.beginGroup("ddc1");
+        s.setValue("frequency",leDDC1Frequency->getFrequencyValueInHz());
+        s.setValue("type_index",cbDDC1Bandwith->getCurrentBandwith());
+        s.setValue("samples_per_buffer",cbSamplesPerBuffer->samplesPerBuffer());
+        s.endGroup();
+        s.sync();
+    }else  qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
 }
 
 void MainWindow::setSettings(const MainWindowSettings::Data &receiverSettings)

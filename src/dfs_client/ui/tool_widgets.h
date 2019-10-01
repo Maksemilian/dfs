@@ -15,6 +15,7 @@ class ToolBarLineEdit:public QLineEdit,public IToolBarWidget
     Q_OBJECT
 public:
     ToolBarLineEdit(MainWindow*mainWindow,QWidget*parent=nullptr);
+    quint16 getValue();
 };
 
 
@@ -36,6 +37,7 @@ public:
     {
         return bandwithArray[currentIndex()];
     }
+    quint32 currentTypeIndex();
 };
 
 class SampleRateComboBox:public ToolBarComboBox
@@ -44,6 +46,7 @@ class SampleRateComboBox:public ToolBarComboBox
     static const quint16 samplesPerBufferArray[];
 public:
     SampleRateComboBox(MainWindow*mainWindow,QWidget*parent=nullptr);
+    quint32 samplesPerBuffer();
 };
 
 
@@ -53,6 +56,7 @@ class AttenuatorComboBox:public ToolBarComboBox
     static const quint8 attenuatorArray[];
 public:
     AttenuatorComboBox(MainWindow*mainWindow,QWidget*parent=nullptr);
+    quint32 getAttenuationLevel();
 };
 
 
