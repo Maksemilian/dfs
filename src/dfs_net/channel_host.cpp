@@ -6,6 +6,8 @@
 #include <QByteArray>
 #include <QHostAddress>
 
+namespace net {
+
 namespace  {
 
 const QByteArray serializeMessage(const google::protobuf::Message &message)
@@ -14,6 +16,7 @@ const QByteArray serializeMessage(const google::protobuf::Message &message)
     message.SerializeToArray(static_cast<void*>(bytesArray.data()),message.ByteSize());
     return QByteArray(bytesArray.data(),message.ByteSize());
 }
+
 }
 
 ChannelHost::ChannelHost(QObject *parent)
@@ -115,4 +118,6 @@ void ChannelHost::internalMessageReceive(const QByteArray &buffer)
 
     default: break;
     }
+}
+
 }

@@ -11,5 +11,5 @@ EchoServer::EchoServer()
 void EchoServer::incomingConnection(qintptr handle)
 {
     qDebug()<<"Echoserver::incomingConnection"<<handle;
-    Channel *channel=new ChannelHost(handle);
+    net::Channel *channel=new net::ChannelHost(handle);
 }

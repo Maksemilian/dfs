@@ -10,6 +10,8 @@
 #include <QDataStream>
 #include <QDebug>
 
+namespace net {
+
 namespace  {
 
 const QByteArray serializeMessage(const google::protobuf::Message &message)
@@ -20,6 +22,7 @@ const QByteArray serializeMessage(const google::protobuf::Message &message)
 }
 
 }
+
 
 ChannelClient::ChannelClient(QObject *parent)
     :Channel (parent)
@@ -110,4 +113,6 @@ void ChannelClient::onConnected()
 ChannelClient::~ChannelClient()
 {
     qDebug()<<"ChannelClient::destroyed";
+}
+
 }

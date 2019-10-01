@@ -9,6 +9,7 @@
 #include <QMutex>
 
 #include "receiver_station_client.h"
+#include "channel_host.h"
 
 class PeerWireClient;
 class RingPacketBuffer;
@@ -65,10 +66,10 @@ private:
     void incomingConnection(qintptr handle) override;
     void onChannelReady();
     void onNewConnection();
-    void createSession(ChannelHost*channelHost);
+    void createSession(net::ChannelHost*channelHost);
 private:
-    QList<ChannelHost*>_pendingChannelsList;
-    QList<ChannelHost*>_readyChannelsList;
+    QList<net::ChannelHost*>_pendingChannelsList;
+    QList<net::ChannelHost*>_readyChannelsList;
     DeviceSetClient *_client;
 
     StreamAnalizator * streamAnalizator;

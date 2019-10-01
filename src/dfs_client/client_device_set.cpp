@@ -28,10 +28,10 @@ const QByteArray DeviceSetClient::serializeCommandToByteArray(
 
 struct DeviceSetClient::Impl
 {
-    Impl():channel(std::make_unique<ChannelClient>())
+    Impl():channel(std::make_unique<net::ChannelClient>())
     {
     }
-    std::unique_ptr<ChannelClient> channel;
+    std::unique_ptr<net::ChannelClient> channel;
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
 };
@@ -40,10 +40,10 @@ DeviceSetClient::DeviceSetClient(QObject *parent):
     QObject(parent),
     d(std::make_unique<Impl>())
 {
-    connect(d->channel.get(),&ChannelClient::messageReceived,
+    connect(d->channel.get(),&net::ChannelClient::messageReceived,
             this,&DeviceSetClient::onMessageReceived);
 
-    connect(d->channel.get(),&ChannelClient::finished,
+    connect(d->channel.get(),&net::ChannelClient::finished,
             this,&DeviceSetClient::disconnected);
 
 //    connect(this,&DeviceSetClient::deviceSetReady,

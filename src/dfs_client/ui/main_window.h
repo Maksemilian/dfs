@@ -110,7 +110,6 @@ private:
 
     QMap<Qt::ToolBarArea,QToolBar*>toolBarMap;
 
-    SyncManager*syncManager;
 
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget

@@ -2,6 +2,7 @@
 
 #include <QDataStream>
 #include <QHostAddress>
+namespace net {
 
 Channel::Channel(QObject *parent)
     : QObject(parent),
@@ -153,4 +154,4 @@ Channel::~Channel()
     deleteLater();
 }
 
-
+}

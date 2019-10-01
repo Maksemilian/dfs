@@ -4,6 +4,8 @@
 #include <QTcpSocket>
 #include <memory>
 
+namespace net {
+
 class Channel:public QObject
 {
     Q_OBJECT
@@ -46,5 +48,6 @@ private:
     qint64 answerSize=0;
 };
 
+}
 
 #endif // CHANNEL_H

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
         qDebug()<<"success";
 
 
-    ChannelClient *client=new ChannelClient;
+    net::ChannelClient *client=new net::ChannelClient;
     client->connectToHost("192.168.10.11",port,SessionType::SESSION_COMMAND);
     ServerKeyExchange serverKeyExchange;
     ClientKeyExchange clientKeyExchange;
