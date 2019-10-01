@@ -7,7 +7,6 @@ class IDeviceSet;
 class WidgetDirector;
 class MacroCommand;
 
-class SyncManager;
 
 class PreselectorCommand;
 class PreamplifireCommand;

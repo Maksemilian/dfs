@@ -42,7 +42,6 @@ HEADERS += \
     core/network/signal_sync.h \
     command_hierarch.h \
     sync_pair_channel.h \
-    sync_manager.h \
     ui/db/widget_director.h \
     ui/db/list_station_panel_widget.h \
     ui/db/receiver_station_panel.h \
@@ -68,7 +67,6 @@ SOURCES += \
     command_hierarch.cpp \
     command_factory.cpp \
     sync_pair_channel.cpp \
-    sync_manager.cpp \
     ui/db/sync_task_view.cpp \
     ui/db/list_station_panel_widget.cpp \
     ui/db/receiver_station_panel.cpp \
