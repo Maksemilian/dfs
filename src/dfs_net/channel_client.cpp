@@ -27,7 +27,11 @@ const QByteArray serializeMessage(const google::protobuf::Message &message)
 ChannelClient::ChannelClient(QObject *parent)
     :Channel (parent)
 {
-    connect(_socket.get(),&QTcpSocket::connected,this,&ChannelClient::onConnected);
+    connect(_socket.get(),&QTcpSocket::connected,
+            this,&ChannelClient::onConnected);
+
+//    connect(_socket.get(),&Channel::finished,
+//            this,&ChannelClient::disconnected);
 }
 
 ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,parent)
@@ -40,6 +44,13 @@ void ChannelClient::connectToHost(const QString &address, quint16 port,SessionTy
     qDebug()<<"ChannelClient::connectToHost"<<address<<port<<sesionType;
     _sessionType=sesionType;
     _socket->connectToHost(address,port);
+}
+
+void ChannelClient::disconnectFromHost()
+{
+     _socket->disconnectFromHost();
+     keyExchangeState=KeyExchangeState::HELLO;
+     _channelState=ChannelState::NOT_CONNECTED;
 }
 
 void ChannelClient::readServerKeyExchange(const QByteArray &buffer)

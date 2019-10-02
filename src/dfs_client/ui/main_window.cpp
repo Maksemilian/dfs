@@ -32,29 +32,12 @@ MainWindow:: MainWindow(QWidget *parent):
     ui->setupUi(this);
     centralWidget()->setLayout(new QVBoxLayout);
 
-    //    syncManager=new SyncManager;
     //TODO FIX THIS CODE
 
     deviceSetListWidget=new DeviceSetListWidget(this);
 
     setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
-    deviceSetListWidget->addDeviceSetWidget(
-                new DeviceSetWidget("192.168.10.11",9000));
-    //************** WIDGET DIRECTOR ******************
 
-    //    widgetDirector=new WidgetDirector;
-    //    setLeftDockWidget(widgetDirector,"Widget Director");
-
-    //    connect(syncManager,&SyncManager::stationConnected,
-    //            widgetDirector,&WidgetDirector::createStationData);
-
-    //    connect(syncManager,&SyncManager::stationDisconnected,
-    //            widgetDirector,&WidgetDirector::removeStationData);
-
-    //    connect(syncManager,&SyncManager::commandError,[this](const QString &error){
-    //        setArrowCursor();
-    //        QMessageBox::warning(this,"Command Error",error);
-    //    });
     //************SETTING TOOLBAR***************
     //****TOP
 
@@ -87,22 +70,10 @@ MainWindow:: MainWindow(QWidget *parent):
 
     //************** SUBSCRIBE ****************
 
-    //    syncManager->addSyncSignalUpdater(channelPlot);
-    //    syncManager->addSumDivUpdater(elipsPlot);
-
     //************** OTHER ******************
-    //    connect(syncManager,&SyncManager::syncReady,
-    //            this,&MainWindow::showReceiverSettingsTool);
     showReceiverSettingsTool();
-    //    connect(syncManager,&SyncManager::syncNotReady,
-    //            this,&MainWindow::hideReceiverSettingsTool);
 
-    //    connect(syncManager,&SyncManager::syncReady,
-    //            widgetDirector,&WidgetDirector::enable);
-    //widgetDirector->enable();
-    //    connect(syncManager,&SyncManager::syncNotReady,
-    //            widgetDirector,&WidgetDirector::disable);
-    deviceSetListWidget->connectToSelectedDeviceSet();
+//    deviceSetListWidget->connectToSelectedDeviceSet();
     //TODO UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
     //    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);

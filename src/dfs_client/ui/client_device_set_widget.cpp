@@ -6,13 +6,20 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QHostAddress>
+#include <QTimer>
+#include <QMessageBox>
+
+const QString DeviceSetWidget::STRING_CONNECT="connected";
+const QString DeviceSetWidget::STRING_DISCONNECT="disconnect";
 
 DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _lbAddresText(new QLabel(address,this)),
     _lbPort(new QLabel(QString::number(port),this)),
+    _lbStatus(new QLabel(this)),
     _cbReceivers(new QComboBox(this)),
     _deviceSetClient(std::make_unique<DeviceSetClient>())
 {
+    setObjectName(address);
     QGridLayout *vbLayout=new QGridLayout;
     setLayout(vbLayout);
 
@@ -22,7 +29,13 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     vbLayout->addWidget(new QLabel("Port:",this),1,0);
     vbLayout->addWidget(_lbPort,1,1);
 
-    vbLayout->addWidget(_cbReceivers);
+    vbLayout->addWidget(new QLabel("Receivers:"),2,0);
+    vbLayout->addWidget(_cbReceivers,2,1);
+
+    vbLayout->addWidget(new QLabel("Status:"),3,0);
+    vbLayout->addWidget(_lbStatus);
+    _lbStatus->setText(STRING_DISCONNECT);
+    _lbStatus->setUserData(USER_DATA_STATUS,new Status(false));
 
     connect(_deviceSetClient.get(),&DeviceSetClient::deviceSetReady,
             this,&DeviceSetWidget::onDeviceSetReady);
@@ -43,22 +56,51 @@ void DeviceSetWidget::connectToDeviceSet()
                                     _lbPort->text().toUShort());
 }
 
+void DeviceSetWidget::disconnectFromDeviceSet()
+{
+    _deviceSetClient->disconnectFromHost();
+}
+
 void DeviceSetWidget::onDeviceSetReady()
 {
     qDebug()<<"onDeviceSetReady";
-   _cbReceivers->addItems(_deviceSetClient->receiverNameList());
+    _lbStatus->setText(STRING_CONNECT);
+    setStatus(true);
+    _cbReceivers->addItems(_deviceSetClient->receiverNameList());
 }
 
 void DeviceSetWidget::onDeviceSetDisconnected()
 {
     qDebug()<<"DeviceSet disconnected";
-//TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОТКЛЮЧЕНИЯ
+    _lbStatus->setText(STRING_DISCONNECT);
+    setStatus(false);
+    _cbReceivers->clear();
+    //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОТКЛЮЧЕНИЯ
+}
+
+bool DeviceSetWidget::isConnected()
+{
+    if(QObjectUserData *userData=_lbStatus->userData(USER_DATA_STATUS))
+    {
+        Status*status=dynamic_cast<Status*>(userData);
+        return status->_status;
+    }
+    return false;
+}
+
+void DeviceSetWidget::setStatus(bool status)
+{
+    if(QObjectUserData *userData=_lbStatus->userData(USER_DATA_STATUS))
+    {
+        Status*s=dynamic_cast<Status*>(userData);
+        s->_status=status;
+    }
 }
 
 void DeviceSetWidget::onDeviceSetCommandFailed(const QString &errorString)
 {
-qDebug()<<errorString;
-//TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОШИБКИ
+    qDebug()<<errorString;
+    //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОШИБКИ
 }
 
 void DeviceSetWidget::setDeviceSetCommand(const proto::receiver::Command &command)

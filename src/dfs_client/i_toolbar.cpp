@@ -3,5 +3,6 @@
 
 void IToolBarWidget::changed()
 {
+    if(_mainWindow)
     _mainWindow->widgetChanged(this);
 }

@@ -14,8 +14,10 @@ public:
     ChannelClient(qintptr handle,QObject *parent=nullptr);
     ~ChannelClient()override;
     void connectToHost(const QString &address,quint16 port,SessionType sesionType);
+    void disconnectFromHost();
 signals:
     void connected();
+    void disconnected();
 private:
     void internalMessageReceive(const QByteArray &buffer)override;
     void readServerKeyExchange(const QByteArray &buffer);

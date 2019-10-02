@@ -17,6 +17,13 @@ SwitchButton::SwitchButton(QString nameOn, QString nameOff,bool clicked,
     setButtonStates(nameOn,nameOff,clicked);
 }
 
+SwitchButton::SwitchButton(const QString &nameOn,const QString &nameOff,
+                           bool clicked,QWidget *parent):
+    QPushButton (parent),IToolBarWidget (nullptr)
+{
+    setButtonStates(nameOn,nameOff,clicked);
+}
+
 void SwitchButton::setButtonStates(QString nameOn, QString nameOff,bool clicked)
 {
     machine=new QStateMachine;
@@ -68,6 +75,7 @@ bool SwitchButton::currentState()
 
 void SwitchButton::setCurrentState(bool clicked)
 {
+    qDebug()<<"Set Current:"<<clicked;
     if(clicked){
         machine->setInitialState(stateSecond);
     }else {

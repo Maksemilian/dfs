@@ -36,6 +36,7 @@ public:
     QStringList receiverNameList();
     QString getStationAddress();
     void connectToHost(const QHostAddress &address,quint16 port);
+    void disconnectFromHost();
     void sendCommand(const proto::receiver::Command &command);
 signals:
     void connected();

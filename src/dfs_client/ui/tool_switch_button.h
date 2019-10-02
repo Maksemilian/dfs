@@ -18,6 +18,9 @@ public:
     SwitchButton(QString nameOn,QString nameOff,bool clicked,
                  MainWindow*mainWindow,QWidget *parent=nullptr);
 
+    SwitchButton(const QString &nameOn,const QString &nameOff,bool clicked,
+                 QWidget *parent=nullptr);
+
     void setCurrentState(bool clicked);
     bool currentState();
 private:

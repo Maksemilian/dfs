@@ -45,9 +45,6 @@ DeviceSetClient::DeviceSetClient(QObject *parent):
 
     connect(d->channel.get(),&net::ChannelClient::finished,
             this,&DeviceSetClient::disconnected);
-
-//    connect(this,&DeviceSetClient::deviceSetReady,
-//            this,&DeviceSetClient::connected);
 }
 
 const proto::receiver::DeviceSetInfo & DeviceSetClient::getDeviceSetInfo() const
@@ -74,6 +71,11 @@ void DeviceSetClient::connectToHost(const QHostAddress &address, quint16 port)
     d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
 }
 
+void DeviceSetClient::disconnectFromHost()
+{
+    d->channel->disconnectFromHost();
+}
+
 DeviceSetClient::~DeviceSetClient(){}
 
 QString DeviceSetClient::getCurrentDeviceSetName()
@@ -91,7 +93,7 @@ QString DeviceSetClient::getCurrentDeviceSetName()
 
 void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
 {
-    qDebug()<<"ReceiverStationClient::onMessageReceived";
+    qDebug()<<"ReceiverStationClient::onMessageReceived"<<buffer.size();
     proto::receiver::HostToClient hostToClient;
     if(!hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
         qDebug()<<"ERROR PARSE HOST_TO_CLIENT_MESSAGE";

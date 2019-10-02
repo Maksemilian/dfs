@@ -8,8 +8,16 @@ Channel::Channel(QObject *parent)
     : QObject(parent),
       _socket(std::make_unique<QTcpSocket>())
 {
-    connect(_socket.get(),&QTcpSocket::readyRead,this,&Channel::onReadyRead);
-    connect(_socket.get(),&QTcpSocket::disconnected,this,&Channel::finished);
+    connect(_socket.get(),&QTcpSocket::readyRead,
+            this,&Channel::onReadyRead);
+
+    connect(_socket.get(),&QTcpSocket::disconnected,
+//            this,&Channel::finished);
+            [this]{
+        keyExchangeState=KeyExchangeState::HELLO;
+        _channelState=NOT_CONNECTED;
+       emit finished();
+    });
 }
 
 Channel::Channel(qintptr _handle,QObject *parent)
