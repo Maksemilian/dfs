@@ -72,8 +72,10 @@ void DeviceSetListWidget::setAllDeviceSet(const proto::receiver::Command &comman
     QList<QListWidgetItem*> itemList=_listWidget->selectedItems();
     for(QListWidgetItem*item:itemList){
         DeviceSetWidget*widget=qobject_cast<DeviceSetWidget*>(_listWidget->itemWidget(item));
-        if(widget)
+        if(widget){
+            _counter++;
             widget->setDeviceSetCommand(command);
+        }
     }
 }
 
@@ -90,6 +92,13 @@ void DeviceSetListWidget::createDevieSetWidgets()
         s.endGroup();
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
         addDeviceSetWidget(new DeviceSetWidget(ip,port));
+
+        s.beginGroup("dev_2");
+        ip=s.value("ip").toString();
+        port=static_cast<quint16>(s.value("port").toUInt());
+        s.endGroup();
+        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+        addDeviceSetWidget(new DeviceSetWidget(ip,port));
     }
 }
 
@@ -97,6 +106,7 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
 {
     connect(deviceSetWidget,&DeviceSetWidget::commandSuccessed,
             [this]{
+        if(--_counter!=0)return ;
         const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
         if(!_commandQueue.isEmpty()&&
                 _commandQueue.head().command_type()!=successedCommand.command_type()){

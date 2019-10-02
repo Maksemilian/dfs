@@ -68,6 +68,7 @@ QStringList DeviceSetClient::receiverNameList()
 
 void DeviceSetClient::connectToHost(const QHostAddress &address, quint16 port)
 {
+    setObjectName(address.toString());
     d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
 }
 
@@ -137,7 +138,7 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
 //            emit deviceSetSettingsSetted();
             break;
         case proto::receiver::CommandType::SET_ATTENUATOR:
-            qDebug()<< "SETED_ATTENUATOR";
+            qDebug()<< "SETED_ATTENUATOR"<<objectName();
             break;
         case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
             qDebug()<< "SETED_PREAMPLIFIER_ENABLED";
@@ -175,8 +176,9 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         qWarning()<<"ERROR RESPONSE"<<answer.type();
         emit commandFailed(errorString(answer.type()));
     }
-
+    qDebug()<<"DEQ_B";
     d->commandQueue.dequeue();
+    qDebug()<<"DEQ_E";
 }
 
 void DeviceSetClient::sendCommand(const proto::receiver::Command &command)

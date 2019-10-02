@@ -46,6 +46,7 @@ private:
     void createDevieSetWidgets();
     void checkingConnections(bool checkingState);
 private:
+    int _counter=0;
     QQueue<proto::receiver::Command>_commandQueue;
     QListWidget *_listWidget;
     SwitchButton *_pbConnectToStation;
