@@ -1,11 +1,10 @@
 #ifndef FREQUENCY_LINE_EDIT_H
 #define FREQUENCY_LINE_EDIT_H
 
-#include "i_toolbar.h"
 
 #include <QLineEdit>
 
-class FrequencyLineEdit : public QLineEdit,public IToolBarWidget
+class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
 {
     Q_OBJECT
     typedef enum
@@ -30,7 +29,7 @@ class FrequencyLineEdit : public QLineEdit,public IToolBarWidget
     static const double MAX_VALUE_IN_HZ;
 
 public:
-    FrequencyLineEdit(MainWindow*mainWindow,QWidget*parent=nullptr);
+    FrequencyLineEdit(/*MainWindow*mainWindow,*/QWidget*parent=nullptr);
 
     void setFrequencyValueInHz(quint32 frequency);
     quint32 getFrequencyValueInHz();
@@ -39,6 +38,8 @@ public:
     static quint32 formatingStringFrequencyToNumber(const QString &strFrequency);
 
     Q_SIGNAL void frequencyChanged(quint32 ddc1FrequencyHz);
+signals:
+    void changed();
 protected :
     void keyPressEvent(QKeyEvent *event)override;
 private:

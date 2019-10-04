@@ -68,11 +68,12 @@ private:
     void onNewConnection();
     void onChannelDisconnected();
     void createSession(net::ChannelHost*channelHost);
+    void createThread(net::ChannelHost *channelHost);
 private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
     DeviceSetClient *_client;
-    StreamDDC1 *_streamDDC1;
+    StreamDDC1 *_streamDDC1=nullptr;
     StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;
     QList<StreamFile*>fileStreamList;

@@ -24,8 +24,8 @@ const quint32 PreselectorWidget::preselectorHighFrequency[PreselectorWidget::PRE
     50'000'000
 };
 
-PreselectorWidget::PreselectorWidget(MainWindow*mainWindow,QWidget*parent)
-    :QWidget(parent),IToolBarWidget(mainWindow)
+PreselectorWidget::PreselectorWidget(/*MainWindow*mainWindow,*/QWidget*parent)
+    :QWidget(parent)/*,IToolBarWidget(mainWindow)*/
 {
     setLayout(new QHBoxLayout);
     cbLowFrequency=new QComboBox(this);

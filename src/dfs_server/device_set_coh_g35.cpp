@@ -171,6 +171,7 @@ void CohG35DeviceSet::stopDDC1(){
         deviceSet->StopDDC1();
         timeReader->stop();
         ddc1Buffer->reset();
+        buffer->reset();
         //WARNING signalFileWriter->stop();
     }
 }

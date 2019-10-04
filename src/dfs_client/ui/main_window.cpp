@@ -9,9 +9,6 @@
 #include "tool_switch_button.h"
 #include "tool_widgets.h"
 
-#include "ui/db/receiver_station_panel.h"
-#include "ui/db/widget_director.h"
-
 #include "plot_channel.h"
 #include "plot_elipse.h"
 
@@ -121,8 +118,10 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
 
     //    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
-    leDDC1Frequency =new FrequencyLineEdit(this,topToolBar);
+    leDDC1Frequency =new FrequencyLineEdit(this);
     leDDC1Frequency->setUserData(USER_DATA_ID,macroFreq);
+    connect(leDDC1Frequency,&FrequencyLineEdit::changed,
+            this,&MainWindow::widgetChanged);
 
     //DDC1 Bandwith
     MacroCommand *macroBandwith=FactoryCommand::getMacroCommand();
@@ -132,13 +131,15 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
     macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
     //    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
-    cbDDC1Bandwith=new BandwithComboBox(this,topToolBar);
+    cbDDC1Bandwith=new BandwithComboBox(this);
     cbDDC1Bandwith->setUserData(USER_DATA_ID,macroBandwith);
+    connect(cbDDC1Bandwith,&BandwithComboBox::changed,this,&MainWindow::widgetChanged);
 
     //Samples per Buffer
 
-    cbSamplesPerBuffer=new SampleRateComboBox(this,topToolBar);
+    cbSamplesPerBuffer=new SampleRateComboBox(this);
     cbSamplesPerBuffer->setEnabled(false);
+    connect(cbSamplesPerBuffer,&SampleRateComboBox::changed,this,&MainWindow::widgetChanged);
 
     topToolBar->addWidget(leDDC1Frequency);
 
@@ -156,8 +157,8 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
 {
     if(!bottomToolBar) return ;
     //power BUTTON
-    pbPower=new SwitchButton("On","Off",false,this,bottomToolBar);
-
+    pbPower=new SwitchButton("On","Off",false,this);
+    connect(pbPower,&SwitchButton::changed,this,&MainWindow::widgetChanged);
     MacroCommand*macroCommand=FactoryCommand::getMacroCommand();
     macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget,this));
     macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget,this));
@@ -175,35 +176,43 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     pbPower->setUserData(USER_DATA_POWER_OFF,mc);
 
     //attenuator BUTTON
-    pbAttenuatorEnable=new SwitchButton("Atten Enable","Atten Disable",false,this,bottomToolBar);
+    pbAttenuatorEnable=new SwitchButton("Atten Enable","Atten Disable",false,this);
     pbAttenuatorEnable->setUserData(USER_DATA_ID,
                                     FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
-
+    connect(pbAttenuatorEnable,&SwitchButton::changed,this,&MainWindow::widgetChanged);
     //attenuator COMBO BOX
-    cbAttenuationLevel=new AttenuatorComboBox(this,bottomToolBar);
+    cbAttenuationLevel=new AttenuatorComboBox(this);
     cbAttenuationLevel->setUserData(USER_DATA_ID,//TODO SYNC MANAGER
                                     FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
-
+    connect(cbAttenuationLevel,&AttenuatorComboBox::changed,
+            this,&MainWindow::widgetChanged);
     //preamplifier BUTTON
-    pbPreamplifierEnable=new SwitchButton("Pream Enable","Pream Disable",false,this,bottomToolBar);
+    pbPreamplifierEnable=new SwitchButton("Pream Enable","Pream Disable",false,this);
     pbPreamplifierEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreamplifireCommand(deviceSetListWidget,this));
+    connect(pbPreamplifierEnable,&SwitchButton::changed,
+            this,&MainWindow::widgetChanged);
 
     //preseector BUTTON
-    pbPreselectorEnable=new SwitchButton("Pres Enable","Pres Disable",false,this,bottomToolBar);
+    pbPreselectorEnable=new SwitchButton("Pres Enable","Pres Disable",false,this);
     pbPreselectorEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
+    connect(pbPreselectorEnable,&SwitchButton::changed,this,&MainWindow::widgetChanged);
 
     //preseector LOW FREQUENCY COMBO BOX
-    preselectorWidget=new PreselectorWidget(this,bottomToolBar);
+    preselectorWidget=new PreselectorWidget(this);
     preselectorWidget->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
+    connect(preselectorWidget,&PreselectorWidget::changed,this,&MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER BUTTON
-    pbAdcNoiceBlanckerEnabled=new SwitchButton("ADC Enable","ADC Disable",false,this,bottomToolBar);
+    pbAdcNoiceBlanckerEnabled=new SwitchButton("ADC Enable","ADC Disable",false,this);
     pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID,FactoryCommand::getAdcEnabledCommand(deviceSetListWidget,this));
+    connect(pbAdcNoiceBlanckerEnabled,&SwitchButton::changed,this,&MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER LENE EDIT
-    leAdcNoiceBlanckerThreshold=new ToolBarLineEdit(this,bottomToolBar);
+    leAdcNoiceBlanckerThreshold=new ToolBarLineEdit(this);
     leAdcNoiceBlanckerThreshold->setFixedWidth(100);
     leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID,FactoryCommand::getAdcThresholdCommand(deviceSetListWidget,this));
+    connect(leAdcNoiceBlanckerThreshold,&ToolBarLineEdit::changed,this,&MainWindow::widgetChanged);
+
     // End Widgets
 
     bottomToolBar->addWidget(pbAttenuatorEnable);
@@ -236,9 +245,11 @@ void MainWindow::showReceiverSettingsTool()
         toolBar->setEnabled(true);
 }
 
-void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
+
+
+void MainWindow::widgetChanged()
 {
-    QWidget*widget= dynamic_cast<QWidget*>(toolBarWidget);
+    QWidget*widget= qobject_cast<QWidget*>(sender());
     if(widget){
         QVariant variant;
         if (widget==pbPower){//pb Power
@@ -473,6 +484,57 @@ void MainWindow::saveSetting()
     }else  qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
 }
 /*
+void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
+{
+    QWidget*widget= dynamic_cast<QWidget*>(toolBarWidget);
+    if(widget){
+        QVariant variant;
+        if (widget==pbPower){//pb Power
+            if(pbPower->currentState()){qDebug()<<"********COMMAND ON";
+                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_ON));
+                if(command)
+                    command->execute();
+            }else {qDebug()<<"********COMMAND OFF";
+                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_OFF));
+                if(command)
+                    command->execute();
+            }
+            return;
+        }else if(widget==pbAttenuatorEnable){//pb Atten
+            if(pbAttenuatorEnable->currentState()==true){qDebug()<<"ATTENUATOR PB";
+                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
+                if(command)
+                    command->execute();
+
+                cbAttenuationLevel->setEnabled(true);
+            }else cbAttenuationLevel->setDisabled(true);
+
+            return;
+        }else if (widget==pbPreselectorEnable) {//pb Preselectors
+            if(pbPreselectorEnable->currentState()){
+                preselectorWidget->setEnabled(true);
+            }else {
+                preselectorWidget->setDisabled(true);
+                return;
+            }
+        }else if (widget==pbAdcNoiceBlanckerEnabled) {
+            pbAdcNoiceBlanckerEnabled->currentState()==false?
+                        leAdcNoiceBlanckerThreshold->setDisabled(true):
+                        leAdcNoiceBlanckerThreshold->setEnabled(true);
+        }else if(widget==cbAttenuationLevel){//cb Atten
+        }else if (widget==preselectorWidget) {// Preselectors Widget
+        }else if (widget==pbPreamplifierEnable) {//pb Pream
+        }else if (widget==leAdcNoiceBlanckerThreshold) {
+        }else if (widget==leDDC1Frequency){
+        }
+
+        //**********
+        AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
+        if(command)
+            command->execute();
+
+    }else qDebug()<<"BAD CAST TOOL WIDGET";
+}
 void MainWindow::setSettings(const MainWindowSettings::Data &receiverSettings)
 {
     pbAttenuatorEnable->setCurrentState(receiverSettings.attenuatorEnable);

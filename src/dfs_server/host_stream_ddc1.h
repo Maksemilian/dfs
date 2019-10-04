@@ -23,15 +23,21 @@ class StreamDDC1:public QObject
 public:
     StreamDDC1(net::ChannelHost*channelHost,
                std::shared_ptr<RingBuffer>buffer);
+
+    ~StreamDDC1(){qDebug()<<"DESTR_DDC1";}
     void process();
     void start();
     void stop();
-    Q_SIGNAL void finished();
+signals:
+    void finished();
+    void next();
+
 private:
     std::shared_ptr<RingBuffer>buffer;
     net::ChannelHost *_streamSocket;
     std::atomic<bool>quit;
-
+//    proto::receiver::Packet packet;
+//   proto::receiver::HostToClient hostToClient;
 };
 
 

@@ -29,7 +29,7 @@ StreamReader::StreamReader(const QString &address, quint16 port,
     d->port=port;
 }
 
-StreamReader::~StreamReader(){}
+StreamReader::~StreamReader(){qDebug()<<"DESTR::StreamReader";}
 
 
 void StreamReader::start()
@@ -48,16 +48,9 @@ void StreamReader::stop()
         d->quit=true;
         disconnect(d->stream.get(),&net::ChannelClient::messageReceived,
                    this,&StreamReader::onMessageReceive);
+        emit stoped();
         qDebug("STOP STREAM READER");
     }
-}
-
-void StreamReader::resetBuffer()
-{
-    qDebug()<<"StreamReader::resetBuffer";
-    //TODO ПОДОБНЫЙ МЕТОД ЕСТЬ В SHARED_PTR КОТОРЫЙ
-    //И ВЫЗЫВАЕТСЯ ИЗ ЗА ЧЕГО ПРОИСХОДИТ БАГ
-    d->streamBuffer->reset();
 }
 
 void StreamReader::run()
@@ -71,7 +64,7 @@ void StreamReader::run()
 
 void StreamReader::onMessageReceive(const QByteArray &buffer)
 {
-    qDebug()<<"StreamReader::onMessageReceive"<<buffer.size()<<d->quit;
+//    qDebug()<<"StreamReader::onMessageReceive"<<buffer.size()<<d->quit;
     proto::receiver::HostToClient hostToClient;
 
     if(!hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
@@ -82,21 +75,13 @@ void StreamReader::onMessageReceive(const QByteArray &buffer)
     if(hostToClient.has_packet()){
         d->streamBuffer->push(const_cast<proto::receiver::Packet&>(hostToClient.packet()));
         qDebug()
-                <<"SD:"<<d->address
+                <<"READ:"<<d->address
                <<"BN:"<<hostToClient.packet().block_number()
               <<"SR:"<<hostToClient.packet().sample_rate()
              <<"TOW:"<<hostToClient.packet().time_of_week()
             <<"DDC_C:"<<hostToClient.packet().ddc_sample_counter()
            <<"ADC_C"<<hostToClient.packet().adc_period_counter();
     }
-    if(d->quit)
-        emit stoped();
-
-}
-
-void StreamReader::readStream()
-{
-
 }
 
 //void StreamReader::run()

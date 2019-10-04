@@ -143,7 +143,7 @@ void Channel::onMessageReceive()
     readDataFromBuffer(buffer.data(),buffer.size());
 
     if(keyExchangeState==KeyExchangeState::DONE){
-        qDebug()<<"WORK_MES"<<buffer.size();
+//        qDebug()<<"WORK_MES"<<buffer.size();
         emit messageReceived(buffer);
     }else {
         qDebug()<<"SESSION_MES"<<buffer.size();
@@ -174,7 +174,7 @@ void Channel::onReadyRead()
                     read_.buffer_size=read_.buffer.toHex().toInt(&ok,16);
                     read_.buffer_size_received=true;
                     read_.buffer.clear();
-                    qDebug()<<"Size"<<read_.buffer_size<<current;
+//                    qDebug()<<"Size"<<read_.buffer_size<<current;
                     if (!read_.buffer_size || read_.buffer_size > 16 * 1024 * 1024)
                     {
                         //                        emit errorOccurred(Error::UNKNOWN);

@@ -25,6 +25,7 @@ StreamServer::StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet):
     //    streamAnalizator->start();
     connect(this,&StreamServer::newChannelReady,
             this,&StreamServer::onNewConnection);
+
 }
 
 void StreamServer::incomingConnection(qintptr handle)
@@ -94,14 +95,39 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
         _client->sendDeviceSetInfo();
     }else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
         qDebug()<<"STREAM SESSION";
-        QThread *thread=new QThread;
-        _streamDDC1=new StreamDDC1(channelHost,_client->getBuffer());
-        _streamDDC1->moveToThread(thread);
-        channelHost->moveToThread(thread);
-        connect(thread,&QThread::started,
-                _streamDDC1,&StreamDDC1::process);
-        thread->start();
+        if(_streamDDC1==nullptr){
+            createThread(channelHost);
+        }else {
+            _streamDDC1->stop();
+
+            createThread(channelHost);
+        }
     }else qDebug()<<"ERROR SESSION TYPE";
+}
+
+void StreamServer::createThread(net::ChannelHost *channelHost)
+{
+    QThread *thread=new QThread;
+    _streamDDC1=new StreamDDC1(channelHost,_client->getBuffer());
+    _streamDDC1->moveToThread(thread);
+    channelHost->moveToThread(thread);
+//        connect(channelHost,&net::ChannelHost::finished,
+//                [this]{
+//           _streamDDC1->stop();
+//        });
+    connect(thread,&QThread::started,
+            _streamDDC1,&StreamDDC1::start);
+
+    connect(_streamDDC1,&StreamDDC1::finished,
+            thread,&QThread::quit);
+
+    connect(thread,&QThread::finished,
+            _streamDDC1,&StreamDDC1::deleteLater);
+
+    connect(thread,&QThread::destroyed,
+            thread,&QThread::deleteLater);
+
+    thread->start();
 }
 
 void StreamServer::addStreamDDC1(StreamDDC1 *stream)

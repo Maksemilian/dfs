@@ -16,6 +16,8 @@ ClientStreamController::ClientStreamController(const QString &address,quint16 po
 ClientStreamController::~ClientStreamController(){}
 void ClientStreamController::startDDC()
 {
+//    if(_ddcStreamThread==nullptr&&_ddcStream==nullptr){
+
     _ddcStreamThread=new QThread;
     _ddcStream=new StreamReader(_address,_port,_ddcBuffer);
 
@@ -39,11 +41,14 @@ void ClientStreamController::startDDC()
 
     _ddcStream->moveToThread(_ddcStreamThread);
     _ddcStreamThread->start();
+
       qDebug()<<"*********************STREAM CONTROLLER START DDC";
+//    }
 }
 
 void ClientStreamController::stopDDC()
 {
-    qDebug()<<"*********************STREAM CONTROLLER STOPED DDC";
     _ddcStream->stop();
+    _ddcBuffer->reset();
+    qDebug()<<"*********************STREAM CONTROLLER STOPED DDC";
 }

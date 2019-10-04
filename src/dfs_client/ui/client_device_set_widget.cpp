@@ -1,5 +1,4 @@
 #include "client_device_set_widget.h"
-#include "client_device_set_stream_widget.h"
 #include "client_device_set.h"
 #include "client_stream_controller.h"
 

@@ -7,19 +7,19 @@
 const char *SwitchButton::STATE_BUTTON= "state_button";
 
 
-SwitchButton::SwitchButton(MainWindow*mainWindow,QWidget *parent):
-    QPushButton(parent),IToolBarWidget(mainWindow){}
+SwitchButton::SwitchButton(/*MainWindow*mainWindow,*/QWidget *parent):
+    QPushButton(parent)/*,IToolBarWidget(mainWindow)*/{}
 
-SwitchButton::SwitchButton(QString nameOn, QString nameOff,bool clicked,
-                           MainWindow*mainWindow,QWidget *parent)
-    :QPushButton(parent),IToolBarWidget(mainWindow)
-{
-    setButtonStates(nameOn,nameOff,clicked);
-}
+//SwitchButton::SwitchButton(QString nameOn, QString nameOff,bool clicked,
+//                           /*MainWindow*mainWindow,*/QWidget *parent)
+//    :QPushButton(parent)/*,IToolBarWidget(mainWindow)*/
+//{
+//    setButtonStates(nameOn,nameOff,clicked);
+//}
 
 SwitchButton::SwitchButton(const QString &nameOn,const QString &nameOff,
                            bool clicked,QWidget *parent):
-    QPushButton (parent),IToolBarWidget (nullptr)
+    QPushButton (parent)/*,IToolBarWidget (nullptr)*/
 {
     setButtonStates(nameOn,nameOff,clicked);
 }

@@ -64,8 +64,8 @@ const quint8 AttenuatorComboBox::attenuatorArray[AttenuatorComboBox::ATTENUATOR_
     21
 };
 
-ToolBarLineEdit::ToolBarLineEdit(MainWindow*mainWindow,QWidget*parent)
-    :QLineEdit(parent),IToolBarWidget (mainWindow)
+ToolBarLineEdit::ToolBarLineEdit(/*MainWindow*mainWindow,*/QWidget*parent)
+    :QLineEdit(parent)/*,IToolBarWidget (mainWindow)*/
 {
     connect(this,&QLineEdit::returnPressed,[this]
     {
@@ -78,20 +78,20 @@ quint16 ToolBarLineEdit::getValue()
     return  text().toUShort();
 }
 
-ToolBarComboBox::ToolBarComboBox(MainWindow*mainWindow,QWidget*parent)
-    :QComboBox(parent),IToolBarWidget(mainWindow)
+ToolBarComboBox::ToolBarComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
+    :QComboBox(parent)/*,IToolBarWidget(mainWindow)*/
 {
     setEditable(false);
     connect(this,static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
             [this](const QString &text){
         if(!text.isEmpty())
-            changed();
+           emit changed();
     });
 }
 
 
-BandwithComboBox::BandwithComboBox(MainWindow*mainWindow,QWidget*parent)
-    :ToolBarComboBox(mainWindow,parent)
+BandwithComboBox::BandwithComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
+    :ToolBarComboBox(/*mainWindow,*/parent)
 {
     for(int i=0;i<BANDWITH_SIZE;i++)
         addItem(FrequencyLineEdit::formatingFrequencyToString(bandwithArray[i]));
@@ -100,13 +100,13 @@ BandwithComboBox::BandwithComboBox(MainWindow*mainWindow,QWidget*parent)
     setMaxVisibleItems(maxVisibleItems);
     setCurrentIndex(0);
 
-    QObject::connect(this,
-                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
-                     [this](const QString &text){
-        if(!text.isEmpty()){
-            this->changed();
-        }
-    });
+//    QObject::connect(this,
+//                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
+//                     [this](const QString &text){
+//        if(!text.isEmpty()){
+//            this->changed();
+//        }
+//    });
 }
 
 quint32 BandwithComboBox::currentTypeIndex()
@@ -114,20 +114,20 @@ quint32 BandwithComboBox::currentTypeIndex()
     return static_cast<quint32>(currentIndex());
 }
 
-SampleRateComboBox::SampleRateComboBox(MainWindow*mainWindow,QWidget*parent)
-    :ToolBarComboBox (mainWindow,parent)
+SampleRateComboBox::SampleRateComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
+    :ToolBarComboBox (/*mainWindow,*/parent)
 {
     for(int i=0;i<SAMPLES_PER_BUFFER_SIZE;i++)
         addItem(QString::number(samplesPerBufferArray[i]));
 
     setCurrentIndex(SAMPLES_PER_BUFFER_SIZE-1);
-    QObject::connect(this,
-                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
-                     [this](const QString &text){
-        if(!text.isEmpty()){
-            this->changed();
-        }
-    });
+//    QObject::connect(this,
+//                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
+//                     [this](const QString &text){
+//        if(!text.isEmpty()){
+//            this->changed();
+//        }
+//    });
 }
 
 quint32 SampleRateComboBox::samplesPerBuffer()
@@ -135,8 +135,8 @@ quint32 SampleRateComboBox::samplesPerBuffer()
     return currentText().toUInt();
 }
 
-AttenuatorComboBox::AttenuatorComboBox(MainWindow*mainWindow,QWidget*parent)
-    :ToolBarComboBox (mainWindow,parent)
+AttenuatorComboBox::AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
+    :ToolBarComboBox (/*mainWindow,*/parent)
 {
     for(int i=0;i<ATTENUATOR_SIZE;i++)
         addItem(QString::number(attenuatorArray[i])+" Db");

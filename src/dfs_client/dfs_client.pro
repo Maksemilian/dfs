@@ -48,12 +48,10 @@ HEADERS += \
     i_device_set_settings.h \
     i_stream_reader.h \
     i_sygnal_update.h \
-    i_toolbar.h \
     core/network/signal_sync.h \
     command_hierarch.h \
     sync_pair_channel.h \
     command_factory.h \
-    db.h \
     client_device_set.h \
     client_stream.h \
     client_stream_controller.h
@@ -71,17 +69,13 @@ SOURCES += \
     command_hierarch.cpp \
     command_factory.cpp \
     sync_pair_channel.cpp \
-    db.cpp \
     main.cpp \
     client_device_set.cpp \
     client_stream.cpp \
-    i_toolbar.cpp \
     client_stream_controller.cpp
 
 FORMS += \
     ui/main_window.ui \
-    ui/db/sync_task_view.ui \
-    ui/db/receiver_station_panel.ui \
 
 #при добавлении нижней строки происходит error
 #:-1: ошибка: cannot open output file release/ProcessingSignalClient.exe: Permission denied

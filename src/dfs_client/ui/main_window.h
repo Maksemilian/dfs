@@ -13,8 +13,6 @@ class MainWindow;
 using UInt32Bandwth =quint32;
 using Uint32SampleRate=quint32;
 
-class IToolBarWidget;
-
 class ReceiverSettings;
 
 class FrequencyLineEdit;
@@ -67,11 +65,6 @@ public:
     void setWaitCursor()override;
     void setArrowCursor()override;
 
-    Q_SLOT void hideReceiverSettingsTool();
-    Q_SLOT void showReceiverSettingsTool();
-
-    void widgetChanged(IToolBarWidget*toolBarWidget);
-
     void setCentralWidget(QWidget *widget);
     void setLeftDockWidget(QWidget*widget,const QString &title=QString());
     void setRightDockWidget(QWidget*widget,const QString &title=QString());
@@ -83,6 +76,10 @@ private:
     //MAIN WINDOW SETTINGS
     void loadSettings();
     void saveSetting();
+private slots:
+    void widgetChanged();
+    void hideReceiverSettingsTool();
+    void showReceiverSettingsTool();
 private:
     Ui::MainWindow *ui;
 
@@ -105,7 +102,6 @@ private:
     PreselectorWidget *preselectorWidget;
 
     QMap<Qt::ToolBarArea,QToolBar*>toolBarMap;
-
 
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget
