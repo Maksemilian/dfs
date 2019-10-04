@@ -8,16 +8,16 @@
 #include <QQueue>
 #include <QMutex>
 
-#include "host_device_set.h"
+#include "host_ds.h"
 #include "channel_host.h"
-#include "host_stream_ddc1.h"
+#include "host_ds_stream.h"
 class PeerWireClient;
 class RingPacketBuffer;
 class CohG35DeviceSet;
 class ConnectRequest;
 class StreamServer;
 
-class StreamFile;
+//class StreamFile;
 class StreamDDC1;
 class ChannelHost;
 
@@ -55,10 +55,10 @@ public:
     StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet);
     ~StreamServer()override;
 
-    void stopStreamDDC1();
-    void stopStreamFile();
     void addStreamDDC1(StreamDDC1*streamDDC1);
-    void addFileStream(StreamFile *fileStream);
+    void stopStreamDDC1();
+//    void stopStreamFile();
+//    void addFileStream(StreamFile *fileStream);
     std::shared_ptr<RingPacketBuffer>getDDC1Buffer();
 signals:
     void newChannelReady();
@@ -76,7 +76,7 @@ private:
     StreamDDC1 *_streamDDC1=nullptr;
     StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;
-    QList<StreamFile*>fileStreamList;
+//    QList<StreamFile*>fileStreamList;
     std::shared_ptr<CohG35DeviceSet>deviceSet;
 };
 #endif // STREAM_SERVE_RTEST_H

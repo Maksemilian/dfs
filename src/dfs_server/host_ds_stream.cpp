@@ -1,4 +1,4 @@
-#include "host_stream_ddc1.h"
+#include "host_ds_stream.h"
 #include "peer_wire_client.h"
 #include "receiver.pb.h"
 #include "channel.h"

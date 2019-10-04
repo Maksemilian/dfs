@@ -42,8 +42,6 @@ HEADERS += \
     ui/tool_widgets.h \
     ui/tool_switch_button.h \
     ui/tool_preselector_widget.h \
-    ui/client_device_set_widget.h \
-    ui/client_device_set_widget_list.h \
     interface/i_deviceset.h \
     i_device_set_settings.h \
     i_stream_reader.h \
@@ -52,9 +50,11 @@ HEADERS += \
     command_hierarch.h \
     sync_pair_channel.h \
     command_factory.h \
-    client_device_set.h \
-    client_stream.h \
-    client_stream_controller.h
+    client_ds.h \
+    client_ds_stream.h \
+    client_ds_stream_controller.h \
+    ui/client_ds_ui.h \
+    ui/client_ds_ui_list.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -64,15 +64,15 @@ SOURCES += \
     ui/tool_switch_button.cpp \
     ui/tool_preselector_widget.cpp \
     ui/tool_frequency_line_edit.cpp \
-    ui/client_device_set_widget.cpp \
-    ui/client_device_set_widget_list.cpp \
     command_hierarch.cpp \
     command_factory.cpp \
     sync_pair_channel.cpp \
     main.cpp \
-    client_device_set.cpp \
-    client_stream.cpp \
-    client_stream_controller.cpp
+    client_ds.cpp \
+    client_ds_stream.cpp \
+    client_ds_stream_controller.cpp \
+    ui/client_ds_ui.cpp \
+    ui/client_ds_ui_list.cpp
 
 FORMS += \
     ui/main_window.ui \

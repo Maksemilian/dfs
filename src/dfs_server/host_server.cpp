@@ -4,8 +4,7 @@
 #include "device_set_coh_g35.h"
 
 #include "peer_wire_client.h"
-#include "host_stream_ddc1.h"
-#include "host_stream_file.h"
+#include "host_ds_stream.h"
 #include "channel_host.h"
 
 #include "command.pb.h"
@@ -98,6 +97,7 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
         if(_streamDDC1==nullptr){
             createThread(channelHost);
         }else {
+            //TODO ИСПРАВИТЬ
             _streamDDC1->stop();
 
             createThread(channelHost);
@@ -130,15 +130,15 @@ void StreamServer::createThread(net::ChannelHost *channelHost)
     thread->start();
 }
 
-void StreamServer::addStreamDDC1(StreamDDC1 *stream)
-{
-    streamDDCList<<stream;
-}
+//void StreamServer::addStreamDDC1(StreamDDC1 *stream)
+//{
+//    streamDDCList<<stream;
+//}
 
-void StreamServer::addFileStream(StreamFile *fileStream)
-{
-    fileStreamList<<fileStream;
-}
+//void StreamServer::addFileStream(StreamFile *fileStream)
+//{
+//    fileStreamList<<fileStream;
+//}
 
 std::shared_ptr<RingPacketBuffer>StreamServer::getDDC1Buffer()
 {
@@ -151,16 +151,16 @@ void StreamServer::stopStreamDDC1()
     streamDDCList.first()->stop();
 }
 
-void StreamServer::stopStreamFile()
-{
-    //WARNING ОТКЛЮЧАЕТСЯ ТОЛЬКО ПЕРВЫЙ
-    fileStreamList.first()->setQuit(true);
-}
+//void StreamServer::stopStreamFile()
+//{
+//    //WARNING ОТКЛЮЧАЕТСЯ ТОЛЬКО ПЕРВЫЙ
+//    fileStreamList.first()->setQuit(true);
+//}
 
 StreamServer::~StreamServer()
 {
     stopStreamDDC1();
-    stopStreamFile();
+//    stopStreamFile();
     streamAnalizator->stop();
 }
 
@@ -272,17 +272,17 @@ void StreamAnalizator::createStreamDDC1(PeerWireClient *streamSocket)
 
 void StreamAnalizator::createFileStream(PeerWireClient *streamSocket)
 {
-    QThread *thread=new QThread;
-    StreamFile *fileStream=new StreamFile(streamSocket);
+//    QThread *thread=new QThread;
+//    StreamFile *fileStream=new StreamFile(streamSocket);
 
-    connect(thread,&QThread::started,fileStream,&StreamFile::run);
-    connect(fileStream,&StreamFile::finished,thread,&QThread::quit);
-    connect(thread,&QThread::finished,thread,&QThread::deleteLater);
+//    connect(thread,&QThread::started,fileStream,&StreamFile::run);
+//    connect(fileStream,&StreamFile::finished,thread,&QThread::quit);
+//    connect(thread,&QThread::finished,thread,&QThread::deleteLater);
 
-    streamSocket->moveToThread(thread);
-    fileStream->moveToThread(thread);
-    fileStream->setQuit(false);
+//    streamSocket->moveToThread(thread);
+//    fileStream->moveToThread(thread);
+//    fileStream->setQuit(false);
 
-    server->addFileStream(fileStream);
-    thread->start();
+//    server->addFileStream(fileStream);
+//    thread->start();
 }

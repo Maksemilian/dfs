@@ -31,25 +31,23 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 #LIBS += -lprotobuf$${LIB_SUFFIX}
 
 HEADERS += device_set_selector.h \
-    host_stream_ddc1.h \
-    host_stream_file.h \
     host_server.h \
-    host_device_set.h \
     tsip_reader.h \
     tsip_parser.h \
     device_set_signal_file_writer.h \
-    device_set_coh_g35.h
+    device_set_coh_g35.h \
+    host_ds.h \
+    host_ds_stream.h
 
 SOURCES += main.cpp \
     device_set_selector.cpp \
-    host_device_set.cpp \
-    host_stream_ddc1.cpp \
-    host_stream_file.cpp \
     host_server.cpp \
     tsip_reader.cpp \
     tsip_parser.cpp \
     device_set_coh_g35.cpp \
-    device_set_signal_file_writer.cpp
+    device_set_signal_file_writer.cpp \
+    host_ds.cpp \
+    host_ds_stream.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings

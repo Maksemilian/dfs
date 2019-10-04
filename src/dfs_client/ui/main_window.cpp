@@ -12,8 +12,8 @@
 #include "plot_channel.h"
 #include "plot_elipse.h"
 
-#include "client_device_set_widget.h"
-#include "client_device_set_widget_list.h"
+#include "client_ds_ui.h"
+#include "client_ds_ui_list.h"
 
 #include <QDockWidget>
 #include <QCheckBox>
