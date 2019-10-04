@@ -37,6 +37,11 @@ DeviceSetClient::~DeviceSetClient()
     d->cohG35DeviceSet->stopDDC1();
 }
 
+std::shared_ptr<RingBuffer> DeviceSetClient::getBuffer()
+{
+    return  d->cohG35DeviceSet->getBuffer();
+}
+
 QByteArray DeviceSetClient::serializeMessage(const google::protobuf::Message &message)
 {
     int  byteSize= message.ByteSize();

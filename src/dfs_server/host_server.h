@@ -10,7 +10,7 @@
 
 #include "host_device_set.h"
 #include "channel_host.h"
-
+#include "host_stream_ddc1.h"
 class PeerWireClient;
 class RingPacketBuffer;
 class CohG35DeviceSet;
@@ -72,7 +72,7 @@ private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
     DeviceSetClient *_client;
-
+    StreamDDC1 *_streamDDC1;
     StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;
     QList<StreamFile*>fileStreamList;

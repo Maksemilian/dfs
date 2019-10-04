@@ -29,7 +29,8 @@ HEADERS += \
     ring_packet_buffer.h \
     channel.h \
     channel_client.h \
-    channel_host.h
+    channel_host.h \
+    ring_buffer.h
 
 SOURCES += \
     peer_wire_client.cpp \

@@ -15,6 +15,7 @@ public:
     ~ChannelClient()override;
     void connectToHost(const QString &address,quint16 port,SessionType sesionType);
     void disconnectFromHost();
+
 signals:
     void connected();
     void disconnected();

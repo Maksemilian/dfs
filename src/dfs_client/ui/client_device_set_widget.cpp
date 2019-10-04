@@ -1,6 +1,7 @@
 #include "client_device_set_widget.h"
-
+#include "client_device_set_stream_widget.h"
 #include "client_device_set.h"
+#include "client_stream_controller.h"
 
 #include <QGridLayout>
 #include <QLabel>
@@ -12,12 +13,17 @@
 const QString DeviceSetWidget::STRING_CONNECT="connected";
 const QString DeviceSetWidget::STRING_DISCONNECT="disconnect";
 
+const QString DeviceSetWidget::TEXT_CONNECT="connect";
+const QString DeviceSetWidget::TEXT_DISCONNECT="disconnect";
+
 DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _lbAddresText(new QLabel(address,this)),
     _lbPort(new QLabel(QString::number(port),this)),
     _lbStatus(new QLabel(this)),
+    _lbStatusDDC1(new QLabel(TEXT_DISCONNECT,this)),
     _cbReceivers(new QComboBox(this)),
-    _deviceSetClient(std::make_unique<DeviceSetClient>())
+    _deviceSetClient(std::make_unique<DeviceSetClient>()),
+    _streamController(std::make_unique<ClientStreamController>(address,port))
 {
     setObjectName(address);
     QGridLayout *vbLayout=new QGridLayout;
@@ -34,8 +40,22 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
 
     vbLayout->addWidget(new QLabel("Status:"),3,0);
     vbLayout->addWidget(_lbStatus);
+
+    vbLayout->addWidget(new QLabel("DDC1"),4,0);
+    vbLayout->addWidget(_lbStatusDDC1,4,1);
+
     _lbStatus->setText(STRING_DISCONNECT);
     _lbStatus->setUserData(USER_DATA_STATUS,new Status(false));
+
+    connect(_streamController.get(),&ClientStreamController::ddcStarted,
+            [this]{
+        _lbStatusDDC1->setText(TEXT_CONNECT);
+    });
+
+    connect(_streamController.get(),&ClientStreamController::ddcStoped,
+            [this]{
+        _lbStatusDDC1->setText(TEXT_DISCONNECT);
+    });
 
     connect(_deviceSetClient.get(),&DeviceSetClient::deviceSetReady,
             this,&DeviceSetWidget::onDeviceSetReady);
@@ -48,6 +68,12 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
 
     connect(_deviceSetClient.get(),&DeviceSetClient::commandFailed,
             this,&DeviceSetWidget::onDeviceSetCommandFailed);
+
+    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStarted,
+            this,&DeviceSetWidget::onDDC1Started);
+
+    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStoped,
+            this,&DeviceSetWidget::onDDC1Stoped);
 }
 
 void DeviceSetWidget::connectToDeviceSet()
@@ -59,6 +85,16 @@ void DeviceSetWidget::connectToDeviceSet()
 void DeviceSetWidget::disconnectFromDeviceSet()
 {
     _deviceSetClient->disconnectFromHost();
+}
+
+void DeviceSetWidget::onDDC1Started()
+{
+    _streamController->startDDC();
+}
+
+void DeviceSetWidget::onDDC1Stoped()
+{
+    _streamController->stopDDC();
 }
 
 void DeviceSetWidget::onDeviceSetReady()
@@ -87,6 +123,7 @@ bool DeviceSetWidget::isConnected()
     }
     return false;
 }
+
 
 void DeviceSetWidget::setStatus(bool status)
 {

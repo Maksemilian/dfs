@@ -12,6 +12,7 @@
 
 CohG35DeviceSet::CohG35DeviceSet():
     ddc1Buffer(new RingPacketBuffer(16)),
+    buffer(std::make_shared<RingBuffer>(16)),
     timeReader(new TimeReader()),
     signalFileWriter(new SignalFileWriter()),
     isFirstBlock(true),
@@ -63,6 +64,7 @@ void CohG35DeviceSet::resetData(){
     currentWeekNumber=0;
     currentTimeOfWeek=0;
     ddc1Buffer->reset();
+    buffer->reset();
 }
 
 void CohG35DeviceSet::freeResource(){
@@ -158,7 +160,7 @@ void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer,bool writeToFile){
             quint32 ddc1Frequency=0;
             if(writeToFile&&deviceSet->GetDDC1Frequency(&ddc1Frequency)){
                 qDebug()<<"Start writing file"<<ddc1Frequency;
-                signalFileWriter->start(ddc1Buffer.get(),QString::number(ddc1Frequency));
+                //WARNING signalFileWriter->start(ddc1Buffer.get(),QString::number(ddc1Frequency));
             }
         });
     }
@@ -169,7 +171,7 @@ void CohG35DeviceSet::stopDDC1(){
         deviceSet->StopDDC1();
         timeReader->stop();
         ddc1Buffer->reset();
-        signalFileWriter->stop();
+        //WARNING signalFileWriter->stop();
     }
 }
 
@@ -231,11 +233,17 @@ void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSe
         ddc1StreamCallbackData.NumberOfSamples=NumberOfSamples;
         ddc1StreamCallbackData.BitsPerSample=BitsPerSample;
 
-        Packet packet;
+        //        Packet packet;
+        //        if(ddcSampleCounter>0){
+        //            fillPacket(packet,ddc1StreamCallbackData,ddcSampleCounter,adcPeriodCounter,counterBlockPPS);
+        //            showPacket(packet);
+        //            ddc1Buffer->push(packet);
+        //        }
+        proto::receiver::Packet packet;
         if(ddcSampleCounter>0){
-            fillPacket(packet,ddc1StreamCallbackData,ddcSampleCounter,adcPeriodCounter,counterBlockPPS);
-            showPacket(packet);
-            ddc1Buffer->push(packet);
+            fillPacketT(packet,ddc1StreamCallbackData,ddcSampleCounter,adcPeriodCounter,counterBlockPPS);
+            showPacketT(packet);
+            buffer->push(packet);
         }
     }
 
@@ -255,6 +263,65 @@ void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSe
 }
 
 //***********************FILL PACKET***********************
+
+void CohG35DeviceSet::fillPacketT(proto::receiver::Packet &packet,
+                                  DDC1StreamCallbackData &ddcStreamCallbackData,
+                                  double ddcSampleCounter,
+                                  unsigned long long adcPeriodCounter,
+                                  int counterBlockPPS)
+{
+    quint32 ddc1Frequency,attenuator;
+    //В ДЕБАГ РЕЖИМЕ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
+    ddcStreamCallbackData.DeviceSet->GetDDC1Frequency(&ddc1Frequency);
+    ddcStreamCallbackData.DeviceSet->GetAttenuator(&attenuator);
+
+    quint32 ddc1;
+    G3XDDC_DDC_INFO ddcInfo;
+    ddcStreamCallbackData.DeviceSet->GetDDC1(&ddc1,&ddcInfo);
+    packet.set_block_number(counterBlockPPS);
+
+    packet.set_ddc1_frequency(ddc1Frequency);
+    packet.set_attenuator(attenuator);
+
+    packet.set_block_size(static_cast<int>(ddcStreamCallbackData.NumberOfSamples));
+
+    packet.set_device_count(ddcStreamCallbackData.DeviceCount);
+    packet.set_sample_rate(ddcInfo.SampleRate);
+
+    packet.set_ddc_sample_counter(ddcSampleCounter);
+    packet.set_adc_period_counter(adcPeriodCounter);
+
+    packet.set_week_number(currentWeekNumber);
+    packet.set_time_of_week(currentTimeOfWeek);
+
+    if(ddcStreamCallbackData.BitsPerSample==16) {
+        qint16 **buffer=reinterpret_cast<qint16**>(const_cast<void **>(ddcStreamCallbackData.Buffers));
+        for(quint32 i=0;i<ddcStreamCallbackData.DeviceCount;i++){
+            for(quint32 j=0;j<ddcStreamCallbackData.NumberOfSamples*COUNT_SIGNAL_COMPONENT;j++){
+                packet.add_sample(buffer[i][j]);
+            }
+        }
+
+    }else if(ddcStreamCallbackData.BitsPerSample==32){
+        qint32 **buffer= reinterpret_cast<qint32**>(const_cast<void **>(ddcStreamCallbackData.Buffers));
+        for(quint32 i=0;i<ddcStreamCallbackData.DeviceCount;i++){
+            for(quint32 j=0;j<ddcStreamCallbackData.NumberOfSamples*COUNT_SIGNAL_COMPONENT;j++){
+                packet.add_sample(buffer[i][j]);
+            }
+        }
+    }
+}
+
+void CohG35DeviceSet::showPacketT(proto::receiver::Packet &packet){
+
+    qDebug()<<"DDC_CALLBACK:"
+           <<packet.block_number()
+          <<packet.block_size()
+         <<packet.sample_rate()
+           ///<<packet.ByteSize()
+        <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
+       <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
+}
 
 void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStreamCallbackData,
                                  double ddcSampleCounter,unsigned long long adcPeriodCounter,int counterBlockPPS)
@@ -300,6 +367,7 @@ void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStre
         }
     }
 }
+
 
 //******************OTHER CALLBACKS********************
 

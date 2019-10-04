@@ -13,6 +13,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QReadLocker>
 #include <QMutexLocker>
+#include <QThread>
 
 //************************** SERVER *************************
 
@@ -91,9 +92,16 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
         _client=new DeviceSetClient(channelHost);
         _client->sendDeviceSetInfo();
-    }else {
-        qDebug()<<"ERROR SESSION TYPE";
-    }
+    }else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
+        qDebug()<<"STREAM SESSION";
+        QThread *thread=new QThread;
+        _streamDDC1=new StreamDDC1(channelHost,_client->getBuffer());
+        _streamDDC1->moveToThread(thread);
+        channelHost->moveToThread(thread);
+        connect(thread,&QThread::started,
+                _streamDDC1,&StreamDDC1::process);
+        thread->start();
+    }else qDebug()<<"ERROR SESSION TYPE";
 }
 
 void StreamServer::addStreamDDC1(StreamDDC1 *stream)
@@ -222,18 +230,18 @@ void StreamAnalizator::run(){
 
 void StreamAnalizator::createStreamDDC1(PeerWireClient *streamSocket)
 {
-    QThread *thread=new QThread;
-    StreamDDC1 *streamDDC1=new StreamDDC1(streamSocket,server->getDDC1Buffer());
-    connect(thread,&QThread::started,streamDDC1,&StreamDDC1::process);
-    connect(streamDDC1,&StreamDDC1::finished,thread,&QThread::quit);
-    connect(thread,&QThread::finished,thread,&QThread::deleteLater);
+    //    QThread *thread=new QThread;
+    //    StreamDDC1 *streamDDC1=new StreamDDC1(streamSocket,server->getDDC1Buffer());
+    //    connect(thread,&QThread::started,streamDDC1,&StreamDDC1::process);
+    //    connect(streamDDC1,&StreamDDC1::finished,thread,&QThread::quit);
+    //    connect(thread,&QThread::finished,thread,&QThread::deleteLater);
 
-    streamSocket->moveToThread(thread);
-    streamDDC1->moveToThread(thread);
-    streamDDC1->start();
+    //    streamSocket->moveToThread(thread);
+    //    streamDDC1->moveToThread(thread);
+    //    streamDDC1->start();
 
-    server->addStreamDDC1(streamDDC1);
-    thread->start();
+    //    server->addStreamDDC1(streamDDC1);
+    //    thread->start();
 }
 
 void StreamAnalizator::createFileStream(PeerWireClient *streamSocket)

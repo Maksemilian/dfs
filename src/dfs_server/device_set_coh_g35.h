@@ -5,12 +5,12 @@
 
 #include <QPair>
 #include <memory>
-
+#include "ring_buffer.h"
 class RingPacketBuffer;
 class Packet;
 class TimeReader;
 class SignalFileWriter;
-
+class RingBuffer;
 struct CohG35DeviceSetSettings{
     unsigned int attenuator;
     QPair<unsigned int,unsigned int> preselectors;
@@ -61,6 +61,9 @@ public:
     std::shared_ptr<RingPacketBuffer>getDdc1Buffer(){
         return ddc1Buffer;
     }
+    std::shared_ptr<RingBuffer>getBuffer(){
+        return buffer;
+    }
     QString getDeviceSetName();
 private:
     void __stdcall CohG35DDC_IFCallback(ICohG35DDCDeviceSet *DeviceSet,unsigned int DeviceIndex,const short *Buffer,unsigned int NumberOfSamples,
@@ -80,12 +83,18 @@ private:
     void fillPacket(Packet &packet,DDC1StreamCallbackData &ddcStreamCallbackData,
                     double ddcSampleCounter,unsigned long long adcPeriodCounter,int counterBlockPPS);
     void showPacket(Packet &packet);
+
+    void fillPacketT(proto::receiver::Packet &packet,DDC1StreamCallbackData &ddcStreamCallbackData,
+                    double ddcSampleCounter,unsigned long long adcPeriodCounter,int counterBlockPPS);
+    void showPacketT(proto::receiver::Packet &packet);
+
     void freeResource();
 private:
 
     ICohG35DDCDeviceSet *deviceSet=nullptr;
 //    RingPacketBuffer*ddc1Buffer=nullptr;
     std::shared_ptr<RingPacketBuffer>ddc1Buffer;
+    std::shared_ptr<RingBuffer>buffer;
     TimeReader *timeReader=nullptr;
     SignalFileWriter *signalFileWriter=nullptr;
 

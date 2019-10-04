@@ -2,6 +2,7 @@
 #define RING_PACKET_BUFFER_H
 
 #include "packet.pb.h"
+//#include "receiver.pb.h"
 
 #include <QWaitCondition>
 #include <QReadLocker>

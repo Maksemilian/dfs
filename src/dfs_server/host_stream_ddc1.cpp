@@ -1,49 +1,56 @@
 #include "host_stream_ddc1.h"
-#include "ring_packet_buffer.h"
 #include "peer_wire_client.h"
-#include "command.pb.h"
+#include "receiver.pb.h"
+#include "channel.h"
 
 #include <QDataStream>
+#include <QtConcurrent/QtConcurrent>
 
-StreamDDC1::StreamDDC1(PeerWireClient*streamSocket, std::shared_ptr<RingPacketBuffer>buffer)
+StreamDDC1::StreamDDC1(net::ChannelHost*streamSocket,
+                       std::shared_ptr<RingBuffer>buffer)
     :
-      streamSocket(streamSocket),
+      _streamSocket(streamSocket),
       buffer(buffer)
-{
 
-}
+{}
 
 void StreamDDC1::process()
 {
+    qDebug("BEGIN PROCESS STREAM");
+    quit=false;
     //********************
-    Packet packet;
+    proto::receiver::Packet packet;
+    proto::receiver::HostToClient hostToClient;
     while(!quit){
-        if(buffer->pop(packet)){
-            int packetByteSize=packet.ByteSize();
+        if(buffer->pop(packet))
+        {
+            hostToClient.mutable_packet()->CopyFrom(packet);
+            int packetByteSize= hostToClient.ByteSize();
+
             QByteArray ba;
             QDataStream out(&ba,QIODevice::WriteOnly);
 
             out<<packetByteSize;
-            if(!streamSocket->isOpen()){
+            if(!_streamSocket->isOpen()){
                 qDebug("Socket Close");
                 break;
             }
 
-            streamSocket->writeDataToBuffer(ba.constData(),ba.size());
-            streamSocket->writeToSocket(ba.size());
-            streamSocket->flush();
+            _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
+            _streamSocket->writeToSocket(ba.size());
+            _streamSocket->flush();
             char buf[packetByteSize];
-            packet.SerializeToArray(buf,packetByteSize);
+            hostToClient.SerializeToArray(buf,packetByteSize);
 
-            streamSocket->writeDataToBuffer(buf,packetByteSize);
+            _streamSocket->writeDataToBuffer(buf,packetByteSize);
 
             qint64 bytesWriten=0;
             while (!quit&&bytesWriten != packetByteSize ){
-                if(!streamSocket->isWritable()){
+                if(!_streamSocket->isWritable()){
                     quit=true;
                     break;
                 }
-                qint64 bytes=streamSocket->writeToSocket(packetByteSize);
+                qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
                 if(bytes==-1){
                     quit=true;
                     break;
@@ -55,7 +62,8 @@ void StreamDDC1::process()
                   <<packet.sample_rate()
                  <<"TOW:"<<packet.time_of_week()
                 <<"DDC_C"<<packet.ddc_sample_counter()
-               <<"ADC_C"<<packet.adc_period_counter();
+               <<"ADC_C"<<packet.adc_period_counter()
+              <<hostToClient.ByteSize();
         }
     }
     emit finished();
@@ -65,6 +73,7 @@ void StreamDDC1::process()
 void StreamDDC1::start(){
     quit=false;
     qDebug("START STREAM WRITER");
+    //        QtConcurrent::run(this,&StreamDDC1::process);
 }
 
 void StreamDDC1::stop(){

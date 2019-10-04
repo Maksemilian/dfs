@@ -19,13 +19,17 @@ public:
     QHostAddress peerAddress();
     ~Channel();
     bool waitChannel(int msec);
+    bool isOpen();
+    bool isWritable();
+    bool flush();
+    void moveToThread(QThread *thread);
 signals:
     void messageReceived(const QByteArray &buffer);
     void finished();
 protected:
     virtual void internalMessageReceive(const QByteArray &buffer)=0;
     ///**************WRITE/READ****************
-
+public:
     qint64 readFromSocket(qint64 bytes);
     qint64 writeToSocket(qint64 bytes);
 
@@ -43,7 +47,26 @@ protected:
     KeyExchangeState keyExchangeState=KeyExchangeState::HELLO;
     ChannelState _channelState=ChannelState::NOT_CONNECTED;
 private:
-    QByteArray incomingBuffer;
+    struct ReadContext
+    {
+        QByteArray buffer;
+        bool paused = false;
+
+        // To this buffer reads data from the network.
+//        QByteArray buffer;
+
+        // If the flag is set to true, then the buffer size is read from the network, if false,
+        // then no.
+        bool buffer_size_received = false;
+
+        // Size of |buffer|.
+        int buffer_size = 0;
+
+        // Number of bytes read into the |buffer|.
+        int64_t bytes_transferred = 0;
+    };
+
+    ReadContext read_;
     QByteArray outgoingBuffer;
     qint64 answerSize=0;
 };

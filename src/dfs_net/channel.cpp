@@ -12,11 +12,11 @@ Channel::Channel(QObject *parent)
             this,&Channel::onReadyRead);
 
     connect(_socket.get(),&QTcpSocket::disconnected,
-//            this,&Channel::finished);
+            //            this,&Channel::finished);
             [this]{
         keyExchangeState=KeyExchangeState::HELLO;
         _channelState=NOT_CONNECTED;
-       emit finished();
+        emit finished();
     });
 }
 
@@ -31,6 +31,27 @@ bool Channel::waitChannel(int msec)
     return _socket->waitForConnected(msec)?true:false;
 }
 
+bool Channel::isOpen()
+{
+    return  _socket->isOpen();
+}
+
+bool Channel::isWritable()
+{
+    return  _socket->isWritable();
+}
+
+bool Channel::flush()
+{
+    return    _socket->flush();
+}
+
+void Channel::moveToThread(QThread *thread)
+{
+    _socket->moveToThread(thread);
+    this->QObject::moveToThread(thread);
+}
+
 QHostAddress Channel::peerAddress()
 {
     return _socket->peerAddress();
@@ -38,7 +59,7 @@ QHostAddress Channel::peerAddress()
 
 void Channel::writeToConnection(const QByteArray &commandData)
 {
-        qDebug()<<"Channel::writeToConnection"<<commandData.size();
+    qDebug()<<"Channel::writeToConnection"<<commandData.size();
     int byteSize=commandData.size();
     QByteArray baSize;
     QDataStream out(&baSize,QIODevice::WriteOnly);
@@ -78,9 +99,9 @@ qint64 Channel::readFromSocket(qint64 bytes)
         qint64 bytesRead = _socket->read(buffer, qMin<qint64>(sizeof(buffer), bytes - totalRead));
         if (bytesRead <= 0)
             break;
-        qint64 oldSize = incomingBuffer.size();
-        incomingBuffer.resize(static_cast<int>(oldSize + bytesRead));
-        memcpy(incomingBuffer.data() + oldSize, buffer,static_cast<size_t>(bytesRead));
+        qint64 oldSize = read_.buffer.size();
+        read_.buffer.resize(static_cast<int>(oldSize + bytesRead));
+        memcpy(read_.buffer.data() + oldSize, buffer,static_cast<size_t>(bytesRead));
 
         totalRead += bytesRead;
     } while (totalRead < bytes);
@@ -98,9 +119,9 @@ qint64 Channel::writeDataToBuffer(const char *data, qint64 size)
 
 qint64 Channel::readDataFromBuffer(char *data, qint64 size)
 {
-    int n = qMin<int>(static_cast<int>(size), incomingBuffer.size());
-    memcpy(data, incomingBuffer.constData(), static_cast<size_t>(n));
-    incomingBuffer.remove(0, n);
+    int n = qMin<int>(static_cast<int>(size), read_.buffer.size());
+    memcpy(data, read_.buffer.constData(), static_cast<size_t>(n));
+    read_.buffer.remove(0, n);
     return n;
 }
 
@@ -118,7 +139,7 @@ void Channel::onMessageReceive()
 {
     //    qDebug()<<"Channel::answerSize"<<answerSize;
     QByteArray buffer;
-    buffer.resize(static_cast<int>(answerSize));
+    buffer.resize(static_cast<int>(read_.buffer.size()));
     readDataFromBuffer(buffer.data(),buffer.size());
 
     if(keyExchangeState==KeyExchangeState::DONE){
@@ -134,27 +155,63 @@ void Channel::onMessageReceive()
 
 void Channel::onReadyRead()
 {
-     qDebug()<<"Channel::onReadyRead"<<answerSize;
-    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
-    if(answerSize==0&&
-            socketBytesAvailable()>=sizeof(int)){
-        readFromSocket(sizeof(int));
-        char buf[sizeof(int)];
-        readDataFromBuffer(buf,sizeof(int));
-        bool ok;
-        answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-        //qDebug()<<"Size"<<size;
-    }else if(socketBytesAvailable()>0){
-        qint64 bytes=readFromSocket(answerSize);
-        if(bytes==answerSize){
-            //qDebug("Rec");
+    quint64 current = 0;
+//    qDebug()<<"onReadyRead";
+    for (;;) {
+        if(!read_.buffer_size_received){
+
+            quint8 byte;
+            current = _socket->read(reinterpret_cast<char*>(&byte),
+                                    sizeof(byte));
+//            qDebug()<<"Current:"<<current;
+            if (current == sizeof(byte))
+            {
+//                qDebug()<<read_.bytes_transferred<<current<<byte;
+                read_.buffer+=byte;
+                if ( read_.bytes_transferred == 3)
+                {
+                    bool ok;
+                    read_.buffer_size=read_.buffer.toHex().toInt(&ok,16);
+                    read_.buffer_size_received=true;
+                    read_.buffer.clear();
+                    qDebug()<<"Size"<<read_.buffer_size<<current;
+                    if (!read_.buffer_size || read_.buffer_size > 16 * 1024 * 1024)
+                    {
+                        //                        emit errorOccurred(Error::UNKNOWN);
+                        qDebug()<<"ERROR CONNECT"<<read_.buffer_size;
+                        return;
+                    }
+
+
+                    if(read_.buffer.capacity()<read_.buffer_size)
+                        read_.buffer.reserve(read_.buffer_size);
+
+                    read_.buffer.resize(read_.buffer_size);
+                    read_.buffer_size=0;
+                    read_.bytes_transferred=0;
+
+                    continue;
+                }
+            }
+        }
+        else if(read_.bytes_transferred<read_.buffer.size()){
+            current=_socket->read(read_.buffer.data()+read_.bytes_transferred,
+                                  read_.buffer.size()-read_.bytes_transferred);
+//            qDebug()<<"R:"<<current<<read_.bytes_transferred;
+        }
+        else {
+            read_.buffer_size_received=false;
+            read_.bytes_transferred=0;
+
             onMessageReceive();
-            answerSize=0;
             return;
         }
-    }
 
-    onReadyRead();
+        if (current <= 0)
+            return;
+
+        read_.bytes_transferred += current;
+    }
 }
 
 Channel::~Channel()
@@ -163,3 +220,29 @@ Channel::~Channel()
 }
 
 }
+
+//     qDebug()<<"Channel::onReadyRead"<<answerSize;
+//    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
+//    if(answerSize==0&&
+//            socketBytesAvailable()>=sizeof(int)){
+//        readFromSocket(sizeof(int));
+//        char buf[sizeof(int)];
+//        readDataFromBuffer(buf,sizeof(int));
+//        bool ok;
+//        answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
+//        qDebug()<<"Size"<<answerSize;
+//    }else if(socketBytesAvailable()>0){
+//        qint64 bytes=readFromSocket(answerSize);
+//        if(bytes==answerSize){
+//            //qDebug("Rec");
+//            onMessageReceive();
+//            answerSize=0;
+//            return;
+//        }else {
+//            qDebug()<<"BA"<<bytes;
+//        }
+//    }else {
+//            qDebug()<<"SOCK_BA"<<socketBytesAvailable();
+//    }
+
+//    onReadyRead();

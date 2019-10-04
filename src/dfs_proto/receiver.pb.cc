@@ -18,6 +18,7 @@
 
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Answer_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_DeviceInfo_receiver_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Packet_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Preselectors_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_Command_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_DeviceSetInfo_receiver_2eproto;
@@ -43,6 +44,10 @@ class AnswerDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Answer> _instance;
 } _Answer_default_instance_;
+class PacketDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<Packet> _instance;
+} _Packet_default_instance_;
 class HostToClientDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<HostToClient> _instance;
@@ -125,6 +130,20 @@ static void InitDefaultsAnswer_receiver_2eproto() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_Answer_receiver_2eproto =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsAnswer_receiver_2eproto}, {}};
 
+static void InitDefaultsPacket_receiver_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::proto::receiver::_Packet_default_instance_;
+    new (ptr) ::proto::receiver::Packet();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::proto::receiver::Packet::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_Packet_receiver_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPacket_receiver_2eproto}, {}};
+
 static void InitDefaultsHostToClient_receiver_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -136,10 +155,11 @@ static void InitDefaultsHostToClient_receiver_2eproto() {
   ::proto::receiver::HostToClient::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<2> scc_info_HostToClient_receiver_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsHostToClient_receiver_2eproto}, {
+::google::protobuf::internal::SCCInfo<3> scc_info_HostToClient_receiver_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 3, InitDefaultsHostToClient_receiver_2eproto}, {
       &scc_info_DeviceSetInfo_receiver_2eproto.base,
-      &scc_info_Answer_receiver_2eproto.base,}};
+      &scc_info_Answer_receiver_2eproto.base,
+      &scc_info_Packet_receiver_2eproto.base,}};
 
 static void InitDefaultsClientToHost_receiver_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -162,11 +182,12 @@ void InitDefaults_receiver_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceInfo_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceSetInfo_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Answer_receiver_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_Packet_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_HostToClient_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_ClientToHost_receiver_2eproto.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_receiver_2eproto[7];
+::google::protobuf::Metadata file_level_metadata_receiver_2eproto[8];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_receiver_2eproto[1];
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_receiver_2eproto = nullptr;
 
@@ -216,12 +237,29 @@ const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBU
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Answer, type_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Answer, succesed_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, block_number_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, ddc1_frequency_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, attenuator_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, block_size_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, device_count_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, sample_rate_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, time_of_week_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, week_number_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, ddc_sample_counter_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, adc_period_counter_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Packet, sample_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::HostToClient, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::HostToClient, device_set_info_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::HostToClient, command_answer_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::HostToClient, packet_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::ClientToHost, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -235,8 +273,9 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SE
   { 22, -1, sizeof(::proto::receiver::DeviceInfo)},
   { 31, -1, sizeof(::proto::receiver::DeviceSetInfo)},
   { 37, -1, sizeof(::proto::receiver::Answer)},
-  { 44, -1, sizeof(::proto::receiver::HostToClient)},
-  { 51, -1, sizeof(::proto::receiver::ClientToHost)},
+  { 44, -1, sizeof(::proto::receiver::Packet)},
+  { 60, -1, sizeof(::proto::receiver::HostToClient)},
+  { 68, -1, sizeof(::proto::receiver::ClientToHost)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -245,6 +284,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_DeviceInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_DeviceSetInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_Answer_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_Packet_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_HostToClient_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_ClientToHost_default_instance_),
 };
@@ -252,7 +292,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 ::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_receiver_2eproto = {
   {}, AddDescriptors_receiver_2eproto, "receiver.proto", schemas,
   file_default_instances, TableStruct_receiver_2eproto::offsets,
-  file_level_metadata_receiver_2eproto, 7, file_level_enum_descriptors_receiver_2eproto, file_level_service_descriptors_receiver_2eproto,
+  file_level_metadata_receiver_2eproto, 8, file_level_enum_descriptors_receiver_2eproto, file_level_service_descriptors_receiver_2eproto,
 };
 
 const char descriptor_table_protodef_receiver_2eproto[] =
@@ -272,24 +312,31 @@ const char descriptor_table_protodef_receiver_2eproto[] =
   "_type\030\004 \001(\t\"@\n\rDeviceSetInfo\022/\n\013device_i"
   "nfo\030\001 \003(\0132\032.proto.receiver.DeviceInfo\"E\n"
   "\006Answer\022)\n\004type\030\001 \001(\0162\033.proto.receiver.C"
-  "ommandType\022\020\n\010succesed\030\002 \001(\010\"v\n\014HostToCl"
-  "ient\0226\n\017device_set_info\030\001 \001(\0132\035.proto.re"
-  "ceiver.DeviceSetInfo\022.\n\016command_answer\030\002"
-  " \001(\0132\026.proto.receiver.Answer\"8\n\014ClientTo"
-  "Host\022(\n\007command\030\001 \001(\0132\027.proto.receiver.C"
-  "ommand*\236\002\n\013CommandType\022\021\n\rSET_POWER_OFF\020"
-  "\000\022\020\n\014SET_POWER_ON\020\001\022\022\n\016SET_ATTENUATOR\020\002\022"
-  "\024\n\020SET_PRESELECTORS\020\003\022\034\n\030SET_PREAMPLIFIE"
-  "R_ENABLED\020\004\022!\n\035SET_ADC_NOICE_BLANKER_ENA"
-  "BLED\020\005\022#\n\037SET_ADC_NOICE_BLANKER_THRESHOL"
-  "D\020\006\022\026\n\022SET_DDC1_FREQUENCY\020\007\022\021\n\rSET_DDC1_"
-  "TYPE\020\010\022\020\n\014SET_SETTINGS\020\t\022\016\n\nSTART_DDC1\020\n"
-  "\022\r\n\tSTOP_DDC1\020\013b\006proto3"
+  "ommandType\022\020\n\010succesed\030\002 \001(\010\"\374\001\n\006Packet\022"
+  "\024\n\014block_number\030\001 \001(\r\022\026\n\016ddc1_frequency\030"
+  "\002 \001(\r\022\022\n\nattenuator\030\003 \001(\r\022\022\n\nblock_size\030"
+  "\004 \001(\r\022\024\n\014device_count\030\005 \001(\r\022\023\n\013sample_ra"
+  "te\030\006 \001(\r\022\024\n\014time_of_week\030\007 \001(\r\022\023\n\013week_n"
+  "umber\030\010 \001(\r\022\032\n\022ddc_sample_counter\030\t \001(\001\022"
+  "\032\n\022adc_period_counter\030\n \001(\004\022\016\n\006sample\030\013 "
+  "\003(\002\"\236\001\n\014HostToClient\0226\n\017device_set_info\030"
+  "\001 \001(\0132\035.proto.receiver.DeviceSetInfo\022.\n\016"
+  "command_answer\030\002 \001(\0132\026.proto.receiver.An"
+  "swer\022&\n\006packet\030\003 \001(\0132\026.proto.receiver.Pa"
+  "cket\"8\n\014ClientToHost\022(\n\007command\030\001 \001(\0132\027."
+  "proto.receiver.Command*\236\002\n\013CommandType\022\021"
+  "\n\rSET_POWER_OFF\020\000\022\020\n\014SET_POWER_ON\020\001\022\022\n\016S"
+  "ET_ATTENUATOR\020\002\022\024\n\020SET_PRESELECTORS\020\003\022\034\n"
+  "\030SET_PREAMPLIFIER_ENABLED\020\004\022!\n\035SET_ADC_N"
+  "OICE_BLANKER_ENABLED\020\005\022#\n\037SET_ADC_NOICE_"
+  "BLANKER_THRESHOLD\020\006\022\026\n\022SET_DDC1_FREQUENC"
+  "Y\020\007\022\021\n\rSET_DDC1_TYPE\020\010\022\020\n\014SET_SETTINGS\020\t"
+  "\022\016\n\nSTART_DDC1\020\n\022\r\n\tSTOP_DDC1\020\013b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_receiver_2eproto = {
   false, InitDefaults_receiver_2eproto, 
   descriptor_table_protodef_receiver_2eproto,
-  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1143,
+  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1439,
 };
 
 void AddDescriptors_receiver_2eproto() {
@@ -2378,16 +2425,742 @@ void Answer::InternalSwap(Answer* other) {
 
 // ===================================================================
 
+void Packet::InitAsDefaultInstance() {
+}
+class Packet::HasBitSetters {
+ public:
+};
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Packet::kBlockNumberFieldNumber;
+const int Packet::kDdc1FrequencyFieldNumber;
+const int Packet::kAttenuatorFieldNumber;
+const int Packet::kBlockSizeFieldNumber;
+const int Packet::kDeviceCountFieldNumber;
+const int Packet::kSampleRateFieldNumber;
+const int Packet::kTimeOfWeekFieldNumber;
+const int Packet::kWeekNumberFieldNumber;
+const int Packet::kDdcSampleCounterFieldNumber;
+const int Packet::kAdcPeriodCounterFieldNumber;
+const int Packet::kSampleFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Packet::Packet()
+  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:proto.receiver.Packet)
+}
+Packet::Packet(const Packet& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(nullptr),
+      sample_(from.sample_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&block_number_, &from.block_number_,
+    static_cast<size_t>(reinterpret_cast<char*>(&adc_period_counter_) -
+    reinterpret_cast<char*>(&block_number_)) + sizeof(adc_period_counter_));
+  // @@protoc_insertion_point(copy_constructor:proto.receiver.Packet)
+}
+
+void Packet::SharedCtor() {
+  ::memset(&block_number_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&adc_period_counter_) -
+      reinterpret_cast<char*>(&block_number_)) + sizeof(adc_period_counter_));
+}
+
+Packet::~Packet() {
+  // @@protoc_insertion_point(destructor:proto.receiver.Packet)
+  SharedDtor();
+}
+
+void Packet::SharedDtor() {
+}
+
+void Packet::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Packet& Packet::default_instance() {
+  ::google::protobuf::internal::InitSCC(&::scc_info_Packet_receiver_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Packet::Clear() {
+// @@protoc_insertion_point(message_clear_start:proto.receiver.Packet)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  sample_.Clear();
+  ::memset(&block_number_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&adc_period_counter_) -
+      reinterpret_cast<char*>(&block_number_)) + sizeof(adc_period_counter_));
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* Packet::_InternalParse(const char* begin, const char* end, void* object,
+                  ::google::protobuf::internal::ParseContext* ctx) {
+  auto msg = static_cast<Packet*>(object);
+  ::google::protobuf::int32 size; (void)size;
+  int depth; (void)depth;
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
+  auto ptr = begin;
+  while (ptr < end) {
+    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
+    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    switch (tag >> 3) {
+      // uint32 block_number = 1;
+      case 1: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
+        msg->set_block_number(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 ddc1_frequency = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 16) goto handle_unusual;
+        msg->set_ddc1_frequency(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 attenuator = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 24) goto handle_unusual;
+        msg->set_attenuator(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 block_size = 4;
+      case 4: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 32) goto handle_unusual;
+        msg->set_block_size(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 device_count = 5;
+      case 5: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 40) goto handle_unusual;
+        msg->set_device_count(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 sample_rate = 6;
+      case 6: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 48) goto handle_unusual;
+        msg->set_sample_rate(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 time_of_week = 7;
+      case 7: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 56) goto handle_unusual;
+        msg->set_time_of_week(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // uint32 week_number = 8;
+      case 8: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 64) goto handle_unusual;
+        msg->set_week_number(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // double ddc_sample_counter = 9;
+      case 9: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 73) goto handle_unusual;
+        msg->set_ddc_sample_counter(::google::protobuf::io::UnalignedLoad<double>(ptr));
+        ptr += sizeof(double);
+        break;
+      }
+      // uint64 adc_period_counter = 10;
+      case 10: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 80) goto handle_unusual;
+        msg->set_adc_period_counter(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // repeated float sample = 11;
+      case 11: {
+        if (static_cast<::google::protobuf::uint8>(tag) == 90) {
+          ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+          parser_till_end = ::google::protobuf::internal::PackedFloatParser;
+          object = msg->mutable_sample();
+          if (size > end - ptr) goto len_delim_till_end;
+          auto newend = ptr + size;
+          if (size) ptr = parser_till_end(ptr, newend, object, ctx);
+          GOOGLE_PROTOBUF_PARSER_ASSERT(ptr == newend);
+          break;
+        } else if (static_cast<::google::protobuf::uint8>(tag) != 93) goto handle_unusual;
+        do {
+          msg->add_sample(::google::protobuf::io::UnalignedLoad<float>(ptr));
+          ptr += sizeof(float);
+          if (ptr >= end) break;
+        } while ((::google::protobuf::io::UnalignedLoad<::google::protobuf::uint64>(ptr) & 255) == 93 && (ptr += 1));
+        break;
+      }
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->EndGroup(tag);
+          return ptr;
+        }
+        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
+          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
+        ptr = res.first;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
+        if (res.second) return ptr;
+      }
+    }  // switch
+  }  // while
+  return ptr;
+len_delim_till_end:
+  return ctx->StoreAndTailCall(ptr, end, {_InternalParse, msg},
+                               {parser_till_end, object}, size);
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool Packet::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:proto.receiver.Packet)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // uint32 block_number = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &block_number_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 ddc1_frequency = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (16 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &ddc1_frequency_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 attenuator = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (24 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &attenuator_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 block_size = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (32 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &block_size_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 device_count = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (40 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &device_count_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 sample_rate = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (48 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &sample_rate_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 time_of_week = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (56 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &time_of_week_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint32 week_number = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (64 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &week_number_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double ddc_sample_counter = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (73 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &ddc_sample_counter_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // uint64 adc_period_counter = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (80 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &adc_period_counter_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated float sample = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (90 & 0xFF)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, this->mutable_sample())));
+        } else if (static_cast< ::google::protobuf::uint8>(tag) == (93 & 0xFF)) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 1, 90u, input, this->mutable_sample())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:proto.receiver.Packet)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:proto.receiver.Packet)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void Packet::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:proto.receiver.Packet)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 block_number = 1;
+  if (this->block_number() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->block_number(), output);
+  }
+
+  // uint32 ddc1_frequency = 2;
+  if (this->ddc1_frequency() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(2, this->ddc1_frequency(), output);
+  }
+
+  // uint32 attenuator = 3;
+  if (this->attenuator() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(3, this->attenuator(), output);
+  }
+
+  // uint32 block_size = 4;
+  if (this->block_size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->block_size(), output);
+  }
+
+  // uint32 device_count = 5;
+  if (this->device_count() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->device_count(), output);
+  }
+
+  // uint32 sample_rate = 6;
+  if (this->sample_rate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->sample_rate(), output);
+  }
+
+  // uint32 time_of_week = 7;
+  if (this->time_of_week() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(7, this->time_of_week(), output);
+  }
+
+  // uint32 week_number = 8;
+  if (this->week_number() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(8, this->week_number(), output);
+  }
+
+  // double ddc_sample_counter = 9;
+  if (this->ddc_sample_counter() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->ddc_sample_counter(), output);
+  }
+
+  // uint64 adc_period_counter = 10;
+  if (this->adc_period_counter() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(10, this->adc_period_counter(), output);
+  }
+
+  // repeated float sample = 11;
+  if (this->sample_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(11, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_sample_cached_byte_size_.load(
+        std::memory_order_relaxed));
+    ::google::protobuf::internal::WireFormatLite::WriteFloatArray(
+      this->sample().data(), this->sample_size(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:proto.receiver.Packet)
+}
+
+::google::protobuf::uint8* Packet::InternalSerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:proto.receiver.Packet)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 block_number = 1;
+  if (this->block_number() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->block_number(), target);
+  }
+
+  // uint32 ddc1_frequency = 2;
+  if (this->ddc1_frequency() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(2, this->ddc1_frequency(), target);
+  }
+
+  // uint32 attenuator = 3;
+  if (this->attenuator() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(3, this->attenuator(), target);
+  }
+
+  // uint32 block_size = 4;
+  if (this->block_size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->block_size(), target);
+  }
+
+  // uint32 device_count = 5;
+  if (this->device_count() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->device_count(), target);
+  }
+
+  // uint32 sample_rate = 6;
+  if (this->sample_rate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->sample_rate(), target);
+  }
+
+  // uint32 time_of_week = 7;
+  if (this->time_of_week() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(7, this->time_of_week(), target);
+  }
+
+  // uint32 week_number = 8;
+  if (this->week_number() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(8, this->week_number(), target);
+  }
+
+  // double ddc_sample_counter = 9;
+  if (this->ddc_sample_counter() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->ddc_sample_counter(), target);
+  }
+
+  // uint64 adc_period_counter = 10;
+  if (this->adc_period_counter() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(10, this->adc_period_counter(), target);
+  }
+
+  // repeated float sample = 11;
+  if (this->sample_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      11,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+        _sample_cached_byte_size_.load(std::memory_order_relaxed),
+         target);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteFloatNoTagToArray(this->sample_, target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:proto.receiver.Packet)
+  return target;
+}
+
+size_t Packet::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:proto.receiver.Packet)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated float sample = 11;
+  {
+    unsigned int count = static_cast<unsigned int>(this->sample_size());
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+            static_cast<::google::protobuf::int32>(data_size));
+    }
+    int cached_size = ::google::protobuf::internal::ToCachedSize(data_size);
+    _sample_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // uint32 block_number = 1;
+  if (this->block_number() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->block_number());
+  }
+
+  // uint32 ddc1_frequency = 2;
+  if (this->ddc1_frequency() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->ddc1_frequency());
+  }
+
+  // uint32 attenuator = 3;
+  if (this->attenuator() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->attenuator());
+  }
+
+  // uint32 block_size = 4;
+  if (this->block_size() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->block_size());
+  }
+
+  // uint32 device_count = 5;
+  if (this->device_count() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->device_count());
+  }
+
+  // uint32 sample_rate = 6;
+  if (this->sample_rate() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->sample_rate());
+  }
+
+  // uint32 time_of_week = 7;
+  if (this->time_of_week() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->time_of_week());
+  }
+
+  // uint32 week_number = 8;
+  if (this->week_number() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->week_number());
+  }
+
+  // double ddc_sample_counter = 9;
+  if (this->ddc_sample_counter() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // uint64 adc_period_counter = 10;
+  if (this->adc_period_counter() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->adc_period_counter());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Packet::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:proto.receiver.Packet)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Packet* source =
+      ::google::protobuf::DynamicCastToGenerated<Packet>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:proto.receiver.Packet)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:proto.receiver.Packet)
+    MergeFrom(*source);
+  }
+}
+
+void Packet::MergeFrom(const Packet& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:proto.receiver.Packet)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  sample_.MergeFrom(from.sample_);
+  if (from.block_number() != 0) {
+    set_block_number(from.block_number());
+  }
+  if (from.ddc1_frequency() != 0) {
+    set_ddc1_frequency(from.ddc1_frequency());
+  }
+  if (from.attenuator() != 0) {
+    set_attenuator(from.attenuator());
+  }
+  if (from.block_size() != 0) {
+    set_block_size(from.block_size());
+  }
+  if (from.device_count() != 0) {
+    set_device_count(from.device_count());
+  }
+  if (from.sample_rate() != 0) {
+    set_sample_rate(from.sample_rate());
+  }
+  if (from.time_of_week() != 0) {
+    set_time_of_week(from.time_of_week());
+  }
+  if (from.week_number() != 0) {
+    set_week_number(from.week_number());
+  }
+  if (from.ddc_sample_counter() != 0) {
+    set_ddc_sample_counter(from.ddc_sample_counter());
+  }
+  if (from.adc_period_counter() != 0) {
+    set_adc_period_counter(from.adc_period_counter());
+  }
+}
+
+void Packet::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:proto.receiver.Packet)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Packet::CopyFrom(const Packet& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:proto.receiver.Packet)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Packet::IsInitialized() const {
+  return true;
+}
+
+void Packet::Swap(Packet* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Packet::InternalSwap(Packet* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  sample_.InternalSwap(&other->sample_);
+  swap(block_number_, other->block_number_);
+  swap(ddc1_frequency_, other->ddc1_frequency_);
+  swap(attenuator_, other->attenuator_);
+  swap(block_size_, other->block_size_);
+  swap(device_count_, other->device_count_);
+  swap(sample_rate_, other->sample_rate_);
+  swap(time_of_week_, other->time_of_week_);
+  swap(week_number_, other->week_number_);
+  swap(ddc_sample_counter_, other->ddc_sample_counter_);
+  swap(adc_period_counter_, other->adc_period_counter_);
+}
+
+::google::protobuf::Metadata Packet::GetMetadata() const {
+  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_receiver_2eproto);
+  return ::file_level_metadata_receiver_2eproto[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void HostToClient::InitAsDefaultInstance() {
   ::proto::receiver::_HostToClient_default_instance_._instance.get_mutable()->device_set_info_ = const_cast< ::proto::receiver::DeviceSetInfo*>(
       ::proto::receiver::DeviceSetInfo::internal_default_instance());
   ::proto::receiver::_HostToClient_default_instance_._instance.get_mutable()->command_answer_ = const_cast< ::proto::receiver::Answer*>(
       ::proto::receiver::Answer::internal_default_instance());
+  ::proto::receiver::_HostToClient_default_instance_._instance.get_mutable()->packet_ = const_cast< ::proto::receiver::Packet*>(
+      ::proto::receiver::Packet::internal_default_instance());
 }
 class HostToClient::HasBitSetters {
  public:
   static const ::proto::receiver::DeviceSetInfo& device_set_info(const HostToClient* msg);
   static const ::proto::receiver::Answer& command_answer(const HostToClient* msg);
+  static const ::proto::receiver::Packet& packet(const HostToClient* msg);
 };
 
 const ::proto::receiver::DeviceSetInfo&
@@ -2398,9 +3171,14 @@ const ::proto::receiver::Answer&
 HostToClient::HasBitSetters::command_answer(const HostToClient* msg) {
   return *msg->command_answer_;
 }
+const ::proto::receiver::Packet&
+HostToClient::HasBitSetters::packet(const HostToClient* msg) {
+  return *msg->packet_;
+}
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int HostToClient::kDeviceSetInfoFieldNumber;
 const int HostToClient::kCommandAnswerFieldNumber;
+const int HostToClient::kPacketFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 HostToClient::HostToClient()
@@ -2422,6 +3200,11 @@ HostToClient::HostToClient(const HostToClient& from)
   } else {
     command_answer_ = nullptr;
   }
+  if (from.has_packet()) {
+    packet_ = new ::proto::receiver::Packet(*from.packet_);
+  } else {
+    packet_ = nullptr;
+  }
   // @@protoc_insertion_point(copy_constructor:proto.receiver.HostToClient)
 }
 
@@ -2429,8 +3212,8 @@ void HostToClient::SharedCtor() {
   ::google::protobuf::internal::InitSCC(
       &scc_info_HostToClient_receiver_2eproto.base);
   ::memset(&device_set_info_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&command_answer_) -
-      reinterpret_cast<char*>(&device_set_info_)) + sizeof(command_answer_));
+      reinterpret_cast<char*>(&packet_) -
+      reinterpret_cast<char*>(&device_set_info_)) + sizeof(packet_));
 }
 
 HostToClient::~HostToClient() {
@@ -2441,6 +3224,7 @@ HostToClient::~HostToClient() {
 void HostToClient::SharedDtor() {
   if (this != internal_default_instance()) delete device_set_info_;
   if (this != internal_default_instance()) delete command_answer_;
+  if (this != internal_default_instance()) delete packet_;
 }
 
 void HostToClient::SetCachedSize(int size) const {
@@ -2466,6 +3250,10 @@ void HostToClient::Clear() {
     delete command_answer_;
   }
   command_answer_ = nullptr;
+  if (GetArenaNoVirtual() == nullptr && packet_ != nullptr) {
+    delete packet_;
+  }
+  packet_ = nullptr;
   _internal_metadata_.Clear();
 }
 
@@ -2502,6 +3290,19 @@ const char* HostToClient::_InternalParse(const char* begin, const char* end, voi
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
         parser_till_end = ::proto::receiver::Answer::_InternalParse;
         object = msg->mutable_command_answer();
+        if (size > end - ptr) goto len_delim_till_end;
+        ptr += size;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
+            {parser_till_end, object}, ptr - size, ptr));
+        break;
+      }
+      // .proto.receiver.Packet packet = 3;
+      case 3: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 26) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        parser_till_end = ::proto::receiver::Packet::_InternalParse;
+        object = msg->mutable_packet();
         if (size > end - ptr) goto len_delim_till_end;
         ptr += size;
         GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
@@ -2560,6 +3361,17 @@ bool HostToClient::MergePartialFromCodedStream(
         break;
       }
 
+      // .proto.receiver.Packet packet = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (26 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_packet()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -2599,6 +3411,12 @@ void HostToClient::SerializeWithCachedSizes(
       2, HasBitSetters::command_answer(this), output);
   }
 
+  // .proto.receiver.Packet packet = 3;
+  if (this->has_packet()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, HasBitSetters::packet(this), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -2624,6 +3442,13 @@ void HostToClient::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
         2, HasBitSetters::command_answer(this), target);
+  }
+
+  // .proto.receiver.Packet packet = 3;
+  if (this->has_packet()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        3, HasBitSetters::packet(this), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -2661,6 +3486,13 @@ size_t HostToClient::ByteSizeLong() const {
         *command_answer_);
   }
 
+  // .proto.receiver.Packet packet = 3;
+  if (this->has_packet()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *packet_);
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -2694,6 +3526,9 @@ void HostToClient::MergeFrom(const HostToClient& from) {
   if (from.has_command_answer()) {
     mutable_command_answer()->::proto::receiver::Answer::MergeFrom(from.command_answer());
   }
+  if (from.has_packet()) {
+    mutable_packet()->::proto::receiver::Packet::MergeFrom(from.packet());
+  }
 }
 
 void HostToClient::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2723,6 +3558,7 @@ void HostToClient::InternalSwap(HostToClient* other) {
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(device_set_info_, other->device_set_info_);
   swap(command_answer_, other->command_answer_);
+  swap(packet_, other->packet_);
 }
 
 ::google::protobuf::Metadata HostToClient::GetMetadata() const {
@@ -3037,6 +3873,9 @@ template<> PROTOBUF_NOINLINE ::proto::receiver::DeviceSetInfo* Arena::CreateMayb
 }
 template<> PROTOBUF_NOINLINE ::proto::receiver::Answer* Arena::CreateMaybeMessage< ::proto::receiver::Answer >(Arena* arena) {
   return Arena::CreateInternal< ::proto::receiver::Answer >(arena);
+}
+template<> PROTOBUF_NOINLINE ::proto::receiver::Packet* Arena::CreateMaybeMessage< ::proto::receiver::Packet >(Arena* arena) {
+  return Arena::CreateInternal< ::proto::receiver::Packet >(arena);
 }
 template<> PROTOBUF_NOINLINE ::proto::receiver::HostToClient* Arena::CreateMaybeMessage< ::proto::receiver::HostToClient >(Arena* arena) {
   return Arena::CreateInternal< ::proto::receiver::HostToClient >(arena);

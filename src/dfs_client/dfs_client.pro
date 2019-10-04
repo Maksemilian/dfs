@@ -57,10 +57,10 @@ HEADERS += \
     command_factory.h \
     db.h \
     client_device_set.h \
-    client_file_loader.h \
     client_stream.h \
     ui/client_device_set_widget.h \
-    ui/client_device_set_widget_list.h
+    ui/client_device_set_widget_list.h \
+    client_stream_controller.h
 
 SOURCES += \
     command_hierarch.cpp \
@@ -82,9 +82,9 @@ SOURCES += \
     ui/client_device_set_widget.cpp \
     ui/client_device_set_widget_list.cpp \
     client_device_set.cpp \
-    client_file_loader.cpp \
     client_stream.cpp \
-    i_toolbar.cpp
+    i_toolbar.cpp \
+    client_stream_controller.cpp
 
 FORMS += \
     ui/main_window.ui \

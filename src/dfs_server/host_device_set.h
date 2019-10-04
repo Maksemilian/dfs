@@ -11,7 +11,7 @@
 
 class CohG35DeviceSetSettings;
 class ChannelHost;
-
+class RingBuffer;
 class DeviceSetClient:public QObject
 {
     Q_OBJECT
@@ -24,13 +24,13 @@ public:
 
     Q_SIGNAL void stationDisconnected();
     void sendDeviceSetInfo();
+    std::shared_ptr<RingBuffer> getBuffer();
 
 private slots:
     void onDisconnected();
     void onMessageReceived(const QByteArray &buffer);
 private:
     void sendCommandAnswer(proto::receiver::Answer *commandAnswer);
-
     void readCommanPacket(const proto::receiver::Command &command);
     CohG35DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 

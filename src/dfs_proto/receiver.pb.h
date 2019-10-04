@@ -42,7 +42,7 @@ struct TableStruct_receiver_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[7]
+  static const ::google::protobuf::internal::ParseTable schema[8]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
@@ -69,6 +69,9 @@ extern DeviceSetInfoDefaultTypeInternal _DeviceSetInfo_default_instance_;
 class HostToClient;
 class HostToClientDefaultTypeInternal;
 extern HostToClientDefaultTypeInternal _HostToClient_default_instance_;
+class Packet;
+class PacketDefaultTypeInternal;
+extern PacketDefaultTypeInternal _Packet_default_instance_;
 class Preselectors;
 class PreselectorsDefaultTypeInternal;
 extern PreselectorsDefaultTypeInternal _Preselectors_default_instance_;
@@ -82,6 +85,7 @@ template<> ::proto::receiver::Command* Arena::CreateMaybeMessage<::proto::receiv
 template<> ::proto::receiver::DeviceInfo* Arena::CreateMaybeMessage<::proto::receiver::DeviceInfo>(Arena*);
 template<> ::proto::receiver::DeviceSetInfo* Arena::CreateMaybeMessage<::proto::receiver::DeviceSetInfo>(Arena*);
 template<> ::proto::receiver::HostToClient* Arena::CreateMaybeMessage<::proto::receiver::HostToClient>(Arena*);
+template<> ::proto::receiver::Packet* Arena::CreateMaybeMessage<::proto::receiver::Packet>(Arena*);
 template<> ::proto::receiver::Preselectors* Arena::CreateMaybeMessage<::proto::receiver::Preselectors>(Arena*);
 }  // namespace protobuf
 }  // namespace google
@@ -812,6 +816,195 @@ class Answer :
 };
 // -------------------------------------------------------------------
 
+class Packet :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:proto.receiver.Packet) */ {
+ public:
+  Packet();
+  virtual ~Packet();
+
+  Packet(const Packet& from);
+
+  inline Packet& operator=(const Packet& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  Packet(Packet&& from) noexcept
+    : Packet() {
+    *this = ::std::move(from);
+  }
+
+  inline Packet& operator=(Packet&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return default_instance().GetDescriptor();
+  }
+  static const Packet& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Packet* internal_default_instance() {
+    return reinterpret_cast<const Packet*>(
+               &_Packet_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  void Swap(Packet* other);
+  friend void swap(Packet& a, Packet& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Packet* New() const final {
+    return CreateMaybeMessage<Packet>(nullptr);
+  }
+
+  Packet* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<Packet>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const Packet& from);
+  void MergeFrom(const Packet& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Packet* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated float sample = 11;
+  int sample_size() const;
+  void clear_sample();
+  static const int kSampleFieldNumber = 11;
+  float sample(int index) const;
+  void set_sample(int index, float value);
+  void add_sample(float value);
+  const ::google::protobuf::RepeatedField< float >&
+      sample() const;
+  ::google::protobuf::RepeatedField< float >*
+      mutable_sample();
+
+  // uint32 block_number = 1;
+  void clear_block_number();
+  static const int kBlockNumberFieldNumber = 1;
+  ::google::protobuf::uint32 block_number() const;
+  void set_block_number(::google::protobuf::uint32 value);
+
+  // uint32 ddc1_frequency = 2;
+  void clear_ddc1_frequency();
+  static const int kDdc1FrequencyFieldNumber = 2;
+  ::google::protobuf::uint32 ddc1_frequency() const;
+  void set_ddc1_frequency(::google::protobuf::uint32 value);
+
+  // uint32 attenuator = 3;
+  void clear_attenuator();
+  static const int kAttenuatorFieldNumber = 3;
+  ::google::protobuf::uint32 attenuator() const;
+  void set_attenuator(::google::protobuf::uint32 value);
+
+  // uint32 block_size = 4;
+  void clear_block_size();
+  static const int kBlockSizeFieldNumber = 4;
+  ::google::protobuf::uint32 block_size() const;
+  void set_block_size(::google::protobuf::uint32 value);
+
+  // uint32 device_count = 5;
+  void clear_device_count();
+  static const int kDeviceCountFieldNumber = 5;
+  ::google::protobuf::uint32 device_count() const;
+  void set_device_count(::google::protobuf::uint32 value);
+
+  // uint32 sample_rate = 6;
+  void clear_sample_rate();
+  static const int kSampleRateFieldNumber = 6;
+  ::google::protobuf::uint32 sample_rate() const;
+  void set_sample_rate(::google::protobuf::uint32 value);
+
+  // uint32 time_of_week = 7;
+  void clear_time_of_week();
+  static const int kTimeOfWeekFieldNumber = 7;
+  ::google::protobuf::uint32 time_of_week() const;
+  void set_time_of_week(::google::protobuf::uint32 value);
+
+  // uint32 week_number = 8;
+  void clear_week_number();
+  static const int kWeekNumberFieldNumber = 8;
+  ::google::protobuf::uint32 week_number() const;
+  void set_week_number(::google::protobuf::uint32 value);
+
+  // double ddc_sample_counter = 9;
+  void clear_ddc_sample_counter();
+  static const int kDdcSampleCounterFieldNumber = 9;
+  double ddc_sample_counter() const;
+  void set_ddc_sample_counter(double value);
+
+  // uint64 adc_period_counter = 10;
+  void clear_adc_period_counter();
+  static const int kAdcPeriodCounterFieldNumber = 10;
+  ::google::protobuf::uint64 adc_period_counter() const;
+  void set_adc_period_counter(::google::protobuf::uint64 value);
+
+  // @@protoc_insertion_point(class_scope:proto.receiver.Packet)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedField< float > sample_;
+  mutable std::atomic<int> _sample_cached_byte_size_;
+  ::google::protobuf::uint32 block_number_;
+  ::google::protobuf::uint32 ddc1_frequency_;
+  ::google::protobuf::uint32 attenuator_;
+  ::google::protobuf::uint32 block_size_;
+  ::google::protobuf::uint32 device_count_;
+  ::google::protobuf::uint32 sample_rate_;
+  ::google::protobuf::uint32 time_of_week_;
+  ::google::protobuf::uint32 week_number_;
+  double ddc_sample_counter_;
+  ::google::protobuf::uint64 adc_period_counter_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_receiver_2eproto;
+};
+// -------------------------------------------------------------------
+
 class HostToClient :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:proto.receiver.HostToClient) */ {
  public:
@@ -850,7 +1043,7 @@ class HostToClient :
                &_HostToClient_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   void Swap(HostToClient* other);
   friend void swap(HostToClient& a, HostToClient& b) {
@@ -925,6 +1118,15 @@ class HostToClient :
   ::proto::receiver::Answer* mutable_command_answer();
   void set_allocated_command_answer(::proto::receiver::Answer* command_answer);
 
+  // .proto.receiver.Packet packet = 3;
+  bool has_packet() const;
+  void clear_packet();
+  static const int kPacketFieldNumber = 3;
+  const ::proto::receiver::Packet& packet() const;
+  ::proto::receiver::Packet* release_packet();
+  ::proto::receiver::Packet* mutable_packet();
+  void set_allocated_packet(::proto::receiver::Packet* packet);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.HostToClient)
  private:
   class HasBitSetters;
@@ -932,6 +1134,7 @@ class HostToClient :
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::proto::receiver::DeviceSetInfo* device_set_info_;
   ::proto::receiver::Answer* command_answer_;
+  ::proto::receiver::Packet* packet_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -975,7 +1178,7 @@ class ClientToHost :
                &_ClientToHost_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   void Swap(ClientToHost* other);
   friend void swap(ClientToHost& a, ClientToHost& b) {
@@ -1515,6 +1718,180 @@ inline void Answer::set_succesed(bool value) {
 
 // -------------------------------------------------------------------
 
+// Packet
+
+// uint32 block_number = 1;
+inline void Packet::clear_block_number() {
+  block_number_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::block_number() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.block_number)
+  return block_number_;
+}
+inline void Packet::set_block_number(::google::protobuf::uint32 value) {
+  
+  block_number_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.block_number)
+}
+
+// uint32 ddc1_frequency = 2;
+inline void Packet::clear_ddc1_frequency() {
+  ddc1_frequency_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::ddc1_frequency() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.ddc1_frequency)
+  return ddc1_frequency_;
+}
+inline void Packet::set_ddc1_frequency(::google::protobuf::uint32 value) {
+  
+  ddc1_frequency_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.ddc1_frequency)
+}
+
+// uint32 attenuator = 3;
+inline void Packet::clear_attenuator() {
+  attenuator_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::attenuator() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.attenuator)
+  return attenuator_;
+}
+inline void Packet::set_attenuator(::google::protobuf::uint32 value) {
+  
+  attenuator_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.attenuator)
+}
+
+// uint32 block_size = 4;
+inline void Packet::clear_block_size() {
+  block_size_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::block_size() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.block_size)
+  return block_size_;
+}
+inline void Packet::set_block_size(::google::protobuf::uint32 value) {
+  
+  block_size_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.block_size)
+}
+
+// uint32 device_count = 5;
+inline void Packet::clear_device_count() {
+  device_count_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::device_count() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.device_count)
+  return device_count_;
+}
+inline void Packet::set_device_count(::google::protobuf::uint32 value) {
+  
+  device_count_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.device_count)
+}
+
+// uint32 sample_rate = 6;
+inline void Packet::clear_sample_rate() {
+  sample_rate_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::sample_rate() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.sample_rate)
+  return sample_rate_;
+}
+inline void Packet::set_sample_rate(::google::protobuf::uint32 value) {
+  
+  sample_rate_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.sample_rate)
+}
+
+// uint32 time_of_week = 7;
+inline void Packet::clear_time_of_week() {
+  time_of_week_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::time_of_week() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.time_of_week)
+  return time_of_week_;
+}
+inline void Packet::set_time_of_week(::google::protobuf::uint32 value) {
+  
+  time_of_week_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.time_of_week)
+}
+
+// uint32 week_number = 8;
+inline void Packet::clear_week_number() {
+  week_number_ = 0u;
+}
+inline ::google::protobuf::uint32 Packet::week_number() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.week_number)
+  return week_number_;
+}
+inline void Packet::set_week_number(::google::protobuf::uint32 value) {
+  
+  week_number_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.week_number)
+}
+
+// double ddc_sample_counter = 9;
+inline void Packet::clear_ddc_sample_counter() {
+  ddc_sample_counter_ = 0;
+}
+inline double Packet::ddc_sample_counter() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.ddc_sample_counter)
+  return ddc_sample_counter_;
+}
+inline void Packet::set_ddc_sample_counter(double value) {
+  
+  ddc_sample_counter_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.ddc_sample_counter)
+}
+
+// uint64 adc_period_counter = 10;
+inline void Packet::clear_adc_period_counter() {
+  adc_period_counter_ = PROTOBUF_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 Packet::adc_period_counter() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.adc_period_counter)
+  return adc_period_counter_;
+}
+inline void Packet::set_adc_period_counter(::google::protobuf::uint64 value) {
+  
+  adc_period_counter_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.adc_period_counter)
+}
+
+// repeated float sample = 11;
+inline int Packet::sample_size() const {
+  return sample_.size();
+}
+inline void Packet::clear_sample() {
+  sample_.Clear();
+}
+inline float Packet::sample(int index) const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Packet.sample)
+  return sample_.Get(index);
+}
+inline void Packet::set_sample(int index, float value) {
+  sample_.Set(index, value);
+  // @@protoc_insertion_point(field_set:proto.receiver.Packet.sample)
+}
+inline void Packet::add_sample(float value) {
+  sample_.Add(value);
+  // @@protoc_insertion_point(field_add:proto.receiver.Packet.sample)
+}
+inline const ::google::protobuf::RepeatedField< float >&
+Packet::sample() const {
+  // @@protoc_insertion_point(field_list:proto.receiver.Packet.sample)
+  return sample_;
+}
+inline ::google::protobuf::RepeatedField< float >*
+Packet::mutable_sample() {
+  // @@protoc_insertion_point(field_mutable_list:proto.receiver.Packet.sample)
+  return &sample_;
+}
+
+// -------------------------------------------------------------------
+
 // HostToClient
 
 // .proto.receiver.DeviceSetInfo device_set_info = 1;
@@ -1619,6 +1996,57 @@ inline void HostToClient::set_allocated_command_answer(::proto::receiver::Answer
   // @@protoc_insertion_point(field_set_allocated:proto.receiver.HostToClient.command_answer)
 }
 
+// .proto.receiver.Packet packet = 3;
+inline bool HostToClient::has_packet() const {
+  return this != internal_default_instance() && packet_ != nullptr;
+}
+inline void HostToClient::clear_packet() {
+  if (GetArenaNoVirtual() == nullptr && packet_ != nullptr) {
+    delete packet_;
+  }
+  packet_ = nullptr;
+}
+inline const ::proto::receiver::Packet& HostToClient::packet() const {
+  const ::proto::receiver::Packet* p = packet_;
+  // @@protoc_insertion_point(field_get:proto.receiver.HostToClient.packet)
+  return p != nullptr ? *p : *reinterpret_cast<const ::proto::receiver::Packet*>(
+      &::proto::receiver::_Packet_default_instance_);
+}
+inline ::proto::receiver::Packet* HostToClient::release_packet() {
+  // @@protoc_insertion_point(field_release:proto.receiver.HostToClient.packet)
+  
+  ::proto::receiver::Packet* temp = packet_;
+  packet_ = nullptr;
+  return temp;
+}
+inline ::proto::receiver::Packet* HostToClient::mutable_packet() {
+  
+  if (packet_ == nullptr) {
+    auto* p = CreateMaybeMessage<::proto::receiver::Packet>(GetArenaNoVirtual());
+    packet_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:proto.receiver.HostToClient.packet)
+  return packet_;
+}
+inline void HostToClient::set_allocated_packet(::proto::receiver::Packet* packet) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete packet_;
+  }
+  if (packet) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      packet = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, packet, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  packet_ = packet;
+  // @@protoc_insertion_point(field_set_allocated:proto.receiver.HostToClient.packet)
+}
+
 // -------------------------------------------------------------------
 
 // ClientToHost
@@ -1677,6 +2105,8 @@ inline void ClientToHost::set_allocated_command(::proto::receiver::Command* comm
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
