@@ -33,7 +33,6 @@ class SyncManager;
 class ChannelPlot;
 class ElipsPlot ;
 
-class WidgetDirector ;
 class DeviceSetListWidget ;
 class MainWindow : public QMainWindow,
         public IDeviceSetSettings
@@ -111,7 +110,6 @@ private:
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget
 
-    WidgetDirector *widgetDirector;
     DeviceSetListWidget *deviceSetListWidget;
 };
 
