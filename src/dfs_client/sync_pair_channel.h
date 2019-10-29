@@ -28,10 +28,10 @@ public:
     ~BlockAlinement();
 
     void equate(Ipp32fc *signal,quint32 size,
-                    double shift,
-                    quint32 ddcFrequency,
-                    quint32 sampleRate,
-                    double deltaStart)const;
+                double shift,
+                quint32 ddcFrequency,
+                quint32 sampleRate,
+                double deltaStart)const;
 private:
     void initFftBuffers(int FFTOrder);
     int  calcFftOrder(quint32 number);
@@ -100,13 +100,14 @@ class SyncPairChannel
 public:
     SyncPairChannel();
     ~SyncPairChannel();
-
+    ShPtrBuffer syncBuffer1();
+    ShPtrBuffer syncBuffer2();
     void start(const ShPtrBufferPair receiverStationClientPair,
                quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
     void stop();
 
-    void addSyncSignalUpdater(ISyncSignalUpdate*updater);
-    void addSumDivUpdater(ISumDivSignalUpdate *updater);
+    void setSyncSignalUpdater(ISyncSignalUpdate*updater);
+    void setSumDivUpdater(ISumDivSignalUpdate *updater);
 
     void enableWholeShift();
     void disableWholeShift();
@@ -117,9 +118,9 @@ private:
     void sync(const ShPtrBufferPair receiverStationClientPair,
               quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
 
-//    void sync(const std::shared_ptr<RingBuffer> buffer1,
-//              const std::shared_ptr<RingBuffer> buffer2,
-//              quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
+    //    void sync(const std::shared_ptr<RingBuffer> buffer1,
+    //              const std::shared_ptr<RingBuffer> buffer2,
+    //              quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
 private:
     struct Impl;
     std::unique_ptr<Impl> d;

@@ -109,14 +109,12 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
             [this]{
         if(--_counter!=0)return ;
         const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
-        if(successedCommand.command_type()==proto::receiver::START_DDC1){
 
+        if(successedCommand.command_type()==proto::receiver::START_DDC1){
             emit  ready(_deviceSetWidgetList);
         }else if(successedCommand.command_type()==proto::receiver::STOP_DDC1){
-            //                sync.stop();
             emit notReady();
         }
-
 
         if(!_commandQueue.isEmpty()&&
                 _commandQueue.head().command_type()!=successedCommand.command_type()){

@@ -33,7 +33,6 @@ MainWindow:: MainWindow(QWidget *parent):
     //TODO FIX THIS CODE
 
     deviceSetListWidget=new DeviceSetListWidget(this);
-    deviceSetListWidget->ds=this;
     setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
 
     //************SETTING TOOLBAR***************

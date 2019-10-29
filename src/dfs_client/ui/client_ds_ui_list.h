@@ -30,7 +30,6 @@ public:
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void setCommand(const proto::receiver::Command &command)override;
     //TODO PUBLIC MEMBER
-    IDeviceSetSettings *ds=nullptr;
 signals:
     void commandSucessed()override;
     void allConnectedState(bool state);
@@ -55,7 +54,6 @@ private:
     QListWidget *_listWidget;
     SwitchButton *_pbConnectToStation;
     QList<DeviceSetWidget*>_deviceSetWidgetList;
-//    SyncPairChannel sync;
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

@@ -508,12 +508,21 @@ void FindChannelForShift::showPacket(quint32 blockNumber,
 
 struct SyncPairChannel::Impl
 {
-    Impl():isWholeShiftEnabled(true),isFructionShiftEnabled(true){}
+    Impl():
+        isWholeShiftEnabled(true),
+        isFructionShiftEnabled(true),
+        syncBuffer1(std::make_shared<RingBuffer>(16)),
+        syncBuffer2(std::make_shared<RingBuffer>(16))
+
+    {}
 
     std::atomic<bool> isWholeShiftEnabled;
     std::atomic<bool> isFructionShiftEnabled;
     QFutureWatcher<void> fw;
     std::atomic<bool> quit;
+    std::shared_ptr<RingBuffer>syncBuffer1;
+    std::shared_ptr<RingBuffer>syncBuffer2;
+
     ISyncSignalUpdate *syncSignalUpdater=nullptr;
     ISumDivSignalUpdate *sumDivUpdater=nullptr;
 };
@@ -522,14 +531,24 @@ SyncPairChannel::SyncPairChannel():
     d(std::make_unique<Impl>())
 {}
 
+ShPtrBuffer SyncPairChannel::syncBuffer1()
+{
+    return d->syncBuffer1;
+}
+
+ShPtrBuffer SyncPairChannel::syncBuffer2()
+{
+    return d->syncBuffer2;
+}
+
 SyncPairChannel::~SyncPairChannel()= default;
 
-void SyncPairChannel::addSyncSignalUpdater(ISyncSignalUpdate *updater)
+void SyncPairChannel::setSyncSignalUpdater(ISyncSignalUpdate *updater)
 {
     d->syncSignalUpdater=updater;
 }
 
-void SyncPairChannel::addSumDivUpdater(ISumDivSignalUpdate *updater)
+void SyncPairChannel::setSumDivUpdater(ISumDivSignalUpdate *updater)
 {
     d->sumDivUpdater=updater;
 }
@@ -544,6 +563,7 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                            quint32 ddcFrequency,quint32 sampleRate,quint32 blockSize)
 {
     qDebug()<<"THREAD_SYNC_BEGIN";
+
     //         qDebug()<<"USE COUNT_B"<<stationPair.first.use_count()<<stationPair.first.use_count();
     FindChannelForShift f(sampleRate,blockSize);
     // qDebug()<<"USE COUNT_"<<stationPair.first.use_count()<<stationPair.first.use_count();
@@ -588,31 +608,35 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                 blockAlinement.equate(signal,blockSize,f.getShiftValue(),
                                       ddcFrequency,sampleRate,f.getDeltaStart());
                 //                                qDebug()<<"BA_2";
-                ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
-                                          packet[CHANNEL_FIRST].ddc_sample_counter(),
-                                          packet[CHANNEL_FIRST].adc_period_counter());
+                d->syncBuffer1->push(packet[CHANNEL_FIRST]);
+                d->syncBuffer2->push(packet[CHANNEL_SECOND]);
 
-                ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
-                                          packet[CHANNEL_SECOND].ddc_sample_counter(),
-                                          packet[CHANNEL_SECOND].adc_period_counter());
-                // qDebug()<<"BA_3";
+//                ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
+//                                          packet[CHANNEL_FIRST].ddc_sample_counter(),
+//                                          packet[CHANNEL_FIRST].adc_period_counter());
+
+//                ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
+//                                          packet[CHANNEL_SECOND].ddc_sample_counter(),
+//                                          packet[CHANNEL_SECOND].adc_period_counter());
+//                // qDebug()<<"BA_3";
                 const float *data1=packet[CHANNEL_FIRST].sample().data();
                 const float *data2=packet[CHANNEL_SECOND].sample().data();
-                //В dataPairSingal заносятся I компоненты с канала 1 и 2
-                for(quint32 i=0;i<blockSize;i++){
-                    dataPairSingal[i*2]=data1[i*2];
-                    dataPairSingal[i*2+1]=data2[i*2];
-                }
+//                //В dataPairSingal заносятся I компоненты с канала 1 и 2
+//                for(quint32 i=0;i<blockSize;i++){
+//                    dataPairSingal[i*2]=data1[i*2];
+//                    dataPairSingal[i*2+1]=data2[i*2];
+//                }
+
+//                //                 qDebug()<<"BA_4";
+//                if(d->syncSignalUpdater){
+//                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
+//                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
+//                }
 
                 //******* SUM-SUB METHOD **************
                 const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
                 memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
                        sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
-                //                 qDebug()<<"BA_4";
-                if(d->syncSignalUpdater){
-                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
-                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
-                }
                 // qDebug()<<"BA_5";
                 if(d->sumDivUpdater)
                     d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
@@ -626,6 +650,60 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
         qDebug("SYNC_ERROR");
     }
     qDebug()<<"THREAD_SYNC_END";
+}
+
+
+/*!
+ * \brief SyncPairChannel::start
+ * запускает процесс синхронизации двух каналов
+ * \param receiverStationClientPair
+ * \param blockSize
+ */
+void SyncPairChannel::start(const ShPtrBufferPair receiverStationClientPair,
+                            quint32 ddcFrequency,
+                            quint32 sampleRate,
+                            quint32 blockSize)
+{
+    qDebug()<<"******SyncPairChannel::start();";
+    qDebug()<<"COUNT"<<receiverStationClientPair.second.use_count();
+    d->quit=false;
+    d->fw.setFuture(QtConcurrent::run(this,&SyncPairChannel::sync,
+                                      receiverStationClientPair,
+                                      ddcFrequency,sampleRate,blockSize));
+}
+
+/*!
+ * \brief SyncPairChannel::stop
+ * останавливает процесс синхронизации двух каналов
+ * \param reset
+ * \todo убрать параметр reset . Этот парамер необходим когда перезапускаем
+ * синхронизацию и должен быть равен false
+ */
+void SyncPairChannel::stop()
+{
+    d->quit=true;
+    d->fw.waitForFinished();
+    qDebug()<<"SyncPairChannel::stop();";
+}
+
+void SyncPairChannel::enableWholeShift(){
+    d->isWholeShiftEnabled=true;
+    qDebug()<<"ENABLED WHOLE SHIFT";
+}
+
+void SyncPairChannel::disableWholeShift(){
+    d->isWholeShiftEnabled=false;
+    qDebug()<<"DISABLED WHOLE SHIFT";
+}
+
+void SyncPairChannel::enableFructionShift(){
+    d->isFructionShiftEnabled=true;
+    qDebug()<<"ENABLED FRUCTION SHIFT";
+}
+
+void SyncPairChannel::disabledFructionShift(){
+    d->isFructionShiftEnabled=false;
+    qDebug()<<"DISABLED FRUCTION SHIFT";
 }
 
 //void SyncPairChannel::sync(const std::shared_ptr<RingBuffer> buffer1,
@@ -717,59 +795,6 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
 //    }
 //    qDebug()<<"THREAD_SYNC_END";
 //}
-
-/*!
- * \brief SyncPairChannel::start
- * запускает процесс синхронизации двух каналов
- * \param receiverStationClientPair
- * \param blockSize
- */
-void SyncPairChannel::start(const ShPtrBufferPair receiverStationClientPair,
-                            quint32 ddcFrequency,
-                            quint32 sampleRate,
-                            quint32 blockSize)
-{
-    qDebug()<<"******SyncPairChannel::start();";
-    qDebug()<<"COUNT"<<receiverStationClientPair.second.use_count();
-    d->quit=false;
-    d->fw.setFuture(QtConcurrent::run(this,&SyncPairChannel::sync,
-                                      receiverStationClientPair,
-                                      ddcFrequency,sampleRate,blockSize));
-}
-
-/*!
- * \brief SyncPairChannel::stop
- * останавливает процесс синхронизации двух каналов
- * \param reset
- * \todo убрать параметр reset . Этот парамер необходим когда перезапускаем
- * синхронизацию и должен быть равен false
- */
-void SyncPairChannel::stop()
-{
-    d->quit=true;
-    d->fw.waitForFinished();
-    qDebug()<<"SyncPairChannel::stop();";
-}
-
-void SyncPairChannel::enableWholeShift(){
-    d->isWholeShiftEnabled=true;
-    qDebug()<<"ENABLED WHOLE SHIFT";
-}
-
-void SyncPairChannel::disableWholeShift(){
-    d->isWholeShiftEnabled=false;
-    qDebug()<<"DISABLED WHOLE SHIFT";
-}
-
-void SyncPairChannel::enableFructionShift(){
-    d->isFructionShiftEnabled=true;
-    qDebug()<<"ENABLED FRUCTION SHIFT";
-}
-
-void SyncPairChannel::disabledFructionShift(){
-    d->isFructionShiftEnabled=false;
-    qDebug()<<"DISABLED FRUCTION SHIFT";
-}
 
 /*
 void SyncPairChannel::sync(const StreamReadablePair stationPair,

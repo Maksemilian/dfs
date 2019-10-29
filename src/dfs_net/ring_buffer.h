@@ -14,7 +14,7 @@ class RingBuffer
 public:
     RingBuffer(int bufferSize):
         array(new proto::receiver::Packet[bufferSize]),
-        writeCounter(0),readCounter(0),mask(bufferSize-1){  }
+        writeCounter(0),readCounter(0),mask(bufferSize-1),_size(bufferSize){  }
 
 //    bool get(int &index,Packet&packet){
 //        QReadLocker readLocker(&mutex);
@@ -63,13 +63,13 @@ public:
         return writeCounter;
     }
     inline bool isReadable(){return readCounter<writeCounter;}
-
+    int size(){return _size;}
 private:
     proto::receiver::Packet *array;
     std::atomic<int> writeCounter;
     std::atomic<int> readCounter;
     std::atomic<int> mask;
-
+    int _size=0;
     QReadWriteLock mutex;
     QWaitCondition notEmpty;
 };
