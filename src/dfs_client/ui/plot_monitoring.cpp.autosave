@@ -16,14 +16,9 @@ PlotMonitoring::PlotMonitoring(QWidget *paret)
     setLayout(gl);
     gl->addWidget(channelPlot,0,0);
     gl->addWidget(elipsPlot,0,1);
-    //    setRightDockWidget(elipsPlot,"Elipse");
 
-    sync->addSumDivUpdater(elipsPlot);
-    sync->addSyncSignalUpdater(channelPlot);
-    //************** CHANNEL PLOT**************************
-
-    //    channelPlot=new ChannelPlot(2,getSamplesPerBuffer());
-    //    setCentralWidget(channelPlot);
+    sync->setSumDivUpdater(elipsPlot);
+    sync->setSyncSignalUpdater(channelPlot);
 }
 
 void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList)

@@ -30,6 +30,7 @@ class SyncManager;
 
 class ChannelPlot;
 class ElipsPlot ;
+class PlotMonitoring;
 
 class DeviceSetListWidget ;
 class MainWindow : public QMainWindow,
@@ -102,6 +103,8 @@ private:
     PreselectorWidget *preselectorWidget;
 
     QMap<Qt::ToolBarArea,QToolBar*>toolBarMap;
+
+    PlotMonitoring *plotMonitoring;
 
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget

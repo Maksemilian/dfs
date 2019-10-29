@@ -106,7 +106,7 @@ public:
     void stop();
 
     void addSyncSignalUpdater(ISyncSignalUpdate*updater);
-    void addSymDivUpdater(ISumDivSignalUpdate *updater);
+    void addSumDivUpdater(ISumDivSignalUpdate *updater);
 
     void enableWholeShift();
     void disableWholeShift();

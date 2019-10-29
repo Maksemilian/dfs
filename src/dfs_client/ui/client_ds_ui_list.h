@@ -12,6 +12,7 @@ class DeviceSetWidget;
 class QPushButton;
 class SwitchButton;
 class IDeviceSetSettings;
+
 class DeviceSetListWidget :
 //        public QListWidget,
         public QWidget,
@@ -33,6 +34,8 @@ public:
 signals:
     void commandSucessed()override;
     void allConnectedState(bool state);
+    void ready(const QList<DeviceSetWidget*>&dsList);
+    void notReady();
 public slots:
     void connectToSelectedDeviceSet();
     void disconnectFromSelectedDeviceSet();
@@ -52,9 +55,7 @@ private:
     QListWidget *_listWidget;
     SwitchButton *_pbConnectToStation;
     QList<DeviceSetWidget*>_deviceSetWidgetList;
-    SyncPairChannel sync;
-    ShPtrBufferPair bufferPair;
-
+//    SyncPairChannel sync;
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

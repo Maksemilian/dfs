@@ -10,6 +10,7 @@ class ChannelPlot;
 class ElipsPlot ;
 class DeviceSetWidget;
 class SyncPairChannel;
+
 class PlotMonitoring :public QWidget
 {
     Q_OBJECT

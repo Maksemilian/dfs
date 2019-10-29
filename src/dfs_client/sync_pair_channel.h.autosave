@@ -105,8 +105,8 @@ public:
                quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
     void stop();
 
-    void addSyncSignalUpdater(ISyncSignalUpdate*updater);
-    void addSumDivUpdater(ISumDivSignalUpdate *updater);
+    void setSyncSignalUpdater(ISyncSignalUpdate*updater);
+    void setSumDivUpdater(ISumDivSignalUpdate *updater);
 
     void enableWholeShift();
     void disableWholeShift();

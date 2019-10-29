@@ -529,7 +529,7 @@ void SyncPairChannel::addSyncSignalUpdater(ISyncSignalUpdate *updater)
     d->syncSignalUpdater=updater;
 }
 
-void SyncPairChannel::addSymDivUpdater(ISumDivSignalUpdate *updater)
+void SyncPairChannel::addSumDivUpdater(ISumDivSignalUpdate *updater)
 {
     d->sumDivUpdater=updater;
 }
@@ -587,7 +587,7 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
 
                 blockAlinement.equate(signal,blockSize,f.getShiftValue(),
                                       ddcFrequency,sampleRate,f.getDeltaStart());
-                                qDebug()<<"BA_2";
+                //                                qDebug()<<"BA_2";
                 ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
                                           packet[CHANNEL_FIRST].ddc_sample_counter(),
                                           packet[CHANNEL_FIRST].adc_period_counter());
@@ -595,7 +595,7 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                 ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
                                           packet[CHANNEL_SECOND].ddc_sample_counter(),
                                           packet[CHANNEL_SECOND].adc_period_counter());
- qDebug()<<"BA_3";
+                // qDebug()<<"BA_3";
                 const float *data1=packet[CHANNEL_FIRST].sample().data();
                 const float *data2=packet[CHANNEL_SECOND].sample().data();
                 //В dataPairSingal заносятся I компоненты с канала 1 и 2
@@ -608,15 +608,15 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                 const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
                 memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
                        sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
-                 qDebug()<<"BA_4";
-//                if(d->syncSignalUpdater!=nullptr){
-//                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
-//                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
-//                }
-// qDebug()<<"BA_5";
-//                if(d->sumDivUpdater!=nullptr)
-//                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
-// qDebug()<<"BA_6";
+                //                 qDebug()<<"BA_4";
+                if(d->syncSignalUpdater){
+                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
+                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
+                }
+                // qDebug()<<"BA_5";
+                if(d->sumDivUpdater)
+                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
+                // qDebug()<<"BA_6";
                 isFirstStationReadedPacket=false;
                 isSecondStationReadedPacket=false;
             }
