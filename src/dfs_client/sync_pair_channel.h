@@ -1,13 +1,20 @@
 #ifndef SYNC_PAIR_CHANNEL_H
 #define SYNC_PAIR_CHANNEL_H
 
-#include "i_stream_reader.h"
+//#include "i_stream_reader.h"
 
 #include "ippbase.h"
+#include <QPair>
+#include "memory"
+#include "ring_buffer.h"
 
 class ISyncSignalUpdate;
 class ISumDivSignalUpdate;
-class IStreamRead;
+//class IStreamRead;
+class RingBuffer;
+
+using ShPtrBuffer=std::shared_ptr<RingBuffer>;
+using ShPtrBufferPair=QPair<ShPtrBuffer,ShPtrBuffer>;
 
 using BoolPair=QPair<bool,bool>;
 
@@ -54,7 +61,7 @@ class FindChannelForShift
 public:
     FindChannelForShift(quint32 sampleRate,quint32 blockSize);
     ~FindChannelForShift();
-    bool calcShiftInChannel(const StreamReadablePair receiverStationClientPair);
+    bool calcShiftInChannel(const ShPtrBufferPair receiverStationClientPair);
     int getChannelIndex();
 
     const std::vector<Ipp32fc>& getShiftBuffer();
@@ -94,7 +101,7 @@ public:
     SyncPairChannel();
     ~SyncPairChannel();
 
-    void start(const StreamReadablePair receiverStationClientPair,
+    void start(const ShPtrBufferPair receiverStationClientPair,
                quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
     void stop();
 
@@ -107,8 +114,12 @@ public:
     void enableFructionShift();
     void disabledFructionShift();
 private:
-    void sync(const StreamReadablePair receiverStationClientPair,
+    void sync(const ShPtrBufferPair receiverStationClientPair,
               quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
+
+//    void sync(const std::shared_ptr<RingBuffer> buffer1,
+//              const std::shared_ptr<RingBuffer> buffer2,
+//              quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
 private:
     struct Impl;
     std::unique_ptr<Impl> d;

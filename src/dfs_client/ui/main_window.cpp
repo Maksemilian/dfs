@@ -28,11 +28,11 @@ MainWindow:: MainWindow(QWidget *parent):
 {
     ui->setupUi(this);
     centralWidget()->setLayout(new QVBoxLayout);
-
+    setObjectName("MainWindow");
     //TODO FIX THIS CODE
 
     deviceSetListWidget=new DeviceSetListWidget(this);
-
+    deviceSetListWidget->ds=this;
     setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
 
     //************SETTING TOOLBAR***************

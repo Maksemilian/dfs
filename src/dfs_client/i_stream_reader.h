@@ -14,8 +14,8 @@ public:
     virtual  bool readDDC1StreamData(Packet &data)=0;
 };
 
-using ShPtrStreamReadable=std::shared_ptr<IStreamRead>;
-using StreamReadablePair=QPair<ShPtrStreamReadable,ShPtrStreamReadable>;
+using ShPtrBuffer=std::shared_ptr<IStreamRead>;
+using ShPtrBufferPair=QPair<ShPtrBuffer,ShPtrBuffer>;
 
 #endif // INTERFACE_READABLE_STREAM_H
 

@@ -1,9 +1,9 @@
 #ifndef DEVICE_SET_WIDGET_LIST_H
 #define DEVICE_SET_WIDGET_LIST_H
 
-
 #include "receiver.pb.h"
 #include "i_deviceset.h"
+#include "sync_pair_channel.h"
 
 #include <QListWidget>
 #include <QQueue>
@@ -11,7 +11,7 @@
 class DeviceSetWidget;
 class QPushButton;
 class SwitchButton;
-
+class IDeviceSetSettings;
 class DeviceSetListWidget :
 //        public QListWidget,
         public QWidget,
@@ -28,7 +28,8 @@ public:
     void addDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void setCommand(const proto::receiver::Command &command)override;
-
+    //TODO PUBLIC MEMBER
+    IDeviceSetSettings *ds=nullptr;
 signals:
     void commandSucessed()override;
     void allConnectedState(bool state);
@@ -51,6 +52,9 @@ private:
     QListWidget *_listWidget;
     SwitchButton *_pbConnectToStation;
     QList<DeviceSetWidget*>_deviceSetWidgetList;
+    SyncPairChannel sync;
+    ShPtrBufferPair bufferPair;
+
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

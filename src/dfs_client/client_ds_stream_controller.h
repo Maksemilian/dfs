@@ -6,6 +6,7 @@
 #include <memory>
 class StreamReader;
 class RingBuffer;
+#include <QDebug>
 
 class ClientStreamController:public QObject
 {
@@ -15,7 +16,10 @@ public:
     ~ClientStreamController();
     void startDDC();
     void stopDDC();
-    inline std::shared_ptr<RingBuffer> ddc1Buffer(){return _ddcBuffer;}
+    inline std::shared_ptr<RingBuffer> ddc1Buffer(){
+//        qDebug()<<"CSC:"<<_ddcBuffer.use_count();
+        return _ddcBuffer;
+    }
 signals:
     void ddcStarted();
     void ddcStoped();

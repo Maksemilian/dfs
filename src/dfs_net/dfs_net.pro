@@ -2,9 +2,9 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-headers.path = $${LIBS_PATH}/dfs_net/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
+#headers.path = $${LIBS_PATH}/dfs_net/include
+#headers.files   += $$files($${PWD}/*.h)
+#INSTALLS       += headers
 
 QT += core
 QT += network

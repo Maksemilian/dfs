@@ -2,7 +2,7 @@
 
 #include "i_sygnal_update.h"
 
-#include "packet.pb.h"
+#include "receiver.pb.h"
 
 #include <vector>
 
@@ -93,8 +93,8 @@ void BlockAlinement::initFftBuffers(int FFTOrder)
 }
 
 void BlockAlinement::equate(Ipp32fc *blockData, quint32 blockSize,
-                                double shift, quint32 ddcFrequency,
-                                quint32 sampleRate, double deltaStart) const
+                            double shift, quint32 ddcFrequency,
+                            quint32 sampleRate, double deltaStart) const
 {
     quint32 shiftW=static_cast<quint32>(shift);
     double shiftF=shift-shiftW;
@@ -153,15 +153,15 @@ void BlockAlinement::shiftFruction(Ipp32fc *blockData, quint32 dataSize, double 
 void BlockAlinement::shiftTest(Ipp32fc *blockData, quint32 blockSize, double teta) const
 {
     Ipp32fc val;
-//    val.re=static_cast<float>(cos(teta));
-//    val.im=static_cast<float>(sin(teta));
+    //    val.re=static_cast<float>(cos(teta));
+    //    val.im=static_cast<float>(sin(teta));
     val.re=static_cast<float>(cos(fmod(teta,(2*M_PI))));
     val.im=static_cast<float>(sin(fmod(teta,(2*M_PI))));
     qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*M_PI));
     //WARNING ippsMulC_32fc
     ippsMulC_32fc(blockData, val, blockData,static_cast<int>(blockSize));
-//    ippsMulC_32fc(blockData, val, d->dstFinalRez.get(),static_cast<int>(blockSize));
-//    blockData=d->dstFinalRez.get();
+    //    ippsMulC_32fc(blockData, val, d->dstFinalRez.get(),static_cast<int>(blockSize));
+    //    blockData=d->dstFinalRez.get();
 }
 
 int  BlockAlinement::calcFftOrder(quint32 number)
@@ -212,9 +212,9 @@ void BlockAlinement::incrementPhaseValuesOnAngle(Ipp32f *phaseData,quint32 size,
 
 //*******************************************
 
-typedef QQueue<Packet> PacketQueue;
-typedef QPair<PacketQueue,PacketQueue>PacketQueuePair;
-typedef QPair<Packet,Packet> PacketPair;
+using PacketQueue=QQueue<proto::receiver::Packet>;
+using PacketQueuePair=QPair<PacketQueue,PacketQueue>;
+using PacketPair=QPair<proto::receiver::Packet,proto::receiver::Packet> ;
 
 class SumSubMethod
 {
@@ -340,7 +340,7 @@ double FindChannelForShift::getDeltaStart()
     return d->deltaStart;
 }
 
-bool FindChannelForShift::calcShiftInChannel(const StreamReadablePair stationPair)
+bool FindChannelForShift::calcShiftInChannel(const ShPtrBufferPair stationPair)
 {
     qDebug()<<"B_USE COUNT_calcShiftInChannel_BEGIN"
            <<stationPair.first.use_count()
@@ -353,12 +353,12 @@ bool FindChannelForShift::calcShiftInChannel(const StreamReadablePair stationPai
     isReadedPacketPair.second=false;
 
     bool shiftFound=false;
-    Packet packetPair[2];
+    proto::receiver::Packet packetPair[2];
 
-    Packet packet;
+    proto::receiver::Packet packet;
     while(!shiftFound){
         //                qDebug()<<"read_1";
-        if(stationPair.first->readDDC1StreamData(packet)){
+        if(stationPair.first->pop(packet)){
             if(packet.sample_rate()==d->sampleRate){
                 packetPair[CHANNEL_FIRST]=packet;
                 isReadedPacketPair.first=true;
@@ -366,7 +366,7 @@ bool FindChannelForShift::calcShiftInChannel(const StreamReadablePair stationPai
             }
         }
         //                qDebug()<<"read_2";
-        if(stationPair.second->readDDC1StreamData(packet)){
+        if(stationPair.second->pop(packet)){
             if(packet.sample_rate()==d->sampleRate){
                 packetPair[CHANNEL_SECOND]=packet;
                 isReadedPacketPair.second=true;
@@ -473,7 +473,7 @@ bool FindChannelForShift::calcShiftInChannel(const StreamReadablePair stationPai
 
 
 void FindChannelForShift::initShiftBuffer(const float *signalData, quint32 blockSize,
-                                           quint32 shift)
+                                          quint32 shift)
 {
     qDebug()<<"B_INIT_SHIFT_TEST"<<shift<<d->shiftBufferT.size();
     for(quint32 i=0;i<shift;i++){
@@ -514,8 +514,8 @@ struct SyncPairChannel::Impl
     std::atomic<bool> isFructionShiftEnabled;
     QFutureWatcher<void> fw;
     std::atomic<bool> quit;
-    ISyncSignalUpdate *syncSignalUpdater;
-    ISumDivSignalUpdate *sumDivUpdater;
+    ISyncSignalUpdate *syncSignalUpdater=nullptr;
+    ISumDivSignalUpdate *sumDivUpdater=nullptr;
 };
 
 SyncPairChannel::SyncPairChannel():
@@ -540,21 +540,22 @@ void SyncPairChannel::addSymDivUpdater(ISumDivSignalUpdate *updater)
  * процесс синхронизации двух каналов
  */
 
-void SyncPairChannel::sync(const StreamReadablePair stationPair,
+void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                            quint32 ddcFrequency,quint32 sampleRate,quint32 blockSize)
 {
     qDebug()<<"THREAD_SYNC_BEGIN";
     //         qDebug()<<"USE COUNT_B"<<stationPair.first.use_count()<<stationPair.first.use_count();
     FindChannelForShift f(sampleRate,blockSize);
     // qDebug()<<"USE COUNT_"<<stationPair.first.use_count()<<stationPair.first.use_count();
-    if(f.calcShiftInChannel(stationPair)){
-        qDebug()<<"USE COUNT_E"<<stationPair.first.use_count()<<stationPair.first.use_count();
+    if(f.calcShiftInChannel(buffers)){
+        qDebug()<<"USE COUNT_E"<<buffers.first.use_count()
+               <<buffers.first.use_count();
         BlockAlinement blockAlinement(f.getShiftBuffer(),blockSize);
         qDebug()<<"BlockAlinment is ready";
         SumSubMethod sumSubMethod(sampleRate,blockSize);
         qDebug()<<"Init is done:"<<f.getChannelIndex()<<f.getShiftValue();
 
-        Packet packet[CHANNEL_SIZE];
+        proto::receiver::Packet packet[CHANNEL_SIZE];
         PacketQueuePair syncQueuePair;
 
         bool isFirstStationReadedPacket=false;
@@ -563,14 +564,14 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
         std::unique_ptr<float[]>dataPairSingal(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
         std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
         qDebug()<<"Start Circle";
-        qDebug()<<"USE COUNT_SC"<<stationPair.first.use_count()<<stationPair.first.use_count();
+        qDebug()<<"USE COUNT_SC"<<buffers.first.use_count()<<buffers.first.use_count();
         while(!d->quit){
-            if(stationPair.first->readDDC1StreamData(packet[CHANNEL_FIRST])){
+            if(buffers.first->pop(packet[CHANNEL_FIRST])){
                 syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
                 isFirstStationReadedPacket=true;
             }
 
-            if(stationPair.second->readDDC1StreamData(packet[CHANNEL_SECOND])){
+            if(buffers.second->pop(packet[CHANNEL_SECOND])){
                 syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
                 isSecondStationReadedPacket=true;
             }
@@ -585,8 +586,8 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
                 Ipp32fc *signal=reinterpret_cast<Ipp32fc*>(data);
 
                 blockAlinement.equate(signal,blockSize,f.getShiftValue(),
-                                          ddcFrequency,sampleRate,f.getDeltaStart());
-                //                qDebug()<<"BA_2";
+                                      ddcFrequency,sampleRate,f.getDeltaStart());
+                                qDebug()<<"BA_2";
                 ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
                                           packet[CHANNEL_FIRST].ddc_sample_counter(),
                                           packet[CHANNEL_FIRST].adc_period_counter());
@@ -594,7 +595,7 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
                 ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
                                           packet[CHANNEL_SECOND].ddc_sample_counter(),
                                           packet[CHANNEL_SECOND].adc_period_counter());
-
+ qDebug()<<"BA_3";
                 const float *data1=packet[CHANNEL_FIRST].sample().data();
                 const float *data2=packet[CHANNEL_SECOND].sample().data();
                 //В dataPairSingal заносятся I компоненты с канала 1 и 2
@@ -607,15 +608,15 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
                 const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
                 memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
                        sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
-
-                if(d->syncSignalUpdater!=nullptr){
-                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
-                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
-                }
-
-                if(d->sumDivUpdater!=nullptr)
-                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
-
+                 qDebug()<<"BA_4";
+//                if(d->syncSignalUpdater!=nullptr){
+//                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
+//                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
+//                }
+// qDebug()<<"BA_5";
+//                if(d->sumDivUpdater!=nullptr)
+//                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
+// qDebug()<<"BA_6";
                 isFirstStationReadedPacket=false;
                 isSecondStationReadedPacket=false;
             }
@@ -627,16 +628,108 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
     qDebug()<<"THREAD_SYNC_END";
 }
 
+//void SyncPairChannel::sync(const std::shared_ptr<RingBuffer> buffer1,
+//                           const std::shared_ptr<RingBuffer> buffer2,
+//                           quint32 ddcFrequency,
+//                           quint32 sampleRate,
+//                           quint32 blockSize)
+//{
+//    qDebug()<<"THREAD_SYNC_BEGIN";
+//    //         qDebug()<<"USE COUNT_B"<<stationPair.first.use_count()<<stationPair.first.use_count();
+//    FindChannelForShift f(sampleRate,blockSize);
+//    // qDebug()<<"USE COUNT_"<<stationPair.first.use_count()<<stationPair.first.use_count();
+//    if(f.calcShiftInChannel(stationPair)){
+//        qDebug()<<"USE COUNT_E"<<stationPair.first.use_count()<<stationPair.first.use_count();
+//        BlockAlinement blockAlinement(f.getShiftBuffer(),blockSize);
+//        qDebug()<<"BlockAlinment is ready";
+//        SumSubMethod sumSubMethod(sampleRate,blockSize);
+//        qDebug()<<"Init is done:"<<f.getChannelIndex()<<f.getShiftValue();
+
+//        proto::receiver::Packet packet[CHANNEL_SIZE];
+//        PacketQueuePair syncQueuePair;
+
+//        bool isFirstStationReadedPacket=false;
+//        bool isSecondStationReadedPacket=false;
+
+//        std::unique_ptr<float[]>dataPairSingal(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
+//        std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
+//        qDebug()<<"Start Circle";
+//        qDebug()<<"USE COUNT_SC"<<stationPair.first.use_count()<<stationPair.first.use_count();
+//        while(!d->quit){
+//            if(stationPair.first->pop(packet[CHANNEL_FIRST])){
+//                syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
+//                isFirstStationReadedPacket=true;
+//            }
+
+//            if(stationPair.second->pop(packet[CHANNEL_SECOND])){
+//                syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
+//                isSecondStationReadedPacket=true;
+//            }
+
+//            if(isFirstStationReadedPacket&&isSecondStationReadedPacket){
+//                //                qDebug()<<"Is find_B"<<syncQueuePair.first.size()<<syncQueuePair.second.size();
+//                packet[CHANNEL_FIRST]=syncQueuePair.first.dequeue();
+//                packet[CHANNEL_SECOND]=syncQueuePair.second.dequeue();
+
+//                float*data= const_cast<float*>(packet[f.getChannelIndex()].sample().data());
+//                //                qDebug()<<"BA_1"<<f.getShiftValue();
+//                Ipp32fc *signal=reinterpret_cast<Ipp32fc*>(data);
+
+//                blockAlinement.equate(signal,blockSize,f.getShiftValue(),
+//                                      ddcFrequency,sampleRate,f.getDeltaStart());
+//                //                qDebug()<<"BA_2";
+//                ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
+//                                          packet[CHANNEL_FIRST].ddc_sample_counter(),
+//                                          packet[CHANNEL_FIRST].adc_period_counter());
+
+//                ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
+//                                          packet[CHANNEL_SECOND].ddc_sample_counter(),
+//                                          packet[CHANNEL_SECOND].adc_period_counter());
+
+//                const float *data1=packet[CHANNEL_FIRST].sample().data();
+//                const float *data2=packet[CHANNEL_SECOND].sample().data();
+//                //В dataPairSingal заносятся I компоненты с канала 1 и 2
+//                for(quint32 i=0;i<blockSize;i++){
+//                    dataPairSingal[i*2]=data1[i*2];
+//                    dataPairSingal[i*2+1]=data2[i*2];
+//                }
+
+//                //******* SUM-SUB METHOD **************
+//                const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
+//                memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
+//                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
+
+//                if(d->syncSignalUpdater!=nullptr){
+//                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
+//                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
+//                }
+
+//                if(d->sumDivUpdater!=nullptr)
+//                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
+
+//                isFirstStationReadedPacket=false;
+//                isSecondStationReadedPacket=false;
+//            }
+//            //             QThread::msleep(1000/(sampleRate/blockSize));
+//        }
+//    }else{
+//        qDebug("SYNC_ERROR");
+//    }
+//    qDebug()<<"THREAD_SYNC_END";
+//}
+
 /*!
  * \brief SyncPairChannel::start
  * запускает процесс синхронизации двух каналов
  * \param receiverStationClientPair
  * \param blockSize
  */
-void SyncPairChannel::start(const StreamReadablePair receiverStationClientPair,
-                            quint32 ddcFrequency,quint32 sampleRate,quint32 blockSize)
+void SyncPairChannel::start(const ShPtrBufferPair receiverStationClientPair,
+                            quint32 ddcFrequency,
+                            quint32 sampleRate,
+                            quint32 blockSize)
 {
-    qDebug()<<"SyncPairChannel::start();";
+    qDebug()<<"******SyncPairChannel::start();";
     qDebug()<<"COUNT"<<receiverStationClientPair.second.use_count();
     d->quit=false;
     d->fw.setFuture(QtConcurrent::run(this,&SyncPairChannel::sync,

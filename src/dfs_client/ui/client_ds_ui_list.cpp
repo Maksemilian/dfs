@@ -3,6 +3,7 @@
 #include "client_ds_ui.h"
 
 #include "tool_switch_button.h"
+#include "i_device_set_settings.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -93,12 +94,12 @@ void DeviceSetListWidget::createDevieSetWidgets()
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
         addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
-        s.beginGroup("dev_2");
-        ip=s.value("ip").toString();
-        port=static_cast<quint16>(s.value("port").toUInt());
-        s.endGroup();
-        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+//        s.beginGroup("dev_2");
+//        ip=s.value("ip").toString();
+//        port=static_cast<quint16>(s.value("port").toUInt());
+//        s.endGroup();
+//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
     }
 }
 
@@ -108,6 +109,30 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
             [this]{
         if(--_counter!=0)return ;
         const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
+        if(ds){
+            if(successedCommand.command_type()==proto::receiver::START_DDC1){
+                qDebug()<<"START SYNC"<<ds->getDDC1Frequency()
+                       <<ds->getSampleRateForBandwith()
+                      <<ds->getSamplesPerBuffer()
+                     <<_deviceSetWidgetList.size()
+                    <<_deviceSetWidgetList.first()->ddc1Buffer().use_count();
+//                     <<_deviceSetWidgetList.first()->ddc1Buffer()->getIndexRead()
+//                    <<_deviceSetWidgetList.first()->ddc1Buffer()->getIndexRead();
+                ShPtrBufferPair bufferPair;
+                bufferPair.first=_deviceSetWidgetList.first()->ddc1Buffer();
+                bufferPair.second=_deviceSetWidgetList.last()->ddc1Buffer();
+                sync.start(bufferPair,
+                           ds->getDDC1Frequency(),
+                           ds->getSampleRateForBandwith(),
+                           ds->getSamplesPerBuffer());
+            }else if(successedCommand.command_type()==proto::receiver::STOP_DDC1){
+                sync.stop();
+            }
+
+        }else {
+            qDebug()<<"ERROR"<<parent()->objectName();
+        }
+
         if(!_commandQueue.isEmpty()&&
                 _commandQueue.head().command_type()!=successedCommand.command_type()){
             setAllDeviceSet(_commandQueue.head());
