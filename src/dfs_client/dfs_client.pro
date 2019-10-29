@@ -44,7 +44,6 @@ HEADERS += \
     ui/tool_preselector_widget.h \
     interface/i_deviceset.h \
     i_device_set_settings.h \
-    i_stream_reader.h \
     i_sygnal_update.h \
     core/network/signal_sync.h \
     command_hierarch.h \
@@ -54,7 +53,8 @@ HEADERS += \
     client_ds_stream.h \
     client_ds_stream_controller.h \
     ui/client_ds_ui.h \
-    ui/client_ds_ui_list.h
+    ui/client_ds_ui_list.h \
+    ui/plot_monitoring.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -72,7 +72,8 @@ SOURCES += \
     client_ds_stream.cpp \
     client_ds_stream_controller.cpp \
     ui/client_ds_ui.cpp \
-    ui/client_ds_ui_list.cpp
+    ui/client_ds_ui_list.cpp \
+    ui/plot_monitoring.cpp
 
 FORMS += \
     ui/main_window.ui \
