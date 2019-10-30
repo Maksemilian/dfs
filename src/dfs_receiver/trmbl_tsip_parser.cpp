@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QSerialPort>
 
-#include "tsip_parser.h"
+#include "trmbl_tsip_parser.h"
 
 TsipParser::TsipParser(QObject *parent ):QObject(parent), nPktLen(0),nParseState(MSG_IN_COMPLETE){}
 

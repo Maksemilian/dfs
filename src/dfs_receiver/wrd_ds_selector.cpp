@@ -1,4 +1,4 @@
-#include "device_set_selector.h"
+#include "wrd_ds_selector.h"
 
 #include <QDebug>
 

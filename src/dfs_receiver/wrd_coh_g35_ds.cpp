@@ -1,8 +1,8 @@
-#include "device_set_coh_g35.h"
+#include "wrd_coh_g35_ds.h"
 
-#include "tsip_reader.h"
+#include "trmbl_tsip_reader.h"
 #include "ring_packet_buffer.h"
-#include "device_set_selector.h"
+#include "wrd_ds_selector.h"
 #include "packet.pb.h"
 
 #include <QTimer>

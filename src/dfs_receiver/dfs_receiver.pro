@@ -33,13 +33,13 @@ LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 HEADERS += \
-    device_set_coh_g35.h \
-    device_set_selector.h \
-    tsip_parser.h \
-    tsip_reader.h
+    wrd_coh_g35_ds.h \
+    wrd_ds_selector.h \
+    trmbl_tsip_parser.h \
+    trmbl_tsip_reader.h
 
 SOURCES += \
-    device_set_coh_g35.cpp \
-    device_set_selector.cpp \
-    tsip_parser.cpp \
-    tsip_reader.cpp
+    wrd_coh_g35_ds.cpp \
+    wrd_ds_selector.cpp \
+    trmbl_tsip_parser.cpp \
+    trmbl_tsip_reader.cpp

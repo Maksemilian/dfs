@@ -3,8 +3,8 @@
 #include <QSerialPortInfo>
 #include <memory>
 
-#include "tsip_reader.h"
-#include "tsip_parser.h"
+#include "trmbl_tsip_reader.h"
+#include "trmbl_tsip_parser.h"
 
 using namespace std;
 
