@@ -3,14 +3,16 @@
 
 #include "channel_host.h"
 
+#include "ring_buffer.h"
 #include "receiver.pb.h"
 
 #include <google/protobuf/message.h>
 #include <memory>
 #include <QObject>
-#include "ring_buffer.h"
+
 class CohG35DeviceSetSettings;
 class ChannelHost;
+
 class DeviceSetClient:public QObject
 {
     Q_OBJECT

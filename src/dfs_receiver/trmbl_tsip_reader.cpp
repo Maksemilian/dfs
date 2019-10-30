@@ -1,10 +1,11 @@
+#include "trmbl_tsip_reader.h"
+#include "trmbl_tsip_parser.h"
+
+#include <memory>
+
 #include <QtConcurrent/QtConcurrent>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-#include <memory>
-
-#include "trmbl_tsip_reader.h"
-#include "trmbl_tsip_parser.h"
 
 using namespace std;
 

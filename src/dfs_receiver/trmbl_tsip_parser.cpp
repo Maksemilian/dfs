@@ -1,7 +1,8 @@
+#include "trmbl_tsip_parser.h"
+
 #include <QDebug>
 #include <QSerialPort>
 
-#include "trmbl_tsip_parser.h"
 
 TsipParser::TsipParser(QObject *parent ):QObject(parent), nPktLen(0),nParseState(MSG_IN_COMPLETE){}
 
@@ -76,7 +77,7 @@ void TsipParser::receivePacket(QSerialPort *port){
             data=port->read(1);
             ///parser.receivePacket(data);
             bool ok=0;
-            quint8 ucByte=data.toHex().toInt(&ok,16);
+            quint8 ucByte=static_cast<quint8>(data.toHex().toUShort(&ok,16));
             switch (nParseState)
             {
             case MSG_IN_COMPLETE:

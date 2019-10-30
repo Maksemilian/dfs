@@ -1,19 +1,14 @@
 #include "wrd_coh_g35_ds.h"
+#include "wrd_ds_selector.h"
 
 #include "trmbl_tsip_reader.h"
-#include "ring_packet_buffer.h"
-#include "wrd_ds_selector.h"
-#include "packet.pb.h"
 
 #include <QTimer>
 #include <QDebug>
-#include <QDate>
 
 CohG35DeviceSet::CohG35DeviceSet():
-//    ddc1Buffer(new RingPacketBuffer(16)),
     buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
     timeReader(new TimeReader()),
-//    signalFileWriter(new SignalFileWriter()),
     isFirstBlock(true),
     counterBlockPPS(1),
     currentDDCCounter(-1),
@@ -241,8 +236,8 @@ void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSe
         //        }
         proto::receiver::Packet packet;
         if(ddcSampleCounter>0){
-            fillPacketT(packet,ddc1StreamCallbackData,ddcSampleCounter,adcPeriodCounter,counterBlockPPS);
-            showPacketT(packet);
+            fillPacket(packet,ddc1StreamCallbackData,ddcSampleCounter,adcPeriodCounter,counterBlockPPS);
+            showPacket(packet);
             buffer->push(packet);
         }
     }
@@ -264,7 +259,7 @@ void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSe
 
 //***********************FILL PACKET***********************
 
-void CohG35DeviceSet::fillPacketT(proto::receiver::Packet &packet,
+void CohG35DeviceSet::fillPacket(proto::receiver::Packet &packet,
                                   DDC1StreamCallbackData &ddcStreamCallbackData,
                                   double ddcSampleCounter,
                                   unsigned long long adcPeriodCounter,
@@ -283,7 +278,7 @@ void CohG35DeviceSet::fillPacketT(proto::receiver::Packet &packet,
     packet.set_ddc1_frequency(ddc1Frequency);
     packet.set_attenuator(attenuator);
 
-    packet.set_block_size(static_cast<int>(ddcStreamCallbackData.NumberOfSamples));
+    packet.set_block_size(ddcStreamCallbackData.NumberOfSamples);
 
     packet.set_device_count(ddcStreamCallbackData.DeviceCount);
     packet.set_sample_rate(ddcInfo.SampleRate);
@@ -312,7 +307,7 @@ void CohG35DeviceSet::fillPacketT(proto::receiver::Packet &packet,
     }
 }
 
-void CohG35DeviceSet::showPacketT(proto::receiver::Packet &packet){
+void CohG35DeviceSet::showPacket(proto::receiver::Packet &packet){
 
     qDebug()<<"DDC_CALLBACK:"
            <<packet.block_number()
@@ -322,7 +317,7 @@ void CohG35DeviceSet::showPacketT(proto::receiver::Packet &packet){
         <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
        <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
 }
-
+/*
 void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStreamCallbackData,
                                  double ddcSampleCounter,unsigned long long adcPeriodCounter,int counterBlockPPS)
 {
@@ -368,7 +363,7 @@ void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStre
     }
 }
 
-
+*/
 //******************OTHER CALLBACKS********************
 
 void CohG35DeviceSet::CohG35DDC_AudioStreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, unsigned int Type, const float *Buffer, unsigned int NumberOfSamples)
@@ -398,7 +393,7 @@ void CohG35DeviceSet::CohG35DDC_DDC2StreamCallback(ICohG35DDCDeviceSet *DeviceSe
     DeviceSet->GetPower(&power);
     qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples;
 }
-
+/*
 void CohG35DeviceSet::showPacket(Packet &packet){
 
     qDebug()<<"DDC_CALLBACK:"
@@ -409,3 +404,4 @@ void CohG35DeviceSet::showPacket(Packet &packet){
         <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
        <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
 }
+*/

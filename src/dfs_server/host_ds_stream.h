@@ -1,20 +1,22 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include "channel_host.h"
+#include "ring_buffer.h"
+#include "receiver.pb.h"
+
+#include <memory>
+
 #include <QTcpServer>
+
 #include <QFutureWatcher>
 #include <QQueue>
 #include <QMutex>
-
-#include <memory>
+#include <QThread>
 
 class CohG35DeviceSet;
 class ConnectRequest;
 
-#include "channel_host.h"
-#include "ring_buffer.h"
-#include <QThread>
-#include "receiver.pb.h"
 class StreamDDC1:public QObject
 {
     Q_OBJECT

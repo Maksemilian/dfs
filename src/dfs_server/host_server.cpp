@@ -1,9 +1,7 @@
 #include "host_server.h"
 
-#include "ring_packet_buffer.h"
 #include "device_set_coh_g35.h"
 
-#include "peer_wire_client.h"
 #include "host_ds_stream.h"
 #include "channel_host.h"
 
