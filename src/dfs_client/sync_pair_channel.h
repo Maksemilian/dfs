@@ -13,9 +13,12 @@ class ISumDivSignalUpdate;
 //class IStreamRead;
 class RingBuffer;
 
-using ShPtrBuffer=std::shared_ptr<RingBuffer>;
-using ShPtrBufferPair=QPair<ShPtrBuffer,ShPtrBuffer>;
 
+using ShPtrBuffer=std::shared_ptr<RingBuffer>;
+using ShPtrBufferT=std::shared_ptr<RingBufferT<std::vector<Ipp32fc>>>;
+using ShPtrBufferPair=QPair<ShPtrBuffer,ShPtrBuffer>;
+using VectorIpp32fc=std::vector<Ipp32fc>;
+using VectorIpp32f=std::vector<Ipp32f>;
 using BoolPair=QPair<bool,bool>;
 
 /*!
@@ -64,7 +67,7 @@ public:
     bool calcShiftInChannel(const ShPtrBufferPair receiverStationClientPair);
     int getChannelIndex();
 
-    const std::vector<Ipp32fc>& getShiftBuffer();
+    const VectorIpp32fc& getShiftBuffer();
 
     double getShiftValue();
     double getDeltaStart();
@@ -102,12 +105,11 @@ public:
     ~SyncPairChannel();
     ShPtrBuffer syncBuffer1();
     ShPtrBuffer syncBuffer2();
+    ShPtrBufferT sumDivMethod();
+
     void start(const ShPtrBufferPair receiverStationClientPair,
                quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
     void stop();
-
-    void setSyncSignalUpdater(ISyncSignalUpdate*updater);
-    void setSumDivUpdater(ISumDivSignalUpdate *updater);
 
     void enableWholeShift();
     void disableWholeShift();

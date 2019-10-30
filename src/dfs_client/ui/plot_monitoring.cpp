@@ -19,8 +19,8 @@ PlotMonitoring::PlotMonitoring(QWidget *paret)
     gl->addWidget(channelPlot,0,0);
     gl->addWidget(elipsPlot,0,1);
 
-    sync->setSumDivUpdater(elipsPlot);
-    sync->setSyncSignalUpdater(channelPlot);
+//    sync->setSumDivUpdater(elipsPlot);
+//    sync->setSyncSignalUpdater(channelPlot);
 }
 
 void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList)
@@ -46,9 +46,10 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
         std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
         int INDEX=0;
         proto::receiver::Packet packet[CHANNEL_SIZE];
+        std::vector<Ipp32fc>v;
         bool isFirstStationReadedPacket=false;
         bool isSecondStationReadedPacket=false;
-
+        bool isElips=false;
         while (!quit) {
             if(sync->syncBuffer1()->pop(packet[CHANNEL_FIRST]))
                 isFirstStationReadedPacket=true;
@@ -56,8 +57,10 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
             if(sync->syncBuffer2()->pop(packet[CHANNEL_SECOND]))
                 isSecondStationReadedPacket=true;
 
+            if(sync->sumDivMethod()->pop(v))
+                isElips=true;
 
-            if(isFirstStationReadedPacket&&isSecondStationReadedPacket){
+            if(isFirstStationReadedPacket&&isSecondStationReadedPacket&&isElips){
 
                 ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
                                           packet[CHANNEL_FIRST].ddc_sample_counter(),
@@ -78,8 +81,15 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
                 channelPlot->updateSignalData(INDEX,channelData1,channelData2);
                 channelPlot->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
 
+                memcpy(sumSubData.get(),reinterpret_cast<float*>(v.data()),
+                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
+
+                // qDebug()<<"BA_5";
+                elipsPlot->update(INDEX,sumSubData.get(),blockSize);
+
                 isFirstStationReadedPacket=false;
                 isSecondStationReadedPacket=false;
+                isElips=false;
             }
         }
     });

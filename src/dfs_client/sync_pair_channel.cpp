@@ -225,24 +225,24 @@ class SumSubMethod
 public:
     SumSubMethod(quint32 sampleRate,quint32 blockSize):
         DELTA_ANGLE_IN_RADIAN((360*(HETERODYNE_FREQUENCY/sampleRate))*(M_PI/180)),
-        im(new Ipp32f[blockSize]),
-        re(new Ipp32f[blockSize]),
-        complexSum(new Ipp32fc[(blockSize)]),
-        complexSub(new Ipp32fc[(blockSize)]),
-        mulSumOnCoef(new Ipp32fc[(blockSize)]),
-        mulSubOnCoef(new Ipp32fc[(blockSize)]),
-        dstSumDiv(new Ipp32fc[blockSize]),
+        im(VectorIpp32f(blockSize)),
+        re(VectorIpp32f(blockSize)),
+        complexSum(VectorIpp32fc(blockSize)),
+        complexSub(VectorIpp32fc(blockSize)),
+        mulSumOnCoef(VectorIpp32fc(blockSize)),
+        mulSubOnCoef(VectorIpp32fc(blockSize)),
+        dstSumDiv(VectorIpp32fc(blockSize)),
         currentAngleRad(0.0)
     {
 
     }
 
-    const std::unique_ptr<Ipp32fc[]>& calc(const float *data1,const float *data2,quint32 blockSize)
+    const VectorIpp32fc& calc(const Ipp32fc *dst1,const Ipp32fc *dst2,quint32 blockSize)
     {
         //1 ***** Создаем коэффициенты
         for(quint32 i=0;i<blockSize;i++,currentAngleRad+=DELTA_ANGLE_IN_RADIAN){
-            re[i]= static_cast<float>(cos(currentAngleRad));
-            im[i]= static_cast<float>(sin(currentAngleRad));
+            re[i]= static_cast<Ipp32f>(cos(currentAngleRad));
+            im[i]= static_cast<Ipp32f>(sin(currentAngleRad));
             if(currentAngleRad>=DOUBLE_PI){
                 re[i]=1;
                 im[i]=0;
@@ -250,49 +250,57 @@ public:
             }
         }
 
-        ippsRealToCplx_32f(re.get(),im.get(),dstSumDiv.get(),
+        ippsRealToCplx_32f(re.data(),im.data(),dstSumDiv.data(),
                            static_cast<int>(blockSize));
 
         // qDebug()<<"******************Src Coef:";
 
         //2 ***** Фильтруем 2 канала
-        const Ipp32fc *dst1=reinterpret_cast<const Ipp32fc*>(data1);
-        const Ipp32fc *dst2=reinterpret_cast<const Ipp32fc*>(data2);
+        //WARNING ФИЛЬТРАЦИЯ НЕ ИСПОЛЬЗУЕТСЯ
 
         //2 ***** Комплексная сумма двух сигналов
-        ippsAdd_32fc(dst1,dst2,complexSum.get(),static_cast<int>(blockSize));
+        ippsAdd_32fc(dst1,dst2,complexSum.data(),static_cast<int>(blockSize));
         //qDebug()<<"******************DATA AFTER SUM:";
 
         //3 ***** Комплексная разность двух сигналов
-        ippsSub_32fc(dst1,dst2,complexSub.get(),static_cast<int>(blockSize));
+        ippsSub_32fc(dst1,dst2,complexSub.data(),static_cast<int>(blockSize));
         //qDebug()<<"******************DATA AFTER SUB:";
 
         //4 ***** Умножить массив коэффициентов на сумму
-        ippsMul_32fc(dstSumDiv.get(),complexSum.get(),mulSumOnCoef.get(),
+        ippsMul_32fc(dstSumDiv.data(),complexSum.data(),mulSumOnCoef.data(),
                      static_cast<int>(blockSize));
         //qDebug()<<"******************DATA AFTER MUL SUM:";
 
         //5 ***** Умножить массив коэффициентов на разность
-        ippsMul_32fc(dstSumDiv.get(),complexSub.get(),mulSubOnCoef.get(),
+        ippsMul_32fc(dstSumDiv.data(),complexSub.data(),mulSubOnCoef.data(),
                      static_cast<int>(blockSize));
         //qDebug()<<"******************DATA AFTER MUL SUB:";
 
-        for(quint32 i=0;i<blockSize;i++){
-            dstSumDiv[i].re=mulSumOnCoef[i].re;
-            dstSumDiv[i].im=mulSubOnCoef[i].im;
-        }
+        //        for(quint32 i=0;i<blockSize;i++){
+        //            dstSumDiv[i].re=mulSumOnCoef[i].re;
+        //            dstSumDiv[i].im=mulSubOnCoef[i].im;
+        //        }
+        memcpy(dstSumDiv.data(),mulSubOnCoef.data(),sizeof (Ipp32fc)*blockSize);
         return  dstSumDiv;
     }
 
 private:
-    std::unique_ptr<Ipp32f[]>im;
-    std::unique_ptr<Ipp32f[]>re;
+    //    std::unique_ptr<Ipp32f[]>im;
+    //    std::unique_ptr<Ipp32f[]>re;
+    //    //    std::unique_ptr<Ipp32fc[]>srcCoef;
+    //    std::unique_ptr<Ipp32fc[]>complexSum;
+    //    std::unique_ptr<Ipp32fc[]>complexSub;
+    //    std::unique_ptr<Ipp32fc[]>mulSumOnCoef;
+    //    std::unique_ptr<Ipp32fc[]>mulSubOnCoef;
+    VectorIpp32f im;
+    VectorIpp32f re;
     //    std::unique_ptr<Ipp32fc[]>srcCoef;
-    std::unique_ptr<Ipp32fc[]>complexSum;
-    std::unique_ptr<Ipp32fc[]>complexSub;
-    std::unique_ptr<Ipp32fc[]>mulSumOnCoef;
-    std::unique_ptr<Ipp32fc[]>mulSubOnCoef;
-    std::unique_ptr<Ipp32fc[]>dstSumDiv;
+    VectorIpp32fc complexSum;
+    VectorIpp32fc complexSub;
+    VectorIpp32fc mulSumOnCoef;
+    VectorIpp32fc mulSubOnCoef;
+
+    VectorIpp32fc dstSumDiv;
     double currentAngleRad;
 };
 //******************************* FindChannelForShift ******************************************
@@ -310,7 +318,7 @@ struct FindChannelForShift::Impl
     }
     quint32 sampleRate;
     std::vector<float>shiftBuffer;
-    std::vector<Ipp32fc>shiftBufferT;
+    VectorIpp32fc shiftBufferT;
     int channelIndex;
     double ddcDifference;
     double deltaStart;
@@ -326,7 +334,7 @@ int FindChannelForShift::getChannelIndex(){
     return d->channelIndex;
 }
 
-const std::vector<Ipp32fc>& FindChannelForShift::getShiftBuffer()
+const VectorIpp32fc& FindChannelForShift::getShiftBuffer()
 {
     return d->shiftBufferT;
 }
@@ -512,7 +520,8 @@ struct SyncPairChannel::Impl
         isWholeShiftEnabled(true),
         isFructionShiftEnabled(true),
         syncBuffer1(std::make_shared<RingBuffer>(16)),
-        syncBuffer2(std::make_shared<RingBuffer>(16))
+        syncBuffer2(std::make_shared<RingBuffer>(16)),
+        sumDivBuffer(std::make_shared<RingBufferT<std::vector<Ipp32fc>>>(16))
 
     {}
 
@@ -520,11 +529,10 @@ struct SyncPairChannel::Impl
     std::atomic<bool> isFructionShiftEnabled;
     QFutureWatcher<void> fw;
     std::atomic<bool> quit;
+
     std::shared_ptr<RingBuffer>syncBuffer1;
     std::shared_ptr<RingBuffer>syncBuffer2;
-
-    ISyncSignalUpdate *syncSignalUpdater=nullptr;
-    ISumDivSignalUpdate *sumDivUpdater=nullptr;
+    std::shared_ptr<RingBufferT<std::vector<Ipp32fc>> > sumDivBuffer;
 };
 
 SyncPairChannel::SyncPairChannel():
@@ -541,17 +549,13 @@ ShPtrBuffer SyncPairChannel::syncBuffer2()
     return d->syncBuffer2;
 }
 
+ShPtrBufferT SyncPairChannel::sumDivMethod()
+{
+    return d->sumDivBuffer;
+}
+
 SyncPairChannel::~SyncPairChannel()= default;
 
-void SyncPairChannel::setSyncSignalUpdater(ISyncSignalUpdate *updater)
-{
-    d->syncSignalUpdater=updater;
-}
-
-void SyncPairChannel::setSumDivUpdater(ISumDivSignalUpdate *updater)
-{
-    d->sumDivUpdater=updater;
-}
 
 //************* START / STOP SYNC *************************************
 /*!
@@ -583,6 +587,7 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
 
         std::unique_ptr<float[]>dataPairSingal(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
         std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
+        std::vector<Ipp32fc> v(blockSize);
         qDebug()<<"Start Circle";
         qDebug()<<"USE COUNT_SC"<<buffers.first.use_count()<<buffers.first.use_count();
         while(!d->quit){
@@ -601,50 +606,33 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                 packet[CHANNEL_FIRST]=syncQueuePair.first.dequeue();
                 packet[CHANNEL_SECOND]=syncQueuePair.second.dequeue();
 
-                float*data= const_cast<float*>(packet[f.getChannelIndex()].sample().data());
-                //                qDebug()<<"BA_1"<<f.getShiftValue();
-                Ipp32fc *signal=reinterpret_cast<Ipp32fc*>(data);
+                Ipp32fc *signal=reinterpret_cast<Ipp32fc*>
+                        (const_cast<float*>
+                         (packet[f.getChannelIndex()].sample().data()));
 
                 blockAlinement.equate(signal,blockSize,f.getShiftValue(),
                                       ddcFrequency,sampleRate,f.getDeltaStart());
                 //                                qDebug()<<"BA_2";
                 d->syncBuffer1->push(packet[CHANNEL_FIRST]);
                 d->syncBuffer2->push(packet[CHANNEL_SECOND]);
+                //
+                const Ipp32fc *dst1=reinterpret_cast<const Ipp32fc*>
+                        (packet[CHANNEL_FIRST].sample().data());
 
-//                ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
-//                                          packet[CHANNEL_FIRST].ddc_sample_counter(),
-//                                          packet[CHANNEL_FIRST].adc_period_counter());
-
-//                ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
-//                                          packet[CHANNEL_SECOND].ddc_sample_counter(),
-//                                          packet[CHANNEL_SECOND].adc_period_counter());
-//                // qDebug()<<"BA_3";
-                const float *data1=packet[CHANNEL_FIRST].sample().data();
-                const float *data2=packet[CHANNEL_SECOND].sample().data();
-//                //В dataPairSingal заносятся I компоненты с канала 1 и 2
-//                for(quint32 i=0;i<blockSize;i++){
-//                    dataPairSingal[i*2]=data1[i*2];
-//                    dataPairSingal[i*2+1]=data2[i*2];
-//                }
-
-//                //                 qDebug()<<"BA_4";
-//                if(d->syncSignalUpdater){
-//                    d->syncSignalUpdater->updateSignalData(INDEX,channelData1,channelData2);
-//                    d->syncSignalUpdater->updateSignalComponent(INDEX,dataPairSingal.get(),blockSize);
-//                }
-
+                const Ipp32fc *dst2=reinterpret_cast<const Ipp32fc*>
+                        (packet[CHANNEL_SECOND].sample().data());
                 //******* SUM-SUB METHOD **************
-                const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
-                memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
-                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
-                // qDebug()<<"BA_5";
-                if(d->sumDivUpdater)
-                    d->sumDivUpdater->update(INDEX,sumSubData.get(),blockSize);
-                // qDebug()<<"BA_6";
+                const VectorIpp32fc &dstSumDivCoef=sumSubMethod.
+                        calc(dst1,dst2,blockSize);
+                //                memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
+                //                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
+
+                //                memcpy(v.data(),dstSumDivCoef.get(),sizeof (Ipp32fc)*blockSize);
+                d->sumDivBuffer->push(dstSumDivCoef);
+
                 isFirstStationReadedPacket=false;
                 isSecondStationReadedPacket=false;
             }
-            //             QThread::msleep(1000/(sampleRate/blockSize));
         }
     }else{
         qDebug("SYNC_ERROR");
