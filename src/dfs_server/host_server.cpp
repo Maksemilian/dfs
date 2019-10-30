@@ -140,10 +140,10 @@ void StreamServer::createThread(net::ChannelHost *channelHost)
 //    fileStreamList<<fileStream;
 //}
 
-std::shared_ptr<RingPacketBuffer>StreamServer::getDDC1Buffer()
-{
-    return deviceSet->getDdc1Buffer();
-}
+//std::shared_ptr<RingPacketBuffer>StreamServer::getDDC1Buffer()
+//{
+//    return deviceSet->getDdc1Buffer();
+//}
 
 void StreamServer::stopStreamDDC1()
 {
@@ -161,9 +161,10 @@ StreamServer::~StreamServer()
 {
     stopStreamDDC1();
 //    stopStreamFile();
-    streamAnalizator->stop();
+//    streamAnalizator->stop();
 }
 
+/*
 //************************ STREAM ANALIZATOR **************************
 
 StreamAnalizator::StreamAnalizator(StreamServer*server):
@@ -286,3 +287,4 @@ void StreamAnalizator::createFileStream(PeerWireClient *streamSocket)
 //    server->addFileStream(fileStream);
 //    thread->start();
 }
+*/

@@ -2,7 +2,6 @@
 
 #include "tsip_reader.h"
 #include "ring_packet_buffer.h"
-#include "device_set_signal_file_writer.h"
 #include "device_set_selector.h"
 #include "packet.pb.h"
 
@@ -11,10 +10,10 @@
 #include <QDate>
 
 CohG35DeviceSet::CohG35DeviceSet():
-    ddc1Buffer(new RingPacketBuffer(16)),
+//    ddc1Buffer(new RingPacketBuffer(16)),
     buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
     timeReader(new TimeReader()),
-    signalFileWriter(new SignalFileWriter()),
+//    signalFileWriter(new SignalFileWriter()),
     isFirstBlock(true),
     counterBlockPPS(1),
     currentDDCCounter(-1),
@@ -49,7 +48,7 @@ bool CohG35DeviceSet::setUpDeviceSet(quint32 numberDeviceSet){
     if(deviceSet){
         deviceSet->SetCallback(this);
         this->deviceSet=deviceSet;
-        signalFileWriter->createMainDirectory(getDeviceSetName());
+//        signalFileWriter->createMainDirectory(getDeviceSetName());
         //       signalFileWriter->createWorkDirectory(QDate::currentDate().toString("dd.MM.yyyy"));
         return true;
     }
@@ -63,7 +62,7 @@ void CohG35DeviceSet::resetData(){
     currentDDCCounter=-1;
     currentWeekNumber=0;
     currentTimeOfWeek=0;
-    ddc1Buffer->reset();
+//    ddc1Buffer->reset();
     buffer->reset();
 }
 
@@ -170,7 +169,7 @@ void CohG35DeviceSet::stopDDC1(){
     if(deviceSet){
         deviceSet->StopDDC1();
         timeReader->stop();
-        ddc1Buffer->reset();
+//        ddc1Buffer->reset();
         buffer->reset();
         //WARNING signalFileWriter->stop();
     }

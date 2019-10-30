@@ -25,7 +25,6 @@ LIBS += $${LIBS_PATH}/google/lib -lprotobuf
 LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 
 HEADERS += \
-    ring_packet_buffer.h \
     channel.h \
     channel_client.h \
     channel_host.h \

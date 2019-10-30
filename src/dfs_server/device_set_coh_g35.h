@@ -7,10 +7,9 @@
 #include <memory>
 #include "ring_buffer.h"
 #include "receiver.pb.h"
-class RingPacketBuffer;
 class Packet;
 class TimeReader;
-class SignalFileWriter;
+//class SignalFileWriter;
 struct CohG35DeviceSetSettings{
     unsigned int attenuator;
     QPair<unsigned int,unsigned int> preselectors;
@@ -58,9 +57,9 @@ public:
 
     bool setUpDeviceSet(quint32 numberDeviceSet);
     COH_G35DDC_DEVICE_SET getDeviceSetInfo();
-    std::shared_ptr<RingPacketBuffer>getDdc1Buffer(){
-        return ddc1Buffer;
-    }
+//    std::shared_ptr<RingPacketBuffer>getDdc1Buffer(){
+//        return ddc1Buffer;
+//    }
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>getBuffer(){
         return buffer;
     }
@@ -93,10 +92,10 @@ private:
 
     ICohG35DDCDeviceSet *deviceSet=nullptr;
 //    RingPacketBuffer*ddc1Buffer=nullptr;
-    std::shared_ptr<RingPacketBuffer>ddc1Buffer;
+//    std::shared_ptr<RingPacketBuffer>ddc1Buffer;
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
     TimeReader *timeReader=nullptr;
-    SignalFileWriter *signalFileWriter=nullptr;
+//    SignalFileWriter *signalFileWriter=nullptr;
 
     bool isFirstBlock;
     int counterBlockPPS;

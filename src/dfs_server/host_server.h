@@ -75,7 +75,7 @@ private:
     QList<net::ChannelHost*>_readyChannelsList;
     DeviceSetClient *_client;
     StreamDDC1 *_streamDDC1=nullptr;
-    StreamAnalizator * streamAnalizator;
+//    StreamAnalizator * streamAnalizator;
     QList<StreamDDC1*>streamDDCList;
 //    QList<StreamFile*>fileStreamList;
     std::shared_ptr<CohG35DeviceSet>deviceSet;

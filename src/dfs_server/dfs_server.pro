@@ -34,7 +34,6 @@ HEADERS += device_set_selector.h \
     host_server.h \
     tsip_reader.h \
     tsip_parser.h \
-    device_set_signal_file_writer.h \
     device_set_coh_g35.h \
     host_ds.h \
     host_ds_stream.h
@@ -45,7 +44,6 @@ SOURCES += main.cpp \
     tsip_reader.cpp \
     tsip_parser.cpp \
     device_set_coh_g35.cpp \
-    device_set_signal_file_writer.cpp \
     host_ds.cpp \
     host_ds_stream.cpp
 
