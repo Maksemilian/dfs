@@ -1,13 +1,14 @@
 #ifndef IGETSETTINGS_H
 #define IGETSETTINGS_H
 
-#include <QPair>
 #include <QObject>
+
+using Preselectors= QPair<quint32,quint32>;
 
 struct DeviceSetSettings
 {
     quint32 attenuator;
-    QPair<quint32,quint32> preselectors;
+    Preselectors preselectors;
     bool preamplifier;
     bool adcEnabled;
     quint16 threshold;
@@ -32,12 +33,10 @@ public :
     virtual quint32 getSampleRateForBandwith()=0;
     virtual quint32 getAttenuator()=0;
     virtual bool getPreamplifierEnabled()=0;
-    virtual QPair<quint32,quint32> getPreselectors()=0;
+    virtual Preselectors getPreselectors()=0;
 
     virtual bool getAdcNoiceBlankerEnabled()=0;
     virtual quint16 getAdcNoiceBlankerThreshold()=0;
 
-    virtual void setWaitCursor()=0;
-    virtual void setArrowCursor()=0;
 };
 #endif // IGETSETTINGS_H

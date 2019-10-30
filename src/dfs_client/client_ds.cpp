@@ -190,6 +190,7 @@ void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
     d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
 }
 
+/*
 //***************************** COMMAND SENDING ***************************
 
 void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
@@ -315,7 +316,7 @@ void DeviceSetClient::setDDC1Type(quint32 typeIndex)
 //    d->commandQueue.enqueue(command.command_type());
     sendCommand(command);
 }
-
+*/
 QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 {
     switch (commandType) {
