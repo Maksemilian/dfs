@@ -6,7 +6,6 @@ QT +=   core
 QT +=   network
 QT +=   serialport
 
-
 TARGET = Server
 
 CONFIG += console c++14
@@ -17,9 +16,11 @@ TEMPLATE = app
 INCLUDEPATH += $${LIBS_PATH}/winradio/include
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
+INCLUDEPATH += $${LIBS_PATH}/dfs_receiver/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 
+LIBS += -L$${LIBS_PATH}/dfs_receiver/lib -ldfs_receiver$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib -ldfs_proto$${LIB_SUFFIX}
 
@@ -32,18 +33,11 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 HEADERS += device_set_selector.h \
     host_server.h \
-    tsip_reader.h \
-    tsip_parser.h \
-    device_set_coh_g35.h \
     host_ds.h \
     host_ds_stream.h
 
 SOURCES += main.cpp \
-    device_set_selector.cpp \
     host_server.cpp \
-    tsip_reader.cpp \
-    tsip_parser.cpp \
-    device_set_coh_g35.cpp \
     host_ds.cpp \
     host_ds_stream.cpp
 
