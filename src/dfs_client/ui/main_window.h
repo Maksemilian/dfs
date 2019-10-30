@@ -63,8 +63,8 @@ public:
     bool getAdcNoiceBlankerEnabled()override;
     quint16 getAdcNoiceBlankerThreshold()override;
 
-    void setWaitCursor()override;
-    void setArrowCursor()override;
+//    void setWaitCursor()override;
+//    void setArrowCursor()override;
 
     void setCentralWidget(QWidget *widget);
     void setLeftDockWidget(QWidget*widget,const QString &title=QString());

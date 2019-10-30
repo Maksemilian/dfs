@@ -8,10 +8,9 @@
 #include <google/protobuf/message.h>
 #include <memory>
 #include <QObject>
-
+#include "ring_buffer.h"
 class CohG35DeviceSetSettings;
 class ChannelHost;
-class RingBuffer;
 class DeviceSetClient:public QObject
 {
     Q_OBJECT
@@ -24,7 +23,7 @@ public:
 
     Q_SIGNAL void stationDisconnected();
     void sendDeviceSetInfo();
-    std::shared_ptr<RingBuffer> getBuffer();
+    std::shared_ptr<RingBuffer<proto::receiver::Packet>> getBuffer();
 
 private slots:
     void onDisconnected();

@@ -1,7 +1,5 @@
 #include "sync_pair_channel.h"
 
-#include "i_sygnal_update.h"
-
 #include "receiver.pb.h"
 
 #include <vector>
@@ -51,7 +49,7 @@ struct BlockAlinement::Impl
 
 
 
-BlockAlinement::BlockAlinement(const std::vector<Ipp32fc>&shiftBuffer,quint32 blockSize):
+BlockAlinement::BlockAlinement(const VectorIpp32fc &shiftBuffer,quint32 blockSize):
     d(std::make_unique<Impl>(shiftBuffer,blockSize))
 {
     initFftBuffers(calcFftOrder(blockSize));
@@ -338,7 +336,7 @@ double ShiftFinder::getDeltaStart()
     return d->deltaStart;
 }
 
-bool ShiftFinder::calcShiftInChannel(const ShPtrBufferPair stationPair)
+bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair)
 {
     qDebug()<<"B_USE COUNT_calcShiftInChannel_BEGIN"
            <<stationPair.first.use_count()
@@ -509,37 +507,37 @@ struct SyncPairChannel::Impl
     Impl():
         isWholeShiftEnabled(true),
         isFructionShiftEnabled(true),
-        syncBuffer1(std::make_shared<RingBuffer>(16)),
-        syncBuffer2(std::make_shared<RingBuffer>(16)),
-        sumDivBuffer(std::make_shared<RingBufferT<std::vector<Ipp32fc>>>(16))
+        syncBuffer1(std::make_shared<RingPacketBuffer>(16)),
+        syncBuffer2(std::make_shared<RingPacketBuffer>(16)),
+        sumDivBuffer(std::make_shared<RingIpp32fcBuffer>(16))
 
     {}
 
-    std::atomic<bool> isWholeShiftEnabled;
-    std::atomic<bool> isFructionShiftEnabled;
+    std::atomic_bool isWholeShiftEnabled;
+    std::atomic_bool isFructionShiftEnabled;
+    std::atomic_bool quit;
     QFutureWatcher<void> fw;
-    std::atomic<bool> quit;
 
-    std::shared_ptr<RingBuffer>syncBuffer1;
-    std::shared_ptr<RingBuffer>syncBuffer2;
-    std::shared_ptr<RingBufferT<std::vector<Ipp32fc>> > sumDivBuffer;
+    ShPtrPacketBuffer syncBuffer1;
+    ShPtrPacketBuffer syncBuffer2;
+    ShPtrIpp32fcBuffer sumDivBuffer;
 };
 
 SyncPairChannel::SyncPairChannel():
     d(std::make_unique<Impl>())
 {}
 
-ShPtrBuffer SyncPairChannel::syncBuffer1()
+ShPtrPacketBuffer SyncPairChannel::syncBuffer1()
 {
     return d->syncBuffer1;
 }
 
-ShPtrBuffer SyncPairChannel::syncBuffer2()
+ShPtrPacketBuffer SyncPairChannel::syncBuffer2()
 {
     return d->syncBuffer2;
 }
 
-ShPtrBufferT SyncPairChannel::sumDivMethod()
+ShPtrIpp32fcBuffer SyncPairChannel::sumDivMethod()
 {
     return d->sumDivBuffer;
 }
@@ -553,7 +551,7 @@ SyncPairChannel::~SyncPairChannel()= default;
  * процесс синхронизации двух каналов
  */
 
-void SyncPairChannel::sync(const ShPtrBufferPair buffers,
+void SyncPairChannel::sync(const ShPtrPacketBufferPair buffers,
                            quint32 ddcFrequency,
                            quint32 sampleRate,
                            quint32 blockSize){
@@ -627,7 +625,7 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
  * \param receiverStationClientPair
  * \param blockSize
  */
-void SyncPairChannel::start(const ShPtrBufferPair receiverStationClientPair,
+void SyncPairChannel::start(const ShPtrPacketBufferPair receiverStationClientPair,
                             quint32 ddcFrequency,
                             quint32 sampleRate,
                             quint32 blockSize)

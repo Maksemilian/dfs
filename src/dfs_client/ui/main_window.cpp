@@ -400,15 +400,15 @@ quint16  MainWindow::getAdcNoiceBlankerThreshold()
     return leAdcNoiceBlanckerThreshold->text().toUShort();
 }
 
-void MainWindow::setWaitCursor()
-{
-    setCursor(Qt::WaitCursor);
-}
+//void MainWindow::setWaitCursor()
+//{
+//    setCursor(Qt::WaitCursor);
+//}
 
-void MainWindow::setArrowCursor()
-{
-    setCursor(Qt::ArrowCursor);
-}
+//void MainWindow::setArrowCursor()
+//{
+//    setCursor(Qt::ArrowCursor);
+//}
 
 //****************************LOAD / SAVE SETTINGS***********************
 

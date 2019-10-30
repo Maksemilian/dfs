@@ -1,20 +1,25 @@
 #ifndef SYNC_PAIR_CHANNEL_H
 #define SYNC_PAIR_CHANNEL_H
 
-
 #include "ring_buffer.h"
+#include "receiver.pb.h"
+
 #include "ippbase.h"
 #include <memory>
+#include <vector>
 #include <QPair>
 
-class RingBuffer;
+using RingIpp32fcBuffer=RingBuffer<std::vector<Ipp32fc>>;
+using RingPacketBuffer=RingBuffer<proto::receiver::Packet>;
 
+using ShPtrIpp32fcBuffer=std::shared_ptr<RingIpp32fcBuffer>;
+using ShPtrPacketBuffer=std::shared_ptr<RingPacketBuffer>;
 
-using ShPtrBuffer=std::shared_ptr<RingBuffer>;
-using ShPtrBufferT=std::shared_ptr<RingBufferT<std::vector<Ipp32fc>>>;
-using ShPtrBufferPair=QPair<ShPtrBuffer,ShPtrBuffer>;
+using ShPtrPacketBufferPair=QPair<ShPtrPacketBuffer,ShPtrPacketBuffer>;
+
 using VectorIpp32fc=std::vector<Ipp32fc>;
 using VectorIpp32f=std::vector<Ipp32f>;
+
 using BoolPair=QPair<bool,bool>;
 
 /*!
@@ -23,7 +28,7 @@ using BoolPair=QPair<bool,bool>;
 class BlockAlinement
 {
 public:
-    BlockAlinement(const std::vector<Ipp32fc>&shiftBuffer,quint32 blockSize);
+    BlockAlinement(const VectorIpp32fc&shiftBuffer,quint32 blockSize);
     ~BlockAlinement();
 
     void equate(Ipp32fc *signal,quint32 size,
@@ -60,7 +65,7 @@ class ShiftFinder
 public:
     ShiftFinder(quint32 sampleRate,quint32 blockSize);
     ~ShiftFinder();
-    bool calcShiftInChannel(const ShPtrBufferPair receiverStationClientPair);
+    bool calcShiftInChannel(const ShPtrPacketBufferPair receiverStationClientPair);
     int getChannelIndex();
 
     const VectorIpp32fc& getShiftBuffer();
@@ -100,11 +105,11 @@ public:
     SyncPairChannel();
     ~SyncPairChannel();
 
-    ShPtrBuffer syncBuffer1();
-    ShPtrBuffer syncBuffer2();
-    ShPtrBufferT sumDivMethod();
+    ShPtrPacketBuffer syncBuffer1();
+    ShPtrPacketBuffer syncBuffer2();
+    ShPtrIpp32fcBuffer sumDivMethod();
 
-    void start(const ShPtrBufferPair receiverStationClientPair,
+    void start(const ShPtrPacketBufferPair receiverStationClientPair,
                quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
     void stop();
 
@@ -114,12 +119,8 @@ public:
     void enableFructionShift();
     void disabledFructionShift();
 private:
-    void sync(const ShPtrBufferPair receiverStationClientPair,
+    void sync(const ShPtrPacketBufferPair receiverStationClientPair,
               quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
-
-    //    void sync(const std::shared_ptr<RingBuffer> buffer1,
-    //              const std::shared_ptr<RingBuffer> buffer2,
-    //              quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
 private:
     struct Impl;
     std::unique_ptr<Impl> d;

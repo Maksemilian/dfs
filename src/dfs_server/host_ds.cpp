@@ -3,7 +3,6 @@
 #include "device_set_coh_g35.h"
 
 #include "channel_host.h"
-
 //******************ReceiverStationClient***********************
 
 struct DeviceSetClient::Impl
@@ -37,7 +36,7 @@ DeviceSetClient::~DeviceSetClient()
     d->cohG35DeviceSet->stopDDC1();
 }
 
-std::shared_ptr<RingBuffer> DeviceSetClient::getBuffer()
+std::shared_ptr<RingBuffer<proto::receiver::Packet>> DeviceSetClient::getBuffer()
 {
     return  d->cohG35DeviceSet->getBuffer();
 }

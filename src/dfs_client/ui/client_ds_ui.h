@@ -13,7 +13,7 @@ class ClientStreamController;
 
 class QComboBox;
 class QLabel;
-class RingBuffer;
+
 class DeviceSetWidget :public QWidget
 {
     Q_OBJECT
@@ -36,7 +36,7 @@ public:
     quint16 port();
     void setDeviceSetCommand(const proto::receiver::Command &command);
     bool isConnected();
-    inline std::shared_ptr<RingBuffer> ddc1Buffer(){
+    inline std::shared_ptr<RingBuffer<proto::receiver::Packet>> ddc1Buffer(){
 //        qDebug()<<"DSW:"<<_streamController->ddc1Buffer().use_count();
         return _streamController->ddc1Buffer();
     }

@@ -8,8 +8,6 @@
 
 #include <memory>
 
-class PeerWireClient;
-class RingPacketBuffer;
 class CohG35DeviceSet;
 class ConnectRequest;
 
@@ -36,8 +34,6 @@ private:
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
     net::ChannelHost *_streamSocket;
     std::atomic<bool>quit;
-//    proto::receiver::Packet packet;
-//   proto::receiver::HostToClient hostToClient;
 };
 
 

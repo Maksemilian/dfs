@@ -30,7 +30,7 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
            <<ds->getSampleRateForBandwith()
           <<ds->getSamplesPerBuffer();
 
-    ShPtrBufferPair bufferPair;
+    ShPtrPacketBufferPair bufferPair;
     bufferPair.first=dsList.first()->ddc1Buffer();
     bufferPair.second=dsList.last()->ddc1Buffer();
     sync->start(bufferPair,

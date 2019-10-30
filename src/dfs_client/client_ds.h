@@ -4,7 +4,7 @@
 #include "receiver.pb.h"
 #include <QObject>
 
-struct DeviceSetSettings;
+//struct DeviceSetSettings;
 
 class QHostAddress;
 
@@ -14,7 +14,7 @@ class DeviceSetClient: public QObject
 public:
     DeviceSetClient(QObject *parent=nullptr);
     ~DeviceSetClient();
-
+/*
     void setSettings(const DeviceSetSettings &settings);
 
     void setPower(bool state);
@@ -29,7 +29,7 @@ public:
 
     void startDDC1Stream(quint32 samplesPerBuffer);
     void stopDDC1Stream();
-
+*/
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
 

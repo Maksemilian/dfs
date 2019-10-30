@@ -11,8 +11,9 @@
 #include "host_ds.h"
 #include "channel_host.h"
 #include "host_ds_stream.h"
-class PeerWireClient;
-class RingPacketBuffer;
+
+//class PeerWireClient;
+//class RingPacketBuffer;
 class CohG35DeviceSet;
 class ConnectRequest;
 class StreamServer;
@@ -20,7 +21,7 @@ class StreamServer;
 //class StreamFile;
 class StreamDDC1;
 class ChannelHost;
-
+/*
 class StreamAnalizator :public QObject{
     Q_OBJECT
 
@@ -44,7 +45,7 @@ private:
     QFutureWatcher<void>fw;
     std::atomic<bool>quit;
 };
-
+*/
 class StreamServer:public QTcpServer
 {
     Q_OBJECT
@@ -59,7 +60,7 @@ public:
     void stopStreamDDC1();
 //    void stopStreamFile();
 //    void addFileStream(StreamFile *fileStream);
-    std::shared_ptr<RingPacketBuffer>getDDC1Buffer();
+//    std::shared_ptr<RingPacketBuffer>getDDC1Buffer();
 signals:
     void newChannelReady();
 private:

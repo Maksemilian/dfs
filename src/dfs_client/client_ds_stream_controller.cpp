@@ -8,7 +8,7 @@
 ClientStreamController::ClientStreamController(const QString &address,quint16 port)
     :_address(address),
       _port(port),
-      _ddcBuffer(std::make_shared<RingBuffer>(16))
+      _ddcBuffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
 {
 
 }

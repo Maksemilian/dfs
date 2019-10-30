@@ -2,9 +2,9 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-#headers.path = $${LIBS_PATH}/dfs_net/include
-#headers.files   += $$files($${PWD}/*.h)
-#INSTALLS       += headers
+headers.path = $${LIBS_PATH}/dfs_net/include
+headers.files   += $$files($${PWD}/*.h)
+INSTALLS       += headers
 
 QT += core
 QT += network
@@ -25,7 +25,6 @@ LIBS += $${LIBS_PATH}/google/lib -lprotobuf
 LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 
 HEADERS += \
-    peer_wire_client.h \
     ring_packet_buffer.h \
     channel.h \
     channel_client.h \
@@ -33,7 +32,6 @@ HEADERS += \
     ring_buffer.h
 
 SOURCES += \
-    peer_wire_client.cpp \
     channel.cpp \
     channel_client.cpp \
     channel_host.cpp

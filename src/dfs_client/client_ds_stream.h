@@ -4,14 +4,15 @@
 #include <QObject>
 #include <memory>
 
-class RingBuffer;
+#include "receiver.pb.h"
+#include "ring_buffer.h"
 
 class StreamReader:public QObject
 {
     Q_OBJECT
 public:
     StreamReader(const QString&address,quint16 port,
-                 const std::shared_ptr<RingBuffer>streamBuffer);
+                 const std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer);
     ~StreamReader();
     void start();
     void stop();

@@ -7,7 +7,7 @@
 #include <QtConcurrent/QtConcurrent>
 
 StreamDDC1::StreamDDC1(net::ChannelHost*streamSocket,
-                       std::shared_ptr<RingBuffer>buffer)
+                       std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer)
     : _streamSocket(streamSocket),
       buffer(buffer)
 {

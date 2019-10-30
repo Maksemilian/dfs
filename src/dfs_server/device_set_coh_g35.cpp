@@ -12,7 +12,7 @@
 
 CohG35DeviceSet::CohG35DeviceSet():
     ddc1Buffer(new RingPacketBuffer(16)),
-    buffer(std::make_shared<RingBuffer>(16)),
+    buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
     timeReader(new TimeReader()),
     signalFileWriter(new SignalFileWriter()),
     isFirstBlock(true),

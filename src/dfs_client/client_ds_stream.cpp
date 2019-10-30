@@ -6,7 +6,7 @@
 
 struct StreamReader::Impl
 {
-    Impl(std::shared_ptr<RingBuffer>ddcBuffer):
+    Impl(std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddcBuffer):
         streamBuffer(ddcBuffer),
         quit(true)
     {
@@ -16,13 +16,13 @@ struct StreamReader::Impl
     quint16 port;
 
     std::unique_ptr<net::ChannelClient> stream;
-    std::shared_ptr<RingBuffer>streamBuffer;
+    std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer;
     std::atomic<bool> quit;
 };
 
 
 StreamReader::StreamReader(const QString &address, quint16 port,
-                           const std::shared_ptr<RingBuffer> streamBuffer)
+                           const std::shared_ptr<RingBuffer<proto::receiver::Packet>> streamBuffer)
     :d(std::make_unique<Impl>(streamBuffer))
 {
     d->address=address;
