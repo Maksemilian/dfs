@@ -1,5 +1,3 @@
-#include "device_set_coh_g35.h"
-
 #include "device_set_selector.h"
 #include "host_server.h"
 
@@ -8,63 +6,30 @@
 #include <QDebug>
 #include <QHostAddress>
 #include <QCommandLineParser>
-#include <QCommandLineOption>
-#include <QTime>
-#include <QTimer>
 
 #define PATH_TO_LIBRARY "G35DDCAPI"
 
 G3XDDCAPI_CREATE_INSTANCE createInstance;
 
-//void reconnect(ReceiverStationClient *client,
-//               const QHostAddress &address,
-//               quint16 port,int reconnectTime=10000);
-
-//void tryReconnectByTimer(const QTime &time,
-//                         ReceiverStationClient *client,
-//                         const QHostAddress &address, quint16 port,int reconnectTime);
-
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    QCommandLineOption addressOption("a", "address","value","value");
-
-    QCommandLineOption portOption("m","main-port","value","value");
-    QCommandLineOption countStationOption("c","count-station","value","value");
-
-    QCommandLineOption streamPortOption("s","stream-port","value","value");
-    QCommandLineOption filePortOption("f","file-port","value","value");
-
-    QCommandLineOption reconnectTimeOption("t","reconnect-time","value","value");
-
+    QCommandLineOption portOption("p","port","value","value");
     QCommandLineParser parser;
 
-    parser.addOption(addressOption);
     parser.addOption(portOption);
-    parser.addOption(countStationOption);
-    parser.addOption(filePortOption);
-    parser.addOption(streamPortOption);
-    parser.addOption(reconnectTimeOption);
-
     parser.process(app.arguments());
 
-    QHostAddress serverAddress(parser.value(addressOption));
-    quint16 serverPort=parser.value(portOption).toUShort();
-    quint16 countStation=parser.value(countStationOption).toUShort();
-    quint16 filePort=parser.value(filePortOption).toUShort();
-    quint16 streamPort=parser.value(streamPortOption).toUShort();
-    //    int reconnectTimeSec=parser.value(reconnectTimeOption).toInt();
-    int reconnectTimeInMs=(parser.value(reconnectTimeOption).toInt()*60)*1000;
+    quint16 listenPort=parser.value(portOption).toUShort()>0?
+                parser.value(portOption).toUShort():9000;
+
     QLibrary library(PATH_TO_LIBRARY);
     if(!library.load()){
         qDebug()<<"Failed to load G35DDCAPI.dll!";
         return -1;
     }
 
-    qDebug()<<"ReconnectTime"
-           <<parser.value(reconnectTimeOption).toInt()<<" sec"
-          <<reconnectTimeInMs<<"ms";
     createInstance=reinterpret_cast<G3XDDCAPI_CREATE_INSTANCE>
             (library.resolve("CreateInstance"));
 
@@ -83,8 +48,8 @@ int main(int argc, char *argv[])
     }
 
     StreamServer *streamServer=new StreamServer(nullptr);
-    streamServer->listen(QHostAddress(QHostAddress::Any),9000);
-
+    streamServer->listen(QHostAddress::Any,listenPort);
+    qDebug()<<"Listen"<<listenPort;
     return app.exec();
 }
 
