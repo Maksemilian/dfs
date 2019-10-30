@@ -16,7 +16,7 @@ public:
                const QString &leftText,const QString &rightText,QCustomPlot*parent);
 };
 
-class ElipsPlot:public QCustomPlot, public ISumDivSignalUpdate
+class ElipsPlot:public QCustomPlot
 {
     int LOWER_BORDER_X_AXIS =-750000;
     int UPPER_BORDER_X_AXIS =750000;
@@ -28,7 +28,7 @@ class ElipsPlot:public QCustomPlot, public ISumDivSignalUpdate
     static const QColor blueColor;
 public:
     ElipsPlot(QWidget *parent=nullptr);
-    void update(int index,const float*sumDivData,quint32 dataSize)override;
+    void update(int index,const float*sumDivData,quint32 dataSize);
 private:
     void customEvent(QEvent *event)override;
 private:

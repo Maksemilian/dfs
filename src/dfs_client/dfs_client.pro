@@ -44,7 +44,6 @@ HEADERS += \
     ui/tool_preselector_widget.h \
     interface/i_deviceset.h \
     i_device_set_settings.h \
-    i_sygnal_update.h \
     core/network/signal_sync.h \
     command_hierarch.h \
     sync_pair_channel.h \

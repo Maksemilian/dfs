@@ -16,18 +16,16 @@
 #include "ipp.h"
 #include "ippvm.h"
 
-//#define EXIT_MAIN exitLine:                                  /* Label for Exit */
-//#define check_sts(st) if((st) != ippStsNoErr) goto exitLine;
-
 using DeleterTypeIpp8u=std::function<void(Ipp8u*)>;
 
-struct BlockAlinement::Impl{
+struct BlockAlinement::Impl
+{
     Impl(const std::vector<Ipp32fc>&shiftBuffer,quint32 blockSize):
-        dstFftFwd(new Ipp32fc[blockSize]),
-        dstMagn(new Ipp32f[blockSize]),
-        dstPhase(new Ipp32f[blockSize]),
-        dstCart32(new Ipp32fc[blockSize]),
-        dstFinalRez(new Ipp32fc[blockSize]),
+        dstFftFwd(VectorIpp32fc(blockSize)),
+        dstMagn(VectorIpp32f(blockSize)),
+        dstPhase(VectorIpp32f(blockSize)),
+        dstCart32(VectorIpp32fc(blockSize)),
+        dstFinalRez(VectorIpp32fc(blockSize)),
         shiftBufferT(shiftBuffer)
     {    }
     /// WARNING ЕСЛИ СДЕЛАТЬ С UNIQUE_PTR ТО ПРОГРАММА КРАШИТСЯ ПРИ ПЕРЕЗАПУСКЕ СИНХРОНИЗАЦИИ
@@ -42,13 +40,13 @@ struct BlockAlinement::Impl{
     std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemBuffer;
     std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemSpec;
 
-    std::unique_ptr<Ipp32fc[]>dstFftFwd;
-    std::unique_ptr<Ipp32f[] >dstMagn;
-    std::unique_ptr<Ipp32f[] >dstPhase;
-    std::unique_ptr<Ipp32fc[]>dstCart32;
-    std::unique_ptr<Ipp32fc[]>dstFinalRez;
+    VectorIpp32fc dstFftFwd;
+    VectorIpp32f dstMagn;
+    VectorIpp32f dstPhase;
+    VectorIpp32fc dstCart32;
+    VectorIpp32fc dstFinalRez;
 
-    std::vector<Ipp32fc>shiftBufferT;
+    VectorIpp32fc shiftBufferT;
 };
 
 
@@ -135,19 +133,19 @@ void BlockAlinement::shiftFruction(Ipp32fc *blockData, quint32 dataSize, double 
 {
     IppsFFTSpec_C_32fc *pSpec=reinterpret_cast<IppsFFTSpec_C_32fc *>(d->pMemSpec.get());
     //1---FFT FWD
-    ippsFFTFwd_CToC_32fc(blockData, d->dstFftFwd.get(), pSpec, d->pMemBuffer.get());
+    ippsFFTFwd_CToC_32fc(blockData, d->dstFftFwd.data(), pSpec, d->pMemBuffer.get());
     //2---CART TO POLAR
-    ippsCartToPolar_32fc(d->dstFftFwd.get(),d->dstMagn.get(),d->dstPhase.get(),static_cast<int>(dataSize));
+    ippsCartToPolar_32fc(d->dstFftFwd.data(),d->dstMagn.data(),d->dstPhase.data(),static_cast<int>(dataSize));
     //3--SWAP PART BLOCK SIGNAL
-    swapHalfPhaseValues(d->dstPhase.get(),dataSize);
+    swapHalfPhaseValues(d->dstPhase.data(),dataSize);
     //4--SHIFT INCREMENT DST POLAR ON ADC
-    incrementPhaseValuesOnAngle(d->dstPhase.get(),dataSize,static_cast<float>(phaseAngle));
+    incrementPhaseValuesOnAngle(d->dstPhase.data(),dataSize,static_cast<float>(phaseAngle));
     //5--SWAP PART BLOCK SIGNAL
-    swapHalfPhaseValues(d->dstPhase.get(),dataSize);
+    swapHalfPhaseValues(d->dstPhase.data(),dataSize);
     //6--POLAR TO CART
-    ippsPolarToCart_32fc(d->dstMagn.get(),d->dstPhase.get(),d->dstCart32.get(),static_cast<int>(dataSize));
+    ippsPolarToCart_32fc(d->dstMagn.data(),d->dstPhase.data(),d->dstCart32.data(),static_cast<int>(dataSize));
     //7--FFT INV
-    ippsFFTInv_CToC_32fc(d->dstCart32.get(),blockData,pSpec,d->pMemBuffer.get());
+    ippsFFTInv_CToC_32fc(d->dstCart32.data(),blockData,pSpec,d->pMemBuffer.get());
 }
 
 void BlockAlinement::shiftTest(Ipp32fc *blockData, quint32 blockSize, double teta) const
@@ -285,16 +283,8 @@ public:
     }
 
 private:
-    //    std::unique_ptr<Ipp32f[]>im;
-    //    std::unique_ptr<Ipp32f[]>re;
-    //    //    std::unique_ptr<Ipp32fc[]>srcCoef;
-    //    std::unique_ptr<Ipp32fc[]>complexSum;
-    //    std::unique_ptr<Ipp32fc[]>complexSub;
-    //    std::unique_ptr<Ipp32fc[]>mulSumOnCoef;
-    //    std::unique_ptr<Ipp32fc[]>mulSubOnCoef;
     VectorIpp32f im;
     VectorIpp32f re;
-    //    std::unique_ptr<Ipp32fc[]>srcCoef;
     VectorIpp32fc complexSum;
     VectorIpp32fc complexSub;
     VectorIpp32fc mulSumOnCoef;
@@ -305,7 +295,7 @@ private:
 };
 //******************************* FindChannelForShift ******************************************
 
-struct FindChannelForShift::Impl
+struct ShiftFinder::Impl
 {
     Impl(quint32 sampleRate,quint32 blockSize):
         sampleRate(sampleRate)
@@ -324,31 +314,31 @@ struct FindChannelForShift::Impl
     double deltaStart;
 };
 
-FindChannelForShift::~FindChannelForShift() = default;
+ShiftFinder::~ShiftFinder() = default;
 
-FindChannelForShift::FindChannelForShift(quint32 sampleRate,quint32 blockSize):
+ShiftFinder::ShiftFinder(quint32 sampleRate,quint32 blockSize):
     d(std::make_unique<Impl>(sampleRate,blockSize))
 {}
 
-int FindChannelForShift::getChannelIndex(){
+int ShiftFinder::getChannelIndex(){
     return d->channelIndex;
 }
 
-const VectorIpp32fc& FindChannelForShift::getShiftBuffer()
+const VectorIpp32fc& ShiftFinder::getShiftBuffer()
 {
     return d->shiftBufferT;
 }
 
-double FindChannelForShift::getShiftValue(){
+double ShiftFinder::getShiftValue(){
     return d->ddcDifference;
 }
 
-double FindChannelForShift::getDeltaStart()
+double ShiftFinder::getDeltaStart()
 {
     return d->deltaStart;
 }
 
-bool FindChannelForShift::calcShiftInChannel(const ShPtrBufferPair stationPair)
+bool ShiftFinder::calcShiftInChannel(const ShPtrBufferPair stationPair)
 {
     qDebug()<<"B_USE COUNT_calcShiftInChannel_BEGIN"
            <<stationPair.first.use_count()
@@ -480,7 +470,7 @@ bool FindChannelForShift::calcShiftInChannel(const ShPtrBufferPair stationPair)
 
 
 
-void FindChannelForShift::initShiftBuffer(const float *signalData, quint32 blockSize,
+void ShiftFinder::initShiftBuffer(const float *signalData, quint32 blockSize,
                                           quint32 shift)
 {
     qDebug()<<"B_INIT_SHIFT_TEST"<<shift<<d->shiftBufferT.size();
@@ -497,12 +487,12 @@ void FindChannelForShift::initShiftBuffer(const float *signalData, quint32 block
  * \param blockSize
  * \return колиество ddc сэмплов после прихода последнего импульса pps
  */
-double FindChannelForShift::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,quint32 blockSize)
+double ShiftFinder::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,quint32 blockSize)
 {
     return (blockNumber*blockSize)-ddcSampleCounter;
 }
 
-void FindChannelForShift::showPacket(quint32 blockNumber,
+void ShiftFinder::showPacket(quint32 blockNumber,
                                      quint32 sampleRate,
                                      quint32 timeOfWeek,
                                      double ddcSampleCounter,
@@ -564,20 +554,16 @@ SyncPairChannel::~SyncPairChannel()= default;
  */
 
 void SyncPairChannel::sync(const ShPtrBufferPair buffers,
-                           quint32 ddcFrequency,quint32 sampleRate,quint32 blockSize)
-{
+                           quint32 ddcFrequency,
+                           quint32 sampleRate,
+                           quint32 blockSize){
+
     qDebug()<<"THREAD_SYNC_BEGIN";
 
-    //         qDebug()<<"USE COUNT_B"<<stationPair.first.use_count()<<stationPair.first.use_count();
-    FindChannelForShift f(sampleRate,blockSize);
-    // qDebug()<<"USE COUNT_"<<stationPair.first.use_count()<<stationPair.first.use_count();
+    ShiftFinder f(sampleRate,blockSize);
     if(f.calcShiftInChannel(buffers)){
-        qDebug()<<"USE COUNT_E"<<buffers.first.use_count()
-               <<buffers.first.use_count();
         BlockAlinement blockAlinement(f.getShiftBuffer(),blockSize);
-        qDebug()<<"BlockAlinment is ready";
         SumSubMethod sumSubMethod(sampleRate,blockSize);
-        qDebug()<<"Init is done:"<<f.getChannelIndex()<<f.getShiftValue();
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
         PacketQueuePair syncQueuePair;
@@ -585,11 +571,9 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
         bool isFirstStationReadedPacket=false;
         bool isSecondStationReadedPacket=false;
 
-        std::unique_ptr<float[]>dataPairSingal(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
-        std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
-        std::vector<Ipp32fc> v(blockSize);
-        qDebug()<<"Start Circle";
-        qDebug()<<"USE COUNT_SC"<<buffers.first.use_count()<<buffers.first.use_count();
+        qDebug()<<"CHANNEL_SHIFT:"<<f.getChannelIndex()
+               <<"SHIFT_VALUE:"<<f.getShiftValue()
+              <<"BUF_USE_COUNT"<<buffers.first.use_count()<<buffers.second.use_count();
         while(!d->quit){
             if(buffers.first->pop(packet[CHANNEL_FIRST])){
                 syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
@@ -616,27 +600,23 @@ void SyncPairChannel::sync(const ShPtrBufferPair buffers,
                 d->syncBuffer1->push(packet[CHANNEL_FIRST]);
                 d->syncBuffer2->push(packet[CHANNEL_SECOND]);
                 //
+
+                //******* SUM-SUB METHOD **************
                 const Ipp32fc *dst1=reinterpret_cast<const Ipp32fc*>
                         (packet[CHANNEL_FIRST].sample().data());
 
                 const Ipp32fc *dst2=reinterpret_cast<const Ipp32fc*>
                         (packet[CHANNEL_SECOND].sample().data());
-                //******* SUM-SUB METHOD **************
-                const VectorIpp32fc &dstSumDivCoef=sumSubMethod.
-                        calc(dst1,dst2,blockSize);
-                //                memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
-                //                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
 
-                //                memcpy(v.data(),dstSumDivCoef.get(),sizeof (Ipp32fc)*blockSize);
-                d->sumDivBuffer->push(dstSumDivCoef);
+                d->sumDivBuffer->push(sumSubMethod.
+                                      calc(dst1,dst2,blockSize));
 
                 isFirstStationReadedPacket=false;
                 isSecondStationReadedPacket=false;
             }
         }
-    }else{
-        qDebug("SYNC_ERROR");
-    }
+    }else  qDebug("SYNC_ERROR");
+
     qDebug()<<"THREAD_SYNC_END";
 }
 
@@ -694,6 +674,10 @@ void SyncPairChannel::disabledFructionShift(){
     qDebug()<<"DISABLED FRUCTION SHIFT";
 }
 
+//                memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
+//                       sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);
+
+//                memcpy(v.data(),dstSumDivCoef.get(),sizeof (Ipp32fc)*blockSize);
 //void SyncPairChannel::sync(const std::shared_ptr<RingBuffer> buffer1,
 //                           const std::shared_ptr<RingBuffer> buffer2,
 //                           quint32 ddcFrequency,
@@ -850,7 +834,6 @@ void SyncPairChannel::sync(const StreamReadablePair stationPair,
                     dataPairSingal[i*2+1]=data2[i*2];
                 }
 
-                //******* SUM-SUB METHOD **************
                 const std::unique_ptr<Ipp32fc[]>&dstSumDivCoef=sumSubMethod.calc(data1,data2,blockSize);
                 memcpy(sumSubData.get(),reinterpret_cast<float*>(dstSumDivCoef.get()),
                        sizeof (float)*blockSize*COUNT_SIGNAL_COMPONENT);

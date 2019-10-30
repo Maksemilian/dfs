@@ -1,16 +1,12 @@
 #ifndef SYNC_PAIR_CHANNEL_H
 #define SYNC_PAIR_CHANNEL_H
 
-//#include "i_stream_reader.h"
 
-#include "ippbase.h"
-#include <QPair>
-#include "memory"
 #include "ring_buffer.h"
+#include "ippbase.h"
+#include <memory>
+#include <QPair>
 
-class ISyncSignalUpdate;
-class ISumDivSignalUpdate;
-//class IStreamRead;
 class RingBuffer;
 
 
@@ -53,7 +49,7 @@ private:
 /*!
  * \brief The FindChannelForShift class
  */
-class FindChannelForShift
+class ShiftFinder
 {
     enum Channel{
         CHANNEL_FIRST=0,
@@ -62,8 +58,8 @@ class FindChannelForShift
     };
     static const unsigned int COUNT_SIGNAL_COMPONENT=2;
 public:
-    FindChannelForShift(quint32 sampleRate,quint32 blockSize);
-    ~FindChannelForShift();
+    ShiftFinder(quint32 sampleRate,quint32 blockSize);
+    ~ShiftFinder();
     bool calcShiftInChannel(const ShPtrBufferPair receiverStationClientPair);
     int getChannelIndex();
 
@@ -103,6 +99,7 @@ class SyncPairChannel
 public:
     SyncPairChannel();
     ~SyncPairChannel();
+
     ShPtrBuffer syncBuffer1();
     ShPtrBuffer syncBuffer2();
     ShPtrBufferT sumDivMethod();

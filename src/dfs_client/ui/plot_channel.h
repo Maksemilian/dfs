@@ -1,8 +1,6 @@
 #ifndef CHANNEL_PLOT_H
 #define CHANNEL_PLOT_H
 
-#include "i_sygnal_update.h"
-
 #include "qcustomplot.h"
 
 #include <QColor>
@@ -25,14 +23,19 @@ private:
     QList<QCPTextElement*>textValuetElevents;
 };
 
-//struct ChannelDataT {
-//    quint32 blockNumber;
-//    double ddcCounter;
-//    quint64 adcCounter;
-//};
-struct ChannelDataT;
+struct ChannelDataT {
+    ChannelDataT(unsigned int blockNumber,    double ddcCounter,    unsigned long long adcCounter):
+        blockNumber(blockNumber),ddcCounter(ddcCounter),adcCounter(adcCounter)
+    {
 
-class ChannelPlot : public ISyncSignalUpdate, public QCustomPlot
+    }
+
+    unsigned int blockNumber;
+    double ddcCounter;
+    unsigned long long adcCounter;
+};
+
+class ChannelPlot : public QCustomPlot
         //        public SyncSignalPairChannelEventListener
 
 {
@@ -56,10 +59,10 @@ public:
 
     void updateSignalData(int index,
                           const ChannelDataT &channelData1,
-                          const ChannelDataT &channelData2)override;
+                          const ChannelDataT &channelData2);
     void updateSignalComponent(int signalIndex,
                                const float *data,
-                               quint32 dataSize) override;
+                               quint32 dataSize) ;
 
     void setGraphName(int id,const QString &name);
 private:
