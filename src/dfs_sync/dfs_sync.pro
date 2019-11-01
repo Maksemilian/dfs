@@ -33,14 +33,12 @@ LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 SOURCES += \
-        sync_pair_channel.cpp \
-    sync_block_alinement.cpp \
-    sync_shift_finder.cpp
+    sync_process.cpp \
+    sync_controller.cpp \
+    sync_block_equalizer.cpp
 
 HEADERS += \
-        sync_pair_channel.h \
-    sync_block_alinement.h \
-    sync_base.h \
-    sync_shift_finder.h \
-    sync_sum_sub_method.h
+    sync_process.h \
+    sync_controller.h \
+    sync_block_equalizer.h
 

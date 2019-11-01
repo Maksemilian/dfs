@@ -11,7 +11,7 @@ PlotMonitoring::PlotMonitoring(QWidget *paret)
     : QWidget (paret),
       channelPlot(new ChannelPlot(2,8192)),
       elipsPlot(new ElipsPlot(this)),
-      sync(std::make_unique<SyncPairChannel>()),
+      sync(std::make_unique<SyncController>()),
       quit(true)
 {
     QGridLayout *gl=new QGridLayout();
@@ -57,7 +57,7 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
             if(sync->syncBuffer2()->pop(packet[CHANNEL_SECOND]))
                 isSecondStationReadedPacket=true;
 
-            if(sync->sumDivMethod()->pop(v))
+            if(sync->sumDivMethodBuffer()->pop(v))
                 isElips=true;
 
             if(isFirstStationReadedPacket&&isSecondStationReadedPacket&&isElips){

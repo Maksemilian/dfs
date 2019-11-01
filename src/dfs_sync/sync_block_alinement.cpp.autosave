@@ -3,7 +3,6 @@
 #include "ipp.h"
 #include "ippvm.h"
 
-#include <memory>
 #include <math.h>
 #include <QDebug>
 
@@ -94,7 +93,7 @@ void BlockAlinement::equate(Ipp32fc *blockData, quint32 blockSize,
 
     shiftFruction(blockData,blockSize,shiftF);
     //    qDebug()<<"SHIFT FRUCTION END";
-    double teta=(ddcFrequency/sampleRate)*2*M_PI*deltaStart;
+    double teta=(ddcFrequency/sampleRate)*2*IPP_PI*deltaStart;
 
     shiftTest(blockData,blockSize,teta);
     qDebug()<<"*******TETA:"<<teta<<ddcFrequency<<sampleRate<<deltaStart;
@@ -143,9 +142,10 @@ void BlockAlinement::shiftTest(Ipp32fc *blockData, quint32 blockSize, double tet
     Ipp32fc val;
     //    val.re=static_cast<float>(cos(teta));
     //    val.im=static_cast<float>(sin(teta));
-    val.re=static_cast<float>(cos(fmod(teta,(2*M_PI))));
-    val.im=static_cast<float>(sin(fmod(teta,(2*M_PI))));
-    qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*M_PI));
+    //TODO НЕ ИСПОЛЬЗОВАТЬ math.h
+    val.re=static_cast<float>(cos(fmod(teta,(2*IPP_PI))));
+    val.im=static_cast<float>(sin(fmod(teta,(2*IPP_PI))));
+    qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*IPP_PI));
     //WARNING ippsMulC_32fc
     ippsMulC_32fc(blockData, val, blockData,static_cast<int>(blockSize));
     //    ippsMulC_32fc(blockData, val, d->dstFinalRez.get(),static_cast<int>(blockSize));

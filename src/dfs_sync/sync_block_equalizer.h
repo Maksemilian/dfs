@@ -1,17 +1,22 @@
 #ifndef SYNC_BLOCK_ALINEMENT_H
 #define SYNC_BLOCK_ALINEMENT_H
 
-#include "sync_base.h"
+#include "ippbase.h"
+
 #include <QObject>
 #include <memory>
+
+using VectorIpp32fc=std::vector<Ipp32fc>;
+using VectorIpp32f=std::vector<Ipp32f>;
+
 /*!
  * \brief The BlockAlinement class
  */
-class BlockAlinement
+class BlockEqualizer
 {
 public:
-    BlockAlinement(const VectorIpp32fc&shiftBuffer,quint32 blockSize);
-    ~BlockAlinement();
+    BlockEqualizer(const VectorIpp32fc&shiftBuffer,quint32 blockSize);
+    ~BlockEqualizer();
 
     void equate(Ipp32fc *signal,quint32 size,
                 double shift,

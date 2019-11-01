@@ -1,35 +1,121 @@
-#include "sync_shift_finder.h"
-#include "sync_block_alinement.h"
-#include "sync_sum_sub_method.h"
+#include "sync_process.h"
+#include "sync_block_equalizer.h"
 
-#include <vector>
+#include "receiver.pb.h"
+
+#include <math.h>
 
 #include <QDebug>
-#include "receiver.pb.h"
+
+#include "ipp.h"
+#include "ippvm.h"
 
 using PacketQueue=QQueue<proto::receiver::Packet>;
 using PacketQueuePair=QPair<PacketQueue,PacketQueue>;
-//using PacketPair=QPair<proto::receiver::Packet,proto::receiver::Packet> ;
-//******************************* FindChannelForShift ******************************************
 
-struct ShiftFinder::Impl
+class SumSubMethod
 {
-    Impl(){}
+    //1250 Гц - частота гетеродина создающего sin/cos коэффициенты
+    const double HETERODYNE_FREQUENCY=1250.0;
+    const double DOUBLE_PI=2*IPP_PI;
+    const double DELTA_ANGLE_IN_RADIAN;
+public:
+    SumSubMethod(quint32 sampleRate,quint32 blockSize):
+        DELTA_ANGLE_IN_RADIAN((360*(HETERODYNE_FREQUENCY/sampleRate))*(IPP_PI/180)),
+        im(VectorIpp32f(blockSize)),
+        re(VectorIpp32f(blockSize)),
+        complexSum(VectorIpp32fc(blockSize)),
+        complexSub(VectorIpp32fc(blockSize)),
+        mulSumOnCoef(VectorIpp32fc(blockSize)),
+        mulSubOnCoef(VectorIpp32fc(blockSize)),
+        dstSumDiv(VectorIpp32fc(blockSize)),
+        currentAngleRad(0.0)
+    {
 
-        Impl(quint32 sampleRate,quint32 blockSize):
-            sampleRate(sampleRate)
-        {
-            shiftData.channelIndex=-1;
-            shiftData.ddcDifference=0.0;
+    }
 
-            shiftData.shiftBuffer.resize(blockSize);
+    const VectorIpp32fc& calc(const Ipp32fc *dst1,const Ipp32fc *dst2,quint32 blockSize)
+    {
+        //1 ***** Создаем коэффициенты
+        for(quint32 i=0;i<blockSize;i++,currentAngleRad+=DELTA_ANGLE_IN_RADIAN){
+            //TODO ПРИМЕНИТЬ SIN и COS из IPP
+            re[i]= static_cast<Ipp32f>(cos(currentAngleRad));
+            im[i]= static_cast<Ipp32f>(sin(currentAngleRad));
+            if(currentAngleRad>=DOUBLE_PI){
+                re[i]=1;
+                im[i]=0;
+                currentAngleRad=0.0;
+            }
         }
 
-        quint32 sampleRate;
-//    VectorIpp32fc shiftBuffer;
-//    int channelIndex;
-//    double ddcDifference;
-//    double deltaStart;
+        ippsRealToCplx_32f(re.data(),im.data(),dstSumDiv.data(),
+                           static_cast<int>(blockSize));
+
+        // qDebug()<<"******************Src Coef:";
+
+        //2 ***** Фильтруем 2 канала
+        //WARNING ФИЛЬТРАЦИЯ НЕ ИСПОЛЬЗУЕТСЯ
+
+        //2 ***** Комплексная сумма двух сигналов
+        ippsAdd_32fc(dst1,dst2,complexSum.data(),static_cast<int>(blockSize));
+        //qDebug()<<"******************DATA AFTER SUM:";
+
+        //3 ***** Комплексная разность двух сигналов
+        ippsSub_32fc(dst1,dst2,complexSub.data(),static_cast<int>(blockSize));
+        //qDebug()<<"******************DATA AFTER SUB:";
+
+        //4 ***** Умножить массив коэффициентов на сумму
+        ippsMul_32fc(dstSumDiv.data(),complexSum.data(),mulSumOnCoef.data(),
+                     static_cast<int>(blockSize));
+        //qDebug()<<"******************DATA AFTER MUL SUM:";
+
+        //5 ***** Умножить массив коэффициентов на разность
+        ippsMul_32fc(dstSumDiv.data(),complexSub.data(),mulSubOnCoef.data(),
+                     static_cast<int>(blockSize));
+        //qDebug()<<"******************DATA AFTER MUL SUB:";
+
+        //        for(quint32 i=0;i<blockSize;i++){
+        //            dstSumDiv[i].re=mulSumOnCoef[i].re;
+        //            dstSumDiv[i].im=mulSubOnCoef[i].im;
+        //        }
+        memcpy(dstSumDiv.data(),mulSubOnCoef.data(),sizeof (Ipp32fc)*blockSize);
+        return  dstSumDiv;
+    }
+
+private:
+    VectorIpp32f im;
+    VectorIpp32f re;
+    VectorIpp32fc complexSum;
+    VectorIpp32fc complexSub;
+    VectorIpp32fc mulSumOnCoef;
+    VectorIpp32fc mulSubOnCoef;
+
+    VectorIpp32fc dstSumDiv;
+    double currentAngleRad;
+};
+
+//******************************* FindChannelForShift ******************************************
+
+struct SyncProcess::Impl
+{
+    Impl(){}
+    Impl(ShPtrPacketBuffer syncBuffer1,
+         ShPtrPacketBuffer syncBuffer2,
+         ShPtrIpp32fcBuffer sumDivBuffer):
+        syncBuffer1(syncBuffer1),syncBuffer2(syncBuffer2),sumDivBuffer(sumDivBuffer)
+    {
+
+    }
+    Impl(quint32 sampleRate,quint32 blockSize):
+        sampleRate(sampleRate)
+    {
+        shiftData.channelIndex=-1;
+        shiftData.ddcDifference=0.0;
+
+        shiftData.shiftBuffer.resize(blockSize);
+    }
+
+    quint32 sampleRate;
 
     struct{
         VectorIpp32fc shiftBuffer;
@@ -37,76 +123,38 @@ struct ShiftFinder::Impl
         double ddcDifference;
         double deltaStart;
     }shiftData;
-    std::atomic_bool quit;
 
     ShPtrPacketBuffer syncBuffer1;
     ShPtrPacketBuffer syncBuffer2;
     ShPtrIpp32fcBuffer sumDivBuffer;
+
+    std::atomic_bool quit;
 };
 
-ShiftFinder::~ShiftFinder() = default;
+SyncProcess::SyncProcess(const ShPtrPacketBuffer &syncBuffer1,
+                         const ShPtrPacketBuffer &syncBuffer2,
+                         const ShPtrIpp32fcBuffer &sumDivBuffer)
+    :d(std::make_unique<Impl>(syncBuffer1,syncBuffer2,sumDivBuffer)){}
 
-void ShiftFinder::start()
+SyncProcess::~SyncProcess()
 {
-    d->quit=false;
-}
-
-void ShiftFinder::stop()
-{
-    d->quit=true;
-}
-
-ShiftFinder::ShiftFinder():
-    d(std::make_unique<Impl>()){}
-
-ShiftFinder::ShiftFinder(quint32 sampleRate,quint32 blockSize):
-    d(std::make_unique<Impl>(sampleRate,blockSize))
-{}
-
-void ShiftFinder::setBuffer1(const ShPtrPacketBuffer buffer1)
-{
-    d->syncBuffer1=buffer1;
-}
-
-void ShiftFinder::setBuffer2(const ShPtrPacketBuffer buffer2)
-{
-    d->syncBuffer2=buffer2;
-}
-
-void ShiftFinder::setSumDivBuffer(const ShPtrIpp32fcBuffer sumDivBuffer)
-{
-    d->sumDivBuffer=sumDivBuffer;
-}
-
-ShPtrPacketBuffer ShiftFinder::syncBuffer1()
-{
-    return d->syncBuffer1;
-}
-
-ShPtrPacketBuffer ShiftFinder::syncBuffer2()
-{
-    return d->syncBuffer2;
-}
-
-ShPtrIpp32fcBuffer ShiftFinder::sumDivMethod()
-{
-    return d->sumDivBuffer;
-}
+    qDebug()<<"SYNC_PROCESS_DESTR";
+};
 
 
-void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
-                       quint32 ddcFrequency,
-                       quint32 sampleRate,
-                       quint32 blockSize){
+void SyncProcess::start(const ShPtrPacketBufferPair buffers,
+                        quint32 ddcFrequency,
+                        quint32 sampleRate,
+                        quint32 blockSize){
 
     qDebug()<<"THREAD_SYNC_BEGIN";
-
+    d->quit=false;
     d->shiftData.channelIndex=-1;
     d->shiftData.ddcDifference=0.0;
     d->shiftData.shiftBuffer.resize(blockSize);
 
     if(calcShiftInChannel(buffers,sampleRate)){
-        BlockAlinement blockAlinement(d->shiftData.shiftBuffer,blockSize);
+        BlockEqualizer blockAlinement(d->shiftData.shiftBuffer,blockSize);
         SumSubMethod sumSubMethod(sampleRate,blockSize);
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
@@ -115,8 +163,8 @@ void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
         bool isFirstStationReadedPacket=false;
         bool isSecondStationReadedPacket=false;
 
-        qDebug()<<"CHANNEL_SHIFT:"<<getChannelIndex()
-               <<"SHIFT_VALUE:"<<getShiftValue()
+        qDebug()<<"CHANNEL_SHIFT:"<<d->shiftData.channelIndex
+               <<"SHIFT_VALUE:"<<d->shiftData.ddcDifference
               <<"BUF_USE_COUNT"<<buffers.first.use_count()<<buffers.second.use_count();
 
         while(!d->quit){
@@ -137,7 +185,7 @@ void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
 
                 Ipp32fc *signal=reinterpret_cast<Ipp32fc*>
                         (const_cast<float*>
-                         (packet[getChannelIndex()].sample().data()));
+                         (packet[d->shiftData.channelIndex].sample().data()));
 
                 blockAlinement.equate(signal,blockSize,d->shiftData.ddcDifference,
                                       ddcFrequency,sampleRate,d->shiftData.deltaStart);
@@ -163,9 +211,15 @@ void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
     }else  qDebug("SYNC_ERROR");
 
     qDebug()<<"THREAD_SYNC_END";
+    emit finished();
 }
 
-bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
+void SyncProcess::stop()
+{
+    d->quit=true;
+}
+
+bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
                                      quint32 sampleRate)
 {
     qDebug()<<"B_USE COUNT_calcShiftInChannel_BEGIN"
@@ -279,7 +333,7 @@ bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
     return shiftFound;
 }
 
-void ShiftFinder::initShiftBuffer(const float *signalData, quint32 blockSize,
+void SyncProcess::initShiftBuffer(const float *signalData, quint32 blockSize,
                                   quint32 shift)
 {
     qDebug()<<"B_INIT_SHIFT_TEST"<<shift<<d->shiftData.shiftBuffer.size();
@@ -296,14 +350,14 @@ void ShiftFinder::initShiftBuffer(const float *signalData, quint32 blockSize,
  * \param blockSize
  * \return колиество ddc сэмплов после прихода последнего импульса pps
  */
-double ShiftFinder::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,quint32 blockSize)
+double SyncProcess::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,quint32 blockSize)
 {
     return (blockNumber*blockSize)-ddcSampleCounter;
 }
 
 
 
-void ShiftFinder::showPacket(quint32 blockNumber,
+void SyncProcess::showPacket(quint32 blockNumber,
                              quint32 sampleRate,
                              quint32 timeOfWeek,
                              double ddcSampleCounter,
@@ -311,23 +365,4 @@ void ShiftFinder::showPacket(quint32 blockNumber,
 {
     qDebug()<<"Packet"<<blockNumber<<sampleRate<<
               timeOfWeek<<ddcSampleCounter<<adcPeriodCounter;
-}
-
-int ShiftFinder::getChannelIndex(){
-    return d->shiftData.channelIndex;
-}
-
-const VectorIpp32fc& ShiftFinder::getShiftBuffer()
-{
-    return d->shiftData.shiftBuffer;
-}
-
-double ShiftFinder::getShiftValue()
-{
-    return d->shiftData.ddcDifference;
-}
-
-double ShiftFinder::getDeltaStart()
-{
-    return d->shiftData.deltaStart;
 }

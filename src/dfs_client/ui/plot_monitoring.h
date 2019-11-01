@@ -9,7 +9,7 @@ class IDeviceSetSettings;
 class ChannelPlot;
 class ElipsPlot ;
 class DeviceSetWidget;
-class SyncPairChannel;
+class SyncController;
 
 class PlotMonitoring :public QWidget
 {
@@ -28,7 +28,7 @@ public:
 private:
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget
-    std::unique_ptr<SyncPairChannel> sync;
+    std::unique_ptr<SyncController> sync;
     std::atomic_bool quit;
 };
 
