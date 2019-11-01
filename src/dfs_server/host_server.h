@@ -23,8 +23,6 @@ class ChannelHost;
 class StreamServer:public QTcpServer
 {
     Q_OBJECT
-    friend class StreamAnalizator;
-
 
 public:
     StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet);
@@ -50,29 +48,4 @@ private:
     std::shared_ptr<CohG35DeviceSet>deviceSet;
 };
 
-/*
-class StreamAnalizator :public QObject{
-    Q_OBJECT
-
-    static const int TIME_FOR_READY_READ_MS=1000;
-public:
-    StreamAnalizator(StreamServer*server);
-    void start();
-    void stop();
-    void pushSocketSescriptor(qintptr socketDescriptor);
-    bool popSocketDescriptor(qintptr &socetDescriptor);
-private:
-    void run();
-    ConnectRequest readStreamType(PeerWireClient *streamSocket);
-    void sendAnswer(PeerWireClient *streamSocket,bool state);
-    void createStreamDDC1(PeerWireClient *streamSocket);
-    void createFileStream(PeerWireClient *streamSocket);
-private:
-    StreamServer*server;
-    QMutex mutex;
-    QQueue<qintptr>desckriptorQueue;
-    QFutureWatcher<void>fw;
-    std::atomic<bool>quit;
-};
-*/
 #endif // STREAM_SERVE_RTEST_H

@@ -2,23 +2,21 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-QT       += core gui
-QT       += network
-QT       += xml
-QT       += sql
-QT       += core
+QT       += core gui network
 
 DEFINES +=QT_MESSAGELOGCONTEXT
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
 
-TEMPLATE = app
 TARGET = Client
+TEMPLATE = app
 CONFIG +=console
 CONFIG += c++14
+
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_sync/include
 
 INCLUDEPATH += $${LIBS_PATH}/ipp/include
 INCLUDEPATH += $${LIBS_PATH}/plot/include
@@ -26,8 +24,9 @@ INCLUDEPATH += $${LIBS_PATH}/google/include
 
 LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
-
+LIBS += -L$${LIBS_PATH}/dfs_sync/lib  -ldfs_sync$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
+
 LIBS += -L$${LIBS_PATH}/plot/lib -lqcustomplot$${LIB_SUFFIX}2
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
@@ -46,7 +45,6 @@ HEADERS += \
     i_device_set_settings.h \
     core/network/signal_sync.h \
     command_hierarch.h \
-    sync_pair_channel.h \
     command_factory.h \
     client_ds.h \
     client_ds_stream.h \
@@ -65,7 +63,6 @@ SOURCES += \
     ui/tool_frequency_line_edit.cpp \
     command_hierarch.cpp \
     command_factory.cpp \
-    sync_pair_channel.cpp \
     main.cpp \
     client_ds.cpp \
     client_ds_stream.cpp \

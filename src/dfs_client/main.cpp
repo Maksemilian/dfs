@@ -46,11 +46,8 @@ void messageLogger(QtMsgType type,const QMessageLogContext &context,const QStrin
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
     //***ipp lib
     ippInit(); //Initialize Intel IPP library
-    const IppLibraryVersion *lib=ippGetLibVersion(); //Get Intel IPP library version info
-    Q_UNUSED(lib);
 
     //***log file
     QFile file("C:/Qt/log.txt");
@@ -70,9 +67,5 @@ int main(int argc, char *argv[])
     mainWindow.setFixedSize(firstScreen->size().width()-INCREASE_MAIN_WINDOW_WIDTH,
                             firstScreen->size().height()-INCREASE_MAIN_WINDOW_HEIGH);
     mainWindow.show();
-    std::unique_ptr<int>ptr=std::make_unique<int>();
-
-    std::unique_ptr<int> ptr1=std::make_unique<int>();
-//    ptr=ptr1;
     return a.exec();
 }

@@ -1,0 +1,36 @@
+#ifndef SYNC_BLOCK_ALINEMENT_H
+#define SYNC_BLOCK_ALINEMENT_H
+
+#include "sync_base.h"
+#include <QObject>
+#include <memory>
+/*!
+ * \brief The BlockAlinement class
+ */
+class BlockAlinement
+{
+public:
+    BlockAlinement(const VectorIpp32fc&shiftBuffer,quint32 blockSize);
+    ~BlockAlinement();
+
+    void equate(Ipp32fc *signal,quint32 size,
+                double shift,
+                quint32 ddcFrequency,
+                quint32 sampleRate,
+                double deltaStart)const;
+private:
+    void initFftBuffers(int FFTOrder);
+    int  calcFftOrder(quint32 number);
+
+    void shiftWhole(Ipp32fc *signal,quint32 blockSize,quint32 wholeShift)const;
+    void shiftFruction(Ipp32fc *signal,quint32 size,double phaseAngle)const;
+    void shiftTest(Ipp32fc *signal,quint32 blockSize,double teta)const;
+
+    void swapHalfPhaseValues(Ipp32f*phaseData,quint32 size)const;
+    void incrementPhaseValuesOnAngle(Ipp32f *phaseData,quint32 size,float phaseAngle)const;
+private:
+    struct Impl;
+    std::unique_ptr<Impl>d;
+};
+
+#endif // SYNC_BLOCK_ALINEMENT_H

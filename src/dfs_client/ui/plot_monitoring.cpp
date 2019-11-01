@@ -44,12 +44,12 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
         quint32 COUNT_SIGNAL_COMPONENT=2;
         std::unique_ptr<float[]>dataPairSingal(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
         std::unique_ptr<float[]>sumSubData(new float[blockSize*COUNT_SIGNAL_COMPONENT]);
-        int INDEX=0;
         proto::receiver::Packet packet[CHANNEL_SIZE];
         std::vector<Ipp32fc>v;
         bool isFirstStationReadedPacket=false;
         bool isSecondStationReadedPacket=false;
         bool isElips=false;
+        int INDEX=0;
         while (!quit) {
             if(sync->syncBuffer1()->pop(packet[CHANNEL_FIRST]))
                 isFirstStationReadedPacket=true;
