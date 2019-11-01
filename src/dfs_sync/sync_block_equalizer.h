@@ -15,6 +15,8 @@ using VectorIpp32f=std::vector<Ipp32f>;
 class BlockEqualizer
 {
 public:
+    //TODO blockSize лишний тк внутринние буфера должны быть
+    //равными размеру shiftBuffer
     BlockEqualizer(const VectorIpp32fc&shiftBuffer,quint32 blockSize);
     ~BlockEqualizer();
 

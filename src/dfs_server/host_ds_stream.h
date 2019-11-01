@@ -33,8 +33,8 @@ signals:
     void next();
 
 private:
-    std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
     net::ChannelHost *_streamSocket;
+    std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
     std::atomic<bool>quit;
 };
 

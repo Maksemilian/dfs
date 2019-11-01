@@ -17,6 +17,7 @@ CONFIG += c++14
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_sync/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
 
 INCLUDEPATH += $${LIBS_PATH}/ipp/include
 INCLUDEPATH += $${LIBS_PATH}/plot/include
@@ -41,17 +42,14 @@ HEADERS += \
     ui/tool_widgets.h \
     ui/tool_switch_button.h \
     ui/tool_preselector_widget.h \
-    interface/i_deviceset.h \
-    i_device_set_settings.h \
-    core/network/signal_sync.h \
+    ui/client_ds_ui.h \
+    ui/client_ds_ui_list.h \
+    ui/plot_monitoring.h \
     command_hierarch.h \
     command_factory.h \
     client_ds.h \
     client_ds_stream.h \
-    client_ds_stream_controller.h \
-    ui/client_ds_ui.h \
-    ui/client_ds_ui_list.h \
-    ui/plot_monitoring.h
+    client_ds_stream_controller.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -61,15 +59,15 @@ SOURCES += \
     ui/tool_switch_button.cpp \
     ui/tool_preselector_widget.cpp \
     ui/tool_frequency_line_edit.cpp \
-    command_hierarch.cpp \
-    command_factory.cpp \
-    main.cpp \
+    ui/client_ds_ui.cpp \
+    ui/client_ds_ui_list.cpp \
+    ui/plot_monitoring.cpp \
     client_ds.cpp \
     client_ds_stream.cpp \
     client_ds_stream_controller.cpp \
-    ui/client_ds_ui.cpp \
-    ui/client_ds_ui_list.cpp \
-    ui/plot_monitoring.cpp
+    command_hierarch.cpp \
+    command_factory.cpp \
+    main.cpp
 
 FORMS += \
     ui/main_window.ui \

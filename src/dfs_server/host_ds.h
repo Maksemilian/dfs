@@ -10,7 +10,7 @@
 #include <memory>
 #include <QObject>
 
-class CohG35DeviceSetSettings;
+class DeviceSetSettings;
 class ChannelHost;
 
 class DeviceSetClient:public QObject
@@ -33,7 +33,7 @@ private slots:
 private:
     void sendCommandAnswer(proto::receiver::Answer *commandAnswer);
     void readCommanPacket(const proto::receiver::Command &command);
-    CohG35DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
+    DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 
     QByteArray serializeMessage(const google::protobuf::Message &message);
     void writeMessage(const google::protobuf::Message &message);

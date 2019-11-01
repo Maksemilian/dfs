@@ -115,7 +115,7 @@ bool CohG35DeviceSet::setDDC1Type(quint32 type)
 {
     return  deviceSet->SetDDC1(type);
 }
-bool CohG35DeviceSet::setSettings(const CohG35DeviceSetSettings &settings){
+bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
     bool succesed=false;
 
     succesed=setAttenuator(settings.attenuator);

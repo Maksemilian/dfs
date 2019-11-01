@@ -284,6 +284,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
             d->shiftData.channelIndex = d->shiftData.ddcDifference<0?CHANNEL_SECOND   :  CHANNEL_FIRST;
             d->shiftData.ddcDifference = abs(d->shiftData.ddcDifference);
 
+            //TODO поместить в один метод
             d->shiftData.deltaStart = d->shiftData.channelIndex==CHANNEL_FIRST ?
                         ((packetPair[CHANNEL_FIRST].block_number()*
                           packetPair[CHANNEL_FIRST].block_size())+ d->shiftData.ddcDifference)

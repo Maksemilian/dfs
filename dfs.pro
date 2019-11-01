@@ -8,7 +8,8 @@ SUBDIRS += \
           src/dfs_proto \
           src/dfs_receiver \
           src/dfs_sync \
-          tests/test_dfs_net
+          src/dfs_base \
+          tests/test_dfs_net \
 
 
 

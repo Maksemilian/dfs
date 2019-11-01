@@ -27,8 +27,7 @@ LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 HEADERS += \
     channel.h \
     channel_client.h \
-    channel_host.h \
-    ring_buffer.h
+    channel_host.h
 
 SOURCES += \
     channel.cpp \

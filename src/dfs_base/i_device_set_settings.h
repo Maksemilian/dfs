@@ -1,29 +1,13 @@
 #ifndef IGETSETTINGS_H
 #define IGETSETTINGS_H
 
-#include <QObject>
 
-using Preselectors= QPair<quint32,quint32>;
-
-struct DeviceSetSettings
-{
-    quint32 attenuator;
-    Preselectors preselectors;
-    bool preamplifier;
-    bool adcEnabled;
-    quint16 threshold;
-    quint32 frequency;
-    quint32 ddcType;
-    quint32 samplesPerBuffer;
-    bool powerEnabled;
-};
-
-Q_DECLARE_METATYPE(DeviceSetSettings);
-
+#include "coh_g35_ds_settings.h"
 
 class IDeviceSetSettings
 {
 public :
+    virtual ~IDeviceSetSettings()=default;
     virtual bool getPower()=0;
     virtual DeviceSetSettings getSettings()=0;
     virtual quint32 getDDC1Frequency()=0;

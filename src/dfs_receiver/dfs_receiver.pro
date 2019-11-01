@@ -20,6 +20,7 @@ INCLUDEPATH += $${LIBS_PATH}/winradio/include
 
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
+INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 

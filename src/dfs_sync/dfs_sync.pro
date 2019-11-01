@@ -24,11 +24,11 @@ DESTDIR =$${LIBS_PATH}/dfs_sync/lib
 INCLUDEPATH += $${LIBS_PATH}/ipp/include
 LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 
+INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
+
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
-INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
-LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 

@@ -53,10 +53,10 @@ QByteArray DeviceSetClient::serializeMessage(const google::protobuf::Message &me
 }
 
 
-CohG35DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
+DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
         const proto::receiver::Command &command)
 {
-    CohG35DeviceSetSettings settings;
+    DeviceSetSettings settings;
     //settings.powerEnabled=command.power();
     settings.attenuator=command.attenuator();
     settings.preselectors.first=command.preselectors().low_frequency();

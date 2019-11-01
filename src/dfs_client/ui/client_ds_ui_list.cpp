@@ -94,19 +94,19 @@ void DeviceSetListWidget::createDevieSetWidgets()
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
         addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
-//        s.beginGroup("dev_2");
-//        ip=s.value("ip").toString();
-//        port=static_cast<quint16>(s.value("port").toUInt());
-//        s.endGroup();
-//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+        s.beginGroup("dev_2");
+        ip=s.value("ip").toString();
+        port=static_cast<quint16>(s.value("port").toUInt());
+        s.endGroup();
+        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+        addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
-//        s.beginGroup("dev_3");
-//        ip=s.value("ip").toString();
-//        port=static_cast<quint16>(s.value("port").toUInt());
-//        s.endGroup();
-//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+        s.beginGroup("dev_3");
+        ip=s.value("ip").toString();
+        port=static_cast<quint16>(s.value("port").toUInt());
+        s.endGroup();
+        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+        addDeviceSetWidget(new DeviceSetWidget(ip,port));
     }
 }
 

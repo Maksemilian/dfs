@@ -6,23 +6,24 @@
 
 #include "G35DDCAPI.h"
 
+#include "coh_g35_ds_settings.h"
 #include <QPair>
 #include <memory>
 
 class TimeReader;
 
-struct CohG35DeviceSetSettings
-{
-    unsigned int attenuator;
-    QPair<unsigned int,unsigned int> preselectors;
-    bool preamplifier;
-    bool adcEnabled;
-    unsigned short threshold;
-    unsigned int frequency;
-    unsigned int ddcType;
-    unsigned int samplesPerBuffer;
-    bool powerEnabled;
-};
+//struct CohG35DeviceSetSettings
+//{
+//    unsigned int attenuator;
+//    QPair<unsigned int,unsigned int> preselectors;
+//    bool preamplifier;
+//    bool adcEnabled;
+//    unsigned short threshold;
+//    unsigned int frequency;
+//    unsigned int ddcType;
+//    unsigned int samplesPerBuffer;
+//    bool powerEnabled;
+//};
 
 class CohG35DeviceSet :public ICohG35DDCDeviceSetCallback
 {
@@ -50,7 +51,7 @@ public:
     bool setAdcNoiceBlankerThreshold(unsigned short threshold);
     bool setDDC1Type(quint32 type);
 
-    bool setSettings(const CohG35DeviceSetSettings &settings);
+    bool setSettings(const DeviceSetSettings &settings);
     //*****Stram DDC1
     void startDDC1(unsigned int sampesPerBuffer,bool writeToFile=false);
     void stopDDC1();
