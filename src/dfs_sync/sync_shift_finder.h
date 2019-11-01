@@ -47,7 +47,6 @@ public:
 
     double getShiftValue();
     double getDeltaStart();
-    void setBuffer1();
 
     void setBuffer1(const ShPtrPacketBuffer buffer1);
     void setBuffer2(const ShPtrPacketBuffer buffer2);
@@ -69,6 +68,7 @@ private:
     void initShiftBuffer(const float *signalData,quint32 size,quint32 ddcDifference);
     double calcDeltaStart();
 private:
+
     struct Impl;
     std::unique_ptr<Impl>d;
 };

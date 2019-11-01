@@ -16,28 +16,36 @@ struct ShiftFinder::Impl
 {
     Impl(){}
 
-    Impl(quint32 sampleRate,quint32 blockSize):
-        sampleRate(sampleRate)
-    {
-        channelIndex=-1;
-        ddcDifference=0.0;
+        Impl(quint32 sampleRate,quint32 blockSize):
+            sampleRate(sampleRate)
+        {
+            shiftData.channelIndex=-1;
+            shiftData.ddcDifference=0.0;
 
-        shiftBufferT.resize(blockSize);
-    }
+            shiftData.shiftBuffer.resize(blockSize);
+        }
 
-    quint32 sampleRate;
-    VectorIpp32fc shiftBufferT;
-    int channelIndex;
-    double ddcDifference;
-    double deltaStart;
+        quint32 sampleRate;
+//    VectorIpp32fc shiftBuffer;
+//    int channelIndex;
+//    double ddcDifference;
+//    double deltaStart;
 
+    struct{
+        VectorIpp32fc shiftBuffer;
+        int channelIndex;
+        double ddcDifference;
+        double deltaStart;
+    }shiftData;
     std::atomic_bool quit;
+
     ShPtrPacketBuffer syncBuffer1;
     ShPtrPacketBuffer syncBuffer2;
     ShPtrIpp32fcBuffer sumDivBuffer;
 };
 
 ShiftFinder::~ShiftFinder() = default;
+
 void ShiftFinder::start()
 {
     d->quit=false;
@@ -85,39 +93,20 @@ ShPtrIpp32fcBuffer ShiftFinder::sumDivMethod()
     return d->sumDivBuffer;
 }
 
-int ShiftFinder::getChannelIndex(){
-    return d->channelIndex;
-}
-
-const VectorIpp32fc& ShiftFinder::getShiftBuffer()
-{
-    return d->shiftBufferT;
-}
-
-double ShiftFinder::getShiftValue()
-{
-    return d->ddcDifference;
-}
-
-double ShiftFinder::getDeltaStart()
-{
-    return d->deltaStart;
-}
 
 void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
-                           quint32 ddcFrequency,
-                           quint32 sampleRate,
-                           quint32 blockSize){
+                       quint32 ddcFrequency,
+                       quint32 sampleRate,
+                       quint32 blockSize){
 
     qDebug()<<"THREAD_SYNC_BEGIN";
 
-    ShiftFinder f(sampleRate,blockSize);
-    d->channelIndex=-1;
-    d->ddcDifference=0.0;
+    d->shiftData.channelIndex=-1;
+    d->shiftData.ddcDifference=0.0;
+    d->shiftData.shiftBuffer.resize(blockSize);
 
-    d->shiftBufferT.resize(blockSize);
     if(calcShiftInChannel(buffers,sampleRate)){
-        BlockAlinement blockAlinement(f.getShiftBuffer(),blockSize);
+        BlockAlinement blockAlinement(d->shiftData.shiftBuffer,blockSize);
         SumSubMethod sumSubMethod(sampleRate,blockSize);
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
@@ -126,9 +115,10 @@ void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
         bool isFirstStationReadedPacket=false;
         bool isSecondStationReadedPacket=false;
 
-        qDebug()<<"CHANNEL_SHIFT:"<<f.getChannelIndex()
-               <<"SHIFT_VALUE:"<<f.getShiftValue()
+        qDebug()<<"CHANNEL_SHIFT:"<<getChannelIndex()
+               <<"SHIFT_VALUE:"<<getShiftValue()
               <<"BUF_USE_COUNT"<<buffers.first.use_count()<<buffers.second.use_count();
+
         while(!d->quit){
             if(buffers.first->pop(packet[CHANNEL_FIRST])){
                 syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
@@ -147,10 +137,10 @@ void ShiftFinder::sync(const ShPtrPacketBufferPair buffers,
 
                 Ipp32fc *signal=reinterpret_cast<Ipp32fc*>
                         (const_cast<float*>
-                         (packet[f.getChannelIndex()].sample().data()));
+                         (packet[getChannelIndex()].sample().data()));
 
-                blockAlinement.equate(signal,blockSize,f.getShiftValue(),
-                                      ddcFrequency,sampleRate,f.getDeltaStart());
+                blockAlinement.equate(signal,blockSize,d->shiftData.ddcDifference,
+                                      ddcFrequency,sampleRate,d->shiftData.deltaStart);
                 //                                qDebug()<<"BA_2";
                 d->syncBuffer1->push(packet[CHANNEL_FIRST]);
                 d->syncBuffer2->push(packet[CHANNEL_SECOND]);
@@ -181,10 +171,11 @@ bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
     qDebug()<<"B_USE COUNT_calcShiftInChannel_BEGIN"
            <<stationPair.first.use_count()
           <<stationPair.first.use_count()
-         <<d->sampleRate
-        <<d->shiftBufferT.size();
+         <<sampleRate
+        <<d->shiftData.shiftBuffer.size();
 
     BoolPair isReadedPacketPair;
+
     isReadedPacketPair.first=false;
     isReadedPacketPair.second=false;
 
@@ -234,37 +225,37 @@ bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
                                                               packetPair[CHANNEL_SECOND].block_number(),
                                                               packetPair[CHANNEL_SECOND].block_size());
 
-            d->ddcDifference=  ddcDelayAfterLastPpsFirst-ddcDelayAfterLastPpsSecond;
+            d->shiftData.ddcDifference=  ddcDelayAfterLastPpsFirst-ddcDelayAfterLastPpsSecond;
 
-            d->channelIndex = d->ddcDifference<0?CHANNEL_SECOND   :  CHANNEL_FIRST;
-            d->ddcDifference = abs(d->ddcDifference);
+            d->shiftData.channelIndex = d->shiftData.ddcDifference<0?CHANNEL_SECOND   :  CHANNEL_FIRST;
+            d->shiftData.ddcDifference = abs(d->shiftData.ddcDifference);
 
-            d->deltaStart = d->channelIndex==CHANNEL_FIRST ?
+            d->shiftData.deltaStart = d->shiftData.channelIndex==CHANNEL_FIRST ?
                         ((packetPair[CHANNEL_FIRST].block_number()*
-                          packetPair[CHANNEL_FIRST].block_size())+ d->ddcDifference)
+                          packetPair[CHANNEL_FIRST].block_size())+ d->shiftData.ddcDifference)
                         -packetPair[CHANNEL_SECOND].block_number()*packetPair[CHANNEL_SECOND].block_size()
                       :
                         ((packetPair[CHANNEL_SECOND].block_number()*
-                          packetPair[CHANNEL_SECOND].block_size())+ d->ddcDifference)
+                          packetPair[CHANNEL_SECOND].block_size())+ d->shiftData.ddcDifference)
                         -packetPair[CHANNEL_FIRST].block_number()*packetPair[CHANNEL_FIRST].block_size()
                         ;
-            d->deltaStart=abs(d->deltaStart);
+            d->shiftData.deltaStart=abs(d->shiftData.deltaStart);
 
-            Q_ASSERT_X( d->ddcDifference>=0 &&  d->ddcDifference<packet.block_size(),
+            Q_ASSERT_X( d->shiftData.ddcDifference>=0 &&  d->shiftData.ddcDifference<packet.block_size(),
                         "SignalSync::sync","error shift");
 
-            if(static_cast<quint32>(d->ddcDifference)>packetPair[d->channelIndex].block_size()){
+            if(static_cast<quint32>(d->shiftData.ddcDifference)>packetPair[d->shiftData.channelIndex].block_size()){
                 qDebug()<<"******************BAD SHIFT SIZE"
-                       <<d->ddcDifference
-                      <<d->deltaStart;
+                       <<d->shiftData.ddcDifference
+                      <<d->shiftData.deltaStart;
                 isReadedPacketPair.first=false;
                 isReadedPacketPair.second=false;
                 continue;
             }
 
-            initShiftBuffer(packetPair[d->channelIndex].sample().data(),
-                    packetPair[d->channelIndex].block_size(),
-                    static_cast<quint32>(d->ddcDifference));
+            initShiftBuffer(packetPair[d->shiftData.channelIndex].sample().data(),
+                    packetPair[d->shiftData.channelIndex].block_size(),
+                    static_cast<quint32>(d->shiftData.ddcDifference));
             //WARNING UNCOMMENT THIS CODE
             //            initShiftBuffer(packetPair[d->channelIndex].sample().data(),
             //                    static_cast<quint32>(packetPair[d->channelIndex].sample().size()),
@@ -278,9 +269,9 @@ bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
                        packetPair[CHANNEL_SECOND].time_of_week(),packetPair[CHANNEL_SECOND].ddc_sample_counter(),
                        packetPair[CHANNEL_SECOND].adc_period_counter());
 
-            qDebug()<<"*********SHIFT_FOUND"<<d->channelIndex
-                   <<d->ddcDifference
-                  <<d->deltaStart;
+            qDebug()<<"*********SHIFT_FOUND"<<d->shiftData.channelIndex
+                   <<d->shiftData.ddcDifference
+                  <<d->shiftData.deltaStart;
             shiftFound=true;
         }
     }
@@ -289,12 +280,12 @@ bool ShiftFinder::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
 }
 
 void ShiftFinder::initShiftBuffer(const float *signalData, quint32 blockSize,
-                                          quint32 shift)
+                                  quint32 shift)
 {
-    qDebug()<<"B_INIT_SHIFT_TEST"<<shift<<d->shiftBufferT.size();
+    qDebug()<<"B_INIT_SHIFT_TEST"<<shift<<d->shiftData.shiftBuffer.size();
     for(quint32 i=0;i<shift;i++){
-        d->shiftBufferT[i].re=signalData[blockSize-(shift)+i*2];
-        d->shiftBufferT[i].im=signalData[(blockSize-(shift)+i*2)+1];
+        d->shiftData.shiftBuffer[i].re=signalData[blockSize-(shift)+i*2];
+        d->shiftData.shiftBuffer[i].im=signalData[(blockSize-(shift)+i*2)+1];
     }
 }
 
@@ -313,11 +304,30 @@ double ShiftFinder::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,
 
 
 void ShiftFinder::showPacket(quint32 blockNumber,
-                                     quint32 sampleRate,
-                                     quint32 timeOfWeek,
-                                     double ddcSampleCounter,
-                                     quint64 adcPeriodCounter)
+                             quint32 sampleRate,
+                             quint32 timeOfWeek,
+                             double ddcSampleCounter,
+                             quint64 adcPeriodCounter)
 {
     qDebug()<<"Packet"<<blockNumber<<sampleRate<<
               timeOfWeek<<ddcSampleCounter<<adcPeriodCounter;
+}
+
+int ShiftFinder::getChannelIndex(){
+    return d->shiftData.channelIndex;
+}
+
+const VectorIpp32fc& ShiftFinder::getShiftBuffer()
+{
+    return d->shiftData.shiftBuffer;
+}
+
+double ShiftFinder::getShiftValue()
+{
+    return d->shiftData.ddcDifference;
+}
+
+double ShiftFinder::getDeltaStart()
+{
+    return d->shiftData.deltaStart;
 }

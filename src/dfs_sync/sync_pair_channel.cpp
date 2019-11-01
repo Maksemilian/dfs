@@ -149,18 +149,19 @@ void SyncPairChannel::start(const ShPtrPacketBufferPair receiverStationClientPai
 {
     qDebug()<<"******SyncPairChannel::start();";
     qDebug()<<"COUNT"<<receiverStationClientPair.second.use_count();
-    d->quit=false;
-//    d->shiftFinder=new ShiftFinder();
-//    d->shiftFinder->setBuffer1(d->syncBuffer1);
-//    d->shiftFinder->setBuffer2(d->syncBuffer2);
-//    d->shiftFinder->setSumDivBuffer(d->sumDivBuffer);
-//    d->shiftFinder->start();
-    d->fw.setFuture(QtConcurrent::run(this,&SyncPairChannel::sync,
-                                      receiverStationClientPair,
-                                      ddcFrequency,sampleRate,blockSize));
-//    d->fw.setFuture(QtConcurrent::run(d->shiftFinder,&ShiftFinder::sync,
+//    d->quit=false;
+//    d->fw.setFuture(QtConcurrent::run(this,&SyncPairChannel::sync,
 //                                      receiverStationClientPair,
 //                                      ddcFrequency,sampleRate,blockSize));
+
+    d->shiftFinder=new ShiftFinder();
+    d->shiftFinder->setBuffer1(d->syncBuffer1);
+    d->shiftFinder->setBuffer2(d->syncBuffer2);
+    d->shiftFinder->setSumDivBuffer(d->sumDivBuffer);
+    d->shiftFinder->start();
+    d->fw.setFuture(QtConcurrent::run(d->shiftFinder,&ShiftFinder::sync,
+                                      receiverStationClientPair,
+                                      ddcFrequency,sampleRate,blockSize));
 }
 
 /*!
@@ -172,10 +173,10 @@ void SyncPairChannel::start(const ShPtrPacketBufferPair receiverStationClientPai
  */
 void SyncPairChannel::stop()
 {
-    d->quit=true;
-    d->fw.waitForFinished();
-//    d->shiftFinder->stop();
-//    delete d->shiftFinder;
+//    d->quit=true;
+//    d->fw.waitForFinished();
+    d->shiftFinder->stop();
+    delete d->shiftFinder;
     qDebug()<<"SyncPairChannel::stop();";
 }
 
