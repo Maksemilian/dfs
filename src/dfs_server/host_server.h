@@ -2,9 +2,10 @@
 #define STREAM_SERVE_RTEST_H
 
 
-#include "host_ds.h"
 #include "channel_host.h"
-#include "host_ds_stream.h"
+//#include "host_ds.h"
+//#include "host_ds_stream.h"
+#include "wrd_coh_g35_ds.h"
 
 #include <memory>
 
@@ -16,6 +17,7 @@
 class CohG35DeviceSet;
 class ConnectRequest;
 class StreamServer;
+class DeviceSetClient;
 
 class StreamDDC1;
 class ChannelHost;
@@ -25,14 +27,14 @@ class StreamServer:public QTcpServer
     Q_OBJECT
 
 public:
-    StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet);
+    StreamServer();
     ~StreamServer()override;
-
-    void addStreamDDC1(StreamDDC1*streamDDC1);
-    void stopStreamDDC1();
 signals:
     void newChannelReady();
+private slots:
+    void onChangedDeviceSet(unsigned int deviceSetIndex){}
 private:
+    void stopStreamDDC1();
     void incomingConnection(qintptr handle) override;
     void onChannelReady();
     void onNewConnection();

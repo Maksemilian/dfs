@@ -1,29 +1,18 @@
 #ifndef COH_G35_DEVICE_SET_H
 #define COH_G35_DEVICE_SET_H
 
+#include "coh_g35_ds_settings.h"
+
 #include "ring_buffer.h"
 #include "receiver.pb.h"
 
 #include "G35DDCAPI.h"
 
-#include "coh_g35_ds_settings.h"
 #include <QPair>
 #include <memory>
 
 class TimeReader;
-
-//struct CohG35DeviceSetSettings
-//{
-//    unsigned int attenuator;
-//    QPair<unsigned int,unsigned int> preselectors;
-//    bool preamplifier;
-//    bool adcEnabled;
-//    unsigned short threshold;
-//    unsigned int frequency;
-//    unsigned int ddcType;
-//    unsigned int samplesPerBuffer;
-//    bool powerEnabled;
-//};
+using ShPtrRingPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class CohG35DeviceSet :public ICohG35DDCDeviceSetCallback
 {
@@ -39,7 +28,7 @@ public:
         unsigned int BitsPerSample;
     };
 
-    CohG35DeviceSet();
+    CohG35DeviceSet( ICohG35DDCDeviceSet *_deviceSet);
     virtual ~CohG35DeviceSet();
 public:
     bool setPower(bool state);
@@ -58,13 +47,12 @@ public:
 
     void reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sampePerBuffer,bool writeToFile=false);
 
-    bool setUpDeviceSet(quint32 numberDeviceSet);
 
-    COH_G35DDC_DEVICE_SET getDeviceSetInfo();
-
-    inline std::shared_ptr<RingBuffer<proto::receiver::Packet>>getBuffer(){
+    inline ShPtrRingPacketBuffer getBuffer(){
         return buffer;
     }
+
+    COH_G35DDC_DEVICE_SET getDeviceSetInfo();
     QString getDeviceSetName();
 private:
     void __stdcall CohG35DDC_IFCallback(ICohG35DDCDeviceSet *DeviceSet,unsigned int DeviceIndex,const short *Buffer,unsigned int NumberOfSamples,
@@ -88,9 +76,9 @@ private:
     void freeResource();
 private:
 
-    ICohG35DDCDeviceSet *deviceSet=nullptr;
-    std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
-    TimeReader *timeReader=nullptr;
+    ICohG35DDCDeviceSet *_deviceSet=nullptr;
+    ShPtrRingPacketBuffer buffer;
+    std::unique_ptr<TimeReader> timeReader;
 
     bool isFirstBlock;
     int counterBlockPPS;

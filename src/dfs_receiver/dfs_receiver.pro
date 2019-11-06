@@ -16,22 +16,21 @@ CONFIG += staticlib
 CONFIG += c++14
 DESTDIR =$${LIBS_PATH}/dfs_receiver/lib
 
-INCLUDEPATH += $${LIBS_PATH}/winradio/include
 
 INCLUDEPATH += $${LIBS_PATH}/google/include
+INCLUDEPATH += $${LIBS_PATH}/winradio/include
 
-INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
-INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
+INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
+#INCLUDEPATH += $${LIBS_PATH}/dfs_net/include
 
-LIBS += -L$${LIBS_PATH}/winradio/lib
-
+#LIBS += -L$${LIBS_PATH}/winradio/lib
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib -ldfs_proto$${LIB_SUFFIX}
 
-LIBS += -L$${LIBS_PATH}/dfs_receiver/lib -ldfs_receiver$${LIB_SUFFIX}
-LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
+#LIBS += -L$${LIBS_PATH}/dfs_receiver/lib -ldfs_receiver$${LIB_SUFFIX}
+#LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 #LIBS += -L$${LIBS_PATH}/winradio/lib
-LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
+#LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 HEADERS += \
     wrd_coh_g35_ds.h \

@@ -34,7 +34,7 @@ public:
     void setAddres(const QString &address,quint16 port);
     QString address();
     quint16 port();
-    void setDeviceSetCommand(const proto::receiver::Command &command);
+    void sendCommand(const proto::receiver::Command &command);
     bool isConnected();
     inline std::shared_ptr<RingBuffer<proto::receiver::Packet>> ddc1Buffer(){
 //        qDebug()<<"DSW:"<<_streamController->ddc1Buffer().use_count();

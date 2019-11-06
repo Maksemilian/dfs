@@ -3,14 +3,11 @@
 
 #include "channel_host.h"
 
-#include "ring_buffer.h"
-#include "receiver.pb.h"
+#include "wrd_coh_g35_ds.h"
 
-#include <google/protobuf/message.h>
 #include <memory>
 #include <QObject>
 
-class DeviceSetSettings;
 class ChannelHost;
 
 class DeviceSetClient:public QObject
@@ -20,19 +17,21 @@ class DeviceSetClient:public QObject
     static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
-    DeviceSetClient(net::ChannelHost*channelHost);
+    DeviceSetClient(net::ChannelHost*channelHost,
+                    const std::shared_ptr<CohG35DeviceSet>&deviceSet);
     ~DeviceSetClient();
 
     Q_SIGNAL void stationDisconnected();
     void sendDeviceSetInfo();
-    std::shared_ptr<RingBuffer<proto::receiver::Packet>> getBuffer();
-
+    void setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet>&shPtrCohG35DeviceSet);
+signals:
+    void changedDeviceSet(unsigned int indexDeviceSet);
 private slots:
     void onDisconnected();
     void onMessageReceived(const QByteArray &buffer);
 private:
     void sendCommandAnswer(proto::receiver::Answer *commandAnswer);
-    void readCommanPacket(const proto::receiver::Command &command);
+    void readCommandPacket(const proto::receiver::Command &command);
     DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 
     QByteArray serializeMessage(const google::protobuf::Message &message);

@@ -139,7 +139,7 @@ void DeviceSetWidget::onDeviceSetCommandFailed(const QString &errorString)
     //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОШИБКИ
 }
 
-void DeviceSetWidget::setDeviceSetCommand(const proto::receiver::Command &command)
+void DeviceSetWidget::sendCommand(const proto::receiver::Command &command)
 {
     _deviceSetClient->sendCommand(command);
 }

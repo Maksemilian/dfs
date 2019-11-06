@@ -21,7 +21,7 @@ DESTDIR =$${LIBS_PATH}/dfs_net/lib
 INCLUDEPATH += $${LIBS_PATH}/google/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 
-LIBS += $${LIBS_PATH}/google/lib -lprotobuf
+#LIBS += $${LIBS_PATH}/google/lib -lprotobuf
 LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 
 HEADERS += \

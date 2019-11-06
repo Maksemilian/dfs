@@ -11,62 +11,7 @@ StreamDDC1::StreamDDC1(net::ChannelHost*streamSocket,
 {
 
 }
-/*
-void StreamDDC1::process()
-{
-//    qDebug("BEGIN PROCESS STREAM");
-    //********************
-//    proto::receiver::Packet packet;
-//    proto::receiver::HostToClient hostToClient;
 
-    if(buffer->pop(packet)&&!quit){
-        hostToClient.mutable_packet()->CopyFrom(packet);
-        int packetByteSize= hostToClient.ByteSize();
-
-//        QByteArray ba;
-//        QDataStream out(&ba,QIODevice::WriteOnly);
-
-//        out<<packetByteSize;
-//        if(!_streamSocket->isOpen()){
-//            qDebug("Socket Close");
-//            quit=true;
-//            return;
-//        }
-
-//        _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
-//        _streamSocket->writeToSocket(ba.size());
-//        _streamSocket->flush();
-//        char buf[packetByteSize];
-//        hostToClient.SerializeToArray(buf,packetByteSize);
-
-//        _streamSocket->writeDataToBuffer(buf,packetByteSize);
-
-//        qint64 bytesWriten=0;
-//        while (!quit&&bytesWriten != packetByteSize ){
-//            if(!_streamSocket->isWritable()){
-//                quit=true;
-//                return;
-//            }
-//            qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
-//            if(bytes==-1){
-//                quit=true;
-//                return;
-//            }
-//            bytesWriten+=bytes;
-//        }
-        qDebug()<<"WRITE:"
-               <<packet.block_number()
-              <<packet.sample_rate()
-             <<"TOW:"<<packet.time_of_week()
-            <<"DDC_C"<<packet.ddc_sample_counter()
-           <<"ADC_C"<<packet.adc_period_counter()
-          <<hostToClient.ByteSize();
-//        qDebug()<<"WR";
-//        QThread::sleep(1);
-        emit next();
-    }
-}
-*/
 
 void StreamDDC1::process()
 {
@@ -140,3 +85,60 @@ void StreamDDC1::stop(){
 //    emit finished();
     qDebug("STOP STREAM WRITER");
 }
+
+/*
+void StreamDDC1::process()
+{
+//    qDebug("BEGIN PROCESS STREAM");
+    //********************
+//    proto::receiver::Packet packet;
+//    proto::receiver::HostToClient hostToClient;
+
+    if(buffer->pop(packet)&&!quit){
+        hostToClient.mutable_packet()->CopyFrom(packet);
+        int packetByteSize= hostToClient.ByteSize();
+
+//        QByteArray ba;
+//        QDataStream out(&ba,QIODevice::WriteOnly);
+
+//        out<<packetByteSize;
+//        if(!_streamSocket->isOpen()){
+//            qDebug("Socket Close");
+//            quit=true;
+//            return;
+//        }
+
+//        _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
+//        _streamSocket->writeToSocket(ba.size());
+//        _streamSocket->flush();
+//        char buf[packetByteSize];
+//        hostToClient.SerializeToArray(buf,packetByteSize);
+
+//        _streamSocket->writeDataToBuffer(buf,packetByteSize);
+
+//        qint64 bytesWriten=0;
+//        while (!quit&&bytesWriten != packetByteSize ){
+//            if(!_streamSocket->isWritable()){
+//                quit=true;
+//                return;
+//            }
+//            qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
+//            if(bytes==-1){
+//                quit=true;
+//                return;
+//            }
+//            bytesWriten+=bytes;
+//        }
+        qDebug()<<"WRITE:"
+               <<packet.block_number()
+              <<packet.sample_rate()
+             <<"TOW:"<<packet.time_of_week()
+            <<"DDC_C"<<packet.ddc_sample_counter()
+           <<"ADC_C"<<packet.adc_period_counter()
+          <<hostToClient.ByteSize();
+//        qDebug()<<"WR";
+//        QThread::sleep(1);
+        emit next();
+    }
+}
+*/

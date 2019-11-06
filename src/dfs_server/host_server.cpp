@@ -1,11 +1,16 @@
 #include "host_server.h"
+#include "host_ds.h"
+#include "host_ds_stream.h"
+#include "wrd_ds_selector.h"
 
 #include <QThread>
 
 //************************** SERVER *************************
 
-StreamServer::StreamServer(std::shared_ptr<CohG35DeviceSet>deviceSet):
-    deviceSet(deviceSet)
+StreamServer::StreamServer(/*std::shared_ptr<CohG35DeviceSet>deviceSet*/):
+    //WARNING СОЗДАНИЕ DEVICE SET
+    //TODO ИСПОЛЬЗУЕТСЯ ТОЛЬКО 0 DEVICE SET
+    deviceSet(DeviceSetSelector::selectDeviceSet(0))
 {
     qDebug()<<"Stream Server Init";
     //    streamAnalizator=new StreamAnalizator(this);
@@ -78,7 +83,7 @@ void StreamServer::onChannelDisconnected()
 void StreamServer::createSession(net::ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
-        _client=new DeviceSetClient(channelHost);
+        _client=new DeviceSetClient(channelHost,deviceSet);
         _client->sendDeviceSetInfo();
     }else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
         qDebug()<<"STREAM SESSION";
@@ -97,7 +102,7 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
 void StreamServer::createThread(net::ChannelHost *channelHost)
 {
     QThread *thread=new QThread;
-    _streamDDC1=new StreamDDC1(channelHost,_client->getBuffer());
+    _streamDDC1=new StreamDDC1(channelHost,deviceSet->getBuffer());
     _streamDDC1->moveToThread(thread);
     channelHost->moveToThread(thread);
 //        connect(channelHost,&net::ChannelHost::finished,

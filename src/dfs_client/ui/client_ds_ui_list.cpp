@@ -75,7 +75,7 @@ void DeviceSetListWidget::setAllDeviceSet(const proto::receiver::Command &comman
         DeviceSetWidget*widget=qobject_cast<DeviceSetWidget*>(_listWidget->itemWidget(item));
         if(widget){
             _counter++;
-            widget->setDeviceSetCommand(command);
+            widget->sendCommand(command);
         }
     }
 }

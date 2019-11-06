@@ -3,9 +3,10 @@
 
 #include "ring_buffer.h"
 #include "receiver.pb.h"
+
 #include <QObject>
 #include <memory>
-#include <QDebug>
+
 class StreamReader;
 
 class ClientStreamController:public QObject

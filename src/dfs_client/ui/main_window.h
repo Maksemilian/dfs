@@ -106,8 +106,8 @@ private:
 
     PlotMonitoring *plotMonitoring;
 
-    ChannelPlot*channelPlot;//central widget
-    ElipsPlot *elipsPlot;//right dock idget
+//    ChannelPlot*channelPlot;//central widget
+//    ElipsPlot *elipsPlot;//right dock idget
 
     DeviceSetListWidget *deviceSetListWidget;
 };

@@ -16,6 +16,7 @@ TARGET = dfs_base
 TEMPLATE = lib
 CONFIG += c++14
 CONFIG += staticlib
+
 HEADERS += \
     i_device_set_settings.h \
     ring_buffer.h \

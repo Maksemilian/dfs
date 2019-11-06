@@ -21,16 +21,15 @@ CONFIG += c++14
 
 DESTDIR =$${LIBS_PATH}/dfs_sync/lib
 
-INCLUDEPATH += $${LIBS_PATH}/ipp/include
-LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
-
 INCLUDEPATH += $${LIBS_PATH}/dfs_base/include
-
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
+
+INCLUDEPATH += $${LIBS_PATH}/ipp/include
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
-LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
+LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
+#LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 SOURCES += \
     sync_process.cpp \

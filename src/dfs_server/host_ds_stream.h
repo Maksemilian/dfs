@@ -25,13 +25,13 @@ public:
                std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer);
 
     ~StreamDDC1(){qDebug()<<"DESTR_DDC1";}
-    void process();
     void start();
     void stop();
 signals:
     void finished();
     void next();
-
+private:
+    void process();
 private:
     net::ChannelHost *_streamSocket;
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;

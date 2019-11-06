@@ -6,23 +6,24 @@
 #include <QTimer>
 #include <QDebug>
 
-CohG35DeviceSet::CohG35DeviceSet():
+CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet*deviceSet):
+    _deviceSet(deviceSet),
     buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-    timeReader(new TimeReader()),
+    timeReader(std::make_unique<TimeReader>()),
     isFirstBlock(true),
     counterBlockPPS(1),
     currentDDCCounter(-1),
     currentWeekNumber(0),
     currentTimeOfWeek(0)
 {
-
+    _deviceSet->SetCallback(this);
 }
 
 QString CohG35DeviceSet::getDeviceSetName(){
     quint32 deviceCount;
-    deviceSet->GetDeviceCount(&deviceCount);
+    _deviceSet->GetDeviceCount(&deviceCount);
     G35DDC_DEVICE_INFO deviceInfo[deviceCount];
-    deviceSet->GetDeviceInfos(deviceInfo,&deviceCount);
+    _deviceSet->GetDeviceInfos(deviceInfo,&deviceCount);
     QString deviceSetName="DS#";
     for(quint32 i=0;i<deviceCount;i++){
         deviceSetName+=deviceInfo[i].SerialNumber;
@@ -38,18 +39,6 @@ QString CohG35DeviceSet::getDeviceSetName(){
     return deviceSetName;
 }
 
-bool CohG35DeviceSet::setUpDeviceSet(quint32 numberDeviceSet){
-    ICohG35DDCDeviceSet *deviceSet=DeviceSetSelector::selectDeviceSet(numberDeviceSet);
-    if(deviceSet){
-        deviceSet->SetCallback(this);
-        this->deviceSet=deviceSet;
-//        signalFileWriter->createMainDirectory(getDeviceSetName());
-        //       signalFileWriter->createWorkDirectory(QDate::currentDate().toString("dd.MM.yyyy"));
-        return true;
-    }
-
-    return false;
-}
 
 void CohG35DeviceSet::resetData(){
     isFirstBlock=true;
@@ -62,8 +51,8 @@ void CohG35DeviceSet::resetData(){
 }
 
 void CohG35DeviceSet::freeResource(){
-    if(deviceSet!=nullptr){
-        deviceSet->Release();
+    if(_deviceSet!=nullptr){
+        _deviceSet->Release();
         //        delete ddc1Buffer;
     }
 }
@@ -75,45 +64,45 @@ CohG35DeviceSet::~CohG35DeviceSet()
 
 COH_G35DDC_DEVICE_SET CohG35DeviceSet::getDeviceSetInfo(){
     COH_G35DDC_DEVICE_SET deviceSetInfos;
-    deviceSet->GetDeviceCount(&deviceSetInfos.DeviceCount);
+    _deviceSet->GetDeviceCount(&deviceSetInfos.DeviceCount);
     deviceSetInfos.DeviceInfo=new G35DDC_DEVICE_INFO[deviceSetInfos.DeviceCount];
-    deviceSet->GetDeviceInfos(deviceSetInfos.DeviceInfo,&deviceSetInfos.DeviceCount);
+    _deviceSet->GetDeviceInfos(deviceSetInfos.DeviceInfo,&deviceSetInfos.DeviceCount);
     return deviceSetInfos;
 }
 
 //**************COMMAND TO DEVICE SET
 
 bool CohG35DeviceSet::setPower(bool state){
-    return deviceSet->SetPower(state);
+    return _deviceSet->SetPower(state);
 }
 
 bool CohG35DeviceSet::setAttenuator(unsigned int attenuationLevel){
-    return deviceSet->SetAttenuator(attenuationLevel);
+    return _deviceSet->SetAttenuator(attenuationLevel);
 }
 
 bool CohG35DeviceSet::setPreamplifierEnabled(bool state){
-    return deviceSet->SetPreamp(state);
+    return _deviceSet->SetPreamp(state);
 }
 
 bool CohG35DeviceSet::setPreselectors(unsigned int lowFrequency, unsigned int highFrequency){
-    return deviceSet->SetPreselectors(lowFrequency,highFrequency);
+    return _deviceSet->SetPreselectors(lowFrequency,highFrequency);
 }
 
 bool CohG35DeviceSet::setAdcNoiceBlankerEnabled(bool state){
-    return deviceSet->SetADCNoiseBlanker(state);
+    return _deviceSet->SetADCNoiseBlanker(state);
 }
 
 bool CohG35DeviceSet::setAdcNoiceBlankerThreshold(unsigned short threshold){
-    return deviceSet->SetADCNoiseBlankerThreshold(threshold);
+    return _deviceSet->SetADCNoiseBlankerThreshold(threshold);
 }
 
 bool CohG35DeviceSet::setDDC1Frequency(unsigned int ddc1Frequency){
-    return deviceSet->SetDDC1Frequency(ddc1Frequency);
+    return _deviceSet->SetDDC1Frequency(ddc1Frequency);
 }
 
 bool CohG35DeviceSet::setDDC1Type(quint32 type)
 {
-    return  deviceSet->SetDDC1(type);
+    return  _deviceSet->SetDDC1(type);
 }
 bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
     bool succesed=false;
@@ -137,22 +126,22 @@ bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
     succesed=setDDC1Frequency(settings.frequency);
     qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<settings.frequency<<"|| Succesed command"<<succesed;
 
-    succesed=deviceSet->SetDDC1(settings.ddcType);
+    succesed=_deviceSet->SetDDC1(settings.ddcType);
     qDebug()<<"======Comand  SET_DDC1_TYPE"<<settings.ddcType<<"|| Succesed command"<<succesed;
 
     return succesed;
 }
 
 void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer,bool writeToFile){
-    Q_ASSERT_X(deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
-    if(deviceSet){
+    Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
+    if(_deviceSet){
         resetData();
         timeReader->start();
         QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer,writeToFile]{
             timeReader->getTime(currentWeekNumber,currentTimeOfWeek);
-            deviceSet->StartDDC1(samplesPerBuffer);
+            _deviceSet->StartDDC1(samplesPerBuffer);
             quint32 ddc1Frequency=0;
-            if(writeToFile&&deviceSet->GetDDC1Frequency(&ddc1Frequency)){
+            if(writeToFile&&_deviceSet->GetDDC1Frequency(&ddc1Frequency)){
                 qDebug()<<"Start writing file"<<ddc1Frequency;
                 //WARNING signalFileWriter->start(ddc1Buffer.get(),QString::number(ddc1Frequency));
             }
@@ -161,8 +150,8 @@ void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer,bool writeToFile){
 }
 
 void CohG35DeviceSet::stopDDC1(){
-    if(deviceSet){
-        deviceSet->StopDDC1();
+    if(_deviceSet){
+        _deviceSet->StopDDC1();
         timeReader->stop();
 //        ddc1Buffer->reset();
         buffer->reset();
@@ -171,15 +160,15 @@ void CohG35DeviceSet::stopDDC1(){
 }
 
 void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int samplesPerBuffer,bool writeToFile){
-    if(deviceSet){
+    if(_deviceSet){
         bool succesed=true;
         std::shared_ptr<QMetaObject::Connection> sharedPtrConnection(new QMetaObject::Connection) ;
-        *sharedPtrConnection=QObject::connect(timeReader,&TimeReader::stopedTrimble,
+        *sharedPtrConnection=QObject::connect(timeReader.get(),&TimeReader::stopedTrimble,
                                               [this,sharedPtrConnection,ddc1TypeIndex,samplesPerBuffer,writeToFile]{
             QObject::disconnect(*sharedPtrConnection);
-            deviceSet->SetDDC1(ddc1TypeIndex);
+            _deviceSet->SetDDC1(ddc1TypeIndex);
             quint32 ddcfreq;
-            deviceSet->GetDDC1Frequency(&ddcfreq);
+            _deviceSet->GetDDC1Frequency(&ddcfreq);
             qDebug()<<"RESTART"<<ddcfreq<<writeToFile;
             startDDC1(samplesPerBuffer,writeToFile);
         });
@@ -317,6 +306,37 @@ void CohG35DeviceSet::showPacket(proto::receiver::Packet &packet){
         <<"||"<<"DDC_C"<<packet.ddc_sample_counter()<<"ADC_C"<<packet.adc_period_counter()
        <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
 }
+
+//******************OTHER CALLBACKS********************
+
+void CohG35DeviceSet::CohG35DDC_AudioStreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, unsigned int Type, const float *Buffer, unsigned int NumberOfSamples)
+{   printf("Audio Stream\n");
+    BOOL power;
+    DeviceSet->GetPower(&power);
+    qDebug()<<DeviceIndex<<Type<<Buffer[0]<<NumberOfSamples;
+}
+
+void CohG35DeviceSet::CohG35DDC_IFCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const short *Buffer, unsigned int NumberOfSamples, WORD MaxADCAmplitude, unsigned int ADCSamplingRate)
+{   printf("IF Stream\n");
+    BOOL power;
+    DeviceSet->GetPower(&power);
+    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples<<MaxADCAmplitude<<ADCSamplingRate;
+}
+
+void CohG35DeviceSet::CohG35DDC_DDC2PreprocessedStreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const float *Buffer, unsigned int NumberOfSamples, float SlevelPeak, float SlevelRMS)
+{   printf("DDC2 PreprocessedStream\n");
+    BOOL power;
+    DeviceSet->GetPower(&power);
+    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples<<SlevelPeak<<SlevelRMS;
+}
+
+void CohG35DeviceSet::CohG35DDC_DDC2StreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const float *Buffer, unsigned int NumberOfSamples)
+{   printf("DDC2 Stream\n");
+    BOOL power;
+    DeviceSet->GetPower(&power);
+    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples;
+}
+
 /*
 void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStreamCallbackData,
                                  double ddcSampleCounter,unsigned long long adcPeriodCounter,int counterBlockPPS)
@@ -364,35 +384,20 @@ void CohG35DeviceSet::fillPacket(Packet &packet, DDC1StreamCallbackData &ddcStre
 }
 
 */
-//******************OTHER CALLBACKS********************
+//bool CohG35DeviceSet::setUpDeviceSet(quint32 numberDeviceSet){
+//    ICohG35DDCDeviceSet *deviceSet=DeviceSetSelector::selectDeviceSet(numberDeviceSet);
+//    if(deviceSet){
+//        deviceSet->SetCallback(this);
+//        this->_deviceSet=deviceSet;
+////        signalFileWriter->createMainDirectory(getDeviceSetName());
+//        //       signalFileWriter->createWorkDirectory(QDate::currentDate().toString("dd.MM.yyyy"));
+//        return true;
+//    }
 
-void CohG35DeviceSet::CohG35DDC_AudioStreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, unsigned int Type, const float *Buffer, unsigned int NumberOfSamples)
-{   printf("Audio Stream\n");
-    BOOL power;
-    DeviceSet->GetPower(&power);
-    qDebug()<<DeviceIndex<<Type<<Buffer[0]<<NumberOfSamples;
-}
+//    return false;
+//}
 
-void CohG35DeviceSet::CohG35DDC_IFCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const short *Buffer, unsigned int NumberOfSamples, WORD MaxADCAmplitude, unsigned int ADCSamplingRate)
-{   printf("IF Stream\n");
-    BOOL power;
-    DeviceSet->GetPower(&power);
-    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples<<MaxADCAmplitude<<ADCSamplingRate;
-}
 
-void CohG35DeviceSet::CohG35DDC_DDC2PreprocessedStreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const float *Buffer, unsigned int NumberOfSamples, float SlevelPeak, float SlevelRMS)
-{   printf("DDC2 PreprocessedStream\n");
-    BOOL power;
-    DeviceSet->GetPower(&power);
-    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples<<SlevelPeak<<SlevelRMS;
-}
-
-void CohG35DeviceSet::CohG35DDC_DDC2StreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceIndex, const float *Buffer, unsigned int NumberOfSamples)
-{   printf("DDC2 Stream\n");
-    BOOL power;
-    DeviceSet->GetPower(&power);
-    qDebug()<<DeviceIndex<<Buffer[0]<<NumberOfSamples;
-}
 /*
 void CohG35DeviceSet::showPacket(Packet &packet){
 

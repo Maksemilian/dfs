@@ -1,4 +1,4 @@
-#include "device_set_selector.h"
+#include "wrd_ds_selector.h"
 #include "host_server.h"
 
 #include <QCoreApplication>
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    StreamServer *streamServer=new StreamServer(nullptr);
+    StreamServer *streamServer=new StreamServer();
     streamServer->listen(QHostAddress::Any,listenPort);
     qDebug()<<"Listen"<<listenPort;
     return app.exec();

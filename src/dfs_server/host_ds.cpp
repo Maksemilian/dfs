@@ -1,23 +1,27 @@
 #include "host_ds.h"
 
-#include "device_set_coh_g35.h"
+#include "wrd_coh_g35_ds.h"
+#include "wrd_ds_selector.h"
 
 #include "channel_host.h"
 //******************ReceiverStationClient***********************
 
 struct DeviceSetClient::Impl
 {
-    Impl(net::ChannelHost *channel):
-        channel(channel),
-        cohG35DeviceSet(std::make_shared<CohG35DeviceSet>())
+    Impl(net::ChannelHost *channel,
+         const std::shared_ptr<CohG35DeviceSet>&deviceSet):
+        channel(channel),cohG35DeviceSet(deviceSet)
+      //TODO сделать по запросу от клиента
+      //        cohG35DeviceSet(DeviceSetSelector::selectDeviceSet(0))
     {}
 
-    std::unique_ptr<net::ChannelHost> channel=nullptr;
+    std::unique_ptr<net::ChannelHost> channel;
     std::shared_ptr<CohG35DeviceSet>cohG35DeviceSet;
 };
 
-DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
-    : d(std::make_unique<Impl>(channelHost))
+DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost,
+                                 const std::shared_ptr<CohG35DeviceSet>&deviceSet)
+    : d(std::make_unique<Impl>(channelHost,deviceSet))
 {
     qDebug()<<"Create ReceiverStationClient";
 
@@ -26,20 +30,27 @@ DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
 
     connect(d->channel.get(),&net::Channel::messageReceived,
             this,&DeviceSetClient::onMessageReceived);
-
+//    emit changedDeviceSet(0);
     //TODO сделать по запросу от клиента
-    d->cohG35DeviceSet->setUpDeviceSet(0);
+    //    d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(0);
+    //    d->cohG35DeviceSet->setUpDeviceSet(0);
 }
+
 
 DeviceSetClient::~DeviceSetClient()
 {
     d->cohG35DeviceSet->stopDDC1();
 }
 
-std::shared_ptr<RingBuffer<proto::receiver::Packet>> DeviceSetClient::getBuffer()
+void DeviceSetClient::setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet> &shPtrCohG35DeviceSet)
 {
-    return  d->cohG35DeviceSet->getBuffer();
+    d->cohG35DeviceSet=shPtrCohG35DeviceSet;
 }
+
+//std::shared_ptr<RingBuffer<proto::receiver::Packet>> DeviceSetClient::getBuffer()
+//{
+//    return  d->cohG35DeviceSet->getBuffer();
+//}
 
 QByteArray DeviceSetClient::serializeMessage(const google::protobuf::Message &message)
 {
@@ -131,13 +142,13 @@ void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
     }
 
     if(clientToHost.has_command()){
-        readCommanPacket(clientToHost.command());
+        readCommandPacket(clientToHost.command());
     }else qDebug()<<"ERROR CLIENT_TO_HOST_MES IS EMPTY";
 }
 
 //********************SWITCH COMMAND*******************
 
-void DeviceSetClient::readCommanPacket(const proto::receiver::Command &command){
+void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command){
     bool succesed=false;
     switch(command.command_type()){
     case proto::receiver::CommandType::SET_POWER_OFF:

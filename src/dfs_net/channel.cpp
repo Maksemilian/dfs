@@ -28,6 +28,7 @@ Channel::Channel(qintptr _handle,QObject *parent)
 
 bool Channel::waitChannel(int msec)
 {
+
     return _socket->waitForConnected(msec)?true:false;
 }
 

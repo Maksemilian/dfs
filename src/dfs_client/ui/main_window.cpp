@@ -9,8 +9,8 @@
 #include "tool_switch_button.h"
 #include "tool_widgets.h"
 
-#include "plot_channel.h"
-#include "plot_elipse.h"
+//#include "plot_channel.h"
+//#include "plot_elipse.h"
 #include "plot_monitoring.h"
 
 #include "client_ds_ui.h"
@@ -20,7 +20,7 @@
 #include <QCheckBox>
 #include <QDebug>
 #include <QFile>
-
+#include <QSettings>
 //**************CONSTANTS*******************
 const QString MainWindow::SETTINGS_FILE_NAME="device_set.ini";
 
