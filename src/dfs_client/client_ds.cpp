@@ -167,6 +167,9 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
             qDebug()<<"STOPED_DDC1:";
             emit ddc1StreamStoped();
             break;
+        case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
+            qDebug()<<"SETTED_SHIFT_PHASE_DDC1";
+            break;
         case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
         case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
             break;
@@ -344,6 +347,8 @@ QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
         return"ERROR ADC THRESHOLD CHECK";
     case proto::receiver::SET_ATTENUATOR:
         return "ERROR ATTENUATOR CHECK";
+    case proto::receiver::SET_SHIFT_PHASE_DDC:
+        return "ERROR SHIFT PHASE DDC1";
     default:return "UNKNOWN KOMMAND";
     }
 }

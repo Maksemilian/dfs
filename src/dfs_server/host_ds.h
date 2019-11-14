@@ -14,7 +14,7 @@ class DeviceSetClient:public QObject
 {
     Q_OBJECT
 
-    static const int WAITING_SETTING_DEVICE_SET_POWER=100;
+//    static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
     DeviceSetClient(net::ChannelHost*channelHost,

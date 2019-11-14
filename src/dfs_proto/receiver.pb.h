@@ -42,7 +42,7 @@ struct TableStruct_receiver_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[8]
+  static const ::google::protobuf::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
@@ -75,6 +75,9 @@ extern PacketDefaultTypeInternal _Packet_default_instance_;
 class Preselectors;
 class PreselectorsDefaultTypeInternal;
 extern PreselectorsDefaultTypeInternal _Preselectors_default_instance_;
+class ShiftPhaseDDC1;
+class ShiftPhaseDDC1DefaultTypeInternal;
+extern ShiftPhaseDDC1DefaultTypeInternal _ShiftPhaseDDC1_default_instance_;
 }  // namespace receiver
 }  // namespace proto
 namespace google {
@@ -87,6 +90,7 @@ template<> ::proto::receiver::DeviceSetInfo* Arena::CreateMaybeMessage<::proto::
 template<> ::proto::receiver::HostToClient* Arena::CreateMaybeMessage<::proto::receiver::HostToClient>(Arena*);
 template<> ::proto::receiver::Packet* Arena::CreateMaybeMessage<::proto::receiver::Packet>(Arena*);
 template<> ::proto::receiver::Preselectors* Arena::CreateMaybeMessage<::proto::receiver::Preselectors>(Arena*);
+template<> ::proto::receiver::ShiftPhaseDDC1* Arena::CreateMaybeMessage<::proto::receiver::ShiftPhaseDDC1>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 namespace proto {
@@ -105,12 +109,13 @@ enum CommandType {
   SET_SETTINGS = 9,
   START_DDC1 = 10,
   STOP_DDC1 = 11,
+  SET_SHIFT_PHASE_DDC = 12,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = SET_POWER_OFF;
-const CommandType CommandType_MAX = STOP_DDC1;
+const CommandType CommandType_MAX = SET_SHIFT_PHASE_DDC;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -244,6 +249,125 @@ class Preselectors :
 };
 // -------------------------------------------------------------------
 
+class ShiftPhaseDDC1 :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:proto.receiver.ShiftPhaseDDC1) */ {
+ public:
+  ShiftPhaseDDC1();
+  virtual ~ShiftPhaseDDC1();
+
+  ShiftPhaseDDC1(const ShiftPhaseDDC1& from);
+
+  inline ShiftPhaseDDC1& operator=(const ShiftPhaseDDC1& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  ShiftPhaseDDC1(ShiftPhaseDDC1&& from) noexcept
+    : ShiftPhaseDDC1() {
+    *this = ::std::move(from);
+  }
+
+  inline ShiftPhaseDDC1& operator=(ShiftPhaseDDC1&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return default_instance().GetDescriptor();
+  }
+  static const ShiftPhaseDDC1& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ShiftPhaseDDC1* internal_default_instance() {
+    return reinterpret_cast<const ShiftPhaseDDC1*>(
+               &_ShiftPhaseDDC1_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  void Swap(ShiftPhaseDDC1* other);
+  friend void swap(ShiftPhaseDDC1& a, ShiftPhaseDDC1& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ShiftPhaseDDC1* New() const final {
+    return CreateMaybeMessage<ShiftPhaseDDC1>(nullptr);
+  }
+
+  ShiftPhaseDDC1* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<ShiftPhaseDDC1>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const ShiftPhaseDDC1& from);
+  void MergeFrom(const ShiftPhaseDDC1& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
+  #else
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ShiftPhaseDDC1* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // double phase_shift = 2;
+  void clear_phase_shift();
+  static const int kPhaseShiftFieldNumber = 2;
+  double phase_shift() const;
+  void set_phase_shift(double value);
+
+  // uint32 device_index = 1;
+  void clear_device_index();
+  static const int kDeviceIndexFieldNumber = 1;
+  ::google::protobuf::uint32 device_index() const;
+  void set_device_index(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:proto.receiver.ShiftPhaseDDC1)
+ private:
+  class HasBitSetters;
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  double phase_shift_;
+  ::google::protobuf::uint32 device_index_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_receiver_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Command :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:proto.receiver.Command) */ {
  public:
@@ -282,7 +406,7 @@ class Command :
                &_Command_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   void Swap(Command* other);
   friend void swap(Command& a, Command& b) {
@@ -362,6 +486,15 @@ class Command :
   ::proto::receiver::Preselectors* mutable_preselectors();
   void set_allocated_preselectors(::proto::receiver::Preselectors* preselectors);
 
+  // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+  bool has_shift_phase_ddc1() const;
+  void clear_shift_phase_ddc1();
+  static const int kShiftPhaseDdc1FieldNumber = 11;
+  const ::proto::receiver::ShiftPhaseDDC1& shift_phase_ddc1() const;
+  ::proto::receiver::ShiftPhaseDDC1* release_shift_phase_ddc1();
+  ::proto::receiver::ShiftPhaseDDC1* mutable_shift_phase_ddc1();
+  void set_allocated_shift_phase_ddc1(::proto::receiver::ShiftPhaseDDC1* shift_phase_ddc1);
+
   // .proto.receiver.CommandType command_type = 1;
   void clear_command_type();
   static const int kCommandTypeFieldNumber = 1;
@@ -417,6 +550,7 @@ class Command :
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr adc_noice_blanker_threshold_;
   ::proto::receiver::Preselectors* preselectors_;
+  ::proto::receiver::ShiftPhaseDDC1* shift_phase_ddc1_;
   int command_type_;
   ::google::protobuf::uint32 attenuator_;
   bool preamplifier_enebled_;
@@ -468,7 +602,7 @@ class DeviceInfo :
                &_DeviceInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   void Swap(DeviceInfo* other);
   friend void swap(DeviceInfo& a, DeviceInfo& b) {
@@ -617,7 +751,7 @@ class DeviceSetInfo :
                &_DeviceSetInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   void Swap(DeviceSetInfo* other);
   friend void swap(DeviceSetInfo& a, DeviceSetInfo& b) {
@@ -735,7 +869,7 @@ class Answer :
                &_Answer_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   void Swap(Answer* other);
   friend void swap(Answer& a, Answer& b) {
@@ -854,7 +988,7 @@ class Packet :
                &_Packet_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   void Swap(Packet* other);
   friend void swap(Packet& a, Packet& b) {
@@ -1043,7 +1177,7 @@ class HostToClient :
                &_HostToClient_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   void Swap(HostToClient* other);
   friend void swap(HostToClient& a, HostToClient& b) {
@@ -1178,7 +1312,7 @@ class ClientToHost :
                &_ClientToHost_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   void Swap(ClientToHost* other);
   friend void swap(ClientToHost& a, ClientToHost& b) {
@@ -1290,6 +1424,38 @@ inline void Preselectors::set_high_frequency(::google::protobuf::uint32 value) {
   
   high_frequency_ = value;
   // @@protoc_insertion_point(field_set:proto.receiver.Preselectors.high_frequency)
+}
+
+// -------------------------------------------------------------------
+
+// ShiftPhaseDDC1
+
+// uint32 device_index = 1;
+inline void ShiftPhaseDDC1::clear_device_index() {
+  device_index_ = 0u;
+}
+inline ::google::protobuf::uint32 ShiftPhaseDDC1::device_index() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.ShiftPhaseDDC1.device_index)
+  return device_index_;
+}
+inline void ShiftPhaseDDC1::set_device_index(::google::protobuf::uint32 value) {
+  
+  device_index_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.ShiftPhaseDDC1.device_index)
+}
+
+// double phase_shift = 2;
+inline void ShiftPhaseDDC1::clear_phase_shift() {
+  phase_shift_ = 0;
+}
+inline double ShiftPhaseDDC1::phase_shift() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.ShiftPhaseDDC1.phase_shift)
+  return phase_shift_;
+}
+inline void ShiftPhaseDDC1::set_phase_shift(double value) {
+  
+  phase_shift_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.ShiftPhaseDDC1.phase_shift)
 }
 
 // -------------------------------------------------------------------
@@ -1510,6 +1676,57 @@ inline void Command::set_samples_per_buffer(::google::protobuf::uint32 value) {
   
   samples_per_buffer_ = value;
   // @@protoc_insertion_point(field_set:proto.receiver.Command.samples_per_buffer)
+}
+
+// .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+inline bool Command::has_shift_phase_ddc1() const {
+  return this != internal_default_instance() && shift_phase_ddc1_ != nullptr;
+}
+inline void Command::clear_shift_phase_ddc1() {
+  if (GetArenaNoVirtual() == nullptr && shift_phase_ddc1_ != nullptr) {
+    delete shift_phase_ddc1_;
+  }
+  shift_phase_ddc1_ = nullptr;
+}
+inline const ::proto::receiver::ShiftPhaseDDC1& Command::shift_phase_ddc1() const {
+  const ::proto::receiver::ShiftPhaseDDC1* p = shift_phase_ddc1_;
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.shift_phase_ddc1)
+  return p != nullptr ? *p : *reinterpret_cast<const ::proto::receiver::ShiftPhaseDDC1*>(
+      &::proto::receiver::_ShiftPhaseDDC1_default_instance_);
+}
+inline ::proto::receiver::ShiftPhaseDDC1* Command::release_shift_phase_ddc1() {
+  // @@protoc_insertion_point(field_release:proto.receiver.Command.shift_phase_ddc1)
+  
+  ::proto::receiver::ShiftPhaseDDC1* temp = shift_phase_ddc1_;
+  shift_phase_ddc1_ = nullptr;
+  return temp;
+}
+inline ::proto::receiver::ShiftPhaseDDC1* Command::mutable_shift_phase_ddc1() {
+  
+  if (shift_phase_ddc1_ == nullptr) {
+    auto* p = CreateMaybeMessage<::proto::receiver::ShiftPhaseDDC1>(GetArenaNoVirtual());
+    shift_phase_ddc1_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:proto.receiver.Command.shift_phase_ddc1)
+  return shift_phase_ddc1_;
+}
+inline void Command::set_allocated_shift_phase_ddc1(::proto::receiver::ShiftPhaseDDC1* shift_phase_ddc1) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete shift_phase_ddc1_;
+  }
+  if (shift_phase_ddc1) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      shift_phase_ddc1 = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, shift_phase_ddc1, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  shift_phase_ddc1_ = shift_phase_ddc1;
+  // @@protoc_insertion_point(field_set_allocated:proto.receiver.Command.shift_phase_ddc1)
 }
 
 // -------------------------------------------------------------------
@@ -2105,6 +2322,8 @@ inline void ClientToHost::set_allocated_command(::proto::receiver::Command* comm
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

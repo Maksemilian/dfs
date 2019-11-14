@@ -8,6 +8,7 @@
 #include <QHostAddress>
 #include <QTimer>
 #include <QMessageBox>
+#include <QLineEdit>
 
 const QString DeviceSetWidget::STRING_CONNECT="connected";
 const QString DeviceSetWidget::STRING_DISCONNECT="disconnect";
@@ -15,12 +16,33 @@ const QString DeviceSetWidget::STRING_DISCONNECT="disconnect";
 const QString DeviceSetWidget::TEXT_CONNECT="connect";
 const QString DeviceSetWidget::TEXT_DISCONNECT="disconnect";
 
+class PhaseValidator:public QValidator
+{
+public:
+    State validate(QString &str,int &pos)const override
+    {
+        if(str.contains(QRegExp("[0-9]"))){
+            double val=str.toDouble();
+            if(val>=-180&&val<=180)
+                return  Acceptable;
+            else {
+                return Intermediate;
+            }
+        }else {
+            qDebug()<<"ELSE REG";
+        }
+        if(str.isEmpty())    return Intermediate;
+        return Invalid;
+    }
+};
+
 DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _lbAddresText(new QLabel(address,this)),
     _lbPort(new QLabel(QString::number(port),this)),
     _lbStatus(new QLabel(this)),
     _lbStatusDDC1(new QLabel(TEXT_DISCONNECT,this)),
     _cbReceivers(new QComboBox(this)),
+    _leSetShiftPhaseDDC1(new QLineEdit(this)),
     _deviceSetClient(std::make_unique<DeviceSetClient>()),
     _streamController(std::make_unique<ClientStreamController>(address,port))
 {
@@ -43,6 +65,24 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     vbLayout->addWidget(new QLabel("DDC1"),4,0);
     vbLayout->addWidget(_lbStatusDDC1,4,1);
 
+    vbLayout->addWidget(new QLabel("Phase Shift ddc1"),5,0);
+    vbLayout->addWidget(_leSetShiftPhaseDDC1);
+    _leSetShiftPhaseDDC1->setValidator(new PhaseValidator);
+//    _leSetShiftPhaseDDC1->setInputMask("DDD");
+    connect(_leSetShiftPhaseDDC1,&QLineEdit::editingFinished,
+            [this](){
+        double phaseShiftDDC1=_leSetShiftPhaseDDC1->text().toDouble();
+      qDebug()<<phaseShiftDDC1;
+      proto::receiver::Command command;
+      command.set_command_type(proto::receiver::CommandType::SET_SHIFT_PHASE_DDC);
+      proto::receiver::ShiftPhaseDDC1 *shiftPhaseDDC1=
+              new proto::receiver::ShiftPhaseDDC1();
+      shiftPhaseDDC1->set_device_index(static_cast<quint32>(
+                                           _cbReceivers->currentIndex()));
+      shiftPhaseDDC1->set_phase_shift(phaseShiftDDC1);
+      command.set_allocated_shift_phase_ddc1(shiftPhaseDDC1);
+      this->sendCommand(command);
+    });
     _lbStatus->setText(STRING_DISCONNECT);
     _lbStatus->setUserData(USER_DATA_STATUS,new Status(false));
 

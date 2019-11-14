@@ -47,7 +47,7 @@ public:
 
     void reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sampePerBuffer,bool writeToFile=false);
 
-
+    bool setShiftPhaseDDC1(unsigned int deviceIndex,double phaseShift);
     inline ShPtrRingPacketBuffer getBuffer(){
         return buffer;
     }

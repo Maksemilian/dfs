@@ -167,11 +167,13 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     case proto::receiver::CommandType::START_DDC1:
         qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
         d->cohG35DeviceSet->startDDC1(command.samples_per_buffer(),true);
+        //TODO RETURN VALUE
         succesed=true;
         break;
     case proto::receiver::CommandType::STOP_DDC1:
         qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
         d->cohG35DeviceSet->stopDDC1();
+        //TODO RETURN VALUE
         succesed=true;
         break;
     case proto::receiver::CommandType::SET_DDC1_TYPE:
@@ -207,6 +209,12 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
         succesed=d->cohG35DeviceSet->setDDC1Frequency(command.ddc1_frequency());
         qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<command.ddc1_frequency()<<"|| Succesed command"<<succesed;
+        break;
+    case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
+        succesed=d->cohG35DeviceSet->setShiftPhaseDDC1(command.shift_phase_ddc1().device_index(),
+                                                       command.shift_phase_ddc1().phase_shift());
+        qDebug()<<"======Comand  SET_DDC1_SHIFT_PHASE"<<command.shift_phase_ddc1().device_index()
+               <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
     case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:

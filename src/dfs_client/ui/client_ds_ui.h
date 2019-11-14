@@ -13,7 +13,7 @@ class ClientStreamController;
 
 class QComboBox;
 class QLabel;
-
+class QLineEdit;
 class DeviceSetWidget :public QWidget
 {
     Q_OBJECT
@@ -63,6 +63,7 @@ private:
     QLabel *_lbStatus;
     QLabel *_lbStatusDDC1;
     QComboBox *_cbReceivers;
+    QLineEdit *_leSetShiftPhaseDDC1;
     std::unique_ptr<DeviceSetClient> _deviceSetClient;
     std::unique_ptr<ClientStreamController> _streamController;
 };

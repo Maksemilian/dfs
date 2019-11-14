@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-
 package proto.receiver;
 
 enum CommandType
@@ -17,12 +16,19 @@ SET_DDC1_TYPE=8;
 SET_SETTINGS=9;
 START_DDC1=10;
 STOP_DDC1=11;
+SET_SHIFT_PHASE_DDC=12;
 }
 
 message Preselectors
 {
 uint32 low_frequency=1;
 uint32 high_frequency=2;
+}
+
+message ShiftPhaseDDC1
+{
+    uint32 device_index=1;
+    double phase_shift=2;
 }
 
 message Command
@@ -41,6 +47,8 @@ uint32 ddc1_type=8;
 
 bool start_ddc1=9;
 uint32 samples_per_buffer=10;
+
+ShiftPhaseDDC1 shift_phase_ddc1=11;
 }
 
 message DeviceInfo

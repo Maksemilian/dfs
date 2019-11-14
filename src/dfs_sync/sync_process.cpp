@@ -117,7 +117,8 @@ struct SyncProcess::Impl
 
     quint32 sampleRate;
 
-    struct{
+    struct
+    {
         VectorIpp32fc shiftBuffer;
         int channelIndex;
         double ddcDifference;
@@ -154,7 +155,7 @@ void SyncProcess::start(const ShPtrPacketBufferPair buffers,
     d->shiftData.shiftBuffer.resize(blockSize);
 
     if(calcShiftInChannel(buffers,sampleRate)){
-        BlockEqualizer blockAlinement(d->shiftData.shiftBuffer,blockSize);
+        BlockEqualizer blockEqualizer(d->shiftData.shiftBuffer,blockSize);
         SumSubMethod sumSubMethod(sampleRate,blockSize);
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
@@ -187,7 +188,7 @@ void SyncProcess::start(const ShPtrPacketBufferPair buffers,
                         (const_cast<float*>
                          (packet[d->shiftData.channelIndex].sample().data()));
 
-                blockAlinement.equate(signal,blockSize,d->shiftData.ddcDifference,
+                blockEqualizer.equate(signal,blockSize,d->shiftData.ddcDifference,
                                       ddcFrequency,sampleRate,d->shiftData.deltaStart);
                 //                                qDebug()<<"BA_2";
                 d->syncBuffer1->push(packet[CHANNEL_FIRST]);
@@ -278,10 +279,11 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
             double ddcDelayAfterLastPpsSecond=ddcAfterLastPps(packetPair[CHANNEL_SECOND].ddc_sample_counter(),
                                                               packetPair[CHANNEL_SECOND].block_number(),
                                                               packetPair[CHANNEL_SECOND].block_size());
-
+// 100 200
             d->shiftData.ddcDifference=  ddcDelayAfterLastPpsFirst-ddcDelayAfterLastPpsSecond;
 
-            d->shiftData.channelIndex = d->shiftData.ddcDifference<0?CHANNEL_SECOND   :  CHANNEL_FIRST;
+            d->shiftData.channelIndex = d->shiftData.ddcDifference<0?
+                        CHANNEL_SECOND   :  CHANNEL_FIRST;
             d->shiftData.ddcDifference = abs(d->shiftData.ddcDifference);
 
             //TODO поместить в один метод
@@ -299,7 +301,8 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
             Q_ASSERT_X( d->shiftData.ddcDifference>=0 &&  d->shiftData.ddcDifference<packet.block_size(),
                         "SignalSync::sync","error shift");
 
-            if(static_cast<quint32>(d->shiftData.ddcDifference)>packetPair[d->shiftData.channelIndex].block_size()){
+            if(static_cast<quint32>(d->shiftData.ddcDifference)>
+                    packetPair[d->shiftData.channelIndex].block_size()){
                 qDebug()<<"******************BAD SHIFT SIZE"
                        <<d->shiftData.ddcDifference
                       <<d->shiftData.deltaStart;
@@ -350,6 +353,7 @@ void SyncProcess::initShiftBuffer(const float *signalData, quint32 blockSize,
  * \param blockNumber
  * \param blockSize
  * \return колиество ddc сэмплов после прихода последнего импульса pps
+ * Количество отсчетов после приема импульса PPS в каждом канале
  */
 double SyncProcess::ddcAfterLastPps(double ddcSampleCounter,quint32 blockNumber,quint32 blockSize)
 {

@@ -176,6 +176,11 @@ void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sample
         qDebug()<<"======Comand  SET_DDC1_TYPE"<<ddc1TypeIndex<<"SamplesPerBuffer"<<samplesPerBuffer<<"|| Succesed command"<<succesed;
     }
 }
+
+bool CohG35DeviceSet::setShiftPhaseDDC1(unsigned int deviceIndex, double phaseShift)
+{
+    return _deviceSet->SetDDC1PhaseShift(deviceIndex,phaseShift);
+}
 //*********************** ICohG35DDCDeviceSetCallback ************************
 
 void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceCount,

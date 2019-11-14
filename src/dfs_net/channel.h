@@ -6,8 +6,6 @@
 
 namespace net {
 
-
-
 class Channel:public QObject
 {
     Q_OBJECT

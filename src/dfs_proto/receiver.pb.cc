@@ -20,14 +20,19 @@ extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::S
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_DeviceInfo_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Packet_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Preselectors_receiver_2eproto;
-extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_Command_receiver_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ShiftPhaseDDC1_receiver_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<1> scc_info_DeviceSetInfo_receiver_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_receiver_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_Command_receiver_2eproto;
 namespace proto {
 namespace receiver {
 class PreselectorsDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Preselectors> _instance;
 } _Preselectors_default_instance_;
+class ShiftPhaseDDC1DefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<ShiftPhaseDDC1> _instance;
+} _ShiftPhaseDDC1_default_instance_;
 class CommandDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Command> _instance;
@@ -72,6 +77,20 @@ static void InitDefaultsPreselectors_receiver_2eproto() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_Preselectors_receiver_2eproto =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsPreselectors_receiver_2eproto}, {}};
 
+static void InitDefaultsShiftPhaseDDC1_receiver_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::proto::receiver::_ShiftPhaseDDC1_default_instance_;
+    new (ptr) ::proto::receiver::ShiftPhaseDDC1();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::proto::receiver::ShiftPhaseDDC1::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_ShiftPhaseDDC1_receiver_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsShiftPhaseDDC1_receiver_2eproto}, {}};
+
 static void InitDefaultsCommand_receiver_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -83,9 +102,10 @@ static void InitDefaultsCommand_receiver_2eproto() {
   ::proto::receiver::Command::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<1> scc_info_Command_receiver_2eproto =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCommand_receiver_2eproto}, {
-      &scc_info_Preselectors_receiver_2eproto.base,}};
+::google::protobuf::internal::SCCInfo<2> scc_info_Command_receiver_2eproto =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 2, InitDefaultsCommand_receiver_2eproto}, {
+      &scc_info_Preselectors_receiver_2eproto.base,
+      &scc_info_ShiftPhaseDDC1_receiver_2eproto.base,}};
 
 static void InitDefaultsDeviceInfo_receiver_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -178,6 +198,7 @@ static void InitDefaultsClientToHost_receiver_2eproto() {
 
 void InitDefaults_receiver_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_Preselectors_receiver_2eproto.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_ShiftPhaseDDC1_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Command_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceInfo_receiver_2eproto.base);
   ::google::protobuf::internal::InitSCC(&scc_info_DeviceSetInfo_receiver_2eproto.base);
@@ -187,7 +208,7 @@ void InitDefaults_receiver_2eproto() {
   ::google::protobuf::internal::InitSCC(&scc_info_ClientToHost_receiver_2eproto.base);
 }
 
-::google::protobuf::Metadata file_level_metadata_receiver_2eproto[8];
+::google::protobuf::Metadata file_level_metadata_receiver_2eproto[9];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_receiver_2eproto[1];
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_receiver_2eproto = nullptr;
 
@@ -199,6 +220,13 @@ const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBU
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Preselectors, low_frequency_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Preselectors, high_frequency_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::ShiftPhaseDDC1, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::ShiftPhaseDDC1, device_index_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::ShiftPhaseDDC1, phase_shift_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -214,6 +242,7 @@ const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBU
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, ddc1_type_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, start_ddc1_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, samples_per_buffer_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, shift_phase_ddc1_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::DeviceInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -269,17 +298,19 @@ const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBU
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::proto::receiver::Preselectors)},
-  { 7, -1, sizeof(::proto::receiver::Command)},
-  { 22, -1, sizeof(::proto::receiver::DeviceInfo)},
-  { 31, -1, sizeof(::proto::receiver::DeviceSetInfo)},
-  { 37, -1, sizeof(::proto::receiver::Answer)},
-  { 44, -1, sizeof(::proto::receiver::Packet)},
-  { 60, -1, sizeof(::proto::receiver::HostToClient)},
-  { 68, -1, sizeof(::proto::receiver::ClientToHost)},
+  { 7, -1, sizeof(::proto::receiver::ShiftPhaseDDC1)},
+  { 14, -1, sizeof(::proto::receiver::Command)},
+  { 30, -1, sizeof(::proto::receiver::DeviceInfo)},
+  { 39, -1, sizeof(::proto::receiver::DeviceSetInfo)},
+  { 45, -1, sizeof(::proto::receiver::Answer)},
+  { 52, -1, sizeof(::proto::receiver::Packet)},
+  { 68, -1, sizeof(::proto::receiver::HostToClient)},
+  { 76, -1, sizeof(::proto::receiver::ClientToHost)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_Preselectors_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_ShiftPhaseDDC1_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_Command_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_DeviceInfo_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::proto::receiver::_DeviceSetInfo_default_instance_),
@@ -292,51 +323,55 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 ::google::protobuf::internal::AssignDescriptorsTable assign_descriptors_table_receiver_2eproto = {
   {}, AddDescriptors_receiver_2eproto, "receiver.proto", schemas,
   file_default_instances, TableStruct_receiver_2eproto::offsets,
-  file_level_metadata_receiver_2eproto, 8, file_level_enum_descriptors_receiver_2eproto, file_level_service_descriptors_receiver_2eproto,
+  file_level_metadata_receiver_2eproto, 9, file_level_enum_descriptors_receiver_2eproto, file_level_service_descriptors_receiver_2eproto,
 };
 
 const char descriptor_table_protodef_receiver_2eproto[] =
   "\n\016receiver.proto\022\016proto.receiver\"=\n\014Pres"
   "electors\022\025\n\rlow_frequency\030\001 \001(\r\022\026\n\016high_"
-  "frequency\030\002 \001(\r\"\305\002\n\007Command\0221\n\014command_t"
-  "ype\030\001 \001(\0162\033.proto.receiver.CommandType\022\022"
-  "\n\nattenuator\030\002 \001(\r\0222\n\014preselectors\030\003 \001(\013"
-  "2\034.proto.receiver.Preselectors\022\034\n\024preamp"
-  "lifier_enebled\030\004 \001(\010\022!\n\031adc_noice_blanke"
-  "r_enebled\030\005 \001(\010\022#\n\033adc_noice_blanker_thr"
-  "eshold\030\006 \001(\014\022\026\n\016ddc1_frequency\030\007 \001(\r\022\021\n\t"
-  "ddc1_type\030\010 \001(\r\022\022\n\nstart_ddc1\030\t \001(\010\022\032\n\022s"
-  "amples_per_buffer\030\n \001(\r\"j\n\nDeviceInfo\022\025\n"
-  "\rserial_number\030\001 \001(\t\022\026\n\016ddc_type_count\030\002"
-  " \001(\007\022\025\n\rchannel_count\030\003 \001(\007\022\026\n\016interface"
-  "_type\030\004 \001(\t\"@\n\rDeviceSetInfo\022/\n\013device_i"
-  "nfo\030\001 \003(\0132\032.proto.receiver.DeviceInfo\"E\n"
-  "\006Answer\022)\n\004type\030\001 \001(\0162\033.proto.receiver.C"
-  "ommandType\022\020\n\010succesed\030\002 \001(\010\"\374\001\n\006Packet\022"
-  "\024\n\014block_number\030\001 \001(\r\022\026\n\016ddc1_frequency\030"
-  "\002 \001(\r\022\022\n\nattenuator\030\003 \001(\r\022\022\n\nblock_size\030"
-  "\004 \001(\r\022\024\n\014device_count\030\005 \001(\r\022\023\n\013sample_ra"
-  "te\030\006 \001(\r\022\024\n\014time_of_week\030\007 \001(\r\022\023\n\013week_n"
-  "umber\030\010 \001(\r\022\032\n\022ddc_sample_counter\030\t \001(\001\022"
-  "\032\n\022adc_period_counter\030\n \001(\004\022\016\n\006sample\030\013 "
-  "\003(\002\"\236\001\n\014HostToClient\0226\n\017device_set_info\030"
-  "\001 \001(\0132\035.proto.receiver.DeviceSetInfo\022.\n\016"
-  "command_answer\030\002 \001(\0132\026.proto.receiver.An"
-  "swer\022&\n\006packet\030\003 \001(\0132\026.proto.receiver.Pa"
-  "cket\"8\n\014ClientToHost\022(\n\007command\030\001 \001(\0132\027."
-  "proto.receiver.Command*\236\002\n\013CommandType\022\021"
-  "\n\rSET_POWER_OFF\020\000\022\020\n\014SET_POWER_ON\020\001\022\022\n\016S"
-  "ET_ATTENUATOR\020\002\022\024\n\020SET_PRESELECTORS\020\003\022\034\n"
-  "\030SET_PREAMPLIFIER_ENABLED\020\004\022!\n\035SET_ADC_N"
-  "OICE_BLANKER_ENABLED\020\005\022#\n\037SET_ADC_NOICE_"
-  "BLANKER_THRESHOLD\020\006\022\026\n\022SET_DDC1_FREQUENC"
-  "Y\020\007\022\021\n\rSET_DDC1_TYPE\020\010\022\020\n\014SET_SETTINGS\020\t"
-  "\022\016\n\nSTART_DDC1\020\n\022\r\n\tSTOP_DDC1\020\013b\006proto3"
+  "frequency\030\002 \001(\r\";\n\016ShiftPhaseDDC1\022\024\n\014dev"
+  "ice_index\030\001 \001(\r\022\023\n\013phase_shift\030\002 \001(\001\"\377\002\n"
+  "\007Command\0221\n\014command_type\030\001 \001(\0162\033.proto.r"
+  "eceiver.CommandType\022\022\n\nattenuator\030\002 \001(\r\022"
+  "2\n\014preselectors\030\003 \001(\0132\034.proto.receiver.P"
+  "reselectors\022\034\n\024preamplifier_enebled\030\004 \001("
+  "\010\022!\n\031adc_noice_blanker_enebled\030\005 \001(\010\022#\n\033"
+  "adc_noice_blanker_threshold\030\006 \001(\014\022\026\n\016ddc"
+  "1_frequency\030\007 \001(\r\022\021\n\tddc1_type\030\010 \001(\r\022\022\n\n"
+  "start_ddc1\030\t \001(\010\022\032\n\022samples_per_buffer\030\n"
+  " \001(\r\0228\n\020shift_phase_ddc1\030\013 \001(\0132\036.proto.r"
+  "eceiver.ShiftPhaseDDC1\"j\n\nDeviceInfo\022\025\n\r"
+  "serial_number\030\001 \001(\t\022\026\n\016ddc_type_count\030\002 "
+  "\001(\007\022\025\n\rchannel_count\030\003 \001(\007\022\026\n\016interface_"
+  "type\030\004 \001(\t\"@\n\rDeviceSetInfo\022/\n\013device_in"
+  "fo\030\001 \003(\0132\032.proto.receiver.DeviceInfo\"E\n\006"
+  "Answer\022)\n\004type\030\001 \001(\0162\033.proto.receiver.Co"
+  "mmandType\022\020\n\010succesed\030\002 \001(\010\"\374\001\n\006Packet\022\024"
+  "\n\014block_number\030\001 \001(\r\022\026\n\016ddc1_frequency\030\002"
+  " \001(\r\022\022\n\nattenuator\030\003 \001(\r\022\022\n\nblock_size\030\004"
+  " \001(\r\022\024\n\014device_count\030\005 \001(\r\022\023\n\013sample_rat"
+  "e\030\006 \001(\r\022\024\n\014time_of_week\030\007 \001(\r\022\023\n\013week_nu"
+  "mber\030\010 \001(\r\022\032\n\022ddc_sample_counter\030\t \001(\001\022\032"
+  "\n\022adc_period_counter\030\n \001(\004\022\016\n\006sample\030\013 \003"
+  "(\002\"\236\001\n\014HostToClient\0226\n\017device_set_info\030\001"
+  " \001(\0132\035.proto.receiver.DeviceSetInfo\022.\n\016c"
+  "ommand_answer\030\002 \001(\0132\026.proto.receiver.Ans"
+  "wer\022&\n\006packet\030\003 \001(\0132\026.proto.receiver.Pac"
+  "ket\"8\n\014ClientToHost\022(\n\007command\030\001 \001(\0132\027.p"
+  "roto.receiver.Command*\267\002\n\013CommandType\022\021\n"
+  "\rSET_POWER_OFF\020\000\022\020\n\014SET_POWER_ON\020\001\022\022\n\016SE"
+  "T_ATTENUATOR\020\002\022\024\n\020SET_PRESELECTORS\020\003\022\034\n\030"
+  "SET_PREAMPLIFIER_ENABLED\020\004\022!\n\035SET_ADC_NO"
+  "ICE_BLANKER_ENABLED\020\005\022#\n\037SET_ADC_NOICE_B"
+  "LANKER_THRESHOLD\020\006\022\026\n\022SET_DDC1_FREQUENCY"
+  "\020\007\022\021\n\rSET_DDC1_TYPE\020\010\022\020\n\014SET_SETTINGS\020\t\022"
+  "\016\n\nSTART_DDC1\020\n\022\r\n\tSTOP_DDC1\020\013\022\027\n\023SET_SH"
+  "IFT_PHASE_DDC\020\014b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_receiver_2eproto = {
   false, InitDefaults_receiver_2eproto, 
   descriptor_table_protodef_receiver_2eproto,
-  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1439,
+  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1583,
 };
 
 void AddDescriptors_receiver_2eproto() {
@@ -368,6 +403,7 @@ bool CommandType_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
       return true;
     default:
       return false;
@@ -685,18 +721,331 @@ void Preselectors::InternalSwap(Preselectors* other) {
 
 // ===================================================================
 
+void ShiftPhaseDDC1::InitAsDefaultInstance() {
+}
+class ShiftPhaseDDC1::HasBitSetters {
+ public:
+};
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ShiftPhaseDDC1::kDeviceIndexFieldNumber;
+const int ShiftPhaseDDC1::kPhaseShiftFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ShiftPhaseDDC1::ShiftPhaseDDC1()
+  : ::google::protobuf::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:proto.receiver.ShiftPhaseDDC1)
+}
+ShiftPhaseDDC1::ShiftPhaseDDC1(const ShiftPhaseDDC1& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&phase_shift_, &from.phase_shift_,
+    static_cast<size_t>(reinterpret_cast<char*>(&device_index_) -
+    reinterpret_cast<char*>(&phase_shift_)) + sizeof(device_index_));
+  // @@protoc_insertion_point(copy_constructor:proto.receiver.ShiftPhaseDDC1)
+}
+
+void ShiftPhaseDDC1::SharedCtor() {
+  ::memset(&phase_shift_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&device_index_) -
+      reinterpret_cast<char*>(&phase_shift_)) + sizeof(device_index_));
+}
+
+ShiftPhaseDDC1::~ShiftPhaseDDC1() {
+  // @@protoc_insertion_point(destructor:proto.receiver.ShiftPhaseDDC1)
+  SharedDtor();
+}
+
+void ShiftPhaseDDC1::SharedDtor() {
+}
+
+void ShiftPhaseDDC1::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ShiftPhaseDDC1& ShiftPhaseDDC1::default_instance() {
+  ::google::protobuf::internal::InitSCC(&::scc_info_ShiftPhaseDDC1_receiver_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void ShiftPhaseDDC1::Clear() {
+// @@protoc_insertion_point(message_clear_start:proto.receiver.ShiftPhaseDDC1)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&phase_shift_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&device_index_) -
+      reinterpret_cast<char*>(&phase_shift_)) + sizeof(device_index_));
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* ShiftPhaseDDC1::_InternalParse(const char* begin, const char* end, void* object,
+                  ::google::protobuf::internal::ParseContext* ctx) {
+  auto msg = static_cast<ShiftPhaseDDC1*>(object);
+  ::google::protobuf::int32 size; (void)size;
+  int depth; (void)depth;
+  ::google::protobuf::uint32 tag;
+  ::google::protobuf::internal::ParseFunc parser_till_end; (void)parser_till_end;
+  auto ptr = begin;
+  while (ptr < end) {
+    ptr = ::google::protobuf::io::Parse32(ptr, &tag);
+    GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+    switch (tag >> 3) {
+      // uint32 device_index = 1;
+      case 1: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 8) goto handle_unusual;
+        msg->set_device_index(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // double phase_shift = 2;
+      case 2: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 17) goto handle_unusual;
+        msg->set_phase_shift(::google::protobuf::io::UnalignedLoad<double>(ptr));
+        ptr += sizeof(double);
+        break;
+      }
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->EndGroup(tag);
+          return ptr;
+        }
+        auto res = UnknownFieldParse(tag, {_InternalParse, msg},
+          ptr, end, msg->_internal_metadata_.mutable_unknown_fields(), ctx);
+        ptr = res.first;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr != nullptr);
+        if (res.second) return ptr;
+      }
+    }  // switch
+  }  // while
+  return ptr;
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool ShiftPhaseDDC1::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:proto.receiver.ShiftPhaseDDC1)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // uint32 device_index = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &device_index_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double phase_shift = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (17 & 0xFF)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &phase_shift_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:proto.receiver.ShiftPhaseDDC1)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:proto.receiver.ShiftPhaseDDC1)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void ShiftPhaseDDC1::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:proto.receiver.ShiftPhaseDDC1)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 device_index = 1;
+  if (this->device_index() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->device_index(), output);
+  }
+
+  // double phase_shift = 2;
+  if (this->phase_shift() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->phase_shift(), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:proto.receiver.ShiftPhaseDDC1)
+}
+
+::google::protobuf::uint8* ShiftPhaseDDC1::InternalSerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:proto.receiver.ShiftPhaseDDC1)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint32 device_index = 1;
+  if (this->device_index() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->device_index(), target);
+  }
+
+  // double phase_shift = 2;
+  if (this->phase_shift() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->phase_shift(), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:proto.receiver.ShiftPhaseDDC1)
+  return target;
+}
+
+size_t ShiftPhaseDDC1::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:proto.receiver.ShiftPhaseDDC1)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // double phase_shift = 2;
+  if (this->phase_shift() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // uint32 device_index = 1;
+  if (this->device_index() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->device_index());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void ShiftPhaseDDC1::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:proto.receiver.ShiftPhaseDDC1)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ShiftPhaseDDC1* source =
+      ::google::protobuf::DynamicCastToGenerated<ShiftPhaseDDC1>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:proto.receiver.ShiftPhaseDDC1)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:proto.receiver.ShiftPhaseDDC1)
+    MergeFrom(*source);
+  }
+}
+
+void ShiftPhaseDDC1::MergeFrom(const ShiftPhaseDDC1& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:proto.receiver.ShiftPhaseDDC1)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.phase_shift() != 0) {
+    set_phase_shift(from.phase_shift());
+  }
+  if (from.device_index() != 0) {
+    set_device_index(from.device_index());
+  }
+}
+
+void ShiftPhaseDDC1::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:proto.receiver.ShiftPhaseDDC1)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ShiftPhaseDDC1::CopyFrom(const ShiftPhaseDDC1& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:proto.receiver.ShiftPhaseDDC1)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ShiftPhaseDDC1::IsInitialized() const {
+  return true;
+}
+
+void ShiftPhaseDDC1::Swap(ShiftPhaseDDC1* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ShiftPhaseDDC1::InternalSwap(ShiftPhaseDDC1* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(phase_shift_, other->phase_shift_);
+  swap(device_index_, other->device_index_);
+}
+
+::google::protobuf::Metadata ShiftPhaseDDC1::GetMetadata() const {
+  ::google::protobuf::internal::AssignDescriptors(&::assign_descriptors_table_receiver_2eproto);
+  return ::file_level_metadata_receiver_2eproto[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void Command::InitAsDefaultInstance() {
   ::proto::receiver::_Command_default_instance_._instance.get_mutable()->preselectors_ = const_cast< ::proto::receiver::Preselectors*>(
       ::proto::receiver::Preselectors::internal_default_instance());
+  ::proto::receiver::_Command_default_instance_._instance.get_mutable()->shift_phase_ddc1_ = const_cast< ::proto::receiver::ShiftPhaseDDC1*>(
+      ::proto::receiver::ShiftPhaseDDC1::internal_default_instance());
 }
 class Command::HasBitSetters {
  public:
   static const ::proto::receiver::Preselectors& preselectors(const Command* msg);
+  static const ::proto::receiver::ShiftPhaseDDC1& shift_phase_ddc1(const Command* msg);
 };
 
 const ::proto::receiver::Preselectors&
 Command::HasBitSetters::preselectors(const Command* msg) {
   return *msg->preselectors_;
+}
+const ::proto::receiver::ShiftPhaseDDC1&
+Command::HasBitSetters::shift_phase_ddc1(const Command* msg) {
+  return *msg->shift_phase_ddc1_;
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Command::kCommandTypeFieldNumber;
@@ -709,6 +1058,7 @@ const int Command::kDdc1FrequencyFieldNumber;
 const int Command::kDdc1TypeFieldNumber;
 const int Command::kStartDdc1FieldNumber;
 const int Command::kSamplesPerBufferFieldNumber;
+const int Command::kShiftPhaseDdc1FieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Command::Command()
@@ -728,6 +1078,11 @@ Command::Command(const Command& from)
     preselectors_ = new ::proto::receiver::Preselectors(*from.preselectors_);
   } else {
     preselectors_ = nullptr;
+  }
+  if (from.has_shift_phase_ddc1()) {
+    shift_phase_ddc1_ = new ::proto::receiver::ShiftPhaseDDC1(*from.shift_phase_ddc1_);
+  } else {
+    shift_phase_ddc1_ = nullptr;
   }
   ::memcpy(&command_type_, &from.command_type_,
     static_cast<size_t>(reinterpret_cast<char*>(&samples_per_buffer_) -
@@ -752,6 +1107,7 @@ Command::~Command() {
 void Command::SharedDtor() {
   adc_noice_blanker_threshold_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != internal_default_instance()) delete preselectors_;
+  if (this != internal_default_instance()) delete shift_phase_ddc1_;
 }
 
 void Command::SetCachedSize(int size) const {
@@ -774,6 +1130,10 @@ void Command::Clear() {
     delete preselectors_;
   }
   preselectors_ = nullptr;
+  if (GetArenaNoVirtual() == nullptr && shift_phase_ddc1_ != nullptr) {
+    delete shift_phase_ddc1_;
+  }
+  shift_phase_ddc1_ = nullptr;
   ::memset(&command_type_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&samples_per_buffer_) -
       reinterpret_cast<char*>(&command_type_)) + sizeof(samples_per_buffer_));
@@ -876,6 +1236,19 @@ const char* Command::_InternalParse(const char* begin, const char* end, void* ob
         if (static_cast<::google::protobuf::uint8>(tag) != 80) goto handle_unusual;
         msg->set_samples_per_buffer(::google::protobuf::internal::ReadVarint(&ptr));
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+      case 11: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 90) goto handle_unusual;
+        ptr = ::google::protobuf::io::ReadSize(ptr, &size);
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        parser_till_end = ::proto::receiver::ShiftPhaseDDC1::_InternalParse;
+        object = msg->mutable_shift_phase_ddc1();
+        if (size > end - ptr) goto len_delim_till_end;
+        ptr += size;
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ctx->ParseExactRange(
+            {parser_till_end, object}, ptr - size, ptr));
         break;
       }
       default: {
@@ -1039,6 +1412,17 @@ bool Command::MergePartialFromCodedStream(
         break;
       }
 
+      // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (90 & 0xFF)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_shift_phase_ddc1()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -1119,6 +1503,12 @@ void Command::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(10, this->samples_per_buffer(), output);
   }
 
+  // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+  if (this->has_shift_phase_ddc1()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      11, HasBitSetters::shift_phase_ddc1(this), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -1187,6 +1577,13 @@ void Command::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(10, this->samples_per_buffer(), target);
   }
 
+  // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+  if (this->has_shift_phase_ddc1()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        11, HasBitSetters::shift_phase_ddc1(this), target);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target);
@@ -1220,6 +1617,13 @@ size_t Command::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
         *preselectors_);
+  }
+
+  // .proto.receiver.ShiftPhaseDDC1 shift_phase_ddc1 = 11;
+  if (this->has_shift_phase_ddc1()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *shift_phase_ddc1_);
   }
 
   // .proto.receiver.CommandType command_type = 1;
@@ -1305,6 +1709,9 @@ void Command::MergeFrom(const Command& from) {
   if (from.has_preselectors()) {
     mutable_preselectors()->::proto::receiver::Preselectors::MergeFrom(from.preselectors());
   }
+  if (from.has_shift_phase_ddc1()) {
+    mutable_shift_phase_ddc1()->::proto::receiver::ShiftPhaseDDC1::MergeFrom(from.shift_phase_ddc1());
+  }
   if (from.command_type() != 0) {
     set_command_type(from.command_type());
   }
@@ -1359,6 +1766,7 @@ void Command::InternalSwap(Command* other) {
   adc_noice_blanker_threshold_.Swap(&other->adc_noice_blanker_threshold_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(preselectors_, other->preselectors_);
+  swap(shift_phase_ddc1_, other->shift_phase_ddc1_);
   swap(command_type_, other->command_type_);
   swap(attenuator_, other->attenuator_);
   swap(preamplifier_enebled_, other->preamplifier_enebled_);
@@ -3861,6 +4269,9 @@ namespace google {
 namespace protobuf {
 template<> PROTOBUF_NOINLINE ::proto::receiver::Preselectors* Arena::CreateMaybeMessage< ::proto::receiver::Preselectors >(Arena* arena) {
   return Arena::CreateInternal< ::proto::receiver::Preselectors >(arena);
+}
+template<> PROTOBUF_NOINLINE ::proto::receiver::ShiftPhaseDDC1* Arena::CreateMaybeMessage< ::proto::receiver::ShiftPhaseDDC1 >(Arena* arena) {
+  return Arena::CreateInternal< ::proto::receiver::ShiftPhaseDDC1 >(arena);
 }
 template<> PROTOBUF_NOINLINE ::proto::receiver::Command* Arena::CreateMaybeMessage< ::proto::receiver::Command >(Arena* arena) {
   return Arena::CreateInternal< ::proto::receiver::Command >(arena);
