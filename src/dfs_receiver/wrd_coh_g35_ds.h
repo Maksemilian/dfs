@@ -42,10 +42,10 @@ public:
 
     bool setSettings(const DeviceSetSettings &settings);
     //*****Stram DDC1
-    void startDDC1(unsigned int sampesPerBuffer,bool writeToFile=false);
+    void startDDC1(unsigned int sampesPerBuffer);
     void stopDDC1();
 
-    void reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sampePerBuffer,bool writeToFile=false);
+    void reStartDdc1(unsigned int ddc1TypeIndex,unsigned int sampePerBuffer);
 
     bool setShiftPhaseDDC1(unsigned int deviceIndex,double phaseShift);
     inline ShPtrRingPacketBuffer getBuffer(){

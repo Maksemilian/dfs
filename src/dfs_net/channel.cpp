@@ -221,29 +221,3 @@ Channel::~Channel()
 }
 
 }
-
-//     qDebug()<<"Channel::onReadyRead"<<answerSize;
-//    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
-//    if(answerSize==0&&
-//            socketBytesAvailable()>=sizeof(int)){
-//        readFromSocket(sizeof(int));
-//        char buf[sizeof(int)];
-//        readDataFromBuffer(buf,sizeof(int));
-//        bool ok;
-//        answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-//        qDebug()<<"Size"<<answerSize;
-//    }else if(socketBytesAvailable()>0){
-//        qint64 bytes=readFromSocket(answerSize);
-//        if(bytes==answerSize){
-//            //qDebug("Rec");
-//            onMessageReceive();
-//            answerSize=0;
-//            return;
-//        }else {
-//            qDebug()<<"BA"<<bytes;
-//        }
-//    }else {
-//            qDebug()<<"SOCK_BA"<<socketBytesAvailable();
-//    }
-
-//    onReadyRead();

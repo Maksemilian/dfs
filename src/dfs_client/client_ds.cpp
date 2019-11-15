@@ -1,8 +1,5 @@
 #include "client_ds.h"
 
-//TODO НУЖЕН ТОЛЬКО ДЛЯ СТРУКТУРЫ DeviceSetSettings
-#include "i_device_set_settings.h"
-
 #include "channel_client.h"
 
 #include "receiver.pb.h"
@@ -18,13 +15,15 @@
 
 //**************************************** Receiver Station Client*****************************************
 
-const QByteArray DeviceSetClient::serializeCommandToByteArray(
+
+const QByteArray serializeMessage(
         const google::protobuf::Message &command)
 {
     std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
     command.SerializeToArray(static_cast<void*>(bytesArray.data()),command.ByteSize());
     return QByteArray(bytesArray.data(),command.ByteSize());
 }
+
 
 struct DeviceSetClient::Impl
 {
@@ -130,15 +129,15 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         switch (answer.type()) {
         case proto::receiver::CommandType::SET_POWER_OFF:
             qDebug()<<"SETED_POWER_OFF";
-//            emit deviceSetPowerSetted(false);
+            //            emit deviceSetPowerSetted(false);
             break;
         case proto::receiver::CommandType::SET_POWER_ON:
             qDebug()<<"SETED_POWER_ON";
-//            emit deviceSetPowerSetted(true);
+            //            emit deviceSetPowerSetted(true);
             break;
         case proto::receiver::CommandType::SET_SETTINGS:
             qDebug()<<"SETED_SETTINGS:";
-//            emit deviceSetSettingsSetted();
+            //            emit deviceSetSettingsSetted();
             break;
         case proto::receiver::CommandType::SET_ATTENUATOR:
             qDebug()<< "SETED_ATTENUATOR"<<objectName();
@@ -160,7 +159,7 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
             break;
         case proto::receiver::CommandType::SET_DDC1_TYPE:
             qDebug()<< "SETED_DDC1_TYPE";
-//            emit deviceSetChangeBandwith();
+            //            emit deviceSetChangeBandwith();
             break;
         case proto::receiver::CommandType::START_DDC1:
             qDebug()<<"STARTED_DDC1:";
@@ -196,7 +195,7 @@ void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
     proto::receiver::ClientToHost clientToHost;
     //TODO ПОНЯТЬ КАК РАБОТАЕТ
     clientToHost.mutable_command()->CopyFrom(command);
-    d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
+    d->channel->writeToConnection(serializeMessage(clientToHost));
 }
 QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 {
@@ -242,7 +241,6 @@ void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
     command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
 
     command.set_attenuator(settings.attenuator);
-    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
     proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
     preselectors->set_low_frequency(settings.preselectors.first);
     preselectors->set_high_frequency(settings.preselectors.second);
@@ -303,7 +301,6 @@ void DeviceSetClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency
 {
     qDebug()<<"Set Pres";
     proto::receiver::Command command;
-    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
     proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
     preselectors->set_low_frequency(lowFrequency);
     preselectors->set_high_frequency(highFrequency);
@@ -381,7 +378,6 @@ void DeviceSetClient::setDDC1Type(quint32 typeIndex)
 
 //void ReceiverStationClient::startLoadingFiles(const QStringList &fileNames)
 //{
-//    //TODO СДЕЛАТЬ ЗАГРУЗКУ МНОЖЕСТВА FILES
 //    if(!d->fileLoaders.isEmpty())return;
 
 //    qDebug()<<"START LOADING FILES";
@@ -447,7 +443,7 @@ void ReceiverStationClient::onReadyReadInfo()
 void ReceiverStationClient::transfer()
 {
     bool isTakeAnswer=false;
-    //static qint64 answerSize=0;// WARNING НЕ РАБОТАЕТ ДЛЯ КОЛИЧЕСТВА СТАНЦИЙ > 1
+    //static qint64 answerSize=0;
     if(d->answerSize==0&&
             d->channel->socketBytesAvailable()>=sizeof(int)){
 

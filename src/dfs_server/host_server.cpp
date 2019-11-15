@@ -1,27 +1,21 @@
 #include "host_server.h"
 #include "host_ds.h"
 #include "host_ds_stream.h"
-#include "wrd_ds_selector.h"
 
 #include <QThread>
 
 //************************** SERVER *************************
 
-StreamServer::StreamServer(/*std::shared_ptr<CohG35DeviceSet>deviceSet*/)
-//    deviceSet(DeviceSetSelector::selectDeviceSet(0))
+StreamServer::StreamServer()
 {
     qDebug()<<"Stream Server Init";
-    //    streamAnalizator=new StreamAnalizator(this);
-    //    streamAnalizator->start();
     connect(this,&StreamServer::newChannelReady,
             this,&StreamServer::onNewConnection);
-
 }
 
 void StreamServer::incomingConnection(qintptr handle)
 {
     qDebug()<<"===============incomingConnection handle"<<handle;
-    //    streamAnalizator->pushSocketSescriptor(handle);
     net::ChannelHost *channelHost=new net::ChannelHost(handle);
     connect(channelHost,&net::ChannelHost::keyExchangedFinished,this,&StreamServer::onChannelReady);
     connect(channelHost,&net::ChannelHost::finished,
@@ -121,22 +115,6 @@ void StreamServer::createThread(net::ChannelHost *channelHost)
     thread->start();
 }
 
-
-void StreamServer::stopStreamDDC1()
-{
-    //WARNING ОТКЛЮЧАЕТСЯ ТОЛЬКО ПЕРВЫЙ
-    streamDDCList.first()->stop();
-}
-
-//void StreamServer::stopStreamFile()
-//{
-//    //WARNING ОТКЛЮЧАЕТСЯ ТОЛЬКО ПЕРВЫЙ
-//    fileStreamList.first()->setQuit(true);
-//}
-
 StreamServer::~StreamServer()
 {
-    stopStreamDDC1();
-//    stopStreamFile();
-//    streamAnalizator->stop();
 }

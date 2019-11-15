@@ -144,6 +144,4 @@ void ChannelPlot::customEvent(QEvent *event){
     mutex.lock();
     replot();
     mutex.unlock();
-    //TODO DELETE EVENT
-//    delete event;
 }

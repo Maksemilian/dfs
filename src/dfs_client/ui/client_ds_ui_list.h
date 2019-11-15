@@ -29,7 +29,6 @@ public:
     void addDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void setCommand(const proto::receiver::Command &command)override;
-    //TODO PUBLIC MEMBER
 signals:
     void commandSucessed()override;
     void allConnectedState(bool state);

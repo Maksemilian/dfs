@@ -30,7 +30,6 @@ MainWindow:: MainWindow(QWidget *parent):
     ui->setupUi(this);
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
-    //TODO FIX THIS CODE
 
     deviceSetListWidget=new DeviceSetListWidget(this);
     setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
@@ -65,23 +64,11 @@ MainWindow:: MainWindow(QWidget *parent):
             plotMonitoring,&PlotMonitoring::onDeviceSetLIstNotReady);
 
     setCentralWidget(plotMonitoring);
-//    elipsPlot=new ElipsPlot;
-//    setRightDockWidget(elipsPlot,"Elipse");
 
-//    //************** CHANNEL PLOT**************************
-
-//    channelPlot=new ChannelPlot(2,getSamplesPerBuffer());
-//    setCentralWidget(channelPlot);
-
-    //************** SUBSCRIBE ****************
-
-    //************** OTHER ******************
     showReceiverSettingsTool();
 
-//    deviceSetListWidget->connectToSelectedDeviceSet();
-    //TODO UNCOMMENT IN RELEASE VERSION
+    //WARNING UNCOMMENT IN RELEASE VERSION
     //    hideReceiverSettingsTool();
-    //    syncManager->connectToStation(QHostAddress("192.168.10.11"),9000);
 }
 
 MainWindow::~MainWindow()
@@ -121,10 +108,6 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
     macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
     macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget,this));
     macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
-    //TODO УБРАНЫ КОМАНДЫ СИНХРОНИЗАЦИИ
-    //    macroFreq->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
-
-    //    macroFreq->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
     leDDC1Frequency =new FrequencyLineEdit(this);
     leDDC1Frequency->setUserData(USER_DATA_ID,macroFreq);
@@ -190,7 +173,7 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     connect(pbAttenuatorEnable,&SwitchButton::changed,this,&MainWindow::widgetChanged);
     //attenuator COMBO BOX
     cbAttenuationLevel=new AttenuatorComboBox(this);
-    cbAttenuationLevel->setUserData(USER_DATA_ID,//TODO SYNC MANAGER
+    cbAttenuationLevel->setUserData(USER_DATA_ID,
                                     FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
     connect(cbAttenuationLevel,&AttenuatorComboBox::changed,
             this,&MainWindow::widgetChanged);

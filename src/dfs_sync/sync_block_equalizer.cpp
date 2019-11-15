@@ -6,7 +6,7 @@
 #include <math.h>
 #include <QDebug>
 
-//WARNING - НАХОДИТЬСЯ В utility
+//NOTE - НАХОДИТЬСЯ В utility
 using DeleterTypeIpp8u=std::function<void(Ipp8u*)>;
 
 struct BlockEqualizer::Impl
@@ -19,9 +19,6 @@ struct BlockEqualizer::Impl
         dstFinalRez(VectorIpp32fc(blockSize)),
         shiftBufferT(shiftBuffer)
     {    }
-    /// WARNING ЕСЛИ СДЕЛАТЬ С UNIQUE_PTR ТО ПРОГРАММА КРАШИТСЯ ПРИ ПЕРЕЗАПУСКЕ СИНХРОНИЗАЦИИ
-    /// ИЗ-ЗА ТОГО ЧТО ИНТЕКЛЕКТУАЛЬНЫЕ УКАЗАТЕЛИ ИСПОЛЬЗУЮТ ОТЛИЧНЫЙ ОТ МЕХАНИЗМА IPP
-    /// МЕХАНИЗМ ОСВОБОЖДЕНИЯ ПАМЯТИ
 
     DeleterTypeIpp8u deleterUniquePtrForIpp8u=[](Ipp8u*v){
         ippFree(v);
@@ -86,7 +83,6 @@ void BlockEqualizer::equate(Ipp32fc *blockData, quint32 blockSize,
     quint32 shiftW=static_cast<quint32>(shift);
     double shiftF=shift-shiftW;
     //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
-    //TODO ADD CONSTANT FOR NUMBER 2
     shiftWhole(blockData,blockSize,shiftW);
 
     //    qDebug()<<"SHIFT WHOLE END";
@@ -146,7 +142,6 @@ void BlockEqualizer::shiftTest(Ipp32fc *blockData, quint32 blockSize, double tet
     val.re=static_cast<float>(cos(fmod(teta,(2*IPP_PI))));
     val.im=static_cast<float>(sin(fmod(teta,(2*IPP_PI))));
     qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*IPP_PI));
-    //WARNING ippsMulC_32fc
     ippsMulC_32fc(blockData, val, blockData,static_cast<int>(blockSize));
     //    ippsMulC_32fc(blockData, val, d->dstFinalRez.get(),static_cast<int>(blockSize));
     //    blockData=d->dstFinalRez.get();

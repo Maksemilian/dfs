@@ -132,19 +132,14 @@ bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
     return succesed;
 }
 
-void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer,bool writeToFile){
+void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer){
     Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
     if(_deviceSet){
         resetData();
         timeReader->start();
-        QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer,writeToFile]{
+        QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer]{
             timeReader->getTime(currentWeekNumber,currentTimeOfWeek);
             _deviceSet->StartDDC1(samplesPerBuffer);
-            quint32 ddc1Frequency=0;
-            if(writeToFile&&_deviceSet->GetDDC1Frequency(&ddc1Frequency)){
-                qDebug()<<"Start writing file"<<ddc1Frequency;
-                //WARNING signalFileWriter->start(ddc1Buffer.get(),QString::number(ddc1Frequency));
-            }
         });
     }
 }
@@ -153,24 +148,22 @@ void CohG35DeviceSet::stopDDC1(){
     if(_deviceSet){
         _deviceSet->StopDDC1();
         timeReader->stop();
-//        ddc1Buffer->reset();
         buffer->reset();
-        //WARNING signalFileWriter->stop();
     }
 }
 
-void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int samplesPerBuffer,bool writeToFile){
+void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int samplesPerBuffer){
     if(_deviceSet){
         bool succesed=true;
         std::shared_ptr<QMetaObject::Connection> sharedPtrConnection(new QMetaObject::Connection) ;
         *sharedPtrConnection=QObject::connect(timeReader.get(),&TimeReader::stopedTrimble,
-                                              [this,sharedPtrConnection,ddc1TypeIndex,samplesPerBuffer,writeToFile]{
+                                              [this,sharedPtrConnection,ddc1TypeIndex,samplesPerBuffer]{
             QObject::disconnect(*sharedPtrConnection);
             _deviceSet->SetDDC1(ddc1TypeIndex);
             quint32 ddcfreq;
             _deviceSet->GetDDC1Frequency(&ddcfreq);
-            qDebug()<<"RESTART"<<ddcfreq<<writeToFile;
-            startDDC1(samplesPerBuffer,writeToFile);
+            qDebug()<<"RESTART"<<ddcfreq;
+            startDDC1(samplesPerBuffer);
         });
         stopDDC1();
         qDebug()<<"======Comand  SET_DDC1_TYPE"<<ddc1TypeIndex<<"SamplesPerBuffer"<<samplesPerBuffer<<"|| Succesed command"<<succesed;

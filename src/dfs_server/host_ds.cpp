@@ -6,6 +6,19 @@
 #include "channel_host.h"
 //******************ReceiverStationClient***********************
 
+
+QByteArray serializeMessage(const google::protobuf::Message &message)
+{
+    int  byteSize= message.ByteSize();
+    //    char bytesArray[byteSize];
+    std::vector<char> bytesArray(static_cast<size_t>(byteSize));
+    message.SerializeToArray(bytesArray.data(),byteSize);
+    QByteArray baMessage(bytesArray.data(),byteSize);///НЕ РАБОТАЕТ С REPEATED DATA ЧАСТЬ ДАННЫХ ОБРЕЗАЕТСЯ
+    //qDebug()<<"Size:"<<byteSize<<baMessage.size()<<baMessage.length();
+    return baMessage;
+}
+
+
 struct DeviceSetClient::Impl
 {
     Impl(net::ChannelHost *channel):
@@ -60,21 +73,7 @@ const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
 {
     return d->cohG35DeviceSet;
 }
-//std::shared_ptr<RingBuffer<proto::receiver::Packet>> DeviceSetClient::getBuffer()
-//{
-//    return  d->cohG35DeviceSet->getBuffer();
-//}
 
-QByteArray DeviceSetClient::serializeMessage(const google::protobuf::Message &message)
-{
-    int  byteSize= message.ByteSize();
-    //    char bytesArray[byteSize];
-    std::vector<char> bytesArray(static_cast<size_t>(byteSize));
-    message.SerializeToArray(bytesArray.data(),byteSize);
-    QByteArray baMessage(bytesArray.data(),byteSize);///НЕ РАБОТАЕТ С REPEATED DATA ЧАСТЬ ДАННЫХ ОБРЕЗАЕТСЯ
-    //qDebug()<<"Size:"<<byteSize<<baMessage.size()<<baMessage.length();
-    return baMessage;
-}
 
 
 DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
@@ -238,7 +237,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         }
         break;
     case proto::receiver::UNKNOWN_COMMAND:
-        //TODO
+        //TODO UNKNOWN COMMAND
         qDebug()<<"====== UNKMOWN COMMAND";
         break;
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:

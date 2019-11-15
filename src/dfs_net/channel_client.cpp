@@ -92,7 +92,6 @@ void ChannelClient::readServerSessionChange(const QByteArray &buffer)
     keyExchangeState=KeyExchangeState::DONE;
     writeToConnection(serializeMessage(clientSessionChange));
     _channelState=ChannelState::ESTABLISHED;
-    //TODO ДОРАБОТАТЬ ВЫЗОВ CONNECTED
     emit connected();
 }
 

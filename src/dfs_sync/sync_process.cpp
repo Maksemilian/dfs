@@ -314,7 +314,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
             initShiftBuffer(packetPair[d->shiftData.channelIndex].sample().data(),
                     packetPair[d->shiftData.channelIndex].block_size(),
                     static_cast<quint32>(d->shiftData.ddcDifference));
-            //WARNING UNCOMMENT THIS CODE
+
             //            initShiftBuffer(packetPair[d->channelIndex].sample().data(),
             //                    static_cast<quint32>(packetPair[d->channelIndex].sample().size()),
             //                    static_cast<quint32>(d->ddcDifference)*COUNT_SIGNAL_COMPONENT);

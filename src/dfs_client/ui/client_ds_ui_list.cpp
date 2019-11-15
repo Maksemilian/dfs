@@ -272,18 +272,3 @@ void DeviceSetListWidget::onAddDeviceSetWidget()
             warning(this,"Creation Device Set Client faild","address:port");
 
 }
-
-//TODO ДОБАВИТЬ ДОБАВЛЕНИЕ И УДАЛЕНИЕ СТАНЦИЙ ТОЛЬКО ПОСЛЕ ТОГО
-//КАК БУДЕТ СДЕЛАНО ДОБАВЛЕНИЕ СТАНЦИЙ В БД
-//QPushButton *_pbAddDeviceSetWidget;
-//QPushButton *_pbRemoveDeviceSetWidget;
-//    _pbAddDeviceSetWidget=new QPushButton("Add",this);
-//    _pbRemoveDeviceSetWidget=new QPushButton("Remove",this);
-//    _pbAddDeviceSetWidget->setEnabled(false);
-//    _pbRemoveDeviceSetWidget->setEnabled(false);
-//    layout()->addWidget(_pbAddDeviceSetWidget);
-//    layout()->addWidget(_pbRemoveDeviceSetWidget);
-//    connect(_pbRemoveDeviceSetWidget,&QPushButton::clicked,
-//            this,&DeviceSetListWidget::onRemoveDeviceSetWidget);
-//    connect(_pbAddDeviceSetWidget,&QPushButton::clicked,
-//            this,&DeviceSetListWidget::onAddDeviceSetWidget);

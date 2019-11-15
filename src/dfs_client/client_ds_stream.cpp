@@ -95,7 +95,6 @@ void StreamReader::onMessageReceive(const QByteArray &buffer)
 //    }else {
 //        qDebug()<<"SUCCESS connected for"<<d->address<<d->port;
 //    }
-//    //TODO СДЕЛАТЬ ПОТОК
 
 //    ConnectRequest request;
 //    request.set_type(ConnectRequest::CT_STREAM);

@@ -176,7 +176,6 @@ void DeviceSetWidget::onDeviceSetDisconnected()
     _lbStatus->setText(STRING_DISCONNECT);
     setStatus(false);
     _cbReceivers->clear();
-    //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОТКЛЮЧЕНИЯ
 }
 
 bool DeviceSetWidget::isConnected()
@@ -202,7 +201,6 @@ void DeviceSetWidget::setStatus(bool status)
 void DeviceSetWidget::onDeviceSetCommandFailed(const QString &errorString)
 {
     qDebug()<<errorString;
-    //TODO СДЕЛАТЬ ВИЗУАЛИЗАЦИЮ ДЛЯ ОШИБКИ
 }
 
 void DeviceSetWidget::sendCommand(const proto::receiver::Command &command)

@@ -14,7 +14,6 @@ class DeviceSetClient:public QObject
 {
     Q_OBJECT
 
-//    static const int WAITING_SETTING_DEVICE_SET_POWER=100;
     static const int SLEEP_TIME=100;
 public:
     DeviceSetClient(net::ChannelHost*channelHost);
@@ -22,10 +21,10 @@ public:
                     const std::shared_ptr<CohG35DeviceSet>&deviceSet);
     ~DeviceSetClient();
 
-    Q_SIGNAL void stationDisconnected();
-    const std::shared_ptr<CohG35DeviceSet> &getCohDeviceSet();
     void setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet>&shPtrCohG35DeviceSet);
+    const std::shared_ptr<CohG35DeviceSet> &getCohDeviceSet();
 signals:
+    void stationDisconnected();
     void changedDeviceSet(unsigned int indexDeviceSet);
 private slots:
     void onDisconnected();
@@ -36,7 +35,7 @@ private:
     void readCommandPacket(const proto::receiver::Command &command);
     DeviceSetSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 
-    QByteArray serializeMessage(const google::protobuf::Message &message);
+//    QByteArray serializeMessage(const google::protobuf::Message &message);
     void writeMessage(const google::protobuf::Message &message);
 private:
     struct Impl;
