@@ -43,6 +43,9 @@ DeviceSetClient::DeviceSetClient(QObject *parent):
     connect(d->channel.get(),&net::ChannelClient::messageReceived,
             this,&DeviceSetClient::onMessageReceived);
 
+    connect(d->channel.get(),&net::ChannelClient::connected,
+            this,&DeviceSetClient::connected);
+
     connect(d->channel.get(),&net::ChannelClient::finished,
             this,&DeviceSetClient::disconnected);
 }
@@ -170,6 +173,9 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
             qDebug()<<"SETTED_SHIFT_PHASE_DDC1";
             break;
+        case proto::receiver::SET_DEVICE_SET_INDEX:
+            qDebug()<<"SETTED_DEVICE_SET_INDEX";
+            break;
         case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
         case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
             break;
@@ -191,6 +197,40 @@ void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
     //TODO ПОНЯТЬ КАК РАБОТАЕТ
     clientToHost.mutable_command()->CopyFrom(command);
     d->channel->writeToConnection(serializeCommandToByteArray(clientToHost));
+}
+QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
+{
+    switch (commandType) {
+    case proto::receiver::CommandType::SET_POWER_ON:
+        return "ERROR Command Power on";
+    case proto::receiver::CommandType::SET_POWER_OFF:
+        return "ERROR Command Power off ";
+    case proto::receiver::CommandType::SET_SETTINGS:
+        return "ERROR Command Power set settings";
+    case proto::receiver::START_DDC1:
+        return"ERROR Command Power start ddc1";
+    case proto::receiver::STOP_DDC1:
+        return"ERROR Command Power stop ddc1";
+    case proto::receiver::SET_DDC1_TYPE:
+        return "ERROR Command Power set ddc1 type";
+    case proto::receiver::SET_DDC1_FREQUENCY:
+        return "ERROR Change Freq";
+    case proto::receiver::SET_PRESELECTORS:
+        return "ERROR Presselector check";
+    case proto::receiver::SET_PREAMPLIFIER_ENABLED:
+        return "ERROR Pream check";
+    case proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED:
+        return"ERROR ADC ENABLED CHECK";
+    case proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD:
+        return"ERROR ADC THRESHOLD CHECK";
+    case proto::receiver::SET_ATTENUATOR:
+        return "ERROR ATTENUATOR CHECK";
+    case proto::receiver::SET_SHIFT_PHASE_DDC:
+        return "ERROR SHIFT PHASE DDC1";
+    case proto::receiver::SET_DEVICE_SET_INDEX:
+        return "ERROR COMMAND SET DEVICE SET INDEX";
+    default:return "UNKNOWN KOMMAND";
+    }
 }
 
 /*
@@ -320,38 +360,6 @@ void DeviceSetClient::setDDC1Type(quint32 typeIndex)
     sendCommand(command);
 }
 */
-QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
-{
-    switch (commandType) {
-    case proto::receiver::CommandType::SET_POWER_ON:
-        return "ERROR Command Power on";
-    case proto::receiver::CommandType::SET_POWER_OFF:
-        return "ERROR Command Power off ";
-    case proto::receiver::CommandType::SET_SETTINGS:
-        return "ERROR Command Power set settings";
-    case proto::receiver::START_DDC1:
-        return"ERROR Command Power start ddc1";
-    case proto::receiver::STOP_DDC1:
-        return"ERROR Command Power stop ddc1";
-    case proto::receiver::SET_DDC1_TYPE:
-        return "ERROR Command Power set ddc1 type";
-    case proto::receiver::SET_DDC1_FREQUENCY:
-        return "ERROR Change Freq";
-    case proto::receiver::SET_PRESELECTORS:
-        return "ERROR Presselector check";
-    case proto::receiver::SET_PREAMPLIFIER_ENABLED:
-        return "ERROR Pream check";
-    case proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED:
-        return"ERROR ADC ENABLED CHECK";
-    case proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD:
-        return"ERROR ADC THRESHOLD CHECK";
-    case proto::receiver::SET_ATTENUATOR:
-        return "ERROR ATTENUATOR CHECK";
-    case proto::receiver::SET_SHIFT_PHASE_DDC:
-        return "ERROR SHIFT PHASE DDC1";
-    default:return "UNKNOWN KOMMAND";
-    }
-}
 
 //************************** DEL *************************
 

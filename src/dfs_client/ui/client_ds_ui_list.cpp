@@ -94,19 +94,19 @@ void DeviceSetListWidget::createDevieSetWidgets()
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
         addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
-        s.beginGroup("dev_2");
-        ip=s.value("ip").toString();
-        port=static_cast<quint16>(s.value("port").toUInt());
-        s.endGroup();
-        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+//        s.beginGroup("dev_2");
+//        ip=s.value("ip").toString();
+//        port=static_cast<quint16>(s.value("port").toUInt());
+//        s.endGroup();
+//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
-        s.beginGroup("dev_3");
-        ip=s.value("ip").toString();
-        port=static_cast<quint16>(s.value("port").toUInt());
-        s.endGroup();
-        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+//        s.beginGroup("dev_3");
+//        ip=s.value("ip").toString();
+//        port=static_cast<quint16>(s.value("port").toUInt());
+//        s.endGroup();
+//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
     }
 }
 
@@ -114,6 +114,7 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
 {
     connect(deviceSetWidget,&DeviceSetWidget::commandSuccessed,
             [this]{
+        if(_commandQueue.isEmpty())return ;
         if(--_counter!=0)return ;
         const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
 

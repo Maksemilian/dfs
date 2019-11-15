@@ -43,6 +43,7 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _lbStatusDDC1(new QLabel(TEXT_DISCONNECT,this)),
     _cbReceivers(new QComboBox(this)),
     _leSetShiftPhaseDDC1(new QLineEdit(this)),
+    _cbDeviceSetIndex(new QComboBox(this)),
     _deviceSetClient(std::make_unique<DeviceSetClient>()),
     _streamController(std::make_unique<ClientStreamController>(address,port))
 {
@@ -62,13 +63,26 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     vbLayout->addWidget(new QLabel("Status:"),3,0);
     vbLayout->addWidget(_lbStatus);
 
-    vbLayout->addWidget(new QLabel("DDC1"),4,0);
+    vbLayout->addWidget(new QLabel("DDC1:"),4,0);
     vbLayout->addWidget(_lbStatusDDC1,4,1);
 
-    vbLayout->addWidget(new QLabel("Phase Shift ddc1"),5,0);
+    vbLayout->addWidget(new QLabel("Phase Shift ddc1:"),5,0);
     vbLayout->addWidget(_leSetShiftPhaseDDC1);
     _leSetShiftPhaseDDC1->setValidator(new PhaseValidator);
 //    _leSetShiftPhaseDDC1->setInputMask("DDD");
+    vbLayout->addWidget(new QLabel("DS index:"),6,0);
+    vbLayout->addWidget(_cbDeviceSetIndex,6,1);
+    _cbDeviceSetIndex->addItem("0");
+    _cbDeviceSetIndex->addItem("1");
+
+    connect(_cbDeviceSetIndex,static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
+            [this](int index){
+        proto::receiver::Command command;
+        command.set_command_type(proto::receiver::SET_DEVICE_SET_INDEX);
+        command.set_device_set_index(static_cast<quint32>(index));
+        this->sendCommand(command);
+    });
+
     connect(_leSetShiftPhaseDDC1,&QLineEdit::editingFinished,
             [this](){
         double phaseShiftDDC1=_leSetShiftPhaseDDC1->text().toDouble();
@@ -83,6 +97,7 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
       command.set_allocated_shift_phase_ddc1(shiftPhaseDDC1);
       this->sendCommand(command);
     });
+
     _lbStatus->setText(STRING_DISCONNECT);
     _lbStatus->setUserData(USER_DATA_STATUS,new Status(false));
 
@@ -95,6 +110,9 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
             [this]{
         _lbStatusDDC1->setText(TEXT_DISCONNECT);
     });
+
+    connect(_deviceSetClient.get(),&DeviceSetClient::connected,
+            this,&DeviceSetWidget::onDeviceSetConnected);
 
     connect(_deviceSetClient.get(),&DeviceSetClient::deviceSetReady,
             this,&DeviceSetWidget::onDeviceSetReady);
@@ -142,6 +160,14 @@ void DeviceSetWidget::onDeviceSetReady()
     _lbStatus->setText(STRING_CONNECT);
     setStatus(true);
     _cbReceivers->addItems(_deviceSetClient->receiverNameList());
+}
+
+void DeviceSetWidget::onDeviceSetConnected()
+{
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SET_DEVICE_SET_INDEX);
+    command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
+    sendCommand(command);
 }
 
 void DeviceSetWidget::onDeviceSetDisconnected()

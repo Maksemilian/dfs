@@ -8,16 +8,30 @@
 
 struct DeviceSetClient::Impl
 {
+    Impl(net::ChannelHost *channel):
+        channel(channel)
+    {}
+
     Impl(net::ChannelHost *channel,
          const std::shared_ptr<CohG35DeviceSet>&deviceSet):
         channel(channel),cohG35DeviceSet(deviceSet)
-      //TODO сделать по запросу от клиента
-      //        cohG35DeviceSet(DeviceSetSelector::selectDeviceSet(0))
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
     std::shared_ptr<CohG35DeviceSet>cohG35DeviceSet;
 };
+
+DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
+    :d(std::make_unique<Impl>(channelHost))
+{
+    qDebug()<<"Create ReceiverStationClient";
+
+    connect(d->channel.get(),&net::Channel::finished,
+            this,&DeviceSetClient::onDisconnected);
+
+    connect(d->channel.get(),&net::Channel::messageReceived,
+            this,&DeviceSetClient::onMessageReceived);
+}
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost,
                                  const std::shared_ptr<CohG35DeviceSet>&deviceSet)
@@ -30,12 +44,7 @@ DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost,
 
     connect(d->channel.get(),&net::Channel::messageReceived,
             this,&DeviceSetClient::onMessageReceived);
-//    emit changedDeviceSet(0);
-    //TODO сделать по запросу от клиента
-    //    d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(0);
-    //    d->cohG35DeviceSet->setUpDeviceSet(0);
 }
-
 
 DeviceSetClient::~DeviceSetClient()
 {
@@ -47,6 +56,10 @@ void DeviceSetClient::setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet> &sh
     d->cohG35DeviceSet=shPtrCohG35DeviceSet;
 }
 
+const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
+{
+    return d->cohG35DeviceSet;
+}
 //std::shared_ptr<RingBuffer<proto::receiver::Packet>> DeviceSetClient::getBuffer()
 //{
 //    return  d->cohG35DeviceSet->getBuffer();
@@ -131,7 +144,6 @@ void DeviceSetClient::writeMessage(const google::protobuf::Message &message)
     d->channel->writeToConnection(serializeMessage(message));
 }
 
-
 void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
 {
     qDebug()<<"Message Received";
@@ -215,6 +227,19 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
                                                        command.shift_phase_ddc1().phase_shift());
         qDebug()<<"======Comand  SET_DDC1_SHIFT_PHASE"<<command.shift_phase_ddc1().device_index()
                <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
+        break;
+    case proto::receiver::CommandType::SET_DEVICE_SET_INDEX:
+        d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(command.device_set_index());
+        d->cohG35DeviceSet.get()!=nullptr? succesed=true:succesed=false;
+        if(succesed){
+            qDebug()<<"======Comand  SET_DEVICE_SET_INDEX"
+                   <<d->cohG35DeviceSet->getDeviceSetName();
+            sendDeviceSetInfo();
+        }
+        break;
+    case proto::receiver::UNKNOWN_COMMAND:
+        //TODO
+        qDebug()<<"====== UNKMOWN COMMAND";
         break;
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
     case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:

@@ -7,7 +7,6 @@
 //struct DeviceSetSettings;
 
 class QHostAddress;
-
 class DeviceSetClient: public QObject
 {
     Q_OBJECT

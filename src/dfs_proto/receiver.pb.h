@@ -97,25 +97,27 @@ namespace proto {
 namespace receiver {
 
 enum CommandType {
-  SET_POWER_OFF = 0,
+  UNKNOWN_COMMAND = 0,
   SET_POWER_ON = 1,
-  SET_ATTENUATOR = 2,
-  SET_PRESELECTORS = 3,
-  SET_PREAMPLIFIER_ENABLED = 4,
-  SET_ADC_NOICE_BLANKER_ENABLED = 5,
-  SET_ADC_NOICE_BLANKER_THRESHOLD = 6,
-  SET_DDC1_FREQUENCY = 7,
-  SET_DDC1_TYPE = 8,
-  SET_SETTINGS = 9,
-  START_DDC1 = 10,
-  STOP_DDC1 = 11,
-  SET_SHIFT_PHASE_DDC = 12,
+  SET_POWER_OFF = 2,
+  SET_ATTENUATOR = 3,
+  SET_PRESELECTORS = 4,
+  SET_PREAMPLIFIER_ENABLED = 5,
+  SET_ADC_NOICE_BLANKER_ENABLED = 6,
+  SET_ADC_NOICE_BLANKER_THRESHOLD = 7,
+  SET_DDC1_FREQUENCY = 8,
+  SET_DDC1_TYPE = 9,
+  SET_SETTINGS = 10,
+  START_DDC1 = 11,
+  STOP_DDC1 = 12,
+  SET_SHIFT_PHASE_DDC = 13,
+  SET_DEVICE_SET_INDEX = 14,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
 };
 bool CommandType_IsValid(int value);
-const CommandType CommandType_MIN = SET_POWER_OFF;
-const CommandType CommandType_MAX = SET_SHIFT_PHASE_DDC;
+const CommandType CommandType_MIN = UNKNOWN_COMMAND;
+const CommandType CommandType_MAX = SET_DEVICE_SET_INDEX;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -543,6 +545,12 @@ class Command :
   ::google::protobuf::uint32 samples_per_buffer() const;
   void set_samples_per_buffer(::google::protobuf::uint32 value);
 
+  // uint32 device_set_index = 12;
+  void clear_device_set_index();
+  static const int kDeviceSetIndexFieldNumber = 12;
+  ::google::protobuf::uint32 device_set_index() const;
+  void set_device_set_index(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.Command)
  private:
   class HasBitSetters;
@@ -559,6 +567,7 @@ class Command :
   ::google::protobuf::uint32 ddc1_frequency_;
   ::google::protobuf::uint32 ddc1_type_;
   ::google::protobuf::uint32 samples_per_buffer_;
+  ::google::protobuf::uint32 device_set_index_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1727,6 +1736,20 @@ inline void Command::set_allocated_shift_phase_ddc1(::proto::receiver::ShiftPhas
   }
   shift_phase_ddc1_ = shift_phase_ddc1;
   // @@protoc_insertion_point(field_set_allocated:proto.receiver.Command.shift_phase_ddc1)
+}
+
+// uint32 device_set_index = 12;
+inline void Command::clear_device_set_index() {
+  device_set_index_ = 0u;
+}
+inline ::google::protobuf::uint32 Command::device_set_index() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.device_set_index)
+  return device_set_index_;
+}
+inline void Command::set_device_set_index(::google::protobuf::uint32 value) {
+  
+  device_set_index_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Command.device_set_index)
 }
 
 // -------------------------------------------------------------------

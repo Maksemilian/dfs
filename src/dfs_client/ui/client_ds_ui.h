@@ -14,6 +14,7 @@ class ClientStreamController;
 class QComboBox;
 class QLabel;
 class QLineEdit;
+
 class DeviceSetWidget :public QWidget
 {
     Q_OBJECT
@@ -45,11 +46,13 @@ public:
 //    quint32 getBufferSize();
 signals:
     void commandSuccessed();
+
 public slots:
     void connectToDeviceSet();
     void disconnectFromDeviceSet();
 private slots:
     void onDeviceSetReady();
+    void onDeviceSetConnected();
     void onDeviceSetDisconnected();
     void onDeviceSetCommandFailed(const QString &errorString);
     void onDDC1Started();
@@ -64,6 +67,7 @@ private:
     QLabel *_lbStatusDDC1;
     QComboBox *_cbReceivers;
     QLineEdit *_leSetShiftPhaseDDC1;
+    QComboBox *_cbDeviceSetIndex;
     std::unique_ptr<DeviceSetClient> _deviceSetClient;
     std::unique_ptr<ClientStreamController> _streamController;
 };
