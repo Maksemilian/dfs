@@ -55,7 +55,6 @@ void StreamReader::stop()
 
 void StreamReader::run()
 {
-    //TODO СОЗДАЕТСЯ черех make_unique
     d->stream.reset(new net::ChannelClient);
     d->stream->connectToHost(d->address,d->port,SessionType::SESSION_SIGNAL_STREAM);
     connect(d->stream.get(),&net::ChannelClient::messageReceived,

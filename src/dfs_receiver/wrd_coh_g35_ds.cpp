@@ -6,10 +6,10 @@
 #include <QTimer>
 #include <QDebug>
 
-CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet*deviceSet):
+CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet*deviceSet,const TimeReader &timeReader):
     _deviceSet(deviceSet),
     buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-    timeReader(std::make_unique<TimeReader>()),
+    timeReader(timeReader),
     isFirstBlock(true),
     counterBlockPPS(1),
     currentDDCCounter(-1),
@@ -19,7 +19,8 @@ CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet*deviceSet):
     _deviceSet->SetCallback(this);
 }
 
-QString CohG35DeviceSet::getDeviceSetName(){
+QString CohG35DeviceSet::getDeviceSetName()
+{
     quint32 deviceCount;
     _deviceSet->GetDeviceCount(&deviceCount);
     G35DDC_DEVICE_INFO deviceInfo[deviceCount];
@@ -31,30 +32,25 @@ QString CohG35DeviceSet::getDeviceSetName(){
             deviceSetName+="_";
         }
     }
-    //    G3XDDC_DDC_INFO info;
-    //    for (int i=0;i<deviceInfo[0].DDCTypeCount;i++) {
-    //        deviceSet->GetDDCInfo(i,&info);
-    //        qDebug()<<info.Bandwidth<<info.SampleRate;
-    //    }
+
     return deviceSetName;
 }
 
 
-void CohG35DeviceSet::resetData(){
+void CohG35DeviceSet::resetData()
+{
     isFirstBlock=true;
     counterBlockPPS=1;
     currentDDCCounter=-1;
     currentWeekNumber=0;
     currentTimeOfWeek=0;
-//    ddc1Buffer->reset();
     buffer->reset();
 }
 
-void CohG35DeviceSet::freeResource(){
-    if(_deviceSet!=nullptr){
+void CohG35DeviceSet::freeResource()
+{
+    if(_deviceSet!=nullptr)
         _deviceSet->Release();
-        //        delete ddc1Buffer;
-    }
 }
 
 CohG35DeviceSet::~CohG35DeviceSet()
@@ -62,7 +58,8 @@ CohG35DeviceSet::~CohG35DeviceSet()
     freeResource();
 }
 
-COH_G35DDC_DEVICE_SET CohG35DeviceSet::getDeviceSetInfo(){
+COH_G35DDC_DEVICE_SET CohG35DeviceSet::getDeviceSetInfo()
+{
     COH_G35DDC_DEVICE_SET deviceSetInfos;
     _deviceSet->GetDeviceCount(&deviceSetInfos.DeviceCount);
     deviceSetInfos.DeviceInfo=new G35DDC_DEVICE_INFO[deviceSetInfos.DeviceCount];
@@ -72,31 +69,38 @@ COH_G35DDC_DEVICE_SET CohG35DeviceSet::getDeviceSetInfo(){
 
 //**************COMMAND TO DEVICE SET
 
-bool CohG35DeviceSet::setPower(bool state){
+bool CohG35DeviceSet::setPower(bool state)
+{
     return _deviceSet->SetPower(state);
 }
 
-bool CohG35DeviceSet::setAttenuator(unsigned int attenuationLevel){
+bool CohG35DeviceSet::setAttenuator(unsigned int attenuationLevel)
+{
     return _deviceSet->SetAttenuator(attenuationLevel);
 }
 
-bool CohG35DeviceSet::setPreamplifierEnabled(bool state){
+bool CohG35DeviceSet::setPreamplifierEnabled(bool state)
+{
     return _deviceSet->SetPreamp(state);
 }
 
-bool CohG35DeviceSet::setPreselectors(unsigned int lowFrequency, unsigned int highFrequency){
+bool CohG35DeviceSet::setPreselectors(unsigned int lowFrequency, unsigned int highFrequency)
+{
     return _deviceSet->SetPreselectors(lowFrequency,highFrequency);
 }
 
-bool CohG35DeviceSet::setAdcNoiceBlankerEnabled(bool state){
+bool CohG35DeviceSet::setAdcNoiceBlankerEnabled(bool state)
+{
     return _deviceSet->SetADCNoiseBlanker(state);
 }
 
-bool CohG35DeviceSet::setAdcNoiceBlankerThreshold(unsigned short threshold){
+bool CohG35DeviceSet::setAdcNoiceBlankerThreshold(unsigned short threshold)
+{
     return _deviceSet->SetADCNoiseBlankerThreshold(threshold);
 }
 
-bool CohG35DeviceSet::setDDC1Frequency(unsigned int ddc1Frequency){
+bool CohG35DeviceSet::setDDC1Frequency(unsigned int ddc1Frequency)
+{
     return _deviceSet->SetDDC1Frequency(ddc1Frequency);
 }
 
@@ -104,7 +108,9 @@ bool CohG35DeviceSet::setDDC1Type(quint32 type)
 {
     return  _deviceSet->SetDDC1(type);
 }
-bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
+
+bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings)
+{
     bool succesed=false;
 
     succesed=setAttenuator(settings.attenuator);
@@ -132,42 +138,28 @@ bool CohG35DeviceSet::setSettings(const DeviceSetSettings &settings){
     return succesed;
 }
 
-void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer){
+bool CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer)
+{
     Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
+    bool success=false;
     if(_deviceSet){
         resetData();
-        timeReader->start();
-        QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer]{
-            timeReader->getTime(currentWeekNumber,currentTimeOfWeek);
-            _deviceSet->StartDDC1(samplesPerBuffer);
-        });
+        //TODO ВОЗВРАЩАТЬ FALSE ЕСЛИ НЕ ЗАПУЩЕН TIME READER
+        timeReader.getTime(currentWeekNumber,currentTimeOfWeek);
+        success=_deviceSet->StartDDC1(samplesPerBuffer);
     }
+    return success;
 }
 
-void CohG35DeviceSet::stopDDC1(){
+
+bool CohG35DeviceSet::stopDDC1()
+{
+    bool success=false;
     if(_deviceSet){
-        _deviceSet->StopDDC1();
-        timeReader->stop();
+        success= _deviceSet->StopDDC1();
         buffer->reset();
     }
-}
-
-void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int samplesPerBuffer){
-    if(_deviceSet){
-        bool succesed=true;
-        std::shared_ptr<QMetaObject::Connection> sharedPtrConnection(new QMetaObject::Connection) ;
-        *sharedPtrConnection=QObject::connect(timeReader.get(),&TimeReader::stopedTrimble,
-                                              [this,sharedPtrConnection,ddc1TypeIndex,samplesPerBuffer]{
-            QObject::disconnect(*sharedPtrConnection);
-            _deviceSet->SetDDC1(ddc1TypeIndex);
-            quint32 ddcfreq;
-            _deviceSet->GetDDC1Frequency(&ddcfreq);
-            qDebug()<<"RESTART"<<ddcfreq;
-            startDDC1(samplesPerBuffer);
-        });
-        stopDDC1();
-        qDebug()<<"======Comand  SET_DDC1_TYPE"<<ddc1TypeIndex<<"SamplesPerBuffer"<<samplesPerBuffer<<"|| Succesed command"<<succesed;
-    }
+    return success;
 }
 
 bool CohG35DeviceSet::setShiftPhaseDDC1(unsigned int deviceIndex, double phaseShift)
@@ -177,7 +169,8 @@ bool CohG35DeviceSet::setShiftPhaseDDC1(unsigned int deviceIndex, double phaseSh
 //*********************** ICohG35DDCDeviceSetCallback ************************
 
 void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceCount,
-                                                   const void **Buffers, unsigned int NumberOfSamples, unsigned int BitsPerSample){
+                                                   const void **Buffers, unsigned int NumberOfSamples, unsigned int BitsPerSample)
+{
     //qDebug("CALLBACK_BEGIN");
     double ddcSampleCounter;
     quint64 adcPeriodCounter;
@@ -200,7 +193,7 @@ void CohG35DeviceSet::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSe
     }
 
     quint32 timeOfWeek;
-    timeReader->getTime(currentWeekNumber,timeOfWeek);
+    timeReader.getTime(currentWeekNumber,timeOfWeek);
     if(!isFirstBlock)
     {
         if(isChangedDDCCounter)
@@ -408,3 +401,44 @@ void CohG35DeviceSet::showPacket(Packet &packet){
        <<"||"<<"WN"<<packet.week_number()<<"TOW:"<<packet.time_of_week();
 }
 */
+//void CohG35DeviceSet::reStartDdc1(unsigned int ddc1TypeIndex,unsigned int samplesPerBuffer){
+//    if(_deviceSet){
+//        bool succesed=true;
+//        std::shared_ptr<QMetaObject::Connection> sharedPtrConnection(new QMetaObject::Connection) ;
+//        *sharedPtrConnection=QObject::connect(timeReader.get(),&TimeReader::stopedTrimble,
+//                                              [this,sharedPtrConnection,ddc1TypeIndex,samplesPerBuffer]{
+//            QObject::disconnect(*sharedPtrConnection);
+//            _deviceSet->SetDDC1(ddc1TypeIndex);
+////            quint32 ddcfreq;
+////            _deviceSet->GetDDC1Frequency(&ddcfreq);
+////            qDebug()<<"RESTART"<<ddcfreq;
+//            startDDC1(samplesPerBuffer);
+//        });
+//        stopDDC1();
+//        qDebug()<<"======Comand  SET_DDC1_TYPE"<<ddc1TypeIndex<<"SamplesPerBuffer"<<samplesPerBuffer<<"|| Succesed command"<<succesed;
+//    }
+//}
+//void CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer){
+//    Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
+//    if(_deviceSet){
+//        resetData();
+//        timeReader->start();
+//        QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer]{
+//            timeReader->getTime(currentWeekNumber,currentTimeOfWeek);
+//            _deviceSet->StartDDC1(samplesPerBuffer);
+//        });
+//    }
+//}
+
+//bool CohG35DeviceSet::startDDC1(unsigned int sampesPerBuffer)
+//{
+//    Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
+//    if(_deviceSet){
+//        resetData();
+//        timeReader->start();
+//        QTimer::singleShot(TIMEOUT,[this,samplesPerBuffer]{
+//            timeReader->getTime(currentWeekNumber,currentTimeOfWeek);
+//            _deviceSet->StartDDC1(samplesPerBuffer);
+//        });
+//    }
+//}

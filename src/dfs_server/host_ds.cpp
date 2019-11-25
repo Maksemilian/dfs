@@ -177,15 +177,11 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         break;
     case proto::receiver::CommandType::START_DDC1:
         qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
-        d->cohG35DeviceSet->startDDC1(command.samples_per_buffer(),true);
-        //TODO RETURN VALUE
-        succesed=true;
+        succesed=d->cohG35DeviceSet->startDDC1(command.samples_per_buffer(),true);
         break;
     case proto::receiver::CommandType::STOP_DDC1:
         qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
-        d->cohG35DeviceSet->stopDDC1();
-        //TODO RETURN VALUE
-        succesed=true;
+        succesed=d->cohG35DeviceSet->stopDDC1();
         break;
     case proto::receiver::CommandType::SET_DDC1_TYPE:
         qDebug()<<"======Comand  SET_DDC1_TYPE"<<command.ddc1_type()<<"|| Succesed command"<<true;
@@ -237,12 +233,9 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         }
         break;
     case proto::receiver::UNKNOWN_COMMAND:
-        //TODO UNKNOWN COMMAND
-        qDebug()<<"====== UNKMOWN COMMAND";
-        break;
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
     case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
-        qDebug()<<"Wrong Command Type"<<command.command_type();
+        qDebug()<<"====== UNKMOWN COMMAND"<<command.command_type();
         break;
     }
     proto::receiver::Answer *answer=new proto::receiver::Answer;

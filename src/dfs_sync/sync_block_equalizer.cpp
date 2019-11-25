@@ -138,7 +138,6 @@ void BlockEqualizer::shiftTest(Ipp32fc *blockData, quint32 blockSize, double tet
     Ipp32fc val;
     //    val.re=static_cast<float>(cos(teta));
     //    val.im=static_cast<float>(sin(teta));
-    //TODO НЕ ИСПОЛЬЗОВАТЬ math.h
     val.re=static_cast<float>(cos(fmod(teta,(2*IPP_PI))));
     val.im=static_cast<float>(sin(fmod(teta,(2*IPP_PI))));
     qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*IPP_PI));

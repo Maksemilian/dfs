@@ -139,6 +139,7 @@ qint64 Channel::socketBytesAvailable()
 void Channel::onMessageReceive()
 {
     //    qDebug()<<"Channel::answerSize"<<answerSize;
+    //TODO ДОРАБОТАТЬ КОНТЕКСТ ДЛЯ ЧТЕНИЯ
     QByteArray buffer;
     buffer.resize(static_cast<int>(read_.buffer.size()));
     readDataFromBuffer(buffer.data(),buffer.size());
@@ -150,8 +151,6 @@ void Channel::onMessageReceive()
         qDebug()<<"SESSION_MES"<<buffer.size();
         internalMessageReceive(buffer);
     }
-    //TODO СДЕЛАТЬ ОСВОБОЖДЕНИЕ БУФЕРА
-    //    internalMessageReceive(incomingBuffer);
 }
 
 void Channel::onReadyRead()

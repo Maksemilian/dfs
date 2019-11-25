@@ -38,7 +38,6 @@ public:
     {
         //1 ***** Создаем коэффициенты
         for(quint32 i=0;i<blockSize;i++,currentAngleRad+=DELTA_ANGLE_IN_RADIAN){
-            //TODO ПРИМЕНИТЬ SIN и COS из IPP
             re[i]= static_cast<Ipp32f>(cos(currentAngleRad));
             im[i]= static_cast<Ipp32f>(sin(currentAngleRad));
             if(currentAngleRad>=DOUBLE_PI){
@@ -287,6 +286,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBufferPair stationPair,
             d->shiftData.ddcDifference = abs(d->shiftData.ddcDifference);
 
             //TODO поместить в один метод
+            //BN1*BS1+SHIFT-BN2*BS2
             d->shiftData.deltaStart = d->shiftData.channelIndex==CHANNEL_FIRST ?
                         ((packetPair[CHANNEL_FIRST].block_number()*
                           packetPair[CHANNEL_FIRST].block_size())+ d->shiftData.ddcDifference)

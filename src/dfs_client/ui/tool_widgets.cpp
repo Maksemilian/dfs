@@ -64,8 +64,8 @@ const quint8 AttenuatorComboBox::attenuatorArray[AttenuatorComboBox::ATTENUATOR_
     21
 };
 
-ToolBarLineEdit::ToolBarLineEdit(/*MainWindow*mainWindow,*/QWidget*parent)
-    :QLineEdit(parent)/*,IToolBarWidget (mainWindow)*/
+ToolBarLineEdit::ToolBarLineEdit(QWidget*parent)
+    :QLineEdit(parent)
 {
     connect(this,&QLineEdit::returnPressed,[this]
     {
@@ -78,8 +78,8 @@ quint16 ToolBarLineEdit::getValue()
     return  text().toUShort();
 }
 
-ToolBarComboBox::ToolBarComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
-    :QComboBox(parent)/*,IToolBarWidget(mainWindow)*/
+ToolBarComboBox::ToolBarComboBox(QWidget*parent)
+    :QComboBox(parent)
 {
     setEditable(false);
     connect(this,static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
@@ -145,6 +145,6 @@ AttenuatorComboBox::AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget*parent)
 quint32 AttenuatorComboBox::getAttenuationLevel()
 {
     QString attetuatorText=currentText();
-    //TODO СДЕЛАТЬ ПРОВЕРКУ
+
     return  attetuatorText.left(attetuatorText.indexOf(' ')).toUInt();
 }

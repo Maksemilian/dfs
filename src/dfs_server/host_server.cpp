@@ -81,8 +81,8 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
         if(_streamDDC1==nullptr){
             createThread(channelHost);
         }else {
-            //TODO СДЕЛАТЬ ОСТАНОВКУ ЧЕРЕЗ КОМАНДУ
-            //ИЛИ ЧЕРЕЗ ПРОВЕРКУ СИГНАЛА
+            //TODO СДЕЛАТЬ ПО АНАЛОГИИ с FTP
+            //DeviceSetClient должен подключаться к главносу приложению и отправлять поток
             _streamDDC1->stop();
 
             createThread(channelHost);

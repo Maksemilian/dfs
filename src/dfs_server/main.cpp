@@ -1,5 +1,7 @@
-#include "wrd_ds_selector.h"
 #include "host_server.h"
+
+#include "wrd_ds_selector.h"
+#include "trmbl_tsip_reader"
 
 #include <QCoreApplication>
 #include <QLibrary>
@@ -14,7 +16,8 @@ G3XDDCAPI_CREATE_INSTANCE createInstance;
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-
+    QObject::connect(app,&QCoreApplication::aboutToQuit,
+                     &TimeReader::instance(),TimeReader::stop);
     QCommandLineOption portOption("p","port","value","value");
     QCommandLineParser parser;
 
@@ -46,7 +49,7 @@ int main(int argc, char *argv[])
         library.unload();
         return -1;
     }
-
+    TimeReader::instance().start();
     StreamServer *streamServer=new StreamServer();
     streamServer->listen(QHostAddress::Any,listenPort);
     qDebug()<<"Listen"<<listenPort;
