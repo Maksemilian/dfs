@@ -142,9 +142,9 @@ bool CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer)
 {
     Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
     bool success=false;
+    if(!timeReader.isStarted())return false;
     if(_deviceSet){
         resetData();
-        //TODO ВОЗВРАЩАТЬ FALSE ЕСЛИ НЕ ЗАПУЩЕН TIME READER
         timeReader.getTime(currentWeekNumber,currentTimeOfWeek);
         success=_deviceSet->StartDDC1(samplesPerBuffer);
     }

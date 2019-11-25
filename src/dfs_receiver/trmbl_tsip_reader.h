@@ -10,8 +10,8 @@ class TimeReader :public QObject
     Q_OBJECT
     TimeReader();
 public:
-    static const TimeReader &instance();
-    void setPortName(QString &portName);
+    static TimeReader &instance();
+    inline bool isStarted(){return startedAtomWatch;}
     void start();
     void stop();
     void getTimeOfWeek(quint32 &timeOfWeek);

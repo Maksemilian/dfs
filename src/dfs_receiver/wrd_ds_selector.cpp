@@ -7,8 +7,6 @@ extern G3XDDCAPI_CREATE_INSTANCE createInstance;
 ShPtrCohG35DeviceSet DeviceSetSelector::selectDeviceSet(unsigned int deviceSetIndex)
 {
     ICohG35DDCDeviceSetEnumerator *enumerator;
-    //TODO СДЕЛАТЬ ЧЕРЕЗ ИНТЕЛЛЕКТУАЛЬНЫЙ УКАЗАТЕЛЬ
-    //С СОБСТВЕННЫМ ДЕЛИТЕРОМ
     ICohG35DDCDeviceSet *deviceSet;
 
     if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET_ENUMERATOR,
@@ -37,7 +35,6 @@ ShPtrCohG35DeviceSet DeviceSetSelector::selectDeviceSet(unsigned int deviceSetIn
         delete []deviceInfoMas;
         enumerator->Release();
 //        return deviceSet;
-        //TODO ДОДЕЛАТЬ ПЕРЕДАЧУ TIME READER
         return std::make_shared<CohG35DeviceSet>(deviceSet,TimeReader::instance());
     }
     qDebug()<<"Device is not open";
