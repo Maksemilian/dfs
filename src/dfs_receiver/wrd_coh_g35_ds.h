@@ -28,7 +28,7 @@ public:
         unsigned int BitsPerSample;
     };
 
-    CohG35DeviceSet( ICohG35DDCDeviceSet *_deviceSet,const std::shared_ptr<TimeReader> &shpTimeReader);
+    CohG35DeviceSet( ICohG35DDCDeviceSet *_deviceSet,const TimeReader &timeReader);
     virtual ~CohG35DeviceSet();
 public:
     bool setPower(bool state);
@@ -78,7 +78,7 @@ private:
 
     ICohG35DDCDeviceSet *_deviceSet=nullptr;
     ShPtrRingPacketBuffer buffer;
-    std::shared_ptr<TimeReader> shpTimeReader;
+    TimeReader& timeReader;
 
     bool isFirstBlock;
     int counterBlockPPS;

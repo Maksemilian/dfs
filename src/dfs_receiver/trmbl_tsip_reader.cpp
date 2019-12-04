@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const TimeReader &TimeReader::instance()
+TimeReader &TimeReader::instance()
 {
     static TimeReader timeReader;
     return timeReader;

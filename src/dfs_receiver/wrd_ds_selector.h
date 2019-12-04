@@ -10,7 +10,6 @@ using ShPtrCohG35DeviceSet=std::shared_ptr<CohG35DeviceSet>;
 class DeviceSetSelector
 {
 public:
-//    static ICohG35DDCDeviceSet* selectDeviceSet(unsigned int deviceSetIndex);
     static std::shared_ptr<CohG35DeviceSet>selectDeviceSet(unsigned int deviceSetIndex);
     static unsigned int numberAvailableDeviceSet();
 };
