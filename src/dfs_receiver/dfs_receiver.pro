@@ -34,12 +34,19 @@ LIBS += -L$${LIBS_PATH}/dfs_proto/lib -ldfs_proto$${LIB_SUFFIX}
 
 HEADERS += \
     wrd_coh_g35_ds.h \
-    wrd_ds_selector.h \
     trmbl_tsip_parser.h \
-    trmbl_tsip_reader.h
+    trmbl_tsip_reader.h \
+    wrd_g35_d.h \
+    wrd_interface.h \
+    wrd_g35_callback.h \
+    wrd_coh_g35_callback.h \
+    wrd_coh_g35_ds_selector.h
 
 SOURCES += \
     wrd_coh_g35_ds.cpp \
-    wrd_ds_selector.cpp \
     trmbl_tsip_parser.cpp \
-    trmbl_tsip_reader.cpp
+    trmbl_tsip_reader.cpp \
+    wrd_g35_d.cpp \
+    wrd_g35_callback.cpp \
+    wrd_coh_g35_callback.cpp \
+    wrd_coh_g35_ds_selector.cpp

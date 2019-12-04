@@ -11,7 +11,7 @@
 class DeviceSetWidget;
 class QPushButton;
 class SwitchButton;
-class IDeviceSetSettings;
+class IDeviceSettings;
 
 class DeviceSetListWidget :
 //        public QListWidget,

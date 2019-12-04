@@ -4,7 +4,7 @@
 #include <QPair>
 using Preselectors= QPair<quint32,quint32>;
 
-struct DeviceSetSettings
+struct DeviceSettings
 {
     unsigned int attenuator;
     Preselectors preselectors;

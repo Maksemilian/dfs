@@ -11,7 +11,7 @@ AbstractCommand::~AbstractCommand()=default;
 
 
 ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,
-                                 IDeviceSetSettings*subject)
+                                 IDeviceSettings*subject)
     :AbstractCommand(),_iDeviceSet(iDeviceSet),subject(subject)
 {
 }
@@ -19,7 +19,7 @@ ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,
 ReceiverCommand::~ReceiverCommand()=default;
 
 AttenuatorCommand::AttenuatorCommand(IDeviceSet*syncManager,
-                                     IDeviceSetSettings*subject):
+                                     IDeviceSettings*subject):
     ReceiverCommand(syncManager,subject)
 {
 //    qDebug()<<"Set Attenuator"<<subject->getAttenuator();
@@ -36,7 +36,7 @@ void AttenuatorCommand::execute()
 
 //************************* PRES
 
-PreselectorCommand::PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+PreselectorCommand::PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject){
 //    qDebug()<<subject->getPreselectors();
 }
@@ -57,7 +57,7 @@ void PreselectorCommand::execute()
 
 //************************* PREAM
 
-PreamplifireCommand::PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+PreamplifireCommand::PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PreamplifireCommand::execute()
@@ -72,7 +72,7 @@ void PreamplifireCommand::execute()
 
 //************************* ADC EN
 
-AdcEnabledCommand::AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+AdcEnabledCommand::AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject)    {}
 
 void  AdcEnabledCommand::execute()
@@ -85,7 +85,7 @@ void  AdcEnabledCommand::execute()
 
 //************************* ADC THR
 
-AdcThresholdCommand::AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+AdcThresholdCommand::AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject)    {}
 
 void AdcThresholdCommand::execute()
@@ -100,7 +100,7 @@ void AdcThresholdCommand::execute()
 
 //************************* POWER ON
 
-PowerCommandOn::PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+PowerCommandOn::PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PowerCommandOn::execute()
@@ -113,7 +113,7 @@ void PowerCommandOn::execute()
 
 //************************* POWER OFF
 
-PowerCommandOff::PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+PowerCommandOff::PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     : ReceiverCommand(iDeviceSet,subject)    {}
 
 void PowerCommandOff::execute()
@@ -125,7 +125,7 @@ void PowerCommandOff::execute()
 
 //************************* SETTINGS
 
-SettingsCommand::SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+SettingsCommand::SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     :ReceiverCommand(iDeviceSet,subject)    {
 }
 
@@ -157,7 +157,7 @@ void SettingsCommand::execute()
 
 //************************* START DDC
 
-StartDDC1Command::StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+StartDDC1Command::StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     :ReceiverCommand(iDeviceSet,subject)    {}
 
 void StartDDC1Command::execute()
@@ -170,7 +170,7 @@ void StartDDC1Command::execute()
 
 //************************* STOP DDC
 
-StopDDC1Command::StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+StopDDC1Command::StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     :ReceiverCommand(iDeviceSet,subject)    {}
 
 void StopDDC1Command::execute()
@@ -182,7 +182,7 @@ void StopDDC1Command::execute()
 
 //************************* RESTART
 
-SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     :ReceiverCommand(iDeviceSet,subject)    {}
 
 void SetDDC1TypeCommand::execute()
@@ -195,7 +195,7 @@ void SetDDC1TypeCommand::execute()
 
 //************************* FREQ
 
-FrequencyCommand::FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSetSettings*subject)
+FrequencyCommand::FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
     :ReceiverCommand(iDeviceSet,subject)    {}
 
 void FrequencyCommand::execute()

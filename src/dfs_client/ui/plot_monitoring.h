@@ -5,7 +5,7 @@
 #include "sync_pair_channel.h"
 //#include <memory>
 
-class IDeviceSetSettings;
+class IDeviceSettings;
 class ChannelPlot;
 class ElipsPlot ;
 class DeviceSetWidget;
@@ -21,7 +21,7 @@ class PlotMonitoring :public QWidget
     };
 public:
     PlotMonitoring(QWidget *parent=nullptr);
-    IDeviceSetSettings *ds=nullptr;
+    IDeviceSettings *ds=nullptr;
 public:
     void onDeviceSetListReady(const QList<DeviceSetWidget*>&dsList);
     void onDeviceSetLIstNotReady();

@@ -1,7 +1,7 @@
 #ifndef FACTORY_COMMAND_H
 #define FACTORY_COMMAND_H
 
-class IDeviceSetSettings ;
+class IDeviceSettings ;
 class IDeviceSet;
 
 class WidgetDirector;
@@ -36,21 +36,21 @@ public:
         return factory;
     }
 
-    static PreselectorCommand *getPreselectorCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static PreamplifireCommand *getPreamplifireCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static AdcEnabledCommand *getAdcEnabledCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static AdcThresholdCommand *getAdcThresholdCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static AttenuatorCommand *getAttenuatorCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
+    static PreselectorCommand *getPreselectorCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static PreamplifireCommand *getPreamplifireCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static AdcEnabledCommand *getAdcEnabledCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static AdcThresholdCommand *getAdcThresholdCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static AttenuatorCommand *getAttenuatorCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
 
-    static PowerCommandOn *getPowerComandOn(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static PowerCommandOff *getPowerComandOff(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
+    static PowerCommandOn *getPowerComandOn(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static PowerCommandOff *getPowerComandOff(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
 
-    static SettingsCommand *getSettingsCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
+    static SettingsCommand *getSettingsCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
 
-    static StartDDC1Command *getStartDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static StopDDC1Command *getStopDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static SetDDC1TypeCommand *getSetDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
-    static FrequencyCommand *getFrequencyCommand(IDeviceSet *iDeviceSet,  IDeviceSetSettings *subject);
+    static StartDDC1Command *getStartDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static StopDDC1Command *getStopDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static SetDDC1TypeCommand *getSetDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
+    static FrequencyCommand *getFrequencyCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
 //    static SyncStartCommand *getSyncStartCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
 //    static SyncStopCommand *getSyncStopCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
 

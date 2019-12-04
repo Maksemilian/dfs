@@ -2,14 +2,14 @@
 #define IGETSETTINGS_H
 
 
-#include "coh_g35_ds_settings.h"
+#include "device_settings.h"
 
 class IDeviceSetSettings
 {
 public :
     virtual ~IDeviceSetSettings()=default;
     virtual bool getPower()=0;
-    virtual DeviceSetSettings getSettings()=0;
+    virtual DeviceSettings getSettings()=0;
     virtual quint32 getDDC1Frequency()=0;
     virtual quint32 getDDC1Type()=0;
     virtual quint32 getSamplesPerBuffer()=0;

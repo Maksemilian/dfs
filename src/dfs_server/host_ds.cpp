@@ -18,20 +18,22 @@ QByteArray serializeMessage(const google::protobuf::Message &message)
     return baMessage;
 }
 
-
 struct DeviceSetClient::Impl
 {
     Impl(net::ChannelHost *channel):
-        channel(channel)
+        channel(channel),buffer(std::make_shared<RingBuffer<Packet>>(16))
     {}
 
     Impl(net::ChannelHost *channel,
          const std::shared_ptr<CohG35DeviceSet>&deviceSet):
-        channel(channel),cohG35DeviceSet(deviceSet)
+        channel(channel),
+        cohG35DeviceSet(deviceSet),
+        buffer(std::make_shared<RingBuffer<Packet>>(16))
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
-    std::shared_ptr<CohG35DeviceSet>cohG35DeviceSet;
+    std::shared_ptr<CohG35DeviceSet> cohG35DeviceSet;
+    std::shared_ptr<RingBuffer<Packet>>buffer;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -73,8 +75,6 @@ const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
 {
     return d->cohG35DeviceSet;
 }
-
-
 
 DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
         const proto::receiver::Command &command)
@@ -224,7 +224,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
                <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_DEVICE_SET_INDEX:
-        d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(command.device_set_index());
+        d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(command.device_set_index(),d->buffer);
         d->cohG35DeviceSet.get()!=nullptr? succesed=true:succesed=false;
         if(succesed){
             qDebug()<<"======Comand  SET_DEVICE_SET_INDEX"

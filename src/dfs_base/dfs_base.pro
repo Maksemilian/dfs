@@ -18,6 +18,6 @@ CONFIG += c++14
 CONFIG += staticlib
 
 HEADERS += \
-    i_device_set_settings.h \
     ring_buffer.h \
-    coh_g35_ds_settings.h
+    device_settings.h \
+    i_device_settings.h
