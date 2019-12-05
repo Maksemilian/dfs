@@ -5,6 +5,8 @@
 #include <QFutureWatcher>
 #include <QReadWriteLock>
 
+//#include "wrd_callback.h"
+
 class TimeReader :public QObject
 {
     Q_OBJECT

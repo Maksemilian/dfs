@@ -33,6 +33,12 @@ message ShiftPhaseDDC1
     uint32 device_index=1;
     double phase_shift=2;
 }
+enum DeviceMode
+{
+ DM_UNKNOWN=0;
+ DM_COHERENT=1;
+ DM_SINGLE=2;
+}
 
 message Command
 {
@@ -53,6 +59,7 @@ uint32 samples_per_buffer=10;
 
 ShiftPhaseDDC1 shift_phase_ddc1=11;
 uint32 device_set_index = 12;
+DeviceMode device_mode=13;
 }
 
 message DeviceInfo

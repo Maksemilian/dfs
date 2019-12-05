@@ -131,6 +131,28 @@ inline bool CommandType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<CommandType>(
     CommandType_descriptor(), name, value);
 }
+enum DeviceMode {
+  DM_UNKNOWN = 0,
+  DM_COHERENT = 1,
+  DM_SINGLE = 2,
+  DeviceMode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
+  DeviceMode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
+};
+bool DeviceMode_IsValid(int value);
+const DeviceMode DeviceMode_MIN = DM_UNKNOWN;
+const DeviceMode DeviceMode_MAX = DM_SINGLE;
+const int DeviceMode_ARRAYSIZE = DeviceMode_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* DeviceMode_descriptor();
+inline const ::std::string& DeviceMode_Name(DeviceMode value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    DeviceMode_descriptor(), value);
+}
+inline bool DeviceMode_Parse(
+    const ::std::string& name, DeviceMode* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<DeviceMode>(
+    DeviceMode_descriptor(), name, value);
+}
 // ===================================================================
 
 class Preselectors :
@@ -552,6 +574,12 @@ class Command :
   ::google::protobuf::uint32 device_set_index() const;
   void set_device_set_index(::google::protobuf::uint32 value);
 
+  // .proto.receiver.DeviceMode device_mode = 13;
+  void clear_device_mode();
+  static const int kDeviceModeFieldNumber = 13;
+  ::proto::receiver::DeviceMode device_mode() const;
+  void set_device_mode(::proto::receiver::DeviceMode value);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.Command)
  private:
   class HasBitSetters;
@@ -569,6 +597,7 @@ class Command :
   ::google::protobuf::uint32 ddc1_type_;
   ::google::protobuf::uint32 samples_per_buffer_;
   ::google::protobuf::uint32 device_set_index_;
+  int device_mode_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1753,6 +1782,20 @@ inline void Command::set_device_set_index(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:proto.receiver.Command.device_set_index)
 }
 
+// .proto.receiver.DeviceMode device_mode = 13;
+inline void Command::clear_device_mode() {
+  device_mode_ = 0;
+}
+inline ::proto::receiver::DeviceMode Command::device_mode() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.device_mode)
+  return static_cast< ::proto::receiver::DeviceMode >(device_mode_);
+}
+inline void Command::set_device_mode(::proto::receiver::DeviceMode value) {
+  
+  device_mode_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Command.device_mode)
+}
+
 // -------------------------------------------------------------------
 
 // DeviceInfo
@@ -2375,6 +2418,11 @@ template <> struct is_proto_enum< ::proto::receiver::CommandType> : ::std::true_
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::proto::receiver::CommandType>() {
   return ::proto::receiver::CommandType_descriptor();
+}
+template <> struct is_proto_enum< ::proto::receiver::DeviceMode> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::proto::receiver::DeviceMode>() {
+  return ::proto::receiver::DeviceMode_descriptor();
 }
 
 }  // namespace protobuf

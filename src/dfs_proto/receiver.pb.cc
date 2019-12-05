@@ -209,7 +209,7 @@ void InitDefaults_receiver_2eproto() {
 }
 
 ::google::protobuf::Metadata file_level_metadata_receiver_2eproto[9];
-const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_receiver_2eproto[1];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors_receiver_2eproto[2];
 constexpr ::google::protobuf::ServiceDescriptor const** file_level_service_descriptors_receiver_2eproto = nullptr;
 
 const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -244,6 +244,7 @@ const ::google::protobuf::uint32 TableStruct_receiver_2eproto::offsets[] PROTOBU
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, samples_per_buffer_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, shift_phase_ddc1_),
   PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, device_set_index_),
+  PROTOBUF_FIELD_OFFSET(::proto::receiver::Command, device_mode_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::proto::receiver::DeviceInfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -301,12 +302,12 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] PROTOBUF_SE
   { 0, -1, sizeof(::proto::receiver::Preselectors)},
   { 7, -1, sizeof(::proto::receiver::ShiftPhaseDDC1)},
   { 14, -1, sizeof(::proto::receiver::Command)},
-  { 31, -1, sizeof(::proto::receiver::DeviceInfo)},
-  { 40, -1, sizeof(::proto::receiver::DeviceSetInfo)},
-  { 46, -1, sizeof(::proto::receiver::Answer)},
-  { 53, -1, sizeof(::proto::receiver::Packet)},
-  { 69, -1, sizeof(::proto::receiver::HostToClient)},
-  { 77, -1, sizeof(::proto::receiver::ClientToHost)},
+  { 32, -1, sizeof(::proto::receiver::DeviceInfo)},
+  { 41, -1, sizeof(::proto::receiver::DeviceSetInfo)},
+  { 47, -1, sizeof(::proto::receiver::Answer)},
+  { 54, -1, sizeof(::proto::receiver::Packet)},
+  { 70, -1, sizeof(::proto::receiver::HostToClient)},
+  { 78, -1, sizeof(::proto::receiver::ClientToHost)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -331,7 +332,7 @@ const char descriptor_table_protodef_receiver_2eproto[] =
   "\n\016receiver.proto\022\016proto.receiver\"=\n\014Pres"
   "electors\022\025\n\rlow_frequency\030\001 \001(\r\022\026\n\016high_"
   "frequency\030\002 \001(\r\";\n\016ShiftPhaseDDC1\022\024\n\014dev"
-  "ice_index\030\001 \001(\r\022\023\n\013phase_shift\030\002 \001(\001\"\231\003\n"
+  "ice_index\030\001 \001(\r\022\023\n\013phase_shift\030\002 \001(\001\"\312\003\n"
   "\007Command\0221\n\014command_type\030\001 \001(\0162\033.proto.r"
   "eceiver.CommandType\022\022\n\nattenuator\030\002 \001(\r\022"
   "2\n\014preselectors\030\003 \001(\0132\034.proto.receiver.P"
@@ -342,39 +343,42 @@ const char descriptor_table_protodef_receiver_2eproto[] =
   "start_ddc1\030\t \001(\010\022\032\n\022samples_per_buffer\030\n"
   " \001(\r\0228\n\020shift_phase_ddc1\030\013 \001(\0132\036.proto.r"
   "eceiver.ShiftPhaseDDC1\022\030\n\020device_set_ind"
-  "ex\030\014 \001(\r\"j\n\nDeviceInfo\022\025\n\rserial_number\030"
-  "\001 \001(\t\022\026\n\016ddc_type_count\030\002 \001(\007\022\025\n\rchannel"
-  "_count\030\003 \001(\007\022\026\n\016interface_type\030\004 \001(\t\"@\n\r"
-  "DeviceSetInfo\022/\n\013device_info\030\001 \003(\0132\032.pro"
-  "to.receiver.DeviceInfo\"E\n\006Answer\022)\n\004type"
-  "\030\001 \001(\0162\033.proto.receiver.CommandType\022\020\n\010s"
-  "uccesed\030\002 \001(\010\"\374\001\n\006Packet\022\024\n\014block_number"
-  "\030\001 \001(\r\022\026\n\016ddc1_frequency\030\002 \001(\r\022\022\n\nattenu"
-  "ator\030\003 \001(\r\022\022\n\nblock_size\030\004 \001(\r\022\024\n\014device"
-  "_count\030\005 \001(\r\022\023\n\013sample_rate\030\006 \001(\r\022\024\n\014tim"
-  "e_of_week\030\007 \001(\r\022\023\n\013week_number\030\010 \001(\r\022\032\n\022"
-  "ddc_sample_counter\030\t \001(\001\022\032\n\022adc_period_c"
-  "ounter\030\n \001(\004\022\016\n\006sample\030\013 \003(\002\"\236\001\n\014HostToC"
-  "lient\0226\n\017device_set_info\030\001 \001(\0132\035.proto.r"
-  "eceiver.DeviceSetInfo\022.\n\016command_answer\030"
-  "\002 \001(\0132\026.proto.receiver.Answer\022&\n\006packet\030"
-  "\003 \001(\0132\026.proto.receiver.Packet\"8\n\014ClientT"
-  "oHost\022(\n\007command\030\001 \001(\0132\027.proto.receiver."
-  "Command*\367\002\n\013CommandType\022\023\n\017UNKNOWN_COMMA"
-  "ND\020\000\022\020\n\014SET_POWER_ON\020\001\022\021\n\rSET_POWER_OFF\020"
-  "\002\022\022\n\016SET_ATTENUATOR\020\003\022\024\n\020SET_PRESELECTOR"
-  "S\020\004\022\034\n\030SET_PREAMPLIFIER_ENABLED\020\005\022!\n\035SET"
-  "_ADC_NOICE_BLANKER_ENABLED\020\006\022#\n\037SET_ADC_"
-  "NOICE_BLANKER_THRESHOLD\020\007\022\026\n\022SET_DDC1_FR"
-  "EQUENCY\020\010\022\021\n\rSET_DDC1_TYPE\020\t\022\020\n\014SET_SETT"
-  "INGS\020\n\022\016\n\nSTART_DDC1\020\013\022\r\n\tSTOP_DDC1\020\014\022\027\n"
-  "\023SET_SHIFT_PHASE_DDC\020\r\022\024\n\020SET_DEVICE_IND"
-  "EX\020\016\022\023\n\017SET_DEVICE_MODE\020\017b\006proto3"
+  "ex\030\014 \001(\r\022/\n\013device_mode\030\r \001(\0162\032.proto.re"
+  "ceiver.DeviceMode\"j\n\nDeviceInfo\022\025\n\rseria"
+  "l_number\030\001 \001(\t\022\026\n\016ddc_type_count\030\002 \001(\007\022\025"
+  "\n\rchannel_count\030\003 \001(\007\022\026\n\016interface_type\030"
+  "\004 \001(\t\"@\n\rDeviceSetInfo\022/\n\013device_info\030\001 "
+  "\003(\0132\032.proto.receiver.DeviceInfo\"E\n\006Answe"
+  "r\022)\n\004type\030\001 \001(\0162\033.proto.receiver.Command"
+  "Type\022\020\n\010succesed\030\002 \001(\010\"\374\001\n\006Packet\022\024\n\014blo"
+  "ck_number\030\001 \001(\r\022\026\n\016ddc1_frequency\030\002 \001(\r\022"
+  "\022\n\nattenuator\030\003 \001(\r\022\022\n\nblock_size\030\004 \001(\r\022"
+  "\024\n\014device_count\030\005 \001(\r\022\023\n\013sample_rate\030\006 \001"
+  "(\r\022\024\n\014time_of_week\030\007 \001(\r\022\023\n\013week_number\030"
+  "\010 \001(\r\022\032\n\022ddc_sample_counter\030\t \001(\001\022\032\n\022adc"
+  "_period_counter\030\n \001(\004\022\016\n\006sample\030\013 \003(\002\"\236\001"
+  "\n\014HostToClient\0226\n\017device_set_info\030\001 \001(\0132"
+  "\035.proto.receiver.DeviceSetInfo\022.\n\016comman"
+  "d_answer\030\002 \001(\0132\026.proto.receiver.Answer\022&"
+  "\n\006packet\030\003 \001(\0132\026.proto.receiver.Packet\"8"
+  "\n\014ClientToHost\022(\n\007command\030\001 \001(\0132\027.proto."
+  "receiver.Command*\367\002\n\013CommandType\022\023\n\017UNKN"
+  "OWN_COMMAND\020\000\022\020\n\014SET_POWER_ON\020\001\022\021\n\rSET_P"
+  "OWER_OFF\020\002\022\022\n\016SET_ATTENUATOR\020\003\022\024\n\020SET_PR"
+  "ESELECTORS\020\004\022\034\n\030SET_PREAMPLIFIER_ENABLED"
+  "\020\005\022!\n\035SET_ADC_NOICE_BLANKER_ENABLED\020\006\022#\n"
+  "\037SET_ADC_NOICE_BLANKER_THRESHOLD\020\007\022\026\n\022SE"
+  "T_DDC1_FREQUENCY\020\010\022\021\n\rSET_DDC1_TYPE\020\t\022\020\n"
+  "\014SET_SETTINGS\020\n\022\016\n\nSTART_DDC1\020\013\022\r\n\tSTOP_"
+  "DDC1\020\014\022\027\n\023SET_SHIFT_PHASE_DDC\020\r\022\024\n\020SET_D"
+  "EVICE_INDEX\020\016\022\023\n\017SET_DEVICE_MODE\020\017*<\n\nDe"
+  "viceMode\022\016\n\nDM_UNKNOWN\020\000\022\017\n\013DM_COHERENT\020"
+  "\001\022\r\n\tDM_SINGLE\020\002b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_receiver_2eproto = {
   false, InitDefaults_receiver_2eproto, 
   descriptor_table_protodef_receiver_2eproto,
-  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1673,
+  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1784,
 };
 
 void AddDescriptors_receiver_2eproto() {
@@ -410,6 +414,21 @@ bool CommandType_IsValid(int value) {
     case 13:
     case 14:
     case 15:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* DeviceMode_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&assign_descriptors_table_receiver_2eproto);
+  return file_level_enum_descriptors_receiver_2eproto[1];
+}
+bool DeviceMode_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
       return true;
     default:
       return false;
@@ -1066,6 +1085,7 @@ const int Command::kStartDdc1FieldNumber;
 const int Command::kSamplesPerBufferFieldNumber;
 const int Command::kShiftPhaseDdc1FieldNumber;
 const int Command::kDeviceSetIndexFieldNumber;
+const int Command::kDeviceModeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Command::Command()
@@ -1092,8 +1112,8 @@ Command::Command(const Command& from)
     shift_phase_ddc1_ = nullptr;
   }
   ::memcpy(&command_type_, &from.command_type_,
-    static_cast<size_t>(reinterpret_cast<char*>(&device_set_index_) -
-    reinterpret_cast<char*>(&command_type_)) + sizeof(device_set_index_));
+    static_cast<size_t>(reinterpret_cast<char*>(&device_mode_) -
+    reinterpret_cast<char*>(&command_type_)) + sizeof(device_mode_));
   // @@protoc_insertion_point(copy_constructor:proto.receiver.Command)
 }
 
@@ -1102,8 +1122,8 @@ void Command::SharedCtor() {
       &scc_info_Command_receiver_2eproto.base);
   adc_noice_blanker_threshold_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&preselectors_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&device_set_index_) -
-      reinterpret_cast<char*>(&preselectors_)) + sizeof(device_set_index_));
+      reinterpret_cast<char*>(&device_mode_) -
+      reinterpret_cast<char*>(&preselectors_)) + sizeof(device_mode_));
 }
 
 Command::~Command() {
@@ -1142,8 +1162,8 @@ void Command::Clear() {
   }
   shift_phase_ddc1_ = nullptr;
   ::memset(&command_type_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&device_set_index_) -
-      reinterpret_cast<char*>(&command_type_)) + sizeof(device_set_index_));
+      reinterpret_cast<char*>(&device_mode_) -
+      reinterpret_cast<char*>(&command_type_)) + sizeof(device_mode_));
   _internal_metadata_.Clear();
 }
 
@@ -1262,6 +1282,14 @@ const char* Command::_InternalParse(const char* begin, const char* end, void* ob
       case 12: {
         if (static_cast<::google::protobuf::uint8>(tag) != 96) goto handle_unusual;
         msg->set_device_set_index(::google::protobuf::internal::ReadVarint(&ptr));
+        GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
+        break;
+      }
+      // .proto.receiver.DeviceMode device_mode = 13;
+      case 13: {
+        if (static_cast<::google::protobuf::uint8>(tag) != 104) goto handle_unusual;
+        ::google::protobuf::uint64 val = ::google::protobuf::internal::ReadVarint(&ptr);
+        msg->set_device_mode(static_cast<::proto::receiver::DeviceMode>(val));
         GOOGLE_PROTOBUF_PARSER_ASSERT(ptr);
         break;
       }
@@ -1450,6 +1478,20 @@ bool Command::MergePartialFromCodedStream(
         break;
       }
 
+      // .proto.receiver.DeviceMode device_mode = 13;
+      case 13: {
+        if (static_cast< ::google::protobuf::uint8>(tag) == (104 & 0xFF)) {
+          int value = 0;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_device_mode(static_cast< ::proto::receiver::DeviceMode >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -1541,6 +1583,12 @@ void Command::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(12, this->device_set_index(), output);
   }
 
+  // .proto.receiver.DeviceMode device_mode = 13;
+  if (this->device_mode() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      13, this->device_mode(), output);
+  }
+
   if (_internal_metadata_.have_unknown_fields()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         _internal_metadata_.unknown_fields(), output);
@@ -1619,6 +1667,12 @@ void Command::SerializeWithCachedSizes(
   // uint32 device_set_index = 12;
   if (this->device_set_index() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(12, this->device_set_index(), target);
+  }
+
+  // .proto.receiver.DeviceMode device_mode = 13;
+  if (this->device_mode() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      13, this->device_mode(), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -1719,6 +1773,12 @@ size_t Command::ByteSizeLong() const {
         this->device_set_index());
   }
 
+  // .proto.receiver.DeviceMode device_mode = 13;
+  if (this->device_mode() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->device_mode());
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
@@ -1783,6 +1843,9 @@ void Command::MergeFrom(const Command& from) {
   if (from.device_set_index() != 0) {
     set_device_set_index(from.device_set_index());
   }
+  if (from.device_mode() != 0) {
+    set_device_mode(from.device_mode());
+  }
 }
 
 void Command::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1823,6 +1886,7 @@ void Command::InternalSwap(Command* other) {
   swap(ddc1_type_, other->ddc1_type_);
   swap(samples_per_buffer_, other->samples_per_buffer_);
   swap(device_set_index_, other->device_set_index_);
+  swap(device_mode_, other->device_mode_);
 }
 
 ::google::protobuf::Metadata Command::GetMetadata() const {

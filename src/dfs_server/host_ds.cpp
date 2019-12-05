@@ -2,7 +2,9 @@
 
 #include "channel_host.h"
 #include "wrd_coh_g35_ds.h"
-#include "wrd_coh_g35_ds_selector.h"
+#include "wrd_g35_d.h"
+
+#include "wrd_device_selector.h"
 
 #include "receiver.pb.h"
 #include "ring_buffer.h"
@@ -27,15 +29,17 @@ struct DeviceSetClient::Impl
     {}
 
     Impl(net::ChannelHost *channel,
-         const std::shared_ptr<CohG35DeviceSet>&deviceSet):
+         const std::shared_ptr<IDevice>&deviceSet):
         channel(channel),
-        cohG35DeviceSet(deviceSet),
+        device(deviceSet),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
-    std::shared_ptr<CohG35DeviceSet> cohG35DeviceSet;
+    std::shared_ptr<IDevice> device;
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
+    std::unique_ptr<DeviceCreator>deviceCreator;
+    proto::receiver::DeviceMode deviceMode;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -65,18 +69,18 @@ DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost,
 
 DeviceSetClient::~DeviceSetClient()
 {
-    d->cohG35DeviceSet->stopDDC1();
+    d->device->stopDDC1();
 }
 
-void DeviceSetClient::setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet> &shPtrCohG35DeviceSet)
-{
-    d->cohG35DeviceSet=shPtrCohG35DeviceSet;
-}
+//void DeviceSetClient::setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet> &shPtrCohG35DeviceSet)
+//{
+//    d->device=shPtrCohG35DeviceSet;
+//}
 
-const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
-{
-    return d->cohG35DeviceSet;
-}
+//const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
+//{
+//    return d->device;
+//}
 
 std::shared_ptr<RingBuffer<proto::receiver::Packet> >DeviceSetClient::ddc1Buffer()
 {
@@ -104,13 +108,50 @@ DeviceSettings DeviceSetClient::extractSettingsFromCommand(
 
 void DeviceSetClient::onDisconnected()
 {
-    d->cohG35DeviceSet->stopDDC1();
+    d->device->stopDDC1();
     emit stationDisconnected();
 }
 
 void DeviceSetClient::sendDeviceSetInfo()
 {
-    COH_G35DDC_DEVICE_SET deviceSetInfos= d->cohG35DeviceSet->getDeviceSetInfo();
+    if(dynamic_cast<CohG35DeviceSet*>(d->device.get())){
+        setDeviceInfoCoherent();
+    }else if(dynamic_cast<G35Device*>(d->device.get())){
+        sendDeviceInfoSingle();
+    }else {
+        qDebug()<<"BAD CAST";
+    }
+}
+
+void DeviceSetClient::sendDeviceInfoSingle()
+{
+    G35DDC_DEVICE_INFO deviceInf= dynamic_cast<G35Device*>(d->device.get())->getDeviceInfo();
+    proto::receiver::DeviceSetInfo *deviceSetInfo=new proto::receiver::DeviceSetInfo;
+    proto::receiver::DeviceInfo *deviceInfo=deviceSetInfo->add_device_info();
+    deviceInfo->set_serial_number(deviceInf.SerialNumber);
+    deviceInfo->set_ddc_type_count(deviceInf.DDCTypeCount);
+    deviceInfo->set_channel_count(deviceInf.ChannelCount);
+
+    switch (deviceInf.InterfaceType) {
+    case G3XDDC_INTERFACE_TYPE_PCIE:
+        deviceInfo->set_interface_type("PCIE");
+        break;
+    case G3XDDC_INTERFACE_TYPE_USB:
+        deviceInfo->set_interface_type("USB");
+        break;
+    }
+    proto::receiver::HostToClient hostToClient;
+
+    hostToClient.set_allocated_device_set_info(deviceSetInfo);
+    qDebug()<<"HostToClient MES"<<hostToClient.ByteSize()
+           <<hostToClient.device_set_info().device_info(0).serial_number().data();
+    writeMessage(hostToClient);
+}
+
+void DeviceSetClient::setDeviceInfoCoherent()
+{
+
+    COH_G35DDC_DEVICE_SET deviceSetInfos= dynamic_cast<CohG35DeviceSet*>(d->device.get())->getDeviceSetInfo();
     proto::receiver::DeviceSetInfo *deviceSetInfo=new proto::receiver::DeviceSetInfo;
     for(quint32 index=0;index<deviceSetInfos.DeviceCount;index++){
         proto::receiver::DeviceInfo *deviceInfo=deviceSetInfo->add_device_info();
@@ -170,77 +211,91 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     bool succesed=false;
     switch(command.command_type()){
     case proto::receiver::CommandType::SET_POWER_OFF:
-        succesed=d->cohG35DeviceSet->setPower(false);
+        succesed=d->device->setPower(false);
         Sleep(SLEEP_TIME);
         qDebug()<<"======Comand  SET_POWER_OFF"<<false<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_POWER_ON:
-        succesed=d->cohG35DeviceSet->setPower(true);
+        succesed=d->device->setPower(true);
         Sleep(SLEEP_TIME);
         qDebug()<<"======Comand  SET_POWER_ON"<<true<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_SETTINGS:
-        succesed=d->cohG35DeviceSet->setSettings(extractSettingsFromCommand(command));
+        succesed=d->device->setSettings(extractSettingsFromCommand(command));
         break;
     case proto::receiver::CommandType::START_DDC1:
         qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
-        succesed=d->cohG35DeviceSet->startDDC1(command.samples_per_buffer());
+        succesed=d->device->startDDC1(command.samples_per_buffer());
         break;
     case proto::receiver::CommandType::STOP_DDC1:
         qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
-        succesed=d->cohG35DeviceSet->stopDDC1();
+        succesed=d->device->stopDDC1();
         break;
     case proto::receiver::CommandType::SET_DDC1_TYPE:
         qDebug()<<"======Comand  SET_DDC1_TYPE"<<command.ddc1_type()<<"|| Succesed command"<<true;
-        succesed=d->cohG35DeviceSet->setDDC1Type(command.ddc1_type());
+        succesed=d->device->setDDC1Type(command.ddc1_type());
         break;
     case proto::receiver::CommandType::SET_ATTENUATOR:
-        succesed=d->cohG35DeviceSet->setAttenuator(command.attenuator());
+        succesed=d->device->setAttenuator(command.attenuator());
         qDebug()<<"======Comand  SET_ATTENUATOR "<<command.attenuator()<<"Db"<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_PRESELECTORS:
-        succesed=d->cohG35DeviceSet->setPreselectors(command.preselectors().low_frequency(),
-                                                     command.preselectors().high_frequency());
+        succesed=d->device->setPreselectors(command.preselectors().low_frequency(),
+                                            command.preselectors().high_frequency());
         qDebug()<<"======Comand  SET_PRESELECTORS"<<"Frequency:"<<"Low "<<command.preselectors().low_frequency()<<"Hz"
                <<"High "<<command.preselectors().high_frequency()<<"Hz"<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
-        succesed=d->cohG35DeviceSet->setAdcNoiceBlankerEnabled(command.adc_noice_blanker_enebled());
+        succesed=d->device->setAdcNoiceBlankerEnabled(command.adc_noice_blanker_enebled());
         qDebug()<<"======Comand  SET_ADC_NOICE_BLANKER_ENABLED"<<command.adc_noice_blanker_enebled()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
     {
         const char *thresholdChar=command.adc_noice_blanker_threshold().data();
         const quint16 threshold=*reinterpret_cast<const quint16*>(thresholdChar);
-        succesed=d->cohG35DeviceSet->setAdcNoiceBlankerThreshold(threshold);
+        succesed=d->device->setAdcNoiceBlankerThreshold(threshold);
         qDebug()<<"======Comand  SET_ADC_NOICE_BLANKER_THRESHOLD"<<threshold<<"|| Succesed command"<<succesed;
         break;
     }
     case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
-        succesed=d->cohG35DeviceSet->setPreamplifierEnabled(command.preamplifier_enebled());
+        succesed=d->device->setPreamplifierEnabled(command.preamplifier_enebled());
         qDebug()<<"======Comand  SET_PREAMPLIFIED_ENABLED"<<command.preamplifier_enebled()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
-        succesed=d->cohG35DeviceSet->setDDC1Frequency(command.ddc1_frequency());
+        succesed=d->device->setDDC1Frequency(command.ddc1_frequency());
         qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<command.ddc1_frequency()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
-//        succesed=d->cohG35DeviceSet->setShiftPhaseDDC1(command.shift_phase_ddc1().device_index(),
-//                                                       command.shift_phase_ddc1().phase_shift());
+        //        succesed=d->cohG35DeviceSet->setShiftPhaseDDC1(command.shift_phase_ddc1().device_index(),
+        //                                                       command.shift_phase_ddc1().phase_shift());
         qDebug()<<"======Comand  SET_DDC1_SHIFT_PHASE UNUSED"<<command.shift_phase_ddc1().device_index()
                <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_DEVICE_INDEX:
-        d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(command.device_set_index(),d->buffer);
-        d->cohG35DeviceSet.get()!=nullptr? succesed=true:succesed=false;
-        if(succesed){
-            qDebug()<<"======Comand  SET_DEVICE_SET_INDEX"
-                   <<d->cohG35DeviceSet->getDeviceSetName();
+        if(d->deviceCreator.get()){
+            d->device = d->deviceCreator->create(command.device_set_index(),
+                                                d->buffer);
+            succesed=true;
             sendDeviceSetInfo();
-        }
+            qDebug()<<"======Comand  SET_DEVICE_INDEX"<<d->deviceMode;
+        }else succesed=false;
         break;
     case proto::receiver::SET_DEVICE_MODE:
-
+        d->deviceMode=command.device_mode();
+        succesed=true;
+        if (d->deviceMode==proto::receiver::DM_COHERENT)
+        {
+            d->deviceCreator.reset(new CohG35DeviceCreator);
+        }
+        else if(d->deviceMode==proto::receiver::DM_SINGLE)
+        {
+            d->deviceCreator.reset(new SingleG35DeviceCreator);
+        }
+        else
+        {
+            qDebug()<<"====== SET MODE FAILED";
+            succesed=false;
+        };
         break;
     case proto::receiver::UNKNOWN_COMMAND:
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
@@ -253,3 +308,31 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     answer->set_succesed(succesed);
     sendCommandAnswer(answer);
 }
+
+//*********************** DEL *****************
+
+//if(command.device_mode()==proto::receiver::DM_COHERENT){//COH
+//    d->device=DeviceSelector::coherentG35DeviceInstance(command.device_set_index());
+//    d->device.get()!=nullptr? succesed=true:succesed=false;
+//    if(succesed){
+//        dynamic_cast<CohG35DeviceSet*>(d->device.get())
+//                ->setCallback(CallbackFactory::cohG35CallbackInstance(d->buffer));
+//        qDebug()<<"======Comand  SET_DEVICE_INDEX_COHERENT";
+//        //                sendDeviceSetInfo();
+//        setDeviceInfoCoherent();
+//    }
+
+//}else if(command.device_mode()==proto::receiver::DM_SINGLE){//single
+//    d->device=DeviceSelector::singleG35DeviceInstance(command.device_set_index());
+//    d->device.get()!=nullptr? succesed=true:succesed=false;
+//    if(succesed){
+//        dynamic_cast<G35Device*>(d->device.get())
+//                ->setCallback(CallbackFactory::singleG35CallbackInstance(d->buffer));
+//        qDebug()<<"======Comand  SET_DEVICE_INDEX_SINGLE";
+//        //                sendDeviceSetInfo();
+//        sendDeviceInfoSingle();
+//    }
+//}else {
+//    succesed=false;
+//    qDebug()<<"MODE UNKNOWN";
+//}

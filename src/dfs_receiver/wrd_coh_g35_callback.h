@@ -1,16 +1,19 @@
-#ifndef WRD_CALLBACK_H
-#define WRD_CALLBACK_H
+#ifndef WRD_COH_G35_CALLBACK_H
+#define WRD_COH_G35_CALLBACK_H
+
+#include "G35DDCAPI.h"
 
 #include "ring_buffer.h"
 #include "receiver.pb.h"
 
-#include <memory>
-#include "G35DDCAPI.h"
+#include "trmbl_tsip_reader.h"
+#include "wrd_callback.h"
 
-class TimeReader;
 using ShPtrRingPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class CohG35Callback:public ICohG35DDCDeviceSetCallback
+
+
 {
     struct DDC1StreamCallbackData{
         ICohG35DDCDeviceSet *DeviceSet;
@@ -53,12 +56,5 @@ private:
     int lastBlockNumber=0;
 };
 
-class CallbackFactory
-{
-public:
-    static std::unique_ptr<CohG35Callback>
-    cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer);
-
-};
 
 #endif // WRD_CALLBACK_H

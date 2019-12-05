@@ -20,4 +20,6 @@ class IDevice
   virtual  bool startDDC1(unsigned int sampesPerBuffer)=0;
   virtual  bool stopDDC1()=0;
 };
+
+class Device
 #endif // WRD_INTERFACE_H

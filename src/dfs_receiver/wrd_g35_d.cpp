@@ -1,6 +1,5 @@
 #include "wrd_g35_d.h"
 
-#include "G35DDCAPI.h"
 #include "device_settings.h"
 
 #include <QDebug>
@@ -9,6 +8,23 @@ G35Device::G35Device(IG35DDCDevice*device):_device(device)
 {
 
 }
+
+G35DDC_DEVICE_INFO G35Device::getDeviceInfo()
+{
+    G35DDC_DEVICE_INFO deviceInfo;
+    _device->GetDeviceInfo(&deviceInfo,sizeof (deviceInfo));
+    return deviceInfo;
+}
+
+void G35Device::setCallback(std::unique_ptr<G35Callback> callback)
+{
+    if(!callback.get())return;
+
+    _callback=std::move(callback);
+
+    _device->SetCallback(callback.get());
+}
+
 bool G35Device::setPower(bool state)
 {
     return _device->SetPower(state);
@@ -102,3 +118,4 @@ bool G35Device::stopDDC1()
 //    }
     return success;
 }
+

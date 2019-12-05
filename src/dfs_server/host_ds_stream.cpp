@@ -12,7 +12,6 @@ StreamDDC1::StreamDDC1(net::ChannelHost*streamSocket,
 
 }
 
-
 void StreamDDC1::process()
 {
     qDebug("BEGIN PROCESS STREAM");

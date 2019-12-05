@@ -2,9 +2,9 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-headers.path = $${LIBS_PATH}/dfs_receiver/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
+#headers.path = $${LIBS_PATH}/dfs_receiver/include
+#headers.files   += $$files($${PWD}/*.h)
+#INSTALLS       += headers
 
 QT += core
 QT += serialport
@@ -37,10 +37,12 @@ HEADERS += \
     trmbl_tsip_parser.h \
     trmbl_tsip_reader.h \
     wrd_g35_d.h \
-    wrd_interface.h \
     wrd_g35_callback.h \
     wrd_coh_g35_callback.h \
-    wrd_coh_g35_ds_selector.h
+    wrd_coh_g35_ds_selector.h \
+    wrd_device_selector.h \
+    wrd_device.h \
+    wrd_callback.h
 
 SOURCES += \
     wrd_coh_g35_ds.cpp \
@@ -49,4 +51,6 @@ SOURCES += \
     wrd_g35_d.cpp \
     wrd_g35_callback.cpp \
     wrd_coh_g35_callback.cpp \
-    wrd_coh_g35_ds_selector.cpp
+    wrd_coh_g35_ds_selector.cpp \
+    wrd_device_selector.cpp \
+    wrd_callback.cpp

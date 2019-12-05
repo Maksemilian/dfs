@@ -5,11 +5,9 @@
 #include <QTimer>
 #include <QDebug>
 
-std::unique_ptr<CohG35Callback>CallbackFactory:: cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer)
-{
-    return std::make_unique<CohG35Callback>(ddc1Buffer,TimeReader::instance());
-}
+
 //*********************** ICohG35DDCDeviceSetCallback ************************
+
 CohG35Callback::CohG35Callback(const ShPtrRingPacketBuffer &buffer,TimeReader &timeReader):
     buffer(buffer),
     timeReader(timeReader),

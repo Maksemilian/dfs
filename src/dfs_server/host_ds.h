@@ -21,8 +21,8 @@ public:
                     const std::shared_ptr<CohG35DeviceSet>&deviceSet);
     ~DeviceSetClient();
 
-    void setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet>&shPtrCohG35DeviceSet);
-    const std::shared_ptr<CohG35DeviceSet> &getCohDeviceSet();
+//    void setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet>&shPtrCohG35DeviceSet);
+//    const std::shared_ptr<CohG35DeviceSet> &getCohDeviceSet();
     std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddc1Buffer();
 signals:
     void stationDisconnected();
@@ -32,6 +32,8 @@ private slots:
     void onMessageReceived(const QByteArray &buffer);
 private:
     void sendDeviceSetInfo();
+    void sendDeviceInfoSingle();
+    void setDeviceInfoCoherent();
     void sendCommandAnswer(proto::receiver::Answer *commandAnswer);
     void readCommandPacket(const proto::receiver::Command &command);
     DeviceSettings extractSettingsFromCommand(const proto::receiver::Command &command);

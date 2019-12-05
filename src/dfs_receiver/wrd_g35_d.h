@@ -1,11 +1,10 @@
 #ifndef WRD_G35_D_H
 #define WRD_G35_D_H
 
-#include "wrd_interface.h"
+#include "wrd_device.h"
+#include "wrd_g35_callback.h"
 
-class TimeReader;
 class DeviceSettings;
-class IG35DDCDevice;
 
 class G35Device:public IDevice
 {
@@ -24,8 +23,11 @@ public:
     //*****Stram DDC1
     bool startDDC1(unsigned int sampesPerBuffer)override;
     bool stopDDC1()override;
+    void setCallback(std::unique_ptr<G35Callback> callback);
+    G35DDC_DEVICE_INFO getDeviceInfo();
  private:
     IG35DDCDevice *_device;
+    std::unique_ptr<G35Callback>_callback;
 
 };
 

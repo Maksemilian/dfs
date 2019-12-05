@@ -4,12 +4,13 @@
 #include "device_settings.h"
 
 #include "wrd_coh_g35_callback.h"
-#include "wrd_interface.h"
+#include "wrd_device.h"
+#include "wrd_callback.h"
 
 #include <QPair>
 #include <memory>
 
-class CohG35DeviceSet:IDevice
+class CohG35DeviceSet:public IDevice
 {
 public:
     CohG35DeviceSet( ICohG35DDCDeviceSet *_deviceSet);
