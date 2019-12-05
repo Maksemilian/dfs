@@ -172,7 +172,7 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
             qDebug()<<"SETTED_SHIFT_PHASE_DDC1";
             break;
-        case proto::receiver::SET_DEVICE_SET_INDEX:
+        case proto::receiver::SET_DEVICE_INDEX:
             qDebug()<<"SETTED_DEVICE_SET_INDEX";
             break;
         case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
@@ -226,7 +226,7 @@ QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
         return "ERROR ATTENUATOR CHECK";
     case proto::receiver::SET_SHIFT_PHASE_DDC:
         return "ERROR SHIFT PHASE DDC1";
-    case proto::receiver::SET_DEVICE_SET_INDEX:
+    case proto::receiver::SET_DEVICE_INDEX:
         return "ERROR COMMAND SET DEVICE SET INDEX";
     default:return "UNKNOWN KOMMAND";
     }

@@ -4,7 +4,8 @@
 
 extern G3XDDCAPI_CREATE_INSTANCE createInstance;
 
-ShPtrCohG35DeviceSet DeviceSetSelector::selectDeviceSet(unsigned int deviceSetIndex)
+ShPtrCohG35DeviceSet DeviceSetSelector::selectDeviceSet(unsigned int deviceSetIndex,
+                                                        const std::shared_ptr<RingBuffer<proto::receiver::Packet>>&buffer)
 {
     ICohG35DDCDeviceSetEnumerator *enumerator;
     ICohG35DDCDeviceSet *deviceSet;
@@ -36,7 +37,7 @@ ShPtrCohG35DeviceSet DeviceSetSelector::selectDeviceSet(unsigned int deviceSetIn
         enumerator->Release();
         //        return deviceSet;
         std::shared_ptr<CohG35DeviceSet> shPtr= std::make_shared<CohG35DeviceSet>(deviceSet);
-        shPtr->setCallback(CallbackFactory::cohG35CallbackInstance(16));
+        shPtr->setCallback(CallbackFactory::cohG35CallbackInstance(buffer));
         return shPtr;
     }
     qDebug()<<"Device is not open";

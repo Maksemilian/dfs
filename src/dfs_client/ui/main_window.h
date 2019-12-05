@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include "i_device_set_settings.h"
+#include "i_device_settings.h"
 
 #include <QMainWindow>
 #include <QMap>
@@ -34,7 +34,7 @@ class PlotMonitoring;
 
 class DeviceSetListWidget ;
 class MainWindow : public QMainWindow,
-        public IDeviceSetSettings
+        public IDeviceSettings
 {
     Q_OBJECT
 
@@ -49,7 +49,7 @@ public:
     ~MainWindow()override;
 
     bool getPower()override;
-    DeviceSetSettings getSettings()override;
+    DeviceSettings getSettings()override;
     quint32 getDDC1Frequency()override;
     quint32 getDDC1Type()override;
     quint32 getSampleRateForBandwith()override;

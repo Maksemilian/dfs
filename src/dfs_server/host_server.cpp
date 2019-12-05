@@ -93,7 +93,7 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
 void StreamServer::createThread(net::ChannelHost *channelHost)
 {
     QThread *thread=new QThread;
-    _streamDDC1=new StreamDDC1(channelHost,_client->getCohDeviceSet()->getBuffer()/*deviceSet->getBuffer()*/);
+    _streamDDC1=new StreamDDC1(channelHost,_client->ddc1Buffer()/*deviceSet->getBuffer()*/);
     _streamDDC1->moveToThread(thread);
     channelHost->moveToThread(thread);
 //        connect(channelHost,&net::ChannelHost::finished,

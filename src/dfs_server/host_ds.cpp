@@ -1,9 +1,11 @@
 #include "host_ds.h"
 
-#include "wrd_coh_g35_ds.h"
-#include "wrd_ds_selector.h"
-
 #include "channel_host.h"
+#include "wrd_coh_g35_ds.h"
+#include "wrd_coh_g35_ds_selector.h"
+
+#include "receiver.pb.h"
+#include "ring_buffer.h"
 //******************ReceiverStationClient***********************
 
 
@@ -21,19 +23,19 @@ QByteArray serializeMessage(const google::protobuf::Message &message)
 struct DeviceSetClient::Impl
 {
     Impl(net::ChannelHost *channel):
-        channel(channel),buffer(std::make_shared<RingBuffer<Packet>>(16))
+        channel(channel),buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
     {}
 
     Impl(net::ChannelHost *channel,
          const std::shared_ptr<CohG35DeviceSet>&deviceSet):
         channel(channel),
         cohG35DeviceSet(deviceSet),
-        buffer(std::make_shared<RingBuffer<Packet>>(16))
+        buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
     std::shared_ptr<CohG35DeviceSet> cohG35DeviceSet;
-    std::shared_ptr<RingBuffer<Packet>>buffer;
+    std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -76,10 +78,15 @@ const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
     return d->cohG35DeviceSet;
 }
 
-DeviceSetSettings DeviceSetClient::extractSettingsFromCommand(
+std::shared_ptr<RingBuffer<proto::receiver::Packet> >DeviceSetClient::ddc1Buffer()
+{
+    return d->buffer;
+}
+
+DeviceSettings DeviceSetClient::extractSettingsFromCommand(
         const proto::receiver::Command &command)
 {
-    DeviceSetSettings settings;
+    DeviceSettings settings;
     //settings.powerEnabled=command.power();
     settings.attenuator=command.attenuator();
     settings.preselectors.first=command.preselectors().low_frequency();
@@ -177,7 +184,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         break;
     case proto::receiver::CommandType::START_DDC1:
         qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
-        succesed=d->cohG35DeviceSet->startDDC1(command.samples_per_buffer(),true);
+        succesed=d->cohG35DeviceSet->startDDC1(command.samples_per_buffer());
         break;
     case proto::receiver::CommandType::STOP_DDC1:
         qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
@@ -218,12 +225,12 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<command.ddc1_frequency()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
-        succesed=d->cohG35DeviceSet->setShiftPhaseDDC1(command.shift_phase_ddc1().device_index(),
-                                                       command.shift_phase_ddc1().phase_shift());
-        qDebug()<<"======Comand  SET_DDC1_SHIFT_PHASE"<<command.shift_phase_ddc1().device_index()
+//        succesed=d->cohG35DeviceSet->setShiftPhaseDDC1(command.shift_phase_ddc1().device_index(),
+//                                                       command.shift_phase_ddc1().phase_shift());
+        qDebug()<<"======Comand  SET_DDC1_SHIFT_PHASE UNUSED"<<command.shift_phase_ddc1().device_index()
                <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
         break;
-    case proto::receiver::CommandType::SET_DEVICE_SET_INDEX:
+    case proto::receiver::CommandType::SET_DEVICE_INDEX:
         d->cohG35DeviceSet=DeviceSetSelector::selectDeviceSet(command.device_set_index(),d->buffer);
         d->cohG35DeviceSet.get()!=nullptr? succesed=true:succesed=false;
         if(succesed){
@@ -231,6 +238,9 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
                    <<d->cohG35DeviceSet->getDeviceSetName();
             sendDeviceSetInfo();
         }
+        break;
+    case proto::receiver::SET_DEVICE_MODE:
+
         break;
     case proto::receiver::UNKNOWN_COMMAND:
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:

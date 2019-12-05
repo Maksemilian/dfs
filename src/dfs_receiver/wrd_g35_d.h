@@ -1,10 +1,11 @@
 #ifndef WRD_G35_D_H
 #define WRD_G35_D_H
 
-#include "G35DDCAPI.h"
 #include "wrd_interface.h"
 
 class TimeReader;
+class DeviceSettings;
+class IG35DDCDevice;
 
 class G35Device:public IDevice
 {
@@ -17,9 +18,9 @@ public:
     bool setDDC1Frequency(unsigned int ddc1Frequency)override;
     bool setAdcNoiceBlankerEnabled(bool state)override;
     bool setAdcNoiceBlankerThreshold(unsigned short threshold)override;
-    bool setDDC1Type(quint32 type)override;
+    bool setDDC1Type(unsigned int type)override;
 
-    bool setSettings(const DeviceSetSettings &settings)override;
+    bool setSettings(const DeviceSettings &settings)override;
     //*****Stram DDC1
     bool startDDC1(unsigned int sampesPerBuffer)override;
     bool stopDDC1()override;

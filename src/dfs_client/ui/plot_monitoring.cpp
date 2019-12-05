@@ -1,7 +1,7 @@
 #include "plot_monitoring.h"
 #include "sync_pair_channel.h"
 #include "client_ds_ui.h"
-#include "i_device_set_settings.h"
+#include "i_device_settings.h"
 #include "plot_elipse.h"
 #include "plot_channel.h"
 #include <QDebug>

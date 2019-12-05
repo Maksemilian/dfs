@@ -1,6 +1,6 @@
 #include "command_hierarch.h"
 
-#include "i_device_set_settings.h"
+#include "i_device_settings.h"
 #include "i_deviceset.h"
 
 #include "receiver.pb.h"
@@ -131,7 +131,7 @@ SettingsCommand::SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
 
 void SettingsCommand::execute()
 {
-    DeviceSetSettings settings=subject->getSettings();
+    DeviceSettings settings=subject->getSettings();
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
 

@@ -1,23 +1,14 @@
 #ifndef WRD_CALLBACK_H
 #define WRD_CALLBACK_H
 
-#include "G35DDCAPI.h"
 #include "ring_buffer.h"
 #include "receiver.pb.h"
-#include "trmbl_tsip_reader.h"
 
 #include <memory>
+#include "G35DDCAPI.h"
+
 class TimeReader;
 using ShPtrRingPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
-
-class CallbackFactory
-{
-public:
-    static std::unique_ptr<CohG35Callback> cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer)
-    {
-        return std::make_unique<CohG35Callback>(ddc1Buffer,TimeReader::instance());
-    }
-};
 
 class CohG35Callback:public ICohG35DDCDeviceSetCallback
 {
@@ -29,7 +20,7 @@ class CohG35Callback:public ICohG35DDCDeviceSetCallback
         unsigned int BitsPerSample;
     };
 public:
-    CohG35Callback(const ShPtrRingPacketBuffer &buffer,const TimeReader&timeReader);
+    CohG35Callback(const ShPtrRingPacketBuffer &buffer,TimeReader&timeReader);
     void __stdcall CohG35DDC_IFCallback(ICohG35DDCDeviceSet *DeviceSet,unsigned int DeviceIndex,const short *Buffer,unsigned int NumberOfSamples,
                                         WORD MaxADCAmplitude,unsigned int ADCSamplingRate);
     void __stdcall CohG35DDC_DDC2StreamCallback(ICohG35DDCDeviceSet *DeviceSet,unsigned int DeviceIndex,const float *Buffer,unsigned int NumberOfSamples);
@@ -43,8 +34,15 @@ public:
     void resetData();
     inline ShPtrRingPacketBuffer ddc1Buffer(){return buffer;}
 private:
+    void fillPacket(proto::receiver::Packet &packet,
+                                    DDC1StreamCallbackData &ddcStreamCallbackData,
+                                    double ddcSampleCounter,
+                                    unsigned long long adcPeriodCounter,
+                                    int counterBlockPPS);
+    void showPacket(proto::receiver::Packet &packet);
+private:
     ShPtrRingPacketBuffer buffer;
-    const TimeReader& timeReader;
+    TimeReader& timeReader;
 
     bool isFirstBlock;
     int counterBlockPPS;
@@ -53,6 +51,14 @@ private:
     unsigned int currentTimeOfWeek;
 
     int lastBlockNumber=0;
+};
+
+class CallbackFactory
+{
+public:
+    static std::unique_ptr<CohG35Callback>
+    cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer);
+
 };
 
 #endif // WRD_CALLBACK_H

@@ -4,10 +4,10 @@
 
 #include "device_settings.h"
 
-class IDeviceSetSettings
+class IDeviceSettings
 {
 public :
-    virtual ~IDeviceSetSettings()=default;
+    virtual ~IDeviceSettings()=default;
     virtual bool getPower()=0;
     virtual DeviceSettings getSettings()=0;
     virtual quint32 getDDC1Frequency()=0;

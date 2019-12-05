@@ -1,50 +1,55 @@
 #include "wrd_g35_d.h"
 
+#include "G35DDCAPI.h"
+#include "device_settings.h"
+
+#include <QDebug>
+
 G35Device::G35Device(IG35DDCDevice*device):_device(device)
 {
 
 }
 bool G35Device::setPower(bool state)
 {
-    return _deviceSet->SetPower(state);
+    return _device->SetPower(state);
 }
 
 bool G35Device::setAttenuator(unsigned int attenuationLevel)
 {
-    return _deviceSet->SetAttenuator(attenuationLevel);
+    return _device->SetAttenuator(attenuationLevel);
 }
 
 bool G35Device::setPreamplifierEnabled(bool state)
 {
-    return _deviceSet->SetPreamp(state);
+    return _device->SetPreamp(state);
 }
 
 bool G35Device::setPreselectors(unsigned int lowFrequency, unsigned int highFrequency)
 {
-    return _deviceSet->SetPreselectors(lowFrequency,highFrequency);
+    return _device->SetPreselectors(lowFrequency,highFrequency);
 }
 
 bool G35Device::setAdcNoiceBlankerEnabled(bool state)
 {
-    return _deviceSet->SetADCNoiseBlanker(state);
+    return _device->SetADCNoiseBlanker(state);
 }
 
 bool G35Device::setAdcNoiceBlankerThreshold(unsigned short threshold)
 {
-    return _deviceSet->SetADCNoiseBlankerThreshold(threshold);
+    return _device->SetADCNoiseBlankerThreshold(threshold);
 }
 
 bool G35Device::setDDC1Frequency(unsigned int ddc1Frequency)
 {
-    return _deviceSet->SetDDC1Frequency(ddc1Frequency);
+    return _device->SetDDC1Frequency(ddc1Frequency);
 }
 
-bool G35Device::setDDC1Type(quint32 type)
+bool G35Device::setDDC1Type(unsigned int type)
 {
-    return  _deviceSet->SetDDC1(type);
+    return  _device->SetDDC1(type);
 }
 
-bool G35Device::setSettings(const DeviceSetSettings &settings)
+bool G35Device::setSettings(const DeviceSettings &settings)
 {
     bool succesed=false;
 
@@ -67,7 +72,7 @@ bool G35Device::setSettings(const DeviceSetSettings &settings)
     succesed=setDDC1Frequency(settings.frequency);
     qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<settings.frequency<<"|| Succesed command"<<succesed;
 
-    succesed=_deviceSet->SetDDC1(settings.ddcType);
+    succesed=_device->SetDDC1(settings.ddcType);
     qDebug()<<"======Comand  SET_DDC1_TYPE"<<settings.ddcType<<"|| Succesed command"<<succesed;
 
     return succesed;
@@ -75,15 +80,15 @@ bool G35Device::setSettings(const DeviceSetSettings &settings)
 
 bool G35Device::startDDC1(unsigned int samplesPerBuffer)
 {
-    Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
+    Q_ASSERT_X(_device,"deviceSet is null","CohG35DeviceSet::startDDC1();");
     bool success=false;
-    if(!timeReader.isStarted())return false;
-    if(_deviceSet){
-        resetData();
-//        uPtrCallback->resetData();
-        timeReader.getTime(currentWeekNumber,currentTimeOfWeek);
-        success=_deviceSet->StartDDC1(samplesPerBuffer);
-    }
+//    if(!timeReader.isStarted())return false;
+//    if(_device){
+//        resetData();
+////        uPtrCallback->resetData();
+//        timeReader.getTime(currentWeekNumber,currentTimeOfWeek);
+//        success=_device->StartDDC1(samplesPerBuffer);
+//    }
     return success;
 }
 
@@ -91,9 +96,9 @@ bool G35Device::startDDC1(unsigned int samplesPerBuffer)
 bool G35Device::stopDDC1()
 {
     bool success=false;
-    if(_deviceSet){
-        success= _deviceSet->StopDDC1();
-        buffer->reset();
-    }
+//    if(_device){
+//        success= _device->StopDDC1();
+//        buffer->reset();
+//    }
     return success;
 }

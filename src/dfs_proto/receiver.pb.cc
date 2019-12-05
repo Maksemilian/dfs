@@ -360,7 +360,7 @@ const char descriptor_table_protodef_receiver_2eproto[] =
   "\002 \001(\0132\026.proto.receiver.Answer\022&\n\006packet\030"
   "\003 \001(\0132\026.proto.receiver.Packet\"8\n\014ClientT"
   "oHost\022(\n\007command\030\001 \001(\0132\027.proto.receiver."
-  "Command*\346\002\n\013CommandType\022\023\n\017UNKNOWN_COMMA"
+  "Command*\367\002\n\013CommandType\022\023\n\017UNKNOWN_COMMA"
   "ND\020\000\022\020\n\014SET_POWER_ON\020\001\022\021\n\rSET_POWER_OFF\020"
   "\002\022\022\n\016SET_ATTENUATOR\020\003\022\024\n\020SET_PRESELECTOR"
   "S\020\004\022\034\n\030SET_PREAMPLIFIER_ENABLED\020\005\022!\n\035SET"
@@ -368,13 +368,13 @@ const char descriptor_table_protodef_receiver_2eproto[] =
   "NOICE_BLANKER_THRESHOLD\020\007\022\026\n\022SET_DDC1_FR"
   "EQUENCY\020\010\022\021\n\rSET_DDC1_TYPE\020\t\022\020\n\014SET_SETT"
   "INGS\020\n\022\016\n\nSTART_DDC1\020\013\022\r\n\tSTOP_DDC1\020\014\022\027\n"
-  "\023SET_SHIFT_PHASE_DDC\020\r\022\030\n\024SET_DEVICE_SET"
-  "_INDEX\020\016b\006proto3"
+  "\023SET_SHIFT_PHASE_DDC\020\r\022\024\n\020SET_DEVICE_IND"
+  "EX\020\016\022\023\n\017SET_DEVICE_MODE\020\017b\006proto3"
   ;
 ::google::protobuf::internal::DescriptorTable descriptor_table_receiver_2eproto = {
   false, InitDefaults_receiver_2eproto, 
   descriptor_table_protodef_receiver_2eproto,
-  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1656,
+  "receiver.proto", &assign_descriptors_table_receiver_2eproto, 1673,
 };
 
 void AddDescriptors_receiver_2eproto() {
@@ -409,6 +409,7 @@ bool CommandType_IsValid(int value) {
     case 12:
     case 13:
     case 14:
+    case 15:
       return true;
     default:
       return false;

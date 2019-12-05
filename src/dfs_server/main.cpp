@@ -1,7 +1,7 @@
 #include "host_server.h"
 
-#include "wrd_ds_selector.h"
-#include "trmbl_tsip_reader"
+#include "wrd_coh_g35_ds_selector.h"
+#include "trmbl_tsip_reader.h"
 
 #include <QCoreApplication>
 #include <QLibrary>
@@ -16,8 +16,9 @@ G3XDDCAPI_CREATE_INSTANCE createInstance;
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    QObject::connect(app,&QCoreApplication::aboutToQuit,
-                     &TimeReader::instance(),TimeReader::stop);
+    TimeReader &inst=TimeReader::instance();
+    QObject::connect(&app,&QCoreApplication::aboutToQuit,
+                     &inst,&TimeReader::stop);
     QCommandLineOption portOption("p","port","value","value");
     QCommandLineParser parser;
 

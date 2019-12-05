@@ -78,7 +78,7 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     connect(_cbDeviceSetIndex,static_cast<void(QComboBox::*)(int)>(&QComboBox::activated),
             [this](int index){
         proto::receiver::Command command;
-        command.set_command_type(proto::receiver::SET_DEVICE_SET_INDEX);
+        command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
         command.set_device_set_index(static_cast<quint32>(index));
         this->sendCommand(command);
     });
@@ -165,7 +165,7 @@ void DeviceSetWidget::onDeviceSetReady()
 void DeviceSetWidget::onDeviceSetConnected()
 {
     proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_DEVICE_SET_INDEX);
+    command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
     command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
     sendCommand(command);
 }

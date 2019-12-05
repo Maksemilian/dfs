@@ -297,9 +297,9 @@ bool MainWindow::getPower()
     return pbPower->currentState();
 }
 
-DeviceSetSettings  MainWindow::getSettings()
+DeviceSettings  MainWindow::getSettings()
 {
-    DeviceSetSettings ds;
+    DeviceSettings ds;
     ds.powerEnabled=pbPower->currentState();
 
     if(ds.powerEnabled){

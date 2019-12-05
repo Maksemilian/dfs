@@ -1,12 +1,16 @@
-#include "wrd_callback.h"
+#include "wrd_coh_g35_callback.h"
 
 #include "trmbl_tsip_reader.h"
 
 #include <QTimer>
 #include <QDebug>
 
+std::unique_ptr<CohG35Callback>CallbackFactory:: cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer)
+{
+    return std::make_unique<CohG35Callback>(ddc1Buffer,TimeReader::instance());
+}
 //*********************** ICohG35DDCDeviceSetCallback ************************
-CohG35Callback::CohG35Callback(const ShPtrRingPacketBuffer &buffer,const TimeReader &timeReader):
+CohG35Callback::CohG35Callback(const ShPtrRingPacketBuffer &buffer,TimeReader &timeReader):
     buffer(buffer),
     timeReader(timeReader),
     isFirstBlock(true),
@@ -20,14 +24,14 @@ CohG35Callback::CohG35Callback(const ShPtrRingPacketBuffer &buffer,const TimeRea
 
 void CohG35Callback::resetData()
 {
-
     isFirstBlock=true;
     counterBlockPPS=1;
     currentDDCCounter=-1;
     currentWeekNumber=0;
     currentTimeOfWeek=0;
     buffer->reset();
-
+    
+    timeReader.getTime(currentWeekNumber,currentTimeOfWeek);
 }
 
 void CohG35Callback::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSet, unsigned int DeviceCount,
@@ -130,7 +134,7 @@ void CohG35Callback::fillPacket(proto::receiver::Packet &packet,
 
     packet.set_week_number(currentWeekNumber);
     packet.set_time_of_week(currentTimeOfWeek);
-
+    quint8 COUNT_SIGNAL_COMPONENT=2;
     if(ddcStreamCallbackData.BitsPerSample==16) {
         qint16 **buffer=reinterpret_cast<qint16**>(const_cast<void **>(ddcStreamCallbackData.Buffers));
         for(quint32 i=0;i<ddcStreamCallbackData.DeviceCount;i++){
@@ -149,7 +153,8 @@ void CohG35Callback::fillPacket(proto::receiver::Packet &packet,
     }
 }
 
-void CohG35Callback::showPacket(proto::receiver::Packet &packet){
+void CohG35Callback::showPacket(proto::receiver::Packet &packet)
+{
 
     qDebug()<<"DDC_CALLBACK:"
            <<packet.block_number()

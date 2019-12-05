@@ -111,13 +111,14 @@ enum CommandType {
   START_DDC1 = 11,
   STOP_DDC1 = 12,
   SET_SHIFT_PHASE_DDC = 13,
-  SET_DEVICE_SET_INDEX = 14,
+  SET_DEVICE_INDEX = 14,
+  SET_DEVICE_MODE = 15,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = UNKNOWN_COMMAND;
-const CommandType CommandType_MAX = SET_DEVICE_SET_INDEX;
+const CommandType CommandType_MAX = SET_DEVICE_MODE;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();

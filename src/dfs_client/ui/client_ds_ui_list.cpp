@@ -3,7 +3,7 @@
 #include "client_ds_ui.h"
 
 #include "tool_switch_button.h"
-#include "i_device_set_settings.h"
+#include "i_device_settings.h"
 
 #include <QDebug>
 #include <QVBoxLayout>

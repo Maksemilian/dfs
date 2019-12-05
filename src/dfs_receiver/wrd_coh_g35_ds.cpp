@@ -7,22 +7,12 @@
 #include <QDebug>
 
 CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet*deviceSet):
-    _deviceSet(deviceSet),
-//    uPtrCallback(new CohG35Callback(buffer,timeReader)),
-
-    isFirstBlock(true),
-    counterBlockPPS(1),
-    currentDDCCounter(-1),
-    currentWeekNumber(0),
-    currentTimeOfWeek(0)
-{
-    _deviceSet->SetCallback(this);
-//    _deviceSet->setCallback(uPtrCallback.get());
-}
+    _deviceSet(deviceSet){}
 
 void CohG35DeviceSet::setCallback(std::unique_ptr<CohG35Callback> callback)
 {
     uPtrCallback=std::move(callback);
+    _deviceSet->SetCallback(uPtrCallback.get());
 }
 
 QString CohG35DeviceSet::getDeviceSetName()
@@ -41,18 +31,6 @@ QString CohG35DeviceSet::getDeviceSetName()
 
     return deviceSetName;
 }
-
-
-//void CohG35DeviceSet::resetData()
-//{
-////    isFirstBlock=true;
-////    counterBlockPPS=1;
-////    currentDDCCounter=-1;
-////    currentWeekNumber=0;
-////    currentTimeOfWeek=0;
-
-////    buffer->reset();
-//}
 
 void CohG35DeviceSet::freeResource()
 {

@@ -18,7 +18,8 @@ TimeReader &TimeReader::instance()
 TimeReader::TimeReader():startedAtomWatch(false),weekNumber(0),timeOfWeek(0){
 }
 
-void TimeReader::getTime(quint16 &weekNumber, quint32 &timeOfWeek){
+void TimeReader::getTime(quint16 &weekNumber, quint32 &timeOfWeek)
+{
     QReadLocker readLocker(&rwLock);
     weekNumber=this->weekNumber;
     timeOfWeek=this->timeOfWeek;
