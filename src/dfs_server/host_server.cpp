@@ -17,9 +17,13 @@ void StreamServer::incomingConnection(qintptr handle)
 {
     qDebug()<<"===============incomingConnection handle"<<handle;
     net::ChannelHost *channelHost=new net::ChannelHost(handle);
-    connect(channelHost,&net::ChannelHost::keyExchangedFinished,this,&StreamServer::onChannelReady);
+
+    connect(channelHost,&net::ChannelHost::keyExchangedFinished,
+            this,&StreamServer::onChannelReady);
+
     connect(channelHost,&net::ChannelHost::finished,
             this,&StreamServer::onChannelDisconnected);
+
     _pendingChannelsList.append(channelHost);
 }
 

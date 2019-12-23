@@ -131,8 +131,9 @@ bool CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer)
 {
     Q_ASSERT_X(_deviceSet,"deviceSet is null","CohG35DeviceSet::startDDC1();");
     bool success=false;
+    qDebug()<<"****CALL_BACK"<<uPtrCallback.get();
 //    if(!timeReader.isStarted())return false;
-    if(_deviceSet&&uPtrCallback.get()){
+    if(_deviceSet && uPtrCallback.get()){
         uPtrCallback->resetData();
         success=_deviceSet->StartDDC1(samplesPerBuffer);
 //        resetData();

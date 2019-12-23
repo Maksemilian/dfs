@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     if(DeviceSetSelector::numberAvailableDeviceSet()==0
             //||countStation!=DeviceSetSelector::numberAvailableDeviceSet()
             ){
-        qDebug()<<"Failed geting Device Set!";
+        qDebug()<<"Failed getting Device Set!";
         library.unload();
         return -1;
     }

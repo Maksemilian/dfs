@@ -120,12 +120,20 @@ ShPtrDevice DeviceSelector::coherentG35DeviceInstance(unsigned int deviceSetInde
         qDebug()<<"DeviceSet error";
         return nullptr;
     }
-
     quint32 countDeviceInSet=0;
-    enumerator->GetDeviceSetInfo(deviceSetIndex,nullptr,&countDeviceInSet);
+    G35DDC_DEVICE_INFO *deviceInfoMas=nullptr;
 
-    G35DDC_DEVICE_INFO *deviceInfoMas=new G35DDC_DEVICE_INFO[countDeviceInSet];
-    enumerator->GetDeviceSetInfo(deviceSetIndex,deviceInfoMas,&countDeviceInSet);
+//    if(numberAvailableDeviceSet()>0)
+//    {
+//    enumerator->GetDeviceSetInfo(deviceSetIndex,nullptr,&countDeviceInSet);
+//    deviceInfoMas=new G35DDC_DEVICE_INFO[countDeviceInSet];
+//    enumerator->GetDeviceSetInfo(deviceSetIndex,deviceInfoMas,&countDeviceInSet);
+//    }
+//    else
+//    {
+        countDeviceInSet=1;
+        deviceInfoMas=static_cast<G35DDC_DEVICE_INFO*>(G35DDC_OPEN_DEMO_SET);
+//    }
 
     if(deviceSet->Open(deviceInfoMas,countDeviceInSet)){
         qDebug()<<"Device Set"<<deviceSetIndex<<"- count device:"<<countDeviceInSet;
@@ -195,4 +203,16 @@ ShPtrDevice DeviceSelector::singleG35DeviceInstance(unsigned int deviceIndex)
         printf("Failed to open device. Error code=%08X\n",GetLastError());
     }
     return nullptr;
+}
+
+unsigned int DeviceSelector::numberAvailableDeviceSet(){
+    ICohG35DDCDeviceSetEnumerator *enumerator;
+    if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET_ENUMERATOR,
+                       reinterpret_cast<void**>(&enumerator))){
+        qDebug()<<"Enumerator error";
+        return 0;
+    }
+    unsigned int number=enumerator->GetDeviceSetCount();
+    enumerator->Release();
+    return number;
 }

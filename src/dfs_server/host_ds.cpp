@@ -25,14 +25,19 @@ QByteArray serializeMessage(const google::protobuf::Message &message)
 struct DeviceSetClient::Impl
 {
     Impl(net::ChannelHost *channel):
-        channel(channel),buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
+        channel(channel),
+        buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
+        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+        deviceMode(proto::receiver::DM_COHERENT)
     {}
 
     Impl(net::ChannelHost *channel,
          const std::shared_ptr<IDevice>&deviceSet):
         channel(channel),
         device(deviceSet),
-        buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16))
+        buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
+        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+        deviceMode(proto::receiver::DM_COHERENT)
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
@@ -224,16 +229,16 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         succesed=d->device->setSettings(extractSettingsFromCommand(command));
         break;
     case proto::receiver::CommandType::START_DDC1:
-        qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
         succesed=d->device->startDDC1(command.samples_per_buffer());
+        qDebug()<<"======Comand  START_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::STOP_DDC1:
-        qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<true;
         succesed=d->device->stopDDC1();
+        qDebug()<<"======Comand  STOP_DDC1"<<command.samples_per_buffer()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_DDC1_TYPE:
-        qDebug()<<"======Comand  SET_DDC1_TYPE"<<command.ddc1_type()<<"|| Succesed command"<<true;
         succesed=d->device->setDDC1Type(command.ddc1_type());
+        qDebug()<<"======Comand  SET_DDC1_TYPE"<<command.ddc1_type()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_ATTENUATOR:
         succesed=d->device->setAttenuator(command.attenuator());
@@ -263,6 +268,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         break;
     case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
         succesed=d->device->setDDC1Frequency(command.ddc1_frequency());
+
         qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<command.ddc1_frequency()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:

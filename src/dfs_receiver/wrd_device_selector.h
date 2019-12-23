@@ -42,6 +42,7 @@ public:
     static ShPtrDevice singleG35DeviceInstance(unsigned int deviceIndex);
 
     static ShPtrDevice coherentG35DeviceInstance(unsigned int deviceSetIndex);
+    static unsigned int numberAvailableDeviceSet();
 
 };
 #endif // WRD_DEVICE_SELECTOR_H
