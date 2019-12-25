@@ -92,6 +92,8 @@ void DeviceSetListWidget::createDevieSetWidgets()
         port=static_cast<quint16>(s.value("port").toUInt());
         s.endGroup();
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+        DeviceSetWidget *widget=new DeviceSetWidget(ip,port);
+        widget->setListeningStreamPort(9001);
         addDeviceSetWidget(new DeviceSetWidget(ip,port));
 
 //        s.beginGroup("dev_2");

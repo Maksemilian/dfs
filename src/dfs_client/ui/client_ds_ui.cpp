@@ -188,6 +188,11 @@ bool DeviceSetWidget::isConnected()
     return false;
 }
 
+void DeviceSetWidget::setListeningStreamPort(quint16 port)
+{
+    _deviceSetClient->setLiceningStreamPort(port);
+}
+
 void DeviceSetWidget::setStatus(bool status)
 {
     if(QObjectUserData *userData=_lbStatus->userData(USER_DATA_STATUS))

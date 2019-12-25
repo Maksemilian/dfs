@@ -1,6 +1,7 @@
 #include "client_ds.h"
 
 #include "channel_client.h"
+#include "stream_server.h"
 
 #include "receiver.pb.h"
 
@@ -12,9 +13,7 @@
 #include <QFutureWatcher>
 
 #include <QHostAddress>
-
 //**************************************** Receiver Station Client*****************************************
-
 
 const QByteArray serializeMessage(
         const google::protobuf::Message &command)
@@ -24,7 +23,6 @@ const QByteArray serializeMessage(
     return QByteArray(bytesArray.data(),command.ByteSize());
 }
 
-
 struct DeviceSetClient::Impl
 {
     Impl():channel(std::make_unique<net::ChannelClient>())
@@ -33,6 +31,7 @@ struct DeviceSetClient::Impl
     std::unique_ptr<net::ChannelClient> channel;
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
+    StreamServer streamServer;
 };
 
 DeviceSetClient::DeviceSetClient(QObject *parent):
@@ -49,15 +48,20 @@ DeviceSetClient::DeviceSetClient(QObject *parent):
             this,&DeviceSetClient::disconnected);
 }
 
+void DeviceSetClient::setLiceningStreamPort(quint16 port)
+{
+    d->streamServer.listen(QHostAddress::Any,port);
+}
+
 const proto::receiver::DeviceSetInfo & DeviceSetClient::getDeviceSetInfo() const
 { return d->currentDeviceSetInfo; }
 
-QString DeviceSetClient::getStationAddress()
+QString DeviceSetClient::getStationAddress()const
 {
     return QHostAddress(d->channel->peerAddress().toIPv4Address()).toString();
 }
 
-QStringList DeviceSetClient::receiverNameList()
+QStringList DeviceSetClient::receiverNameList()const
 {
     QStringList receiverNameList;
 
@@ -81,7 +85,7 @@ void DeviceSetClient::disconnectFromHost()
 
 DeviceSetClient::~DeviceSetClient(){}
 
-QString DeviceSetClient::getCurrentDeviceSetName()
+QString DeviceSetClient::getCurrentDeviceSetName()const
 {
     QString deviceSetName="DS#";
     for (int i=0;i<d->currentDeviceSetInfo.device_info_size();i++){

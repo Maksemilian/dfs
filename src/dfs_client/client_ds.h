@@ -17,7 +17,7 @@ public:
     void connectToHost(const QHostAddress &address,quint16 port);
     void disconnectFromHost();
     void sendCommand(const proto::receiver::Command &command);
-
+    void setReceiveStreamPort(quint32 port);
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
     QString getCurrentDeviceSetName();
 
