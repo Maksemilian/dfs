@@ -113,12 +113,13 @@ enum CommandType {
   SET_SHIFT_PHASE_DDC = 13,
   SET_DEVICE_INDEX = 14,
   SET_DEVICE_MODE = 15,
+  SEND_DDC1_STREAM = 16,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = UNKNOWN_COMMAND;
-const CommandType CommandType_MAX = SET_DEVICE_MODE;
+const CommandType CommandType_MAX = SEND_DDC1_STREAM;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -580,6 +581,12 @@ class Command :
   ::proto::receiver::DeviceMode device_mode() const;
   void set_device_mode(::proto::receiver::DeviceMode value);
 
+  // int32 steam_key = 14;
+  void clear_steam_key();
+  static const int kSteamKeyFieldNumber = 14;
+  ::google::protobuf::int32 steam_key() const;
+  void set_steam_key(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.Command)
  private:
   class HasBitSetters;
@@ -598,6 +605,7 @@ class Command :
   ::google::protobuf::uint32 samples_per_buffer_;
   ::google::protobuf::uint32 device_set_index_;
   int device_mode_;
+  ::google::protobuf::int32 steam_key_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1417,12 +1425,29 @@ class ClientToHost :
   ::proto::receiver::Command* mutable_command();
   void set_allocated_command(::proto::receiver::Command* command);
 
+  // .proto.receiver.Packet packet = 2;
+  bool has_packet() const;
+  void clear_packet();
+  static const int kPacketFieldNumber = 2;
+  const ::proto::receiver::Packet& packet() const;
+  ::proto::receiver::Packet* release_packet();
+  ::proto::receiver::Packet* mutable_packet();
+  void set_allocated_packet(::proto::receiver::Packet* packet);
+
+  // int32 stream_key = 3;
+  void clear_stream_key();
+  static const int kStreamKeyFieldNumber = 3;
+  ::google::protobuf::int32 stream_key() const;
+  void set_stream_key(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.ClientToHost)
  private:
   class HasBitSetters;
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::proto::receiver::Command* command_;
+  ::proto::receiver::Packet* packet_;
+  ::google::protobuf::int32 stream_key_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1794,6 +1819,20 @@ inline void Command::set_device_mode(::proto::receiver::DeviceMode value) {
   
   device_mode_ = value;
   // @@protoc_insertion_point(field_set:proto.receiver.Command.device_mode)
+}
+
+// int32 steam_key = 14;
+inline void Command::clear_steam_key() {
+  steam_key_ = 0;
+}
+inline ::google::protobuf::int32 Command::steam_key() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.steam_key)
+  return steam_key_;
+}
+inline void Command::set_steam_key(::google::protobuf::int32 value) {
+  
+  steam_key_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Command.steam_key)
 }
 
 // -------------------------------------------------------------------
@@ -2384,6 +2423,71 @@ inline void ClientToHost::set_allocated_command(::proto::receiver::Command* comm
   }
   command_ = command;
   // @@protoc_insertion_point(field_set_allocated:proto.receiver.ClientToHost.command)
+}
+
+// .proto.receiver.Packet packet = 2;
+inline bool ClientToHost::has_packet() const {
+  return this != internal_default_instance() && packet_ != nullptr;
+}
+inline void ClientToHost::clear_packet() {
+  if (GetArenaNoVirtual() == nullptr && packet_ != nullptr) {
+    delete packet_;
+  }
+  packet_ = nullptr;
+}
+inline const ::proto::receiver::Packet& ClientToHost::packet() const {
+  const ::proto::receiver::Packet* p = packet_;
+  // @@protoc_insertion_point(field_get:proto.receiver.ClientToHost.packet)
+  return p != nullptr ? *p : *reinterpret_cast<const ::proto::receiver::Packet*>(
+      &::proto::receiver::_Packet_default_instance_);
+}
+inline ::proto::receiver::Packet* ClientToHost::release_packet() {
+  // @@protoc_insertion_point(field_release:proto.receiver.ClientToHost.packet)
+  
+  ::proto::receiver::Packet* temp = packet_;
+  packet_ = nullptr;
+  return temp;
+}
+inline ::proto::receiver::Packet* ClientToHost::mutable_packet() {
+  
+  if (packet_ == nullptr) {
+    auto* p = CreateMaybeMessage<::proto::receiver::Packet>(GetArenaNoVirtual());
+    packet_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:proto.receiver.ClientToHost.packet)
+  return packet_;
+}
+inline void ClientToHost::set_allocated_packet(::proto::receiver::Packet* packet) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete packet_;
+  }
+  if (packet) {
+    ::google::protobuf::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      packet = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, packet, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  packet_ = packet;
+  // @@protoc_insertion_point(field_set_allocated:proto.receiver.ClientToHost.packet)
+}
+
+// int32 stream_key = 3;
+inline void ClientToHost::clear_stream_key() {
+  stream_key_ = 0;
+}
+inline ::google::protobuf::int32 ClientToHost::stream_key() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.ClientToHost.stream_key)
+  return stream_key_;
+}
+inline void ClientToHost::set_stream_key(::google::protobuf::int32 value) {
+  
+  stream_key_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.ClientToHost.stream_key)
 }
 
 #ifdef __GNUC__

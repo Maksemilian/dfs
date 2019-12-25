@@ -20,7 +20,6 @@ struct StreamReader::Impl
     std::atomic<bool> quit;
 };
 
-
 StreamReader::StreamReader(const QString &address, quint16 port,
                            const std::shared_ptr<RingBuffer<proto::receiver::Packet>> streamBuffer)
     :d(std::make_unique<Impl>(streamBuffer))

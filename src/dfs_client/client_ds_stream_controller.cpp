@@ -14,6 +14,7 @@ ClientStreamController::ClientStreamController(const QString &address,quint16 po
 }
 
 ClientStreamController::~ClientStreamController(){}
+
 void ClientStreamController::startDDC()
 {
 //    if(_ddcStreamThread==nullptr&&_ddcStream==nullptr){

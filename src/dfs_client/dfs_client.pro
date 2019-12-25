@@ -49,7 +49,8 @@ HEADERS += \
     command_factory.h \
     client_ds.h \
     client_ds_stream.h \
-    client_ds_stream_controller.h
+    client_ds_stream_controller.h \
+    stream_server.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -67,7 +68,8 @@ SOURCES += \
     client_ds_stream_controller.cpp \
     command_hierarch.cpp \
     command_factory.cpp \
-    main.cpp
+    main.cpp \
+    stream_server.cpp
 
 FORMS += \
     ui/main_window.ui \

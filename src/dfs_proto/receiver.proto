@@ -20,6 +20,7 @@ STOP_DDC1 = 12;
 SET_SHIFT_PHASE_DDC = 13;
 SET_DEVICE_INDEX = 14;
 SET_DEVICE_MODE =15;
+SEND_DDC1_STREAM=16;
 }
 
 message Preselectors
@@ -60,6 +61,7 @@ uint32 samples_per_buffer=10;
 ShiftPhaseDDC1 shift_phase_ddc1=11;
 uint32 device_set_index = 12;
 DeviceMode device_mode=13;
+int32 steam_key=14;
 }
 
 message DeviceInfo
@@ -113,4 +115,6 @@ Packet packet=3;
 message ClientToHost
 {
 Command command=1;
+Packet packet=2;
+int32 stream_key=3;
 }

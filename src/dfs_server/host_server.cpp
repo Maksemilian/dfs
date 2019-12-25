@@ -73,13 +73,13 @@ void StreamServer::onNewConnection()
 void StreamServer::onChannelDisconnected()
 {
     qDebug()<<"onChannelDisconnected";
-    _client->deleteLater();
+    _client.first()->deleteLater();
 }
 
 void StreamServer::createSession(net::ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
-        _client=new DeviceSetClient(channelHost);
+        _client.append(new DeviceSetClient(channelHost));
     }else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
         qDebug()<<"STREAM SESSION";
         if(_streamDDC1==nullptr){
@@ -97,7 +97,7 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
 void StreamServer::createThread(net::ChannelHost *channelHost)
 {
     QThread *thread=new QThread;
-    _streamDDC1=new StreamDDC1(channelHost,_client->ddc1Buffer()/*deviceSet->getBuffer()*/);
+    _streamDDC1=new StreamDDC1(channelHost,_client.first()->ddc1Buffer()/*deviceSet->getBuffer()*/);
     _streamDDC1->moveToThread(thread);
     channelHost->moveToThread(thread);
 //        connect(channelHost,&net::ChannelHost::finished,
