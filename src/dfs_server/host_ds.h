@@ -23,8 +23,6 @@ public:
                     const std::shared_ptr<CohG35DeviceSet>&deviceSet);
     ~DeviceSetClient();
 
-//    void setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet>&shPtrCohG35DeviceSet);
-//    const std::shared_ptr<CohG35DeviceSet> &getCohDeviceSet();
     ShPtrRingBuffer ddc1Buffer();
 signals:
     void stationDisconnected();
@@ -40,9 +38,8 @@ private:
     void readCommandPacket(const proto::receiver::Command &command);
     DeviceSettings extractSettingsFromCommand(const proto::receiver::Command &command);
 
-//    QByteArray serializeMessage(const google::protobuf::Message &message);
     void writeMessage(const google::protobuf::Message &message);
-    void createThread(const QHostAddress &address,quint16 port,
+    void startSendingDDC1Stream(const QHostAddress &address,quint16 port,
                                        const ShPtrRingBuffer &buffer);
 private:
     struct Impl;
@@ -54,14 +51,13 @@ class StreamDDC1T:public QObject
     Q_OBJECT
 public:
     StreamDDC1T(const QHostAddress &address,quint16 port,
-            ShPtrRingBuffer _buffer);
+            const ShPtrRingBuffer &_buffer);
 
     ~StreamDDC1T(){qDebug()<<"DESTR_DDC1";}
     void start();
     void stop();
 signals:
     void finished();
-    void next();
 private:
     void process();
 private:
@@ -70,6 +66,5 @@ private:
     quint16 _port;
     ShPtrRingBuffer _buffer;
     std::atomic<bool>_quit;
-    QFutureWatcher<void> _fw;
 };
 #endif // RECEIVER_STATION_CLIENT_H

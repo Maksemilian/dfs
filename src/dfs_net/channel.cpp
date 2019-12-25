@@ -7,11 +7,15 @@ namespace net {
 Channel::Channel(QObject *parent)
     : QObject(parent),
       _socket(std::make_unique<QTcpSocket>())
+//      _socket(new QTcpSocket)
 {
     connect(_socket.get(),&QTcpSocket::readyRead,
             this,&Channel::onReadyRead);
+//    connect(_socket,&QTcpSocket::readyRead,
+//            this,&Channel::onReadyRead);
 
     connect(_socket.get(),&QTcpSocket::disconnected,
+//    connect(_socket,&QTcpSocket::disconnected,
             //            this,&Channel::finished);
             [this]{
         keyExchangeState=KeyExchangeState::HELLO;
@@ -216,6 +220,7 @@ void Channel::onReadyRead()
 
 Channel::~Channel()
 {
+    _socket->deleteLater();
     deleteLater();
 }
 

@@ -44,6 +44,7 @@ private:
 
 protected:
     std::unique_ptr<QTcpSocket> _socket;
+//    QTcpSocket *_socket;
     KeyExchangeState keyExchangeState=KeyExchangeState::HELLO;
     ChannelState _channelState=ChannelState::NOT_CONNECTED;
 private:

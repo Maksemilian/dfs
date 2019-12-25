@@ -86,12 +86,10 @@ void ClStreamReaderT::process()
 
     connect(d->stream.get(),&net::ChannelHost::finished,
             this,&ClStreamReaderT::finished);
-
 }
 
 void ClStreamReaderT::onMessageReceive(const QByteArray &buffer)
 {
-    //    qDebug()<<"StreamReader::onMessageReceive"<<buffer.size()<<d->quit;
     proto::receiver::ClientToHost clientToHost;
 
     if(!clientToHost.ParseFromArray(buffer.constData(),buffer.size())){

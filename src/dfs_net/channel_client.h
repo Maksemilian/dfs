@@ -16,6 +16,7 @@ public:
     void connectToHost(const QString &address,quint16 port,SessionType sesionType);
     void disconnectFromHost();
     void waitForConnected(int time=30000);
+    void waitForDisconnected(int time=30000);
 signals:
     void connected();
     void disconnected();

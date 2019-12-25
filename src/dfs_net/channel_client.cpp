@@ -28,6 +28,7 @@ ChannelClient::ChannelClient(QObject *parent)
     :Channel (parent)
 {
     connect(_socket.get(),&QTcpSocket::connected,
+//    connect(_socket,&QTcpSocket::connected,
             this,&ChannelClient::onConnected);
 
 //    connect(_socket.get(),&Channel::finished,
@@ -56,6 +57,11 @@ void ChannelClient::disconnectFromHost()
 void ChannelClient::waitForConnected(int time)
 {
     _socket->waitForConnected(time);
+}
+
+void ChannelClient::waitForDisconnected(int time)
+{
+    _socket->waitForDisconnected(time);
 }
 
 void ChannelClient::readServerKeyExchange(const QByteArray &buffer)

@@ -52,7 +52,8 @@ struct DeviceSetClient::Impl
     ShPtrRingBuffer buffer;
     std::unique_ptr<DeviceCreator>deviceCreator;
     proto::receiver::DeviceMode deviceMode;
-    std::map<StreamType,std::unique_ptr<StreamDDC1T>>streams;
+//    std::map<StreamType,std::unique_ptr<StreamDDC1T>>streams;
+    StreamDDC1T *streamDDC1=nullptr;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -313,12 +314,14 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
         break;
     case proto::receiver::START_SENDING_DDC1_STREAM:
         qDebug()<<"===== START_SENDING_DDC1_STREAM";
-        createThread(d->channel->peerAddress(),command.stream_port(),d->buffer);
+        startSendingDDC1Stream(d->channel->peerAddress(),
+                               static_cast<quint16>(command.stream_port()),
+                               d->buffer);
         succesed=true;
         break;
     case proto::receiver::STOP_SENDING_DDC1_STREAM:
         qDebug()<<"===== STOP_SENDING_DDC1_STREAM";
-        d->streams[Impl::StreamType::ST_DDC1]->stop();
+        d->streamDDC1->stop();
         succesed=true;
         break;
 
@@ -334,24 +337,22 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     sendCommandAnswer(answer);
 }
 
-void DeviceSetClient::createThread(const QHostAddress &address,quint16 port,
+void DeviceSetClient::startSendingDDC1Stream(const QHostAddress &address,quint16 port,
                                    const ShPtrRingBuffer &buffer)
 {
     QThread *thread=new QThread;
-    StreamDDC1T *streamDDC1=new StreamDDC1T(address,port,buffer);
-    streamDDC1->moveToThread(thread);
 
-    d->streams[Impl::StreamType::ST_DDC1].reset(streamDDC1);
-
+    d->streamDDC1=new StreamDDC1T(address,port,buffer);
+    d->streamDDC1->moveToThread(thread);
 
     connect(thread,&QThread::started,
-            streamDDC1,&StreamDDC1T::start);
+            d->streamDDC1,&StreamDDC1T::start);
 
-    connect(streamDDC1,&StreamDDC1T::finished,
+    connect(d->streamDDC1,&StreamDDC1T::finished,
             thread,&QThread::quit);
 
     connect(thread,&QThread::finished,
-            streamDDC1,&StreamDDC1T::deleteLater);
+            d->streamDDC1,&StreamDDC1T::deleteLater);
 
     connect(thread,&QThread::destroyed,
             thread,&QThread::deleteLater);
@@ -362,7 +363,7 @@ void DeviceSetClient::createThread(const QHostAddress &address,quint16 port,
 //************************ STREAM DDC1 **********************
 
 StreamDDC1T::StreamDDC1T(const QHostAddress &address,quint16 port,
-                         std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer)
+                         const ShPtrRingBuffer &buffer)
     :  _address(address),_port(port),_buffer(buffer){}
 
 void StreamDDC1T::process()
@@ -379,12 +380,12 @@ void StreamDDC1T::process()
     _quit=false;
     //********************
     proto::receiver::Packet packet;
-    proto::receiver::ClientToHost cliirntToHost;
+    proto::receiver::ClientToHost clientToHost;
     while(!_quit){
         if(_buffer->pop(packet))
         {
-            cliirntToHost.mutable_packet()->CopyFrom(packet);
-            int packetByteSize= cliirntToHost.ByteSize();
+            clientToHost.mutable_packet()->CopyFrom(packet);
+            int packetByteSize= clientToHost.ByteSize();
 
             QByteArray ba;
             QDataStream out(&ba,QIODevice::WriteOnly);
@@ -399,7 +400,7 @@ void StreamDDC1T::process()
             _streamSocket->writeToSocket(ba.size());
             _streamSocket->flush();
             char buf[packetByteSize];
-            cliirntToHost.SerializeToArray(buf,packetByteSize);
+            clientToHost.SerializeToArray(buf,packetByteSize);
 
             _streamSocket->writeDataToBuffer(buf,packetByteSize);
 
@@ -422,11 +423,12 @@ void StreamDDC1T::process()
                  <<"TOW:"<<packet.time_of_week()
                 <<"DDC_C"<<packet.ddc_sample_counter()
                <<"ADC_C"<<packet.adc_period_counter()
-              <<cliirntToHost.ByteSize();
+              <<clientToHost.ByteSize();
         }
     }
     _streamSocket->disconnectFromHost();
-//    emit finished();
+    _streamSocket->waitForDisconnected(5000);
+    emit finished();
     qDebug("SIGNAL FINISHED STREAM DDC WRITER");
     });
     _streamSocket->connectToHost(QHostAddress(_address.toIPv4Address()).toString()

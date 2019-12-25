@@ -69,7 +69,7 @@ SOURCES += \
     command_hierarch.cpp \
     command_factory.cpp \
     main.cpp \
-    stream_server.cpp
+    client_stream_server.cpp
 
 FORMS += \
     ui/main_window.ui \
