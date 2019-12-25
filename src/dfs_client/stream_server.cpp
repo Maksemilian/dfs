@@ -6,29 +6,30 @@
 
 #include <QThread>
 using namespace  std;
-class StreamReaderT:public QObject
-{
-    Q_OBJECT
-public:
-    StreamReaderT(net::ChannelHost *channelHost,
-                  const std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer);
-    ~StreamReaderT();
-    void start();
-    void stop();
-    qint32 key();
-signals:
-    void started();
-    void stoped();
-    void finished();
-private:
-    void run();
-    void onMessageReceive(const QByteArray&buffer);
-private:
-    struct Impl;
-    std::unique_ptr<Impl>d;
-};
 
-struct StreamReaderT::Impl
+//class StreamReaderT:public QObject
+//{
+//    Q_OBJECT
+//public:
+//    StreamReaderT(net::ChannelHost *channelHost,
+//                  const std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer);
+//    ~StreamReaderT();
+//    void start();
+//    void stop();
+//    qint32 key();
+//signals:
+//    void started();
+//    void stoped();
+//    void finished();
+//private:
+//    void run();
+//    void onMessageReceive(const QByteArray&buffer);
+//private:
+//    struct Impl;
+//    std::unique_ptr<Impl>d;
+//};
+
+struct ClStreamReaderT::Impl
 {
     Impl(net::ChannelHost*channelHost,
          std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddcBuffer):
@@ -44,54 +45,51 @@ struct StreamReaderT::Impl
     qint32 key;
 };
 
-StreamReaderT::StreamReaderT(net::ChannelHost *channelHost,
-                             const std::shared_ptr<RingBuffer<proto::receiver::Packet>> streamBuffer)
+ClStreamReaderT::ClStreamReaderT(net::ChannelHost *channelHost,
+                             const ShPtrPacketBuffer streamBuffer)
     :d(std::make_unique<Impl>(channelHost,streamBuffer))
 {
 
 }
 
-StreamReaderT::~StreamReaderT(){qDebug()<<"DESTR::StreamReader";}
-
-qint32 StreamReaderT::key()
-{
-    return d->key;
+ClStreamReaderT::~ClStreamReaderT(){
+    qDebug()<<"STOP Stream Reader DDC1";
+    qDebug()<<"DESTR::StreamReader";
 }
 
-void StreamReaderT::start()
-{
-    if(d->quit){
-        d->quit=false;
-        run();
-        emit started();
-        qDebug("START STREAM READER");
-    }
-}
+//void ClStreamReaderT::start()
+//{
+//    if(d->quit){
+//        d->quit=false;
+//        process();
+//        emit started();
+//        qDebug("START STREAM READER");
+//    }
+//}
 
-void StreamReaderT::stop()
-{
-    if(!d->quit){
-        d->quit=true;
-        disconnect(d->stream.get(),&net::ChannelHost::messageReceived,
-                   this,&StreamReaderT::onMessageReceive);
-        emit stoped();
-        qDebug("STOP STREAM READER");
-    }
-}
+//void ClStreamReaderT::stop()
+//{
+//    if(!d->quit){
+//        d->quit=true;
+//        disconnect(d->stream.get(),&net::ChannelHost::messageReceived,
+//                   this,&ClStreamReaderT::onMessageReceive);
+//        emit stoped();
+//        qDebug("STOP STREAM READER");
+//    }
+//}
 
-void StreamReaderT::run()
+void ClStreamReaderT::process()
 {
-    //    d->stream.reset(new net::ChannelHost);
-    //    d->stream->connectToHost(d->address,d->port,SessionType::SESSION_SIGNAL_STREAM);
+    qDebug()<<"START Stream Reader DDC1";
     connect(d->stream.get(),&net::ChannelHost::messageReceived,
-            this,&StreamReaderT::onMessageReceive);
+            this,&ClStreamReaderT::onMessageReceive);
 
     connect(d->stream.get(),&net::ChannelHost::finished,
-            this,&StreamReaderT::finished);
+            this,&ClStreamReaderT::finished);
 
 }
 
-void StreamReaderT::onMessageReceive(const QByteArray &buffer)
+void ClStreamReaderT::onMessageReceive(const QByteArray &buffer)
 {
     //    qDebug()<<"StreamReader::onMessageReceive"<<buffer.size()<<d->quit;
     proto::receiver::ClientToHost clientToHost;
@@ -114,37 +112,37 @@ void StreamReaderT::onMessageReceive(const QByteArray &buffer)
 
 //******************************
 
-StreamServer::StreamServer(quint8 bufferSize)
+ClStreamServer::ClStreamServer(quint8 bufferSize)
 {
     qDebug()<<"Stream Server Init";
-    connect(this,&StreamServer::newChannelReady,
-            this,&StreamServer::onNewConnection);
+    connect(this,&ClStreamServer::newChannelReady,
+            this,&ClStreamServer::onNewConnection);
 
     buffers[StreamType::ST_DDC1]=std::make_shared<RingBuffer<proto::receiver::Packet>>(bufferSize);
 }
 
-ShPtrPacketBuffer StreamServer::getBuffer(StreamType type)
+ShPtrPacketBuffer ClStreamServer::getBuffer(StreamType type)
 {
     if(type==StreamType::ST_DDC1){
         return buffers[StreamType::ST_DDC1];
     }
     return nullptr;
 }
-void StreamServer::incomingConnection(qintptr handle)
+void ClStreamServer::incomingConnection(qintptr handle)
 {
-    qDebug()<<"===============incomingConnection handle"<<handle;
+    qDebug()<<"=============== Stream_Serever_incomingConnection handle"<<handle;
     net::ChannelHost *channelHost=new net::ChannelHost(handle);
 
     connect(channelHost,&net::ChannelHost::keyExchangedFinished,
-            this,&StreamServer::onChannelReady);
+            this,&ClStreamServer::onChannelReady);
 
-    connect(channelHost,&net::ChannelHost::finished,
-            this,&StreamServer::onChannelDisconnected);
+//    connect(channelHost,&net::ChannelHost::finished,
+//            this,&ClStreamServer::onChannelDisconnected);
 
     _pendingChannelsList.append(channelHost);
 }
 
-void StreamServer::onChannelReady()
+void ClStreamServer::onChannelReady()
 {
     qDebug()<<"Server::onChannelReady";
 
@@ -170,7 +168,7 @@ void StreamServer::onChannelReady()
     }
 }
 
-void StreamServer::onNewConnection()
+void ClStreamServer::onNewConnection()
 {
     qDebug()<<"Server::onNewConnection";
 
@@ -187,13 +185,14 @@ void StreamServer::onNewConnection()
     }
 }
 
-void StreamServer::onChannelDisconnected()
+void ClStreamServer::onChannelDisconnected()
 {
     qDebug()<<"onChannelDisconnected";
+
 //    _client.first()->deleteLater();
 }
 
-void StreamServer::createSession(net::ChannelHost *channelHost)
+void ClStreamServer::createSession(net::ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
         qDebug()<<"STREAM SESSION";
@@ -201,25 +200,22 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
     }else qDebug()<<"ERROR SESSION TYPE";
 }
 
-void StreamServer::createThread(net::ChannelHost *channelHost)
+void ClStreamServer::createThread(net::ChannelHost *channelHost)
 {
     QThread *thread=new QThread;
 
-    StreamReaderT*   _streamDDC1=new StreamReaderT(channelHost,buffers[StreamType::ST_DDC1]);
-    _streamDDC1->moveToThread(thread);
+    ClStreamReaderT*   streamDDC1=new ClStreamReaderT(channelHost,buffers[StreamType::ST_DDC1]);
+    streamDDC1->moveToThread(thread);
     channelHost->moveToThread(thread);
-    //        connect(channelHost,&net::ChannelHost::finished,
-    //                [this]{
-    //           _streamDDC1->stop();
-    //        });
-    connect(thread,&QThread::started,
-            _streamDDC1,&StreamReaderT::start);
 
-    connect(_streamDDC1,&StreamReaderT::finished,
+    connect(thread,&QThread::started,
+            streamDDC1,&ClStreamReaderT::process);
+
+    connect(streamDDC1,&ClStreamReaderT::finished,
             thread,&QThread::quit);
 
     connect(thread,&QThread::finished,
-            _streamDDC1,&StreamReaderT::deleteLater);
+            streamDDC1,&ClStreamReaderT::deleteLater);
 
     connect(thread,&QThread::destroyed,
             thread,&QThread::deleteLater);
@@ -227,6 +223,6 @@ void StreamServer::createThread(net::ChannelHost *channelHost)
     thread->start();
 }
 
-StreamServer::~StreamServer()
+ClStreamServer::~ClStreamServer()
 {
 }

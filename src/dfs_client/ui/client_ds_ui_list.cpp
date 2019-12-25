@@ -93,7 +93,7 @@ void DeviceSetListWidget::createDevieSetWidgets()
         s.endGroup();
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
         DeviceSetWidget *widget=new DeviceSetWidget(ip,port);
-        widget->setListeningStreamPort(9001);
+        widget->setListeningStreamPort(10050);
         addDeviceSetWidget(widget);
 
 //        s.beginGroup("dev_2");

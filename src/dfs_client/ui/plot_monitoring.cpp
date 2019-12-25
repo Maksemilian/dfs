@@ -95,7 +95,7 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
     });
 }
 
-void PlotMonitoring::onDeviceSetLIstNotReady()
+void PlotMonitoring::onDeviceSetListNotReady()
 {
     quit=true;
     sync->stop();

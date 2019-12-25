@@ -78,9 +78,10 @@ void StreamServer::onChannelDisconnected()
 
 void StreamServer::createSession(net::ChannelHost *channelHost)
 {
-    if(channelHost->sessionType()==SessionType::SESSION_COMMAND){
+    if(channelHost->sessionType()==SessionType::SESSION_COMMAND)
+    {
         _client.append(new DeviceSetClient(channelHost));
-    }else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
+    }/*else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
         qDebug()<<"STREAM SESSION";
         if(_streamDDC1==nullptr){
             createThread(channelHost);
@@ -91,34 +92,35 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
 
             createThread(channelHost);
         }
-    }else qDebug()<<"ERROR SESSION TYPE";
-}
-
-void StreamServer::createThread(net::ChannelHost *channelHost)
-{
-    QThread *thread=new QThread;
-    _streamDDC1=new StreamDDC1(channelHost,_client.first()->ddc1Buffer()/*deviceSet->getBuffer()*/);
-    _streamDDC1->moveToThread(thread);
-    channelHost->moveToThread(thread);
-//        connect(channelHost,&net::ChannelHost::finished,
-//                [this]{
-//           _streamDDC1->stop();
-//        });
-    connect(thread,&QThread::started,
-            _streamDDC1,&StreamDDC1::start);
-
-    connect(_streamDDC1,&StreamDDC1::finished,
-            thread,&QThread::quit);
-
-    connect(thread,&QThread::finished,
-            _streamDDC1,&StreamDDC1::deleteLater);
-
-    connect(thread,&QThread::destroyed,
-            thread,&QThread::deleteLater);
-
-    thread->start();
+    }*/
+    else qDebug()<<"ERROR SESSION TYPE";
 }
 
 StreamServer::~StreamServer()
 {
 }
+
+//void StreamServer::createThread(net::ChannelHost *channelHost)
+//{
+//    QThread *thread=new QThread;
+//    _streamDDC1=new StreamDDC1(channelHost,_client.first()->ddc1Buffer()/*deviceSet->getBuffer()*/);
+//    _streamDDC1->moveToThread(thread);
+//    channelHost->moveToThread(thread);
+////        connect(channelHost,&net::ChannelHost::finished,
+////                [this]{
+////           _streamDDC1->stop();
+////        });
+//    connect(thread,&QThread::started,
+//            _streamDDC1,&StreamDDC1::start);
+
+//    connect(_streamDDC1,&StreamDDC1::finished,
+//            thread,&QThread::quit);
+
+//    connect(thread,&QThread::finished,
+//            _streamDDC1,&StreamDDC1::deleteLater);
+
+//    connect(thread,&QThread::destroyed,
+//            thread,&QThread::deleteLater);
+
+//    thread->start();
+//}

@@ -15,6 +15,7 @@ StreamDDC1::StreamDDC1(net::ChannelHost*streamSocket,
 void StreamDDC1::process()
 {
     qDebug("BEGIN PROCESS STREAM");
+
     quit=false;
     //********************
     proto::receiver::Packet packet;

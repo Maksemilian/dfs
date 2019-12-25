@@ -8,6 +8,11 @@
 
 #include "receiver.pb.h"
 #include "ring_buffer.h"
+
+#include <QDataStream>
+#include <QThread>
+#include <QtConcurrent/QtConcurrent>
+#include <QHostAddress>
 //******************ReceiverStationClient***********************
 
 
@@ -24,6 +29,8 @@ QByteArray serializeMessage(const google::protobuf::Message &message)
 
 struct DeviceSetClient::Impl
 {
+    enum class StreamType {ST_DDC1};
+
     Impl(net::ChannelHost *channel):
         channel(channel),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
@@ -42,9 +49,10 @@ struct DeviceSetClient::Impl
 
     std::unique_ptr<net::ChannelHost> channel;
     std::shared_ptr<IDevice> device;
-    std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer;
+    ShPtrRingBuffer buffer;
     std::unique_ptr<DeviceCreator>deviceCreator;
     proto::receiver::DeviceMode deviceMode;
+    std::map<StreamType,std::unique_ptr<StreamDDC1T>>streams;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -87,7 +95,7 @@ DeviceSetClient::~DeviceSetClient()
 //    return d->device;
 //}
 
-std::shared_ptr<RingBuffer<proto::receiver::Packet> >DeviceSetClient::ddc1Buffer()
+ShPtrRingBuffer DeviceSetClient::ddc1Buffer()
 {
     return d->buffer;
 }
@@ -303,6 +311,17 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
             succesed=false;
         };
         break;
+    case proto::receiver::START_SENDING_DDC1_STREAM:
+        qDebug()<<"===== START_SENDING_DDC1_STREAM";
+        createThread(d->channel->peerAddress(),command.stream_port(),d->buffer);
+        succesed=true;
+        break;
+    case proto::receiver::STOP_SENDING_DDC1_STREAM:
+        qDebug()<<"===== STOP_SENDING_DDC1_STREAM";
+        d->streams[Impl::StreamType::ST_DDC1]->stop();
+        succesed=true;
+        break;
+
     case proto::receiver::UNKNOWN_COMMAND:
     case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
     case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
@@ -314,6 +333,129 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
     answer->set_succesed(succesed);
     sendCommandAnswer(answer);
 }
+
+void DeviceSetClient::createThread(const QHostAddress &address,quint16 port,
+                                   const ShPtrRingBuffer &buffer)
+{
+    QThread *thread=new QThread;
+    StreamDDC1T *streamDDC1=new StreamDDC1T(address,port,buffer);
+    streamDDC1->moveToThread(thread);
+
+    d->streams[Impl::StreamType::ST_DDC1].reset(streamDDC1);
+
+
+    connect(thread,&QThread::started,
+            streamDDC1,&StreamDDC1T::start);
+
+    connect(streamDDC1,&StreamDDC1T::finished,
+            thread,&QThread::quit);
+
+    connect(thread,&QThread::finished,
+            streamDDC1,&StreamDDC1T::deleteLater);
+
+    connect(thread,&QThread::destroyed,
+            thread,&QThread::deleteLater);
+
+    thread->start();
+}
+
+//************************ STREAM DDC1 **********************
+
+StreamDDC1T::StreamDDC1T(const QHostAddress &address,quint16 port,
+                         std::shared_ptr<RingBuffer<proto::receiver::Packet>>buffer)
+    :  _address(address),_port(port),_buffer(buffer){}
+
+void StreamDDC1T::process()
+{
+    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
+           <<_port;
+    _streamSocket.reset(new net::ChannelClient);
+
+    connect(_streamSocket.get(),&net::ChannelClient::connected,
+            [this]{
+
+    qDebug("BEGIN PROCESS STREAM");
+
+    _quit=false;
+    //********************
+    proto::receiver::Packet packet;
+    proto::receiver::ClientToHost cliirntToHost;
+    while(!_quit){
+        if(_buffer->pop(packet))
+        {
+            cliirntToHost.mutable_packet()->CopyFrom(packet);
+            int packetByteSize= cliirntToHost.ByteSize();
+
+            QByteArray ba;
+            QDataStream out(&ba,QIODevice::WriteOnly);
+
+            out<<packetByteSize;
+            if(!_streamSocket->isOpen()){
+                qDebug("Socket Close");
+                break;
+            }
+
+            _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
+            _streamSocket->writeToSocket(ba.size());
+            _streamSocket->flush();
+            char buf[packetByteSize];
+            cliirntToHost.SerializeToArray(buf,packetByteSize);
+
+            _streamSocket->writeDataToBuffer(buf,packetByteSize);
+
+            qint64 bytesWriten=0;
+            while (!_quit&&bytesWriten != packetByteSize ){
+                if(!_streamSocket->isWritable()){
+                    _quit=true;
+                    break;
+                }
+                qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
+                if(bytes==-1){
+                    _quit=true;
+                    break;
+                }
+                bytesWriten+=bytes;
+            }
+            qDebug()<<"WRITE:"
+                   <<packet.block_number()
+                  <<packet.sample_rate()
+                 <<"TOW:"<<packet.time_of_week()
+                <<"DDC_C"<<packet.ddc_sample_counter()
+               <<"ADC_C"<<packet.adc_period_counter()
+              <<cliirntToHost.ByteSize();
+        }
+    }
+    _streamSocket->disconnectFromHost();
+//    emit finished();
+    qDebug("SIGNAL FINISHED STREAM DDC WRITER");
+    });
+    _streamSocket->connectToHost(QHostAddress(_address.toIPv4Address()).toString()
+                                 ,_port,SessionType::SESSION_SIGNAL_STREAM);
+
+    _streamSocket->waitForConnected(5000);
+}
+
+void StreamDDC1T::start()
+{
+    _quit=false;
+//    connect(this,&StreamDDC1::next,this,&StreamDDC1::process);
+    process();
+//    _fw.setFuture(QtConcurrent::run(this,&StreamDDC1T::process));
+    qDebug("START STREAM WRITER");
+
+    //        QtConcurrent::run(this,&StreamDDC1::process);
+}
+
+void StreamDDC1T::stop()
+{
+    _quit=true;
+//    _fw.waitForFinished();
+//    disconnect(this,&StreamDDC1::next,this,&StreamDDC1::process);
+//    emit finished();
+    qDebug("STOP STREAM WRITER");
+}
+
+
 
 //*********************** DEL *****************
 

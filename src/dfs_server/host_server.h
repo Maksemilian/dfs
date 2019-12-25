@@ -32,12 +32,11 @@ private:
     void onNewConnection();
     void onChannelDisconnected();
     void createSession(net::ChannelHost*channelHost);
-    void createThread(net::ChannelHost *channelHost);
+
 private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
     QList<DeviceSetClient*> _client;
-    StreamDDC1 *_streamDDC1=nullptr;
 };
 
 #endif // STREAM_SERVE_RTEST_H

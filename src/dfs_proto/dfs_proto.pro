@@ -4,9 +4,9 @@
 
 ##****************** copy 2 ВО ВРЕМЯ ЗАПУСКА APP КОМИТИТЬ
 
-headers.path = $${LIBS_PATH}/dfs_proto/include
-headers.files   += $$files($${PWD}/*.pb.h)
-INSTALLS       += headers
+#headers.path = $${LIBS_PATH}/dfs_proto/include
+#headers.files   += $$files($${PWD}/*.pb.h)
+#INSTALLS       += headers
 
 TARGET = dfs_proto
 TEMPLATE = aux

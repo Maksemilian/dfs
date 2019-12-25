@@ -8,6 +8,6 @@ class IDeviceSet
 public:
     virtual void setCommand(const proto::receiver::Command &command)=0;
     virtual void commandSucessed()=0;
-    unsigned short
+
 };
 #endif // IDEVICESET_H

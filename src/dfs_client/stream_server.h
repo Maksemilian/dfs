@@ -8,15 +8,40 @@
 #include <QTcpServer>
 #include <QList>
 
-class StreamReaderT;
+
+
 using ShPtrPacketBuffer =std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
-class StreamServer:public QTcpServer
+class ClStreamReaderT:public QObject
 {
+    Q_OBJECT
+public:
+    ClStreamReaderT(net::ChannelHost *channelHost,
+                  const ShPtrPacketBuffer streamBuffer);
+    ~ClStreamReaderT();
+    void process();
+//    void start();
+//    void stop();
+signals:
+//    void started();
+//    void stoped();
+    void finished();
+private:
+    void onMessageReceive(const QByteArray&buffer);
+private:
+    struct Impl;
+    std::unique_ptr<Impl>d;
+};
+
+
+class ClStreamServer:public QTcpServer
+{
+    Q_OBJECT
 public:
     enum class StreamType{ST_DDC1};
-    StreamServer(quint8 bufferSize=16);
-    ~StreamServer()override;
+    ClStreamServer(quint8 bufferSize=16);
+    ~ClStreamServer()override;
+    ShPtrPacketBuffer getBuffer(StreamType type);
 signals:
     void newChannelReady();
 private:
@@ -26,12 +51,11 @@ private:
     void onChannelDisconnected();
     void createSession(net::ChannelHost*channelHost);
     void createThread(net::ChannelHost *channelHost);
-    ShPtrPacketBuffer getBuffer(StreamType type);
 private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
-    QList<StreamReaderT*>_streamReaders;
     std::map<StreamType,ShPtrPacketBuffer> buffers;
 };
+
 
 #endif // STREAM_SERVER_H

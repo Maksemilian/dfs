@@ -24,7 +24,7 @@ public:
     IDeviceSettings *ds=nullptr;
 public:
     void onDeviceSetListReady(const QList<DeviceSetWidget*>&dsList);
-    void onDeviceSetLIstNotReady();
+    void onDeviceSetListNotReady();
 private:
     ChannelPlot*channelPlot;//central widget
     ElipsPlot *elipsPlot;//right dock idget

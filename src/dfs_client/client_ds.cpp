@@ -31,7 +31,7 @@ struct DeviceSetClient::Impl
     std::unique_ptr<net::ChannelClient> channel;
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
-    StreamServer streamServer;
+    ClStreamServer streamServer;
 };
 
 DeviceSetClient::DeviceSetClient(QObject *parent):
@@ -88,6 +88,10 @@ void DeviceSetClient::disconnectFromHost()
     d->channel->disconnectFromHost();
 }
 
+ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
+{
+    return  d->streamServer.getBuffer(ClStreamServer::StreamType::ST_DDC1);
+}
 DeviceSetClient::~DeviceSetClient(){}
 
 QString DeviceSetClient::getCurrentDeviceSetName()const
@@ -183,6 +187,12 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
             break;
         case proto::receiver::SET_DEVICE_INDEX:
             qDebug()<<"SETTED_DEVICE_SET_INDEX";
+            break;
+        case proto::receiver::START_SENDING_DDC1_STREAM:
+            qDebug()<<"START_SENDING_DDC1_STREAM";
+            break;
+        case proto::receiver::STOP_SENDING_DDC1_STREAM:
+            qDebug()<<"STOP_SENDING_DDC1_STREAM";
             break;
         case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
         case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:

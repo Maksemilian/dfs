@@ -34,10 +34,10 @@ ChannelClient::ChannelClient(QObject *parent)
 //            this,&ChannelClient::disconnected);
 }
 
-ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,parent)
-{
+//ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,parent)
+//{
 
-}
+//}
 
 void ChannelClient::connectToHost(const QString &address, quint16 port,SessionType sesionType)
 {
@@ -51,6 +51,11 @@ void ChannelClient::disconnectFromHost()
      _socket->disconnectFromHost();
      keyExchangeState=KeyExchangeState::HELLO;
      _channelState=ChannelState::NOT_CONNECTED;
+}
+
+void ChannelClient::waitForConnected(int time)
+{
+    _socket->waitForConnected(time);
 }
 
 void ChannelClient::readServerKeyExchange(const QByteArray &buffer)

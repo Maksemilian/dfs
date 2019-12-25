@@ -61,7 +61,7 @@ MainWindow:: MainWindow(QWidget *parent):
             plotMonitoring,&PlotMonitoring::onDeviceSetListReady);
 
     connect(deviceSetListWidget,&DeviceSetListWidget::notReady,
-            plotMonitoring,&PlotMonitoring::onDeviceSetLIstNotReady);
+            plotMonitoring,&PlotMonitoring::onDeviceSetListNotReady);
 
     setCentralWidget(plotMonitoring);
 

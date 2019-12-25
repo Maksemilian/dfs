@@ -148,14 +148,17 @@ void DeviceSetWidget::onDDC1Started()
 {
 //    _streamController->startDDC();
     proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SEND_DDC1_STREAM);
+    command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
     command.set_stream_port(_deviceSetClient->liceningStreamPort());
     sendCommand(command);
 }
 
 void DeviceSetWidget::onDDC1Stoped()
 {
-    _streamController->stopDDC();
+//    _streamController->stopDDC();
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::STOP_SENDING_DDC1_STREAM);
+    sendCommand(command);
 }
 
 void DeviceSetWidget::onDeviceSetReady()
