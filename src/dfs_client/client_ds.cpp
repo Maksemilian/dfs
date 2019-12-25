@@ -53,6 +53,11 @@ void DeviceSetClient::setLiceningStreamPort(quint16 port)
     d->streamServer.listen(QHostAddress::Any,port);
 }
 
+quint16 DeviceSetClient::liceningStreamPort()
+{
+    return d->streamServer.serverPort();
+}
+
 const proto::receiver::DeviceSetInfo & DeviceSetClient::getDeviceSetInfo() const
 { return d->currentDeviceSetInfo; }
 

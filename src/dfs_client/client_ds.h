@@ -2,9 +2,10 @@
 #define RECEIVER_STATION_CLIENT_H
 
 #include "receiver.pb.h"
+#include "ring_buffer.h"
 #include <QObject>
-
 //struct DeviceSetSettings;
+using ShPtrPacketBuffer =std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class QHostAddress;
 class DeviceSetClient: public QObject
@@ -17,12 +18,14 @@ public:
     void connectToHost(const QHostAddress &address,quint16 port);
     void disconnectFromHost();
     void sendCommand(const proto::receiver::Command &command);
-    void setReceiveStreamPort(quint32 port);
+    void setLiceningStreamPort(quint16 port);
+    quint16 liceningStreamPort();
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;
-    QString getCurrentDeviceSetName();
+    QString getCurrentDeviceSetName()const;
 
-    QStringList receiverNameList();
-    QString getStationAddress();
+    QStringList receiverNameList()const;
+    QString getStationAddress()const;
+    ShPtrPacketBuffer getDDC1Buffer()const;
 signals:
     void connected();
     void disconnected();

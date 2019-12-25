@@ -64,6 +64,10 @@ FrequencyCommand*FactoryCommand::getFrequencyCommand(IDeviceSet *syncManager, ID
     return new FrequencyCommand(syncManager,subject);
 }
 
+//AbstractCommand *FactoryCommand::getSendStreamDDC1()
+//{
+//    return new SendStreamDDC1();
+//}
 //SyncStartCommand*FactoryCommand::getSyncStartCommand(IDeviceSet *syncManager, IDeviceSetSettings *subject)
 //{
 //    return new SyncStartCommand(syncManager,subject);

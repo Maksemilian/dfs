@@ -13,7 +13,9 @@ using ShPtrPacketBuffer =std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class StreamServer:public QTcpServer
 {
-    StreamServer();
+public:
+    enum class StreamType{ST_DDC1};
+    StreamServer(quint8 bufferSize=16);
     ~StreamServer()override;
 signals:
     void newChannelReady();
@@ -24,12 +26,12 @@ private:
     void onChannelDisconnected();
     void createSession(net::ChannelHost*channelHost);
     void createThread(net::ChannelHost *channelHost);
-    ShPtrPacketBuffer getBufferByKey(qint32 stream_key);
+    ShPtrPacketBuffer getBuffer(StreamType type);
 private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
     QList<StreamReaderT*>_streamReaders;
-    std::map<qint32,ShPtrPacketBuffer> buffers;
+    std::map<StreamType,ShPtrPacketBuffer> buffers;
 };
 
 #endif // STREAM_SERVER_H

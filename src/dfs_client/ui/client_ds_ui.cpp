@@ -146,7 +146,11 @@ void DeviceSetWidget::disconnectFromDeviceSet()
 
 void DeviceSetWidget::onDDC1Started()
 {
-    _streamController->startDDC();
+//    _streamController->startDDC();
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::SEND_DDC1_STREAM);
+    command.set_stream_port(_deviceSetClient->liceningStreamPort());
+    sendCommand(command);
 }
 
 void DeviceSetWidget::onDDC1Stoped()
@@ -212,7 +216,7 @@ void DeviceSetWidget::sendCommand(const proto::receiver::Command &command)
     _deviceSetClient->sendCommand(command);
 }
 
-void DeviceSetWidget::setAddres(const QString &address, quint16 port)
+void DeviceSetWidget::setAddress(const QString &address, quint16 port)
 {
     _lbAddresText->setText(address);
     _lbPort->setText(QString::number(port));

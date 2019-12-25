@@ -133,6 +133,12 @@ public:
     void execute() override;
 };
 
+//class SendStreamDDC1:public AbstractCommand
+//{
+//public:
+//    SendStreamDDC1(IDeviceSet *deviceSet);
+//    void execute();
+//};
 //************************* MACRO
 
 class MacroCommand:public AbstractCommand

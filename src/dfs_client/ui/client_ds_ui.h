@@ -32,14 +32,16 @@ class DeviceSetWidget :public QWidget
     };
 public:
     DeviceSetWidget(const QString &address,quint16 port);
-    void setAddres(const QString &address,quint16 port);
+    void setAddress(const QString &address,quint16 port);
     QString address();
     quint16 port();
     void sendCommand(const proto::receiver::Command &command);
     bool isConnected();
+    void setListeningStreamPort(quint16 port);
     inline std::shared_ptr<RingBuffer<proto::receiver::Packet>> ddc1Buffer(){
 //        qDebug()<<"DSW:"<<_streamController->ddc1Buffer().use_count();
-        return _streamController->ddc1Buffer();
+//        return _streamController->ddc1Buffer();
+        return _deviceSetClient->getDDC1Buffer();
     }
 //    quint32 getDdc1Frequiency();
 //    quint32 getSampleRate();

@@ -206,6 +206,10 @@ void FrequencyCommand::execute()
     _iDeviceSet->setCommand(command);
 }
 
+//SendStreamDDC1::SendStreamDDC1(IDeviceSet*iDeviceSet)
+//{
+
+//}
 //************************* MACRO
 
 MacroCommand::MacroCommand(){}

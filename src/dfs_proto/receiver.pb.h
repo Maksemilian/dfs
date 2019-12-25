@@ -113,13 +113,14 @@ enum CommandType {
   SET_SHIFT_PHASE_DDC = 13,
   SET_DEVICE_INDEX = 14,
   SET_DEVICE_MODE = 15,
-  SEND_DDC1_STREAM = 16,
+  START_SENDING_DDC1_STREAM = 16,
+  STOP_SENDING_DDC1_STREAM = 17,
   CommandType_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::min(),
   CommandType_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::google::protobuf::int32>::max()
 };
 bool CommandType_IsValid(int value);
 const CommandType CommandType_MIN = UNKNOWN_COMMAND;
-const CommandType CommandType_MAX = SEND_DDC1_STREAM;
+const CommandType CommandType_MAX = STOP_SENDING_DDC1_STREAM;
 const int CommandType_ARRAYSIZE = CommandType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* CommandType_descriptor();
@@ -581,11 +582,11 @@ class Command :
   ::proto::receiver::DeviceMode device_mode() const;
   void set_device_mode(::proto::receiver::DeviceMode value);
 
-  // int32 steam_key = 14;
-  void clear_steam_key();
-  static const int kSteamKeyFieldNumber = 14;
-  ::google::protobuf::int32 steam_key() const;
-  void set_steam_key(::google::protobuf::int32 value);
+  // uint32 stream_port = 14;
+  void clear_stream_port();
+  static const int kStreamPortFieldNumber = 14;
+  ::google::protobuf::uint32 stream_port() const;
+  void set_stream_port(::google::protobuf::uint32 value);
 
   // @@protoc_insertion_point(class_scope:proto.receiver.Command)
  private:
@@ -605,7 +606,7 @@ class Command :
   ::google::protobuf::uint32 samples_per_buffer_;
   ::google::protobuf::uint32 device_set_index_;
   int device_mode_;
-  ::google::protobuf::int32 steam_key_;
+  ::google::protobuf::uint32 stream_port_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1821,18 +1822,18 @@ inline void Command::set_device_mode(::proto::receiver::DeviceMode value) {
   // @@protoc_insertion_point(field_set:proto.receiver.Command.device_mode)
 }
 
-// int32 steam_key = 14;
-inline void Command::clear_steam_key() {
-  steam_key_ = 0;
+// uint32 stream_port = 14;
+inline void Command::clear_stream_port() {
+  stream_port_ = 0u;
 }
-inline ::google::protobuf::int32 Command::steam_key() const {
-  // @@protoc_insertion_point(field_get:proto.receiver.Command.steam_key)
-  return steam_key_;
+inline ::google::protobuf::uint32 Command::stream_port() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.stream_port)
+  return stream_port_;
 }
-inline void Command::set_steam_key(::google::protobuf::int32 value) {
+inline void Command::set_stream_port(::google::protobuf::uint32 value) {
   
-  steam_key_ = value;
-  // @@protoc_insertion_point(field_set:proto.receiver.Command.steam_key)
+  stream_port_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Command.stream_port)
 }
 
 // -------------------------------------------------------------------

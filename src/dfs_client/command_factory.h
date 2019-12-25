@@ -3,6 +3,7 @@
 
 class IDeviceSettings ;
 class IDeviceSet;
+class AbstractCommand;
 
 class WidgetDirector;
 class MacroCommand;
@@ -24,6 +25,8 @@ class FrequencyCommand;
 class SyncStartCommand;
 class SyncStopCommand;
 class AddTaskCommand;
+
+class SendStreamDDC1;
 
 class FactoryCommand
 {
@@ -55,7 +58,7 @@ public:
 //    static SyncStopCommand *getSyncStopCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
 
 //    static AddTaskCommand *getAddTaskCommand(WidgetDirector*wd,IDeviceSetSettings*subject);
-
+//    static AbstractCommand* getSendStreamDDC1();
     static MacroCommand *getMacroCommand();
 
 };
