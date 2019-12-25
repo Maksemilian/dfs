@@ -7,11 +7,12 @@
 #include "wrd_coh_g35_ds.h"
 
 #include <memory>
+
 #include <QObject>
-#include <QFutureWatcher>
 #include <QHostAddress>
 
 using ShPtrRingBuffer=std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
+
 class DeviceSetClient:public QObject
 {
     Q_OBJECT
@@ -19,13 +20,12 @@ class DeviceSetClient:public QObject
     static const int SLEEP_TIME=100;
 public:
     DeviceSetClient(net::ChannelHost*channelHost);
-    DeviceSetClient(net::ChannelHost*channelHost,
-                    const std::shared_ptr<CohG35DeviceSet>&deviceSet);
+
     ~DeviceSetClient();
 
     ShPtrRingBuffer ddc1Buffer();
 signals:
-    void stationDisconnected();
+    void deviceDisconnected();
     void changedDeviceSet(unsigned int indexDeviceSet);
 private slots:
     void onDisconnected();
@@ -46,14 +46,14 @@ private:
     std::unique_ptr<Impl> d;
 };
 
-class StreamDDC1T:public QObject
+class SignalStreamWriter:public QObject
 {
     Q_OBJECT
 public:
-    StreamDDC1T(const QHostAddress &address,quint16 port,
+    SignalStreamWriter(const QHostAddress &address,quint16 port,
             const ShPtrRingBuffer &_buffer);
 
-    ~StreamDDC1T(){qDebug()<<"DESTR_DDC1";}
+    ~SignalStreamWriter(){qDebug()<<"DESTR_DDC1";}
     void start();
     void stop();
 signals:

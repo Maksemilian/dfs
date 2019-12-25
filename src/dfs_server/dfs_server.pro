@@ -32,13 +32,11 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 HEADERS += device_set_selector.h \
     host_server.h \
-    host_ds.h \
-    host_ds_stream.h
+    host_ds.h
 
 SOURCES += main.cpp \
     host_server.cpp \
-    host_ds.cpp \
-    host_ds_stream.cpp
+    host_ds.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings

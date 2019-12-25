@@ -11,7 +11,6 @@
 
 #include <QDataStream>
 #include <QThread>
-#include <QtConcurrent/QtConcurrent>
 #include <QHostAddress>
 //******************ReceiverStationClient***********************
 
@@ -52,8 +51,7 @@ struct DeviceSetClient::Impl
     ShPtrRingBuffer buffer;
     std::unique_ptr<DeviceCreator>deviceCreator;
     proto::receiver::DeviceMode deviceMode;
-//    std::map<StreamType,std::unique_ptr<StreamDDC1T>>streams;
-    StreamDDC1T *streamDDC1=nullptr;
+    SignalStreamWriter *streamDDC1=nullptr;
 };
 
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
@@ -68,33 +66,13 @@ DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
             this,&DeviceSetClient::onMessageReceived);
 }
 
-DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost,
-                                 const std::shared_ptr<CohG35DeviceSet>&deviceSet)
-    : d(std::make_unique<Impl>(channelHost,deviceSet))
-{
-    qDebug()<<"Create ReceiverStationClient";
-
-    connect(d->channel.get(),&net::Channel::finished,
-            this,&DeviceSetClient::onDisconnected);
-
-    connect(d->channel.get(),&net::Channel::messageReceived,
-            this,&DeviceSetClient::onMessageReceived);
-}
-
 DeviceSetClient::~DeviceSetClient()
 {
     d->device->stopDDC1();
+
+    if(d->streamDDC1)d->streamDDC1->stop();
+    qDebug()<<"DESTR DeviceSetCleint";
 }
-
-//void DeviceSetClient::setCohDeviceSet(const std::shared_ptr<CohG35DeviceSet> &shPtrCohG35DeviceSet)
-//{
-//    d->device=shPtrCohG35DeviceSet;
-//}
-
-//const std::shared_ptr<CohG35DeviceSet> &DeviceSetClient::getCohDeviceSet()
-//{
-//    return d->device;
-//}
 
 ShPtrRingBuffer DeviceSetClient::ddc1Buffer()
 {
@@ -123,7 +101,7 @@ DeviceSettings DeviceSetClient::extractSettingsFromCommand(
 void DeviceSetClient::onDisconnected()
 {
     d->device->stopDDC1();
-    emit stationDisconnected();
+    emit deviceDisconnected();
 }
 
 void DeviceSetClient::sendDeviceSetInfo()
@@ -342,17 +320,17 @@ void DeviceSetClient::startSendingDDC1Stream(const QHostAddress &address,quint16
 {
     QThread *thread=new QThread;
 
-    d->streamDDC1=new StreamDDC1T(address,port,buffer);
+    d->streamDDC1=new SignalStreamWriter(address,port,buffer);
     d->streamDDC1->moveToThread(thread);
 
     connect(thread,&QThread::started,
-            d->streamDDC1,&StreamDDC1T::start);
+            d->streamDDC1,&SignalStreamWriter::start);
 
-    connect(d->streamDDC1,&StreamDDC1T::finished,
+    connect(d->streamDDC1,&SignalStreamWriter::finished,
             thread,&QThread::quit);
 
     connect(thread,&QThread::finished,
-            d->streamDDC1,&StreamDDC1T::deleteLater);
+            d->streamDDC1,&SignalStreamWriter::deleteLater);
 
     connect(thread,&QThread::destroyed,
             thread,&QThread::deleteLater);
@@ -362,11 +340,11 @@ void DeviceSetClient::startSendingDDC1Stream(const QHostAddress &address,quint16
 
 //************************ STREAM DDC1 **********************
 
-StreamDDC1T::StreamDDC1T(const QHostAddress &address,quint16 port,
+SignalStreamWriter::SignalStreamWriter(const QHostAddress &address,quint16 port,
                          const ShPtrRingBuffer &buffer)
     :  _address(address),_port(port),_buffer(buffer){}
 
-void StreamDDC1T::process()
+void SignalStreamWriter::process()
 {
     qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
            <<_port;
@@ -437,52 +415,15 @@ void StreamDDC1T::process()
     _streamSocket->waitForConnected(5000);
 }
 
-void StreamDDC1T::start()
+void SignalStreamWriter::start()
 {
     _quit=false;
-//    connect(this,&StreamDDC1::next,this,&StreamDDC1::process);
     process();
-//    _fw.setFuture(QtConcurrent::run(this,&StreamDDC1T::process));
     qDebug("START STREAM WRITER");
-
-    //        QtConcurrent::run(this,&StreamDDC1::process);
 }
 
-void StreamDDC1T::stop()
+void SignalStreamWriter::stop()
 {
     _quit=true;
-//    _fw.waitForFinished();
-//    disconnect(this,&StreamDDC1::next,this,&StreamDDC1::process);
-//    emit finished();
     qDebug("STOP STREAM WRITER");
 }
-
-
-
-//*********************** DEL *****************
-
-//if(command.device_mode()==proto::receiver::DM_COHERENT){//COH
-//    d->device=DeviceSelector::coherentG35DeviceInstance(command.device_set_index());
-//    d->device.get()!=nullptr? succesed=true:succesed=false;
-//    if(succesed){
-//        dynamic_cast<CohG35DeviceSet*>(d->device.get())
-//                ->setCallback(CallbackFactory::cohG35CallbackInstance(d->buffer));
-//        qDebug()<<"======Comand  SET_DEVICE_INDEX_COHERENT";
-//        //                sendDeviceSetInfo();
-//        setDeviceInfoCoherent();
-//    }
-
-//}else if(command.device_mode()==proto::receiver::DM_SINGLE){//single
-//    d->device=DeviceSelector::singleG35DeviceInstance(command.device_set_index());
-//    d->device.get()!=nullptr? succesed=true:succesed=false;
-//    if(succesed){
-//        dynamic_cast<G35Device*>(d->device.get())
-//                ->setCallback(CallbackFactory::singleG35CallbackInstance(d->buffer));
-//        qDebug()<<"======Comand  SET_DEVICE_INDEX_SINGLE";
-//        //                sendDeviceSetInfo();
-//        sendDeviceInfoSingle();
-//    }
-//}else {
-//    succesed=false;
-//    qDebug()<<"MODE UNKNOWN";
-//}

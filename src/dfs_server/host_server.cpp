@@ -1,8 +1,5 @@
 #include "host_server.h"
 #include "host_ds.h"
-#include "host_ds_stream.h"
-
-#include <QThread>
 
 //************************** SERVER *************************
 
@@ -20,9 +17,6 @@ void StreamServer::incomingConnection(qintptr handle)
 
     connect(channelHost,&net::ChannelHost::keyExchangedFinished,
             this,&StreamServer::onChannelReady);
-
-    connect(channelHost,&net::ChannelHost::finished,
-            this,&StreamServer::onChannelDisconnected);
 
     _pendingChannelsList.append(channelHost);
 }
@@ -73,54 +67,22 @@ void StreamServer::onNewConnection()
 void StreamServer::onChannelDisconnected()
 {
     qDebug()<<"onChannelDisconnected";
-    _client.first()->deleteLater();
+    DeviceSetClient*ds=qobject_cast<DeviceSetClient*>(sender());
+    if(ds){
+        _client.removeOne(ds);
+        ds->deleteLater();
+    }
 }
 
 void StreamServer::createSession(net::ChannelHost *channelHost)
 {
     if(channelHost->sessionType()==SessionType::SESSION_COMMAND)
     {
-        _client.append(new DeviceSetClient(channelHost));
-    }/*else if(channelHost->sessionType()==SessionType::SESSION_SIGNAL_STREAM){
-        qDebug()<<"STREAM SESSION";
-        if(_streamDDC1==nullptr){
-            createThread(channelHost);
-        }else {
-            //TODO СДЕЛАТЬ ПО АНАЛОГИИ с FTP
-            //DeviceSetClient должен подключаться к главносу приложению и отправлять поток
-            _streamDDC1->stop();
+        DeviceSetClient *deviceSetClient=new DeviceSetClient(channelHost);
+        connect(deviceSetClient,&DeviceSetClient::deviceDisconnected,
+                this,&StreamServer::onChannelDisconnected);
 
-            createThread(channelHost);
-        }
-    }*/
-    else qDebug()<<"ERROR SESSION TYPE";
+        _client.append(deviceSetClient);
+    } else qDebug()<<"ERROR SESSION TYPE";
 }
 
-StreamServer::~StreamServer()
-{
-}
-
-//void StreamServer::createThread(net::ChannelHost *channelHost)
-//{
-//    QThread *thread=new QThread;
-//    _streamDDC1=new StreamDDC1(channelHost,_client.first()->ddc1Buffer()/*deviceSet->getBuffer()*/);
-//    _streamDDC1->moveToThread(thread);
-//    channelHost->moveToThread(thread);
-////        connect(channelHost,&net::ChannelHost::finished,
-////                [this]{
-////           _streamDDC1->stop();
-////        });
-//    connect(thread,&QThread::started,
-//            _streamDDC1,&StreamDDC1::start);
-
-//    connect(_streamDDC1,&StreamDDC1::finished,
-//            thread,&QThread::quit);
-
-//    connect(thread,&QThread::finished,
-//            _streamDDC1,&StreamDDC1::deleteLater);
-
-//    connect(thread,&QThread::destroyed,
-//            thread,&QThread::deleteLater);
-
-//    thread->start();
-//}
