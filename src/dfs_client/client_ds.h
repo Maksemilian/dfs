@@ -3,11 +3,13 @@
 
 #include "receiver.pb.h"
 #include "ring_buffer.h"
+
 #include <QObject>
-//struct DeviceSetSettings;
+
 using ShPtrPacketBuffer =std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class QHostAddress;
+
 class DeviceSetClient: public QObject
 {
     Q_OBJECT
@@ -33,7 +35,7 @@ signals:
     void commandSuccessed();
     void commandFailed(const QString &errorString);
     void deviceSetReady();
-
+    void deviceInfoUpdated();
     void ddc1StreamStarted();
     void ddc1StreamStoped();
 

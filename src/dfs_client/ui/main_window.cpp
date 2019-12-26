@@ -240,54 +240,75 @@ void MainWindow::showReceiverSettingsTool()
 
 void MainWindow::widgetChanged()
 {
-    QWidget*widget= qobject_cast<QWidget*>(sender());
-    if(widget){
+    QWidget* widget = qobject_cast<QWidget*>(sender());
+    if(widget)
+    {
         QVariant variant;
-        if (widget==pbPower){//pb Power
-            if(pbPower->currentState()){qDebug()<<"********COMMAND ON";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_ON));
-                if(command)
-                    command->execute();
-            }else {qDebug()<<"********COMMAND OFF";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_OFF));
-                if(command)
-                    command->execute();
-            }
+        if (widget == pbPower)
+        {//pb Power
+            quint8 state=pbPower->currentState() ?
+                        USER_DATA_POWER_ON : USER_DATA_POWER_OFF ;
+
+            if(AbstractCommand* command =
+                    dynamic_cast<AbstractCommand*>(widget->userData(state)))
+                command->execute();
+
+            if(pbPower->currentState())qDebug()<<"********COMMAND ON";
+            else qDebug()<<"********COMMAND OFF";
+
             return;
-        }else if(widget==pbAttenuatorEnable){//pb Atten
-            if(pbAttenuatorEnable->currentState()==true){qDebug()<<"ATTENUATOR PB";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
-                if(command)
+        }
+        else if(widget==pbAttenuatorEnable)
+        {//pb Atten
+            if(pbAttenuatorEnable->currentState()==true)
+            {
+                qDebug()<<"ATTENUATOR PB";
+
+                if(AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
                     command->execute();
 
                 cbAttenuationLevel->setEnabled(true);
-            }else cbAttenuationLevel->setDisabled(true);
+            }
+            else
+            {
+                cbAttenuationLevel->setDisabled(true);
+            }
 
             return;
-        }else if (widget==pbPreselectorEnable) {//pb Preselectors
-            if(pbPreselectorEnable->currentState()){
+        }
+        else if (widget == pbPreselectorEnable)
+        {//pb Preselectors
+            if(pbPreselectorEnable->currentState())
+            {
                 preselectorWidget->setEnabled(true);
-            }else {
+            }else
+            {
                 preselectorWidget->setDisabled(true);
                 return;
             }
-        }else if (widget==pbAdcNoiceBlanckerEnabled) {
-            pbAdcNoiceBlanckerEnabled->currentState()==false?
-                        leAdcNoiceBlanckerThreshold->setDisabled(true):
-                        leAdcNoiceBlanckerThreshold->setEnabled(true);
-        }else if(widget==cbAttenuationLevel){//cb Atten
-        }else if (widget==preselectorWidget) {// Preselectors Widget
-        }else if (widget==pbPreamplifierEnable) {//pb Pream
-        }else if (widget==leAdcNoiceBlanckerThreshold) {
-        }else if (widget==leDDC1Frequency){
+        }
+        else if (widget == pbAdcNoiceBlanckerEnabled)
+        {
+            pbAdcNoiceBlanckerEnabled->currentState()?
+                        leAdcNoiceBlanckerThreshold->setEnabled(true):
+                        leAdcNoiceBlanckerThreshold->setDisabled(true);
+        }else if (widget == cbAttenuationLevel){//cb Atten
+        }else if (widget == preselectorWidget) {// Preselectors Widget
+        }else if (widget == pbPreamplifierEnable) {//pb Pream
+        }else if (widget == leAdcNoiceBlanckerThreshold) {
+        }else if (widget == leDDC1Frequency){
         }
 
         //**********
-        AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
-        if(command)
+
+        if(AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
             command->execute();
 
-    }else qDebug()<<"BAD CAST TOOL WIDGET";
+    }
+    else
+    {
+        qDebug()<<"BAD CAST TOOL WIDGET";
+    }
 }
 
 //*********** IDeviceSetSettingsGetable *****************************

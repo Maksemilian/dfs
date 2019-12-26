@@ -42,7 +42,7 @@ void messageLogger(QtMsgType type,const QMessageLogContext &context,const QStrin
         file.close();
     }
 }
-#include "memory"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

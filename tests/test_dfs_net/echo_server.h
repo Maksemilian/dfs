@@ -5,6 +5,7 @@
 
 class EchoServer : public QTcpServer
 {
+    Q_OBJECT
 public:
     EchoServer();
 private:

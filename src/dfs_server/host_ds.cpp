@@ -57,7 +57,7 @@ struct DeviceSetClient::Impl
 DeviceSetClient::DeviceSetClient(net::ChannelHost*channelHost)
     :d(std::make_unique<Impl>(channelHost))
 {
-    qDebug()<<"Create ReceiverStationClient";
+    qDebug()<<"Create DeviceSetClient";
 
     connect(d->channel.get(),&net::Channel::finished,
             this,&DeviceSetClient::onDisconnected);
@@ -165,6 +165,13 @@ void DeviceSetClient::setDeviceInfoCoherent()
     hostToClient.set_allocated_device_set_info(deviceSetInfo);
     qDebug()<<"HostToClient MES"<<hostToClient.ByteSize()
            <<hostToClient.device_set_info().device_info(0).serial_number().data();
+    writeMessage(hostToClient);
+}
+
+void DeviceSetClient::sendDevieSetStatus()
+{
+    proto::receiver::HostToClient hostToClient;
+    hostToClient.set_is_ready(true);
     writeMessage(hostToClient);
 }
 
@@ -346,14 +353,14 @@ SignalStreamWriter::SignalStreamWriter(const QHostAddress &address,quint16 port,
 
 void SignalStreamWriter::process()
 {
-    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
-           <<_port;
+//    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
+//           <<_port;
     _streamSocket.reset(new net::ChannelClient);
 
     connect(_streamSocket.get(),&net::ChannelClient::connected,
             [this]{
 
-    qDebug("BEGIN PROCESS STREAM");
+    qDebug("SignalStreamWriter::BEGIN PROCESS STREAM");
 
     _quit=false;
     //********************
@@ -405,9 +412,9 @@ void SignalStreamWriter::process()
         }
     }
     _streamSocket->disconnectFromHost();
-    _streamSocket->waitForDisconnected(5000);
+//    _streamSocket->waitForDisconnected(5000);
     emit finished();
-    qDebug("SIGNAL FINISHED STREAM DDC WRITER");
+    qDebug("SignalStreamWriter::END PROCESS WRITER");
     });
     _streamSocket->connectToHost(QHostAddress(_address.toIPv4Address()).toString()
                                  ,_port,SessionType::SESSION_SIGNAL_STREAM);

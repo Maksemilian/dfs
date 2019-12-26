@@ -1309,6 +1309,12 @@ class HostToClient :
   ::proto::receiver::Packet* mutable_packet();
   void set_allocated_packet(::proto::receiver::Packet* packet);
 
+  // bool is_ready = 4;
+  void clear_is_ready();
+  static const int kIsReadyFieldNumber = 4;
+  bool is_ready() const;
+  void set_is_ready(bool value);
+
   // @@protoc_insertion_point(class_scope:proto.receiver.HostToClient)
  private:
   class HasBitSetters;
@@ -1317,6 +1323,7 @@ class HostToClient :
   ::proto::receiver::DeviceSetInfo* device_set_info_;
   ::proto::receiver::Answer* command_answer_;
   ::proto::receiver::Packet* packet_;
+  bool is_ready_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -1435,12 +1442,6 @@ class ClientToHost :
   ::proto::receiver::Packet* mutable_packet();
   void set_allocated_packet(::proto::receiver::Packet* packet);
 
-  // int32 stream_key = 3;
-  void clear_stream_key();
-  static const int kStreamKeyFieldNumber = 3;
-  ::google::protobuf::int32 stream_key() const;
-  void set_stream_key(::google::protobuf::int32 value);
-
   // @@protoc_insertion_point(class_scope:proto.receiver.ClientToHost)
  private:
   class HasBitSetters;
@@ -1448,7 +1449,6 @@ class ClientToHost :
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::proto::receiver::Command* command_;
   ::proto::receiver::Packet* packet_;
-  ::google::protobuf::int32 stream_key_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_receiver_2eproto;
 };
@@ -2371,6 +2371,20 @@ inline void HostToClient::set_allocated_packet(::proto::receiver::Packet* packet
   // @@protoc_insertion_point(field_set_allocated:proto.receiver.HostToClient.packet)
 }
 
+// bool is_ready = 4;
+inline void HostToClient::clear_is_ready() {
+  is_ready_ = false;
+}
+inline bool HostToClient::is_ready() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.HostToClient.is_ready)
+  return is_ready_;
+}
+inline void HostToClient::set_is_ready(bool value) {
+  
+  is_ready_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.HostToClient.is_ready)
+}
+
 // -------------------------------------------------------------------
 
 // ClientToHost
@@ -2475,20 +2489,6 @@ inline void ClientToHost::set_allocated_packet(::proto::receiver::Packet* packet
   }
   packet_ = packet;
   // @@protoc_insertion_point(field_set_allocated:proto.receiver.ClientToHost.packet)
-}
-
-// int32 stream_key = 3;
-inline void ClientToHost::clear_stream_key() {
-  stream_key_ = 0;
-}
-inline ::google::protobuf::int32 ClientToHost::stream_key() const {
-  // @@protoc_insertion_point(field_get:proto.receiver.ClientToHost.stream_key)
-  return stream_key_;
-}
-inline void ClientToHost::set_stream_key(::google::protobuf::int32 value) {
-  
-  stream_key_ = value;
-  // @@protoc_insertion_point(field_set:proto.receiver.ClientToHost.stream_key)
 }
 
 #ifdef __GNUC__

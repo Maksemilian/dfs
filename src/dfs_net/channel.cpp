@@ -64,7 +64,7 @@ QHostAddress Channel::peerAddress()
 
 void Channel::writeToConnection(const QByteArray &commandData)
 {
-    qDebug()<<"Channel::writeToConnection"<<commandData.size();
+//    qDebug()<<"Channel::writeToConnection"<<commandData.size();
     int byteSize=commandData.size();
     QByteArray baSize;
     QDataStream out(&baSize,QIODevice::WriteOnly);
@@ -142,7 +142,7 @@ qint64 Channel::socketBytesAvailable()
 
 void Channel::onMessageReceive()
 {
-    //    qDebug()<<"Channel::answerSize"<<answerSize;
+//        qDebug()<<"Channel::answerSize"<<answerSize;
     //TODO ДОРАБОТАТЬ КОНТЕКСТ ДЛЯ ЧТЕНИЯ
     QByteArray buffer;
     buffer.resize(static_cast<int>(read_.buffer.size()));
@@ -152,7 +152,7 @@ void Channel::onMessageReceive()
 //        qDebug()<<"WORK_MES"<<buffer.size();
         emit messageReceived(buffer);
     }else {
-        qDebug()<<"SESSION_MES"<<buffer.size();
+//        qDebug()<<"SESSION_MES"<<buffer.size();
         internalMessageReceive(buffer);
     }
 }

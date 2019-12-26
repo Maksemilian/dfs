@@ -48,9 +48,7 @@ HEADERS += \
     command_hierarch.h \
     command_factory.h \
     client_ds.h \
-    client_ds_stream.h \
-    client_ds_stream_controller.h \
-    stream_server.h
+    client_signal_stream_server.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -64,12 +62,10 @@ SOURCES += \
     ui/client_ds_ui_list.cpp \
     ui/plot_monitoring.cpp \
     client_ds.cpp \
-    client_ds_stream.cpp \
-    client_ds_stream_controller.cpp \
     command_hierarch.cpp \
     command_factory.cpp \
     main.cpp \
-    client_stream_server.cpp
+    client_signal_stream_server.cpp
 
 FORMS += \
     ui/main_window.ui \

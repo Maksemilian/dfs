@@ -1,7 +1,7 @@
 #include "client_ds.h"
 
 #include "channel_client.h"
-#include "stream_server.h"
+#include "client_signal_stream_server.h"
 
 #include "receiver.pb.h"
 
@@ -31,7 +31,7 @@ struct DeviceSetClient::Impl
     std::unique_ptr<net::ChannelClient> channel;
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
-    ClStreamServer streamServer;
+    SignalStreamServer streamServer;
 };
 
 DeviceSetClient::DeviceSetClient(QObject *parent):
@@ -90,7 +90,7 @@ void DeviceSetClient::disconnectFromHost()
 
 ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
 {
-    return  d->streamServer.getBuffer(ClStreamServer::StreamType::ST_DDC1);
+    return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
 }
 DeviceSetClient::~DeviceSetClient(){}
 
@@ -109,7 +109,7 @@ QString DeviceSetClient::getCurrentDeviceSetName()const
 
 void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
 {
-    qDebug()<<"ReceiverStationClient::onMessageReceived"<<buffer.size();
+    //qDebug()<<"ReceiverStationClient::onMessageReceived"<<buffer.size();
     proto::receiver::HostToClient hostToClient;
     if(!hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
         qDebug()<<"ERROR PARSE HOST_TO_CLIENT_MESSAGE";
@@ -121,9 +121,12 @@ void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
         readAnswerPacket(commandAnswer);
     }else if (hostToClient.has_device_set_info()) {
         d->currentDeviceSetInfo=hostToClient.device_set_info();
-        qDebug()<<"DeviceSetReadyForUse";
+//        qDebug()<<"DeviceSetReadyForUse";
+        emit deviceInfoUpdated();
+    }else if (hostToClient.is_ready()){
         emit deviceSetReady();
-    }else qDebug()<<"ERROR MESSAGE RECEIVE";
+    }
+    else qDebug()<<"ERROR MESSAGE RECEIVE";
 }
 
 void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
@@ -203,9 +206,9 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         qWarning()<<"ERROR RESPONSE"<<answer.type();
         emit commandFailed(errorString(answer.type()));
     }
-    qDebug()<<"DEQ_B";
+//    qDebug()<<"DEQ_B";
     d->commandQueue.dequeue();
-    qDebug()<<"DEQ_E";
+//    qDebug()<<"DEQ_E";
 }
 
 void DeviceSetClient::sendCommand(const proto::receiver::Command &command)

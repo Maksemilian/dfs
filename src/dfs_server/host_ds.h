@@ -24,6 +24,7 @@ public:
     ~DeviceSetClient();
 
     ShPtrRingBuffer ddc1Buffer();
+    void sendDevieSetStatus();
 signals:
     void deviceDisconnected();
     void changedDeviceSet(unsigned int indexDeviceSet);

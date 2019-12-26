@@ -51,15 +51,20 @@ void StreamServer::onNewConnection()
 {
     qDebug()<<"Server::onNewConnection";
 
-    while (!_readyChannelsList.isEmpty()) {
+    while (!_readyChannelsList.isEmpty())
+    {
         net::ChannelHost* networkChannel=_readyChannelsList.front();
-        qDebug()<<networkChannel->sessionType();
-        if(networkChannel){
+        qDebug()<<"Session Type"<<networkChannel->sessionType();
+        if(networkChannel && networkChannel->sessionType() ==
+                SessionType::SESSION_COMMAND)
+        {
             qDebug()<<"Create Session";
             createSession(networkChannel);
             _readyChannelsList.pop_front();
-        }else {
-            qDebug()<<"NULLPTR SESSION TYPE";
+        }
+        else
+        {
+            qDebug()<<"BAD SESSION TYPE:"<<networkChannel->sessionType();
         }
     }
 }
@@ -81,7 +86,8 @@ void StreamServer::createSession(net::ChannelHost *channelHost)
         DeviceSetClient *deviceSetClient=new DeviceSetClient(channelHost);
         connect(deviceSetClient,&DeviceSetClient::deviceDisconnected,
                 this,&StreamServer::onChannelDisconnected);
-
+        //TODO ОТПРАВИТЬ СООБЩЕНИЕ О ГОТОВНОСТИ
+        deviceSetClient->sendDevieSetStatus();
         _client.append(deviceSetClient);
     } else qDebug()<<"ERROR SESSION TYPE";
 }

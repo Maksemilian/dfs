@@ -125,14 +125,14 @@ ShPtrDevice DeviceSelector::coherentG35DeviceInstance(unsigned int deviceSetInde
 
 //    if(numberAvailableDeviceSet()>0)
 //    {
-//    enumerator->GetDeviceSetInfo(deviceSetIndex,nullptr,&countDeviceInSet);
-//    deviceInfoMas=new G35DDC_DEVICE_INFO[countDeviceInSet];
-//    enumerator->GetDeviceSetInfo(deviceSetIndex,deviceInfoMas,&countDeviceInSet);
+    enumerator->GetDeviceSetInfo(deviceSetIndex,nullptr,&countDeviceInSet);
+    deviceInfoMas=new G35DDC_DEVICE_INFO[countDeviceInSet];
+    enumerator->GetDeviceSetInfo(deviceSetIndex,deviceInfoMas,&countDeviceInSet);
 //    }
 //    else
 //    {
-        countDeviceInSet=1;
-        deviceInfoMas=static_cast<G35DDC_DEVICE_INFO*>(G35DDC_OPEN_DEMO_SET);
+//        countDeviceInSet=1;
+//        deviceInfoMas=static_cast<G35DDC_DEVICE_INFO*>(G35DDC_OPEN_DEMO_SET);
 //    }
 
     if(deviceSet->Open(deviceInfoMas,countDeviceInSet)){

@@ -103,7 +103,7 @@ void ChannelHost::readClientSession(const QByteArray &buffer)
 
 void ChannelHost::internalMessageReceive(const QByteArray &buffer)
 {
-    //    qDebug()<<"ChannelHost::internalMessageReceive"<<keyExchangeState;
+//        qDebug()<<"ChannelHost::internalMessageReceive"<<keyExchangeState;
     switch(keyExchangeState)
     {
     case KeyExchangeState::HELLO:

@@ -111,11 +111,11 @@ message HostToClient
 DeviceSetInfo device_set_info=1;
 Answer command_answer=2;
 Packet packet=3;
+bool is_ready=4;
 }
 
 message ClientToHost
 {
 Command command=1;
 Packet packet=2;
-int32 stream_key=3;
 }

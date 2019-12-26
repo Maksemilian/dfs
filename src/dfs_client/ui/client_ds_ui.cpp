@@ -1,6 +1,5 @@
 #include "client_ds_ui.h"
 #include "client_ds.h"
-#include "client_ds_stream_controller.h"
 
 #include <QGridLayout>
 #include <QLabel>
@@ -44,8 +43,7 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _cbReceivers(new QComboBox(this)),
     _leSetShiftPhaseDDC1(new QLineEdit(this)),
     _cbDeviceSetIndex(new QComboBox(this)),
-    _deviceSetClient(std::make_unique<DeviceSetClient>()),
-    _streamController(std::make_unique<ClientStreamController>(address,port))
+    _deviceSetClient(std::make_unique<DeviceSetClient>())
 {
     setObjectName(address);
     QGridLayout *vbLayout=new QGridLayout;
@@ -101,21 +99,14 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     _lbStatus->setText(STRING_DISCONNECT);
     _lbStatus->setUserData(USER_DATA_STATUS,new Status(false));
 
-    connect(_streamController.get(),&ClientStreamController::ddcStarted,
-            [this]{
-        _lbStatusDDC1->setText(TEXT_CONNECT);
-    });
-
-    connect(_streamController.get(),&ClientStreamController::ddcStoped,
-            [this]{
-        _lbStatusDDC1->setText(TEXT_DISCONNECT);
-    });
-
-    connect(_deviceSetClient.get(),&DeviceSetClient::connected,
-            this,&DeviceSetWidget::onDeviceSetConnected);
+//    connect(_deviceSetClient.get(),&DeviceSetClient::connected,
+//            this,&DeviceSetWidget::onDeviceSetConnected);
 
     connect(_deviceSetClient.get(),&DeviceSetClient::deviceSetReady,
             this,&DeviceSetWidget::onDeviceSetReady);
+
+    connect(_deviceSetClient.get(),&DeviceSetClient::deviceInfoUpdated,
+            this,&DeviceSetWidget::onDeviceSetInfoUpdate);
 
     connect(_deviceSetClient.get(),&DeviceSetClient::commandSuccessed,
             this,&DeviceSetWidget::commandSuccessed);
@@ -163,18 +154,28 @@ void DeviceSetWidget::onDDC1Stoped()
 
 void DeviceSetWidget::onDeviceSetReady()
 {
-    qDebug()<<"onDeviceSetReady";
-    _lbStatus->setText(STRING_CONNECT);
-    setStatus(true);
-    _cbReceivers->addItems(_deviceSetClient->receiverNameList());
-}
+//    qDebug()<<"DeviceSetWidget::onDeviceSetReady";
+//    _lbStatus->setText(STRING_CONNECT);
+//    setStatus(true);
+//    _cbReceivers->addItems(_deviceSetClient->receiverNameList());
 
-void DeviceSetWidget::onDeviceSetConnected()
-{
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
     command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
     sendCommand(command);
+}
+
+void DeviceSetWidget::onDeviceSetInfoUpdate()
+{
+//    qDebug()<<"DeviceSetWidget::onDeviceSetConnected";
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
+//    command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
+//    sendCommand(command);
+    _lbStatus->setText(STRING_CONNECT);
+    setStatus(true);
+    _cbReceivers->addItems(_deviceSetClient->receiverNameList());
+
 }
 
 void DeviceSetWidget::onDeviceSetDisconnected()

@@ -92,23 +92,28 @@ void DeviceSetListWidget::createDevieSetWidgets()
         port=static_cast<quint16>(s.value("port").toUInt());
         s.endGroup();
         qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-        DeviceSetWidget *widget=new DeviceSetWidget(ip,port);
-        widget->setListeningStreamPort(10050);
-        addDeviceSetWidget(widget);
+        DeviceSetWidget *widget1=new DeviceSetWidget(ip,port);
+        widget1->setListeningStreamPort(10050);
+        addDeviceSetWidget(widget1);
 
-//        s.beginGroup("dev_2");
-//        ip=s.value("ip").toString();
-//        port=static_cast<quint16>(s.value("port").toUInt());
-//        s.endGroup();
-//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+        s.beginGroup("dev_2");
+        ip=s.value("ip").toString();
+        port=static_cast<quint16>(s.value("port").toUInt());
+        s.endGroup();
+        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+        DeviceSetWidget *widget2=new DeviceSetWidget(ip,port);
+        widget2->setListeningStreamPort(10060);
+        addDeviceSetWidget(widget2);
 
-//        s.beginGroup("dev_3");
-//        ip=s.value("ip").toString();
-//        port=static_cast<quint16>(s.value("port").toUInt());
-//        s.endGroup();
-//        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
-//        addDeviceSetWidget(new DeviceSetWidget(ip,port));
+        s.beginGroup("dev_3");
+        ip=s.value("ip").toString();
+        port=static_cast<quint16>(s.value("port").toUInt());
+        s.endGroup();
+        qDebug()<<"DeviceSet:"<<ip<<" "<<port;
+
+        DeviceSetWidget *widget3=new DeviceSetWidget(ip,port);
+        widget3->setListeningStreamPort(10070);
+        addDeviceSetWidget(widget3);
     }
 }
 

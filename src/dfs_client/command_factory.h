@@ -8,7 +8,6 @@ class AbstractCommand;
 class WidgetDirector;
 class MacroCommand;
 
-
 class PreselectorCommand;
 class PreamplifireCommand;
 class AdcEnabledCommand;
@@ -54,13 +53,8 @@ public:
     static StopDDC1Command *getStopDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
     static SetDDC1TypeCommand *getSetDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
     static FrequencyCommand *getFrequencyCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
-//    static SyncStartCommand *getSyncStartCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
-//    static SyncStopCommand *getSyncStopCommand(SyncManager *syncManager,IDeviceSetSettings *subject);
 
-//    static AddTaskCommand *getAddTaskCommand(WidgetDirector*wd,IDeviceSetSettings*subject);
-//    static AbstractCommand* getSendStreamDDC1();
     static MacroCommand *getMacroCommand();
-
 };
 
 #endif // FACTORY_COMMAND_H

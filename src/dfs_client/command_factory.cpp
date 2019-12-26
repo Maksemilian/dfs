@@ -64,25 +64,6 @@ FrequencyCommand*FactoryCommand::getFrequencyCommand(IDeviceSet *syncManager, ID
     return new FrequencyCommand(syncManager,subject);
 }
 
-//AbstractCommand *FactoryCommand::getSendStreamDDC1()
-//{
-//    return new SendStreamDDC1();
-//}
-//SyncStartCommand*FactoryCommand::getSyncStartCommand(IDeviceSet *syncManager, IDeviceSetSettings *subject)
-//{
-//    return new SyncStartCommand(syncManager,subject);
-//}
-
-//SyncStopCommand*FactoryCommand::getSyncStopCommand(IDeviceSet *syncManager, IDeviceSetSettings *subject)
-//{
-//    return new SyncStopCommand(syncManager,subject);
-//}
-
-//AddTaskCommand*FactoryCommand::getAddTaskCommand(IDeviceSet *syncManager, IDeviceSetSettings *subject)
-//{
-//    return new AddTaskCommand(wd,subject);
-//}
-
 MacroCommand *FactoryCommand::getMacroCommand()
 {
     return new MacroCommand();
