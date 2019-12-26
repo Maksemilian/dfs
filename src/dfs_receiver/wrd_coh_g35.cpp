@@ -1,6 +1,5 @@
 #include "wrd_coh_g35_ds.h"
-#include "wrd_coh_g35_ds_selector.h"
-#include "wrd_coh_g35_callback.h"
+#include "wrd_callback_coh_g35.h"
 
 #include "trmbl_tsip_reader.h"
 

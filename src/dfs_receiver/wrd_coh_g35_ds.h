@@ -3,8 +3,8 @@
 
 #include "device_settings.h"
 
-#include "wrd_coh_g35_callback.h"
-#include "wrd_device.h"
+#include "wrd_callback_coh_g35.h"
+#include "wrd_device_interface.h"
 #include "wrd_callback.h"
 
 #include <QPair>

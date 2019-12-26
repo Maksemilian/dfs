@@ -63,6 +63,7 @@ ShiftPhaseDDC1 shift_phase_ddc1=11;
 uint32 device_set_index = 12;
 DeviceMode device_mode=13;
 uint32 stream_port=14;
+bool demo_mode=15;
 }
 
 message DeviceInfo

@@ -1,6 +1,6 @@
 #include "wrd_callback.h"
-#include "wrd_coh_g35_callback.h"
-#include "wrd_g35_callback.h"
+#include "wrd_callback_coh_g35.h"
+#include "wrd_callback_g35.h"
 
 std::unique_ptr<CohG35Callback>CallbackFactory:: cohG35CallbackInstance(const ShPtrRingPacketBuffer&ddc1Buffer)
 {

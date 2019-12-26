@@ -1,4 +1,4 @@
-#include "wrd_coh_g35_callback.h"
+#include "wrd_callback_coh_g35.h"
 
 #include "trmbl_tsip_reader.h"
 
@@ -42,7 +42,7 @@ void CohG35Callback::CohG35DDC_DDC1StreamCallback(ICohG35DDCDeviceSet *DeviceSet
 
     bool isChangedDDCCounter=false;
 
-    if(ddcSampleCounter!=currentDDCCounter){
+    if(ddcSampleCounter != currentDDCCounter){
         if(!isFirstBlock){
             //qDebug()<<"*********DDC_NOT_USE"<<ddcSampleCounter<<currentDDCCounter;
         }

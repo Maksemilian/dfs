@@ -2,7 +2,7 @@
 
 #include "channel_host.h"
 #include "wrd_coh_g35_ds.h"
-#include "wrd_g35_d.h"
+#include "wrd_d_g35.h"
 
 #include "wrd_device_selector.h"
 
@@ -33,7 +33,7 @@ struct DeviceSetClient::Impl
     Impl(net::ChannelHost *channel):
         channel(channel),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+        //        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
         deviceMode(proto::receiver::DM_COHERENT)
     {}
 
@@ -42,14 +42,14 @@ struct DeviceSetClient::Impl
         channel(channel),
         device(deviceSet),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+        //        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
         deviceMode(proto::receiver::DM_COHERENT)
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
     std::shared_ptr<IDevice> device;
     ShPtrRingBuffer buffer;
-    std::unique_ptr<DeviceCreator>deviceCreator;
+    //    std::unique_ptr<DeviceCreator>deviceCreator;
     proto::receiver::DeviceMode deviceMode;
     SignalStreamWriter *streamDDC1=nullptr;
 };
@@ -272,26 +272,33 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
                <<command.shift_phase_ddc1().phase_shift()<<"|| Succesed command"<<succesed;
         break;
     case proto::receiver::CommandType::SET_DEVICE_INDEX:
-        if(d->deviceCreator.get()){
-            d->device = d->deviceCreator->create(command.device_set_index(),
-                                                d->buffer);
-            succesed=true;
-            sendDeviceSetInfo();
-            qDebug()<<"======Comand  SET_DEVICE_INDEX"<<d->deviceMode;
-        }else succesed=false;
-        break;
-    case proto::receiver::SET_DEVICE_MODE:
-        d->deviceMode=command.device_mode();
-        succesed=true;
         if (d->deviceMode==proto::receiver::DM_COHERENT)
         {
-            d->deviceCreator.reset(new CohG35DeviceCreator);
+            d->device = DeviceFactory::createCohG35Device(command.device_set_index(),
+                                                          d->buffer,
+                                                          command.demo_mode());
+
         }
         else if(d->deviceMode==proto::receiver::DM_SINGLE)
         {
-            d->deviceCreator.reset(new SingleG35DeviceCreator);
+            d->device = DeviceFactory::createSingleG35Device(command.device_set_index(),
+                                                             d->buffer,
+                                                             command.demo_mode());
         }
-        else
+        if(d->device.get()){
+            succesed=true;
+            sendDeviceSetInfo();
+            qDebug()<<"======Comand  SET_DEVICE_INDEX"<<d->deviceMode;
+        }
+        else{
+            succesed=false;
+            qDebug()<<"======Comand  SET_DEVICE_INDEX FAILED"<<d->deviceMode;
+        }
+        break;
+    case proto::receiver::SET_DEVICE_MODE:
+        d->deviceMode = command.device_mode();
+        succesed = true;
+        if( d->deviceMode == proto::receiver::DM_UNKNOWN)
         {
             qDebug()<<"====== SET MODE FAILED";
             succesed=false;
@@ -323,7 +330,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command &command)
 }
 
 void DeviceSetClient::startSendingDDC1Stream(const QHostAddress &address,quint16 port,
-                                   const ShPtrRingBuffer &buffer)
+                                             const ShPtrRingBuffer &buffer)
 {
     QThread *thread=new QThread;
 
@@ -348,73 +355,73 @@ void DeviceSetClient::startSendingDDC1Stream(const QHostAddress &address,quint16
 //************************ STREAM DDC1 **********************
 
 SignalStreamWriter::SignalStreamWriter(const QHostAddress &address,quint16 port,
-                         const ShPtrRingBuffer &buffer)
+                                       const ShPtrRingBuffer &buffer)
     :  _address(address),_port(port),_buffer(buffer){}
 
 void SignalStreamWriter::process()
 {
-//    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
-//           <<_port;
+    //    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
+    //           <<_port;
     _streamSocket.reset(new net::ChannelClient);
 
     connect(_streamSocket.get(),&net::ChannelClient::connected,
             [this]{
 
-    qDebug("SignalStreamWriter::BEGIN PROCESS STREAM");
+        qDebug("SignalStreamWriter::BEGIN PROCESS STREAM");
 
-    _quit=false;
-    //********************
-    proto::receiver::Packet packet;
-    proto::receiver::ClientToHost clientToHost;
-    while(!_quit){
-        if(_buffer->pop(packet))
-        {
-            clientToHost.mutable_packet()->CopyFrom(packet);
-            int packetByteSize= clientToHost.ByteSize();
+        _quit=false;
+        //********************
+        proto::receiver::Packet packet;
+        proto::receiver::ClientToHost clientToHost;
+        while(!_quit){
+            if(_buffer->pop(packet))
+            {
+                clientToHost.mutable_packet()->CopyFrom(packet);
+                int packetByteSize= clientToHost.ByteSize();
 
-            QByteArray ba;
-            QDataStream out(&ba,QIODevice::WriteOnly);
+                QByteArray ba;
+                QDataStream out(&ba,QIODevice::WriteOnly);
 
-            out<<packetByteSize;
-            if(!_streamSocket->isOpen()){
-                qDebug("Socket Close");
-                break;
-            }
-
-            _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
-            _streamSocket->writeToSocket(ba.size());
-            _streamSocket->flush();
-            char buf[packetByteSize];
-            clientToHost.SerializeToArray(buf,packetByteSize);
-
-            _streamSocket->writeDataToBuffer(buf,packetByteSize);
-
-            qint64 bytesWriten=0;
-            while (!_quit&&bytesWriten != packetByteSize ){
-                if(!_streamSocket->isWritable()){
-                    _quit=true;
+                out<<packetByteSize;
+                if(!_streamSocket->isOpen()){
+                    qDebug("Socket Close");
                     break;
                 }
-                qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
-                if(bytes==-1){
-                    _quit=true;
-                    break;
+
+                _streamSocket->writeDataToBuffer(ba.constData(),ba.size());
+                _streamSocket->writeToSocket(ba.size());
+                _streamSocket->flush();
+                char buf[packetByteSize];
+                clientToHost.SerializeToArray(buf,packetByteSize);
+
+                _streamSocket->writeDataToBuffer(buf,packetByteSize);
+
+                qint64 bytesWriten=0;
+                while (!_quit&&bytesWriten != packetByteSize ){
+                    if(!_streamSocket->isWritable()){
+                        _quit=true;
+                        break;
+                    }
+                    qint64 bytes=_streamSocket->writeToSocket(packetByteSize);
+                    if(bytes==-1){
+                        _quit=true;
+                        break;
+                    }
+                    bytesWriten+=bytes;
                 }
-                bytesWriten+=bytes;
+                qDebug()<<"WRITE:"
+                       <<packet.block_number()
+                      <<packet.sample_rate()
+                     <<"TOW:"<<packet.time_of_week()
+                    <<"DDC_C"<<packet.ddc_sample_counter()
+                   <<"ADC_C"<<packet.adc_period_counter()
+                  <<clientToHost.ByteSize();
             }
-            qDebug()<<"WRITE:"
-                   <<packet.block_number()
-                  <<packet.sample_rate()
-                 <<"TOW:"<<packet.time_of_week()
-                <<"DDC_C"<<packet.ddc_sample_counter()
-               <<"ADC_C"<<packet.adc_period_counter()
-              <<clientToHost.ByteSize();
         }
-    }
-    _streamSocket->disconnectFromHost();
-//    _streamSocket->waitForDisconnected(5000);
-    emit finished();
-    qDebug("SignalStreamWriter::END PROCESS WRITER");
+        _streamSocket->disconnectFromHost();
+        //    _streamSocket->waitForDisconnected(5000);
+        emit finished();
+        qDebug("SignalStreamWriter::END PROCESS WRITER");
     });
     _streamSocket->connectToHost(QHostAddress(_address.toIPv4Address()).toString()
                                  ,_port,SessionType::SESSION_SIGNAL_STREAM);

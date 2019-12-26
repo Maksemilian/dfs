@@ -1,7 +1,8 @@
 #include "host_server.h"
-
-#include "wrd_coh_g35_ds_selector.h"
+#include "wrd_device_selector.h"
 #include "trmbl_tsip_reader.h"
+
+#include "G35DDCAPI.h"
 
 #include <QCoreApplication>
 #include <QLibrary>
@@ -43,13 +44,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if(DeviceSetSelector::numberAvailableDeviceSet()==0
-            //||countStation!=DeviceSetSelector::numberAvailableDeviceSet()
-            ){
-        qDebug()<<"Failed getting Device Set!";
-        library.unload();
-        return -1;
-    }
     TimeReader::instance().start();
     StreamServer *streamServer=new StreamServer();
     streamServer->listen(QHostAddress::Any,listenPort);

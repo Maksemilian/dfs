@@ -1,8 +1,8 @@
 #ifndef WRD_G35_D_H
 #define WRD_G35_D_H
 
-#include "wrd_device.h"
-#include "wrd_g35_callback.h"
+#include "wrd_device_interface.h"
+#include "wrd_callback_g35.h"
 
 class DeviceSettings;
 

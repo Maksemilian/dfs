@@ -60,7 +60,7 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget *> &dsList
             if(sync->sumDivMethodBuffer()->pop(v))
                 isElips=true;
 
-            if(isFirstStationReadedPacket&&isSecondStationReadedPacket&&isElips){
+            if(isFirstStationReadedPacket && isSecondStationReadedPacket&&isElips){
 
                 ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
                                           packet[CHANNEL_FIRST].ddc_sample_counter(),

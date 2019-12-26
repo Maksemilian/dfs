@@ -1,4 +1,4 @@
-#include "wrd_g35_d.h"
+#include "wrd_d_g35.h"
 
 #include "device_settings.h"
 

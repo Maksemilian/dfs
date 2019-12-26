@@ -534,6 +534,18 @@ class Command :
   ::google::protobuf::uint32 attenuator() const;
   void set_attenuator(::google::protobuf::uint32 value);
 
+  // uint32 ddc1_frequency = 7;
+  void clear_ddc1_frequency();
+  static const int kDdc1FrequencyFieldNumber = 7;
+  ::google::protobuf::uint32 ddc1_frequency() const;
+  void set_ddc1_frequency(::google::protobuf::uint32 value);
+
+  // uint32 ddc1_type = 8;
+  void clear_ddc1_type();
+  static const int kDdc1TypeFieldNumber = 8;
+  ::google::protobuf::uint32 ddc1_type() const;
+  void set_ddc1_type(::google::protobuf::uint32 value);
+
   // bool preamplifier_enebled = 4;
   void clear_preamplifier_enebled();
   static const int kPreamplifierEnebledFieldNumber = 4;
@@ -552,17 +564,11 @@ class Command :
   bool start_ddc1() const;
   void set_start_ddc1(bool value);
 
-  // uint32 ddc1_frequency = 7;
-  void clear_ddc1_frequency();
-  static const int kDdc1FrequencyFieldNumber = 7;
-  ::google::protobuf::uint32 ddc1_frequency() const;
-  void set_ddc1_frequency(::google::protobuf::uint32 value);
-
-  // uint32 ddc1_type = 8;
-  void clear_ddc1_type();
-  static const int kDdc1TypeFieldNumber = 8;
-  ::google::protobuf::uint32 ddc1_type() const;
-  void set_ddc1_type(::google::protobuf::uint32 value);
+  // bool demo_mode = 15;
+  void clear_demo_mode();
+  static const int kDemoModeFieldNumber = 15;
+  bool demo_mode() const;
+  void set_demo_mode(bool value);
 
   // uint32 samples_per_buffer = 10;
   void clear_samples_per_buffer();
@@ -598,11 +604,12 @@ class Command :
   ::proto::receiver::ShiftPhaseDDC1* shift_phase_ddc1_;
   int command_type_;
   ::google::protobuf::uint32 attenuator_;
+  ::google::protobuf::uint32 ddc1_frequency_;
+  ::google::protobuf::uint32 ddc1_type_;
   bool preamplifier_enebled_;
   bool adc_noice_blanker_enebled_;
   bool start_ddc1_;
-  ::google::protobuf::uint32 ddc1_frequency_;
-  ::google::protobuf::uint32 ddc1_type_;
+  bool demo_mode_;
   ::google::protobuf::uint32 samples_per_buffer_;
   ::google::protobuf::uint32 device_set_index_;
   int device_mode_;
@@ -1834,6 +1841,20 @@ inline void Command::set_stream_port(::google::protobuf::uint32 value) {
   
   stream_port_ = value;
   // @@protoc_insertion_point(field_set:proto.receiver.Command.stream_port)
+}
+
+// bool demo_mode = 15;
+inline void Command::clear_demo_mode() {
+  demo_mode_ = false;
+}
+inline bool Command::demo_mode() const {
+  // @@protoc_insertion_point(field_get:proto.receiver.Command.demo_mode)
+  return demo_mode_;
+}
+inline void Command::set_demo_mode(bool value) {
+  
+  demo_mode_ = value;
+  // @@protoc_insertion_point(field_set:proto.receiver.Command.demo_mode)
 }
 
 // -------------------------------------------------------------------

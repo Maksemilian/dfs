@@ -154,28 +154,18 @@ void DeviceSetWidget::onDDC1Stoped()
 
 void DeviceSetWidget::onDeviceSetReady()
 {
-//    qDebug()<<"DeviceSetWidget::onDeviceSetReady";
-//    _lbStatus->setText(STRING_CONNECT);
-//    setStatus(true);
-//    _cbReceivers->addItems(_deviceSetClient->receiverNameList());
-
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
     command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
+//    command.set_demo_mode(true);
     sendCommand(command);
 }
 
 void DeviceSetWidget::onDeviceSetInfoUpdate()
 {
-//    qDebug()<<"DeviceSetWidget::onDeviceSetConnected";
-//    proto::receiver::Command command;
-//    command.set_command_type(proto::receiver::SET_DEVICE_INDEX);
-//    command.set_device_set_index(static_cast<quint32>(_cbDeviceSetIndex->currentIndex()));
-//    sendCommand(command);
     _lbStatus->setText(STRING_CONNECT);
     setStatus(true);
     _cbReceivers->addItems(_deviceSetClient->receiverNameList());
-
 }
 
 void DeviceSetWidget::onDeviceSetDisconnected()
