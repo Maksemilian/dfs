@@ -22,10 +22,13 @@ class DeviceSetListWidget :
     static const QString SETTINGS_FILE;
     static const QString STRING_CONNECT;
     static const QString STRING_DISCONNECT;
+    static const quint16 PORT=9000;
+
     static const int TIME_WAIT_CONNECTION=5000;
     static const int TIME_CHECK=500;
 public:
     DeviceSetListWidget(QWidget*parent=nullptr);
+    ~DeviceSetListWidget();
     void addDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void setCommand(proto::receiver::Command &command)override;
@@ -45,14 +48,17 @@ private slots:
 private:
     void setCursor(const QCursor &cursor);
     void setAllDeviceSet(proto::receiver::Command &command);
-    void createDevieSetWidgets();
+    void loadSettings();
+    void saveSettings();
     void checkingConnections(bool checkingState);
+    QList<DeviceSetWidget*> createdDeviceSetWidgets();
 private:
     int _counter=0;
     QQueue<proto::receiver::Command>_commandQueue;
     QListWidget *_listWidget;
     SwitchButton *_pbConnectToStation;
-    QList<DeviceSetWidget*>_deviceSetWidgetList;
+    QList<DeviceSetWidget*>_allDeviceSetWidgetList;
+    QList<DeviceSetWidget*>_connectedDeviceSetWidgetList;
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

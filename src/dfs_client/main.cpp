@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     //qInstallMessageHandler(messageLogger);
 
     //***app
-    const quint16 INCREASE_MAIN_WINDOW_WIDTH=200;
+    const quint16 INCREASE_MAIN_WINDOW_WIDTH=600;
     const quint16 INCREASE_MAIN_WINDOW_HEIGH=100;
 
     MainWindow mainWindow;

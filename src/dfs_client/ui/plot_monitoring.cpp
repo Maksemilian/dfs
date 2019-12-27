@@ -16,8 +16,8 @@ PlotMonitoring::PlotMonitoring(QWidget *paret)
 {
     QGridLayout *gl=new QGridLayout();
     setLayout(gl);
-    gl->addWidget(channelPlot,0,0);
-    gl->addWidget(elipsPlot,0,1);
+    gl->addWidget(channelPlot,0,0,1,2);
+    gl->addWidget(elipsPlot,1,0);
 
 //    sync->setSumDivUpdater(elipsPlot);
 //    sync->setSyncSignalUpdater(channelPlot);
