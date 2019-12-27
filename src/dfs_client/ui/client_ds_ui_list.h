@@ -28,7 +28,7 @@ public:
     DeviceSetListWidget(QWidget*parent=nullptr);
     void addDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
     void removeDeviceSetWidget(DeviceSetWidget*deviceSetWidget);
-    void setCommand(const proto::receiver::Command &command)override;
+    void setCommand(proto::receiver::Command &command)override;
 signals:
     void commandSucessed()override;
     void allConnectedState(bool state);
@@ -44,7 +44,7 @@ private slots:
     void onTest(bool state);
 private:
     void setCursor(const QCursor &cursor);
-    void setAllDeviceSet(const proto::receiver::Command &command);
+    void setAllDeviceSet(proto::receiver::Command &command);
     void createDevieSetWidgets();
     void checkingConnections(bool checkingState);
 private:

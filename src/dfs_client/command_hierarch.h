@@ -16,6 +16,25 @@ public:
       virtual void execute()=0;
 };
 
+class StartSendingStream:public AbstractCommand
+{
+public:
+    StartSendingStream(IDeviceSet*deviceSet);
+    void execute()override;
+private:
+    IDeviceSet* _iDeviceSet;
+};
+
+class StopSendingStream:public AbstractCommand
+{
+public:
+    StopSendingStream(IDeviceSet*deviceSet);
+    void execute()override;
+private:
+    IDeviceSet* _iDeviceSet;
+};
+
+
 class ReceiverCommand:public AbstractCommand
 {
 public:
@@ -140,10 +159,10 @@ class MacroCommand:public AbstractCommand
 public:
     MacroCommand();
     void execute()override;
-    void addCommand(ReceiverCommand*command);
-    void removeCommand(ReceiverCommand*command);
+    void addCommand(AbstractCommand*command);
+    void removeCommand(AbstractCommand*command);
 private:
-    QList<ReceiverCommand*>_commands;
+    QList<AbstractCommand*>_commands;
 };
 
 #endif // COMMAND_HIERARCH_H

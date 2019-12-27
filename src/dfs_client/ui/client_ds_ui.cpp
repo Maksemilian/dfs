@@ -117,11 +117,11 @@ DeviceSetWidget::DeviceSetWidget(const QString &address,quint16 port):
     connect(_deviceSetClient.get(),&DeviceSetClient::commandFailed,
             this,&DeviceSetWidget::onDeviceSetCommandFailed);
 
-    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStarted,
-            this,&DeviceSetWidget::onDDC1Started);
+    //    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStarted,
+    //            this,&DeviceSetWidget::onDDC1Started);
 
-    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStoped,
-            this,&DeviceSetWidget::onDDC1Stoped);
+    //    connect(_deviceSetClient.get(),&DeviceSetClient::ddc1StreamStoped,
+    //            this,&DeviceSetWidget::onDDC1Stoped);
 }
 
 void DeviceSetWidget::connectToDeviceSet()
@@ -135,22 +135,22 @@ void DeviceSetWidget::disconnectFromDeviceSet()
     _deviceSetClient->disconnectFromHost();
 }
 
-void DeviceSetWidget::onDDC1Started()
-{
-//    _streamController->startDDC();
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
-    command.set_stream_port(_deviceSetClient->liceningStreamPort());
-    sendCommand(command);
-}
+//void DeviceSetWidget::onDDC1Started()
+//{
+////    _streamController->startDDC();
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
+//    command.set_stream_port(_deviceSetClient->liceningStreamPort());
+//    sendCommand(command);
+//}
 
-void DeviceSetWidget::onDDC1Stoped()
-{
-//    _streamController->stopDDC();
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::STOP_SENDING_DDC1_STREAM);
-    sendCommand(command);
-}
+//void DeviceSetWidget::onDDC1Stoped()
+//{
+////    _streamController->stopDDC();
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::STOP_SENDING_DDC1_STREAM);
+//    sendCommand(command);
+//}
 
 void DeviceSetWidget::onDeviceSetReady()
 {
@@ -205,7 +205,7 @@ void DeviceSetWidget::onDeviceSetCommandFailed(const QString &errorString)
     qDebug()<<errorString;
 }
 
-void DeviceSetWidget::sendCommand(const proto::receiver::Command &command)
+void DeviceSetWidget::sendCommand(proto::receiver::Command &command)
 {
     _deviceSetClient->sendCommand(command);
 }

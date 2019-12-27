@@ -58,7 +58,7 @@ void DeviceSetListWidget::onTest(bool state)
     }
 }
 
-void DeviceSetListWidget::setCommand(const proto::receiver::Command &command)
+void DeviceSetListWidget::setCommand(proto::receiver::Command &command)
 {
     setCursor(Qt::WaitCursor);
 
@@ -68,7 +68,7 @@ void DeviceSetListWidget::setCommand(const proto::receiver::Command &command)
     _commandQueue.enqueue(command);
 }
 
-void DeviceSetListWidget::setAllDeviceSet(const proto::receiver::Command &command)
+void DeviceSetListWidget::setAllDeviceSet( proto::receiver::Command &command)
 {
     QList<QListWidgetItem*> itemList=_listWidget->selectedItems();
     for(QListWidgetItem*item:itemList){
@@ -121,18 +121,18 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget *deviceSetWidget)
 {
     connect(deviceSetWidget,&DeviceSetWidget::commandSuccessed,
             [this]{
-        if(_commandQueue.isEmpty())return ;
-        if(--_counter!=0)return ;
-        const proto::receiver::Command &successedCommand=_commandQueue.dequeue();
+        if(_commandQueue.isEmpty()) return ;
+        if(--_counter != 0) return ;
+        const proto::receiver::Command& successedCommand = _commandQueue.dequeue();
 
-        if(successedCommand.command_type()==proto::receiver::START_DDC1){
+        if(successedCommand.command_type() == proto::receiver::START_DDC1){
             emit  ready(_deviceSetWidgetList);
-        }else if(successedCommand.command_type()==proto::receiver::STOP_DDC1){
+        }else if(successedCommand.command_type() == proto::receiver::STOP_DDC1){
             emit notReady();
         }
 
-        if(!_commandQueue.isEmpty()&&
-                _commandQueue.head().command_type()!=successedCommand.command_type()){
+        if(!_commandQueue.isEmpty() &&
+                _commandQueue.head().command_type() != successedCommand.command_type()){
             setAllDeviceSet(_commandQueue.head());
         }else setCursor(Qt::ArrowCursor);
     });

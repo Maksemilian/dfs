@@ -9,6 +9,31 @@ AbstractCommand::AbstractCommand(){}
 
 AbstractCommand::~AbstractCommand()=default;
 
+StartSendingStream::StartSendingStream(IDeviceSet* deviceSet)
+    :_iDeviceSet(deviceSet)
+{
+
+}
+
+void StartSendingStream::execute()
+{
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
+    _iDeviceSet->setCommand(command);
+}
+
+StopSendingStream::StopSendingStream(IDeviceSet* deviceSet)
+:_iDeviceSet(deviceSet)
+{
+
+}
+
+void StopSendingStream::execute()
+{
+    proto::receiver::Command command;
+    command.set_command_type(proto::receiver::STOP_SENDING_DDC1_STREAM);
+    _iDeviceSet->setCommand(command);
+}
 
 ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,
                                  IDeviceSettings*subject)
@@ -218,16 +243,16 @@ void MacroCommand::execute()
 {
     qDebug()<<"====================MackroCommand EXEC";
 
-    for(ReceiverCommand*rc:_commands)
+    for(AbstractCommand* rc : _commands)
         rc->execute();
 }
 
-void MacroCommand::addCommand(ReceiverCommand*command)
+void MacroCommand::addCommand(AbstractCommand* command)
 {
     _commands<<command;
 }
 
-void MacroCommand::removeCommand(ReceiverCommand*command)
+void MacroCommand::removeCommand(AbstractCommand* command)
 {
     _commands.removeOne(command);
 }

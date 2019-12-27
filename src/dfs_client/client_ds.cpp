@@ -121,7 +121,7 @@ void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
         readAnswerPacket(commandAnswer);
     }else if (hostToClient.has_device_set_info()) {
         d->currentDeviceSetInfo=hostToClient.device_set_info();
-//        qDebug()<<"DeviceSetReadyForUse";
+        //        qDebug()<<"DeviceSetReadyForUse";
         emit deviceInfoUpdated();
     }else if (hostToClient.is_ready()){
         emit deviceSetReady();
@@ -141,8 +141,10 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
         return;
     }
 
-    if(answer.succesed()){
-        switch (answer.type()) {
+    if(answer.succesed())
+    {
+        switch (answer.type())
+        {
         case proto::receiver::CommandType::SET_POWER_OFF:
             qDebug()<<"SETED_POWER_OFF";
             //            emit deviceSetPowerSetted(false);
@@ -202,17 +204,23 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
             break;
         }
         emit commandSuccessed();
-    }else{
+    }
+    else
+    {
         qWarning()<<"ERROR RESPONSE"<<answer.type();
         emit commandFailed(errorString(answer.type()));
     }
-//    qDebug()<<"DEQ_B";
+    //    qDebug()<<"DEQ_B";
     d->commandQueue.dequeue();
-//    qDebug()<<"DEQ_E";
+    //    qDebug()<<"DEQ_E";
 }
 
-void DeviceSetClient::sendCommand(const proto::receiver::Command &command)
+void DeviceSetClient::sendCommand(proto::receiver::Command &command)
 {
+    if(command.command_type()== proto::receiver::START_SENDING_DDC1_STREAM)
+    {
+        command.set_stream_port(d->streamServer.serverPort());
+    }
     d->commandQueue.enqueue(command.command_type());
     proto::receiver::ClientToHost clientToHost;
     //TODO ПОНЯТЬ КАК РАБОТАЕТ

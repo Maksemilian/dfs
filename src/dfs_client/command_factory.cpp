@@ -64,6 +64,17 @@ FrequencyCommand*FactoryCommand::getFrequencyCommand(IDeviceSet *syncManager, ID
     return new FrequencyCommand(syncManager,subject);
 }
 
+AbstractCommand* FactoryCommand::getStartSendingStreamCommand(IDeviceSet* iDeviceSet)
+{
+    return new StartSendingStream(iDeviceSet);
+}
+
+AbstractCommand* FactoryCommand::getStopSendingStreamCommand(IDeviceSet* iDeviceSet)
+{
+    return new StopSendingStream(iDeviceSet);
+}
+
+
 MacroCommand *FactoryCommand::getMacroCommand()
 {
     return new MacroCommand();

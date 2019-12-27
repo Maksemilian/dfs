@@ -19,7 +19,7 @@ public:
 
     void connectToHost(const QHostAddress &address,quint16 port);
     void disconnectFromHost();
-    void sendCommand(const proto::receiver::Command &command);
+    void sendCommand(proto::receiver::Command &command);
     void setLiceningStreamPort(quint16 port);
     quint16 liceningStreamPort();
     const proto::receiver::DeviceSetInfo &getDeviceSetInfo()const;

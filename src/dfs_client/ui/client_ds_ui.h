@@ -35,7 +35,7 @@ public:
     void setAddress(const QString &address,quint16 port);
     QString address();
     quint16 port();
-    void sendCommand(const proto::receiver::Command &command);
+    void sendCommand( proto::receiver::Command &command);
     bool isConnected();
     void setListeningStreamPort(quint16 port);
     inline ShPtrPacketBuffer ddc1Buffer(){
@@ -52,8 +52,6 @@ private slots:
     void onDeviceSetInfoUpdate();
     void onDeviceSetDisconnected();
     void onDeviceSetCommandFailed(const QString &errorString);
-    void onDDC1Started();
-    void onDDC1Stoped();
 private:
     void setCursor(const QCursor &cursor);
     void setStatus(bool status);

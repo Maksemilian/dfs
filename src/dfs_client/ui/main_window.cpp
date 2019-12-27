@@ -9,8 +9,6 @@
 #include "tool_switch_button.h"
 #include "tool_widgets.h"
 
-//#include "plot_channel.h"
-//#include "plot_elipse.h"
 #include "plot_monitoring.h"
 
 #include "client_ds_ui.h"
@@ -154,6 +152,7 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget,this));
     macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget,this));
     macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
+    macroCommand->addCommand(FactoryCommand::getStartSendingStreamCommand(deviceSetListWidget));
     //    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
     //    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
@@ -162,6 +161,7 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
     MacroCommand*mc=FactoryCommand::getMacroCommand();
     //    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
     mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
+    mc->addCommand(FactoryCommand::getStopSendingStreamCommand(deviceSetListWidget));
     mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget,this));
 
     pbPower->setUserData(USER_DATA_POWER_OFF,mc);

@@ -54,7 +54,10 @@ public:
     static SetDDC1TypeCommand *getSetDdc1Command(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
     static FrequencyCommand *getFrequencyCommand(IDeviceSet *iDeviceSet,  IDeviceSettings *subject);
 
-    static MacroCommand *getMacroCommand();
+    static AbstractCommand* getStartSendingStreamCommand(IDeviceSet* iDeviceSet);
+    static AbstractCommand* getStopSendingStreamCommand(IDeviceSet* iDeviceSet);
+
+    static MacroCommand* getMacroCommand();
 };
 
 #endif // FACTORY_COMMAND_H
