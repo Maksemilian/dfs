@@ -9,11 +9,11 @@ class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
     Q_OBJECT
     typedef enum
     {
-        FrequencyEditUnits_Hz=0,
-        FrequencyEditUnits_kHz=1,
-        FrequencyEditUnits_MHz=2,
-        FrequencyEditUnits_GHz=3,
-        FrequencyUnitEnd=4
+        FrequencyEditUnits_Hz = 0,
+        FrequencyEditUnits_kHz = 1,
+        FrequencyEditUnits_MHz = 2,
+        FrequencyEditUnits_GHz = 3,
+        FrequencyUnitEnd = 4
     } TFrequencyEditUnits;
 
     struct Freq
@@ -28,25 +28,25 @@ class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
     static const double MIN_VALUE_IN_HZ;
     static const double MAX_VALUE_IN_HZ;
 
-public:
-    FrequencyLineEdit(/*MainWindow*mainWindow,*/QWidget*parent=nullptr);
+  public:
+    FrequencyLineEdit(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
 
     void setFrequencyValueInHz(quint32 frequency);
     quint32 getFrequencyValueInHz();
 
     static QString formatingFrequencyToString(quint32 frequency);
-    static quint32 formatingStringFrequencyToNumber(const QString &strFrequency);
+    static quint32 formatingStringFrequencyToNumber(const QString& strFrequency);
 
     Q_SIGNAL void frequencyChanged(quint32 ddc1FrequencyHz);
-signals:
+  signals:
     void changed();
-protected :
-    void keyPressEvent(QKeyEvent *event)override;
-private:
-    void onChangedPositionCursor(int oldV , int newV);
+  protected :
+    void keyPressEvent(QKeyEvent* event)override;
+  private:
+    void onChangedPositionCursor(int oldV, int newV);
     void onReturnPresed();
 
-    int postfixLength=0;
+    int postfixLength = 0;
     int unit;
 };
 

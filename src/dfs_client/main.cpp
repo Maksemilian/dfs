@@ -8,42 +8,45 @@
 
 #include "ipp.h"
 
-void messageLogger(QtMsgType type,const QMessageLogContext &context,const QString &msg)
+void messageLogger(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     QString txt;
-    static long long uid=0;
+    static long long uid = 0;
     QRegExp rx("([\\w-]+::[\\w-]+)");
 
-    if(rx.indexIn(context.function)==-1)return;
-    QString function=rx.cap(1);
-    QString msgSep=(msg.length()>0)?">> " :"";
+    if(rx.indexIn(context.function) == -1)return;
+    QString function = rx.cap(1);
+    QString msgSep = (msg.length() > 0) ? ">> " : "";
 
-    switch (type) {
-    case QtInfoMsg: break;
-    case QtDebugMsg:
-        txt=QString("Debug:%1%2%3").arg(function).arg(msgSep).arg(msg);
-        break;
-    case QtWarningMsg:
-        txt=QString("Warning:%1%2%3").arg(function).arg(msgSep).arg(msg);
-        break;
-    case QtCriticalMsg:
-        txt=QString("Critical:%1%2%3").arg(function).arg(msgSep).arg(msg);
-        break;
-    case QtFatalMsg:
-        txt=QString("Fatal:%1%2%3").arg(function).arg(msgSep).arg(msg);
+    switch (type)
+    {
+        case QtInfoMsg:
+            break;
+        case QtDebugMsg:
+            txt = QString("Debug:%1%2%3").arg(function).arg(msgSep).arg(msg);
+            break;
+        case QtWarningMsg:
+            txt = QString("Warning:%1%2%3").arg(function).arg(msgSep).arg(msg);
+            break;
+        case QtCriticalMsg:
+            txt = QString("Critical:%1%2%3").arg(function).arg(msgSep).arg(msg);
+            break;
+        case QtFatalMsg:
+            txt = QString("Fatal:%1%2%3").arg(function).arg(msgSep).arg(msg);
 
-        abort();
+            abort();
     }
     uid++;
     QFile file("C:/Qt/log.txt");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if(file.open(QIODevice::WriteOnly | QIODevice::Append))
+    {
         QTextStream ts(&file);
-        ts<<txt<<"\r\n";
+        ts << txt << "\r\n";
         file.close();
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
     //***ipp lib
@@ -51,21 +54,21 @@ int main(int argc, char *argv[])
 
     //***log file
     QFile file("C:/Qt/log.txt");
-    qDebug()<<sizeof (size_t)<<sizeof (int)<<sizeof (unsigned int);
-    if(file.exists()&&file.size()>0)
+    qDebug() << sizeof (size_t) << sizeof (int) << sizeof (unsigned int);
+    if(file.exists() && file.size() > 0)
         file.remove();
 
     //qInstallMessageHandler(messageLogger);
 
     //***app
-    const quint16 INCREASE_MAIN_WINDOW_WIDTH=600;
-    const quint16 INCREASE_MAIN_WINDOW_HEIGH=100;
+    const quint16 INCREASE_MAIN_WINDOW_WIDTH = 600;
+    const quint16 INCREASE_MAIN_WINDOW_HEIGH = 100;
 
     MainWindow mainWindow;
-    QScreen *firstScreen=QGuiApplication::screens().first();
+    QScreen* firstScreen = QGuiApplication::screens().first();
 
-    mainWindow.setFixedSize(firstScreen->size().width()-INCREASE_MAIN_WINDOW_WIDTH,
-                            firstScreen->size().height()-INCREASE_MAIN_WINDOW_HEIGH);
+    mainWindow.setFixedSize(firstScreen->size().width() - INCREASE_MAIN_WINDOW_WIDTH,
+                            firstScreen->size().height() - INCREASE_MAIN_WINDOW_HEIGH);
     mainWindow.show();
     return a.exec();
 }

@@ -8,160 +8,160 @@
 class IDeviceSettings;
 class IDeviceSet;
 
-class AbstractCommand:public QObjectUserData
+class AbstractCommand: public QObjectUserData
 {
-public:
-      AbstractCommand();
-      virtual ~AbstractCommand();
-      virtual void execute()=0;
+  public:
+    AbstractCommand();
+    virtual ~AbstractCommand();
+    virtual void execute() = 0;
 };
 
-class StartSendingStream:public AbstractCommand
+class StartSendingStream: public AbstractCommand
 {
-public:
-    StartSendingStream(IDeviceSet*deviceSet);
+  public:
+    StartSendingStream(IDeviceSet* deviceSet);
     void execute()override;
-private:
+  private:
     IDeviceSet* _iDeviceSet;
 };
 
-class StopSendingStream:public AbstractCommand
+class StopSendingStream: public AbstractCommand
 {
-public:
-    StopSendingStream(IDeviceSet*deviceSet);
+  public:
+    StopSendingStream(IDeviceSet* deviceSet);
     void execute()override;
-private:
+  private:
     IDeviceSet* _iDeviceSet;
 };
 
 
-class ReceiverCommand:public AbstractCommand
+class ReceiverCommand: public AbstractCommand
 {
-public:
-     ReceiverCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
-     ~ReceiverCommand();
-protected:
-    IDeviceSet*_iDeviceSet;
-    IDeviceSettings*subject;
+  public:
+    ReceiverCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    ~ReceiverCommand();
+  protected:
+    IDeviceSet* _iDeviceSet;
+    IDeviceSettings* subject;
 };
 
 //************************* ATTENUATOR
-class AttenuatorCommand:public ReceiverCommand
+class AttenuatorCommand: public ReceiverCommand
 {
-public:
-    AttenuatorCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    AttenuatorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     AttenuatorCommand();
     void execute()override;
 };
 
 //************************* PRESELECTORS
 
-class PreselectorCommand:public ReceiverCommand
+class PreselectorCommand: public ReceiverCommand
 {
-public:
-    PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    PreselectorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* PREAM
 
-class PreamplifireCommand:public ReceiverCommand
+class PreamplifireCommand: public ReceiverCommand
 {
-public:
-    PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    PreamplifireCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* ADC ENABLED
 
-class AdcEnabledCommand:public ReceiverCommand
+class AdcEnabledCommand: public ReceiverCommand
 {
-public:
-    AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    AdcEnabledCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* ADC THRESHOLD
 
-class AdcThresholdCommand:public ReceiverCommand
+class AdcThresholdCommand: public ReceiverCommand
 {
-public:
-    AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    AdcThresholdCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* POWER ON
 
-class PowerCommandOn:public ReceiverCommand
+class PowerCommandOn: public ReceiverCommand
 {
-public:
-    PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    PowerCommandOn(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* POWER OFF
 
-class PowerCommandOff:public ReceiverCommand
+class PowerCommandOff: public ReceiverCommand
 {
-public:
-    PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    PowerCommandOff(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* SETTINGS
 
-class SettingsCommand:public ReceiverCommand
+class SettingsCommand: public ReceiverCommand
 {
-public:
-    SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    SettingsCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
 //************************* START DDC1
-class StartDDC1Command:public ReceiverCommand
+class StartDDC1Command: public ReceiverCommand
 {
-public:
-    StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    StartDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
 //************************* STOP DDC1
 
-class StopDDC1Command:public ReceiverCommand
+class StopDDC1Command: public ReceiverCommand
 {
-public:
-    StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    StopDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
 //************************* RESTART
 
-class SetDDC1TypeCommand:public ReceiverCommand
+class SetDDC1TypeCommand: public ReceiverCommand
 {
-public:
-    SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    SetDDC1TypeCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
 //************************* FREQ
 
-class FrequencyCommand:public ReceiverCommand
+class FrequencyCommand: public ReceiverCommand
 {
-public:
-    FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject);
+  public:
+    FrequencyCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
 //************************* MACRO
 
-class MacroCommand:public AbstractCommand
+class MacroCommand: public AbstractCommand
 {
-public:
+  public:
     MacroCommand();
     void execute()override;
-    void addCommand(AbstractCommand*command);
-    void removeCommand(AbstractCommand*command);
-private:
+    void addCommand(AbstractCommand* command);
+    void removeCommand(AbstractCommand* command);
+  private:
     QList<AbstractCommand*>_commands;
 };
 

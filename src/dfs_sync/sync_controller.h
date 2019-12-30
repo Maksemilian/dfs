@@ -11,7 +11,7 @@
  */
 class SyncController
 {
-public:
+  public:
     SyncController();
     ~SyncController();
 
@@ -20,9 +20,9 @@ public:
     ShPtrIpp32fcBuffer sumDivMethodBuffer();
 
     void start(const ShPtrPacketBufferPair inPacketBuffers,
-               quint32 ddcFrequency,quint32 samplerate,quint32 blockSize);
+               quint32 ddcFrequency, quint32 samplerate, quint32 blockSize);
     void stop();
-private:
+  private:
     struct Impl;
     std::unique_ptr<Impl> d;
 };

@@ -5,12 +5,12 @@
 
 #include "receiver.pb.h"
 
-AbstractCommand::AbstractCommand(){}
+AbstractCommand::AbstractCommand() {}
 
-AbstractCommand::~AbstractCommand()=default;
+AbstractCommand::~AbstractCommand() = default;
 
 StartSendingStream::StartSendingStream(IDeviceSet* deviceSet)
-    :_iDeviceSet(deviceSet)
+    : _iDeviceSet(deviceSet)
 {
 
 }
@@ -23,7 +23,7 @@ void StartSendingStream::execute()
 }
 
 StopSendingStream::StopSendingStream(IDeviceSet* deviceSet)
-:_iDeviceSet(deviceSet)
+    : _iDeviceSet(deviceSet)
 {
 
 }
@@ -35,17 +35,17 @@ void StopSendingStream::execute()
     _iDeviceSet->setCommand(command);
 }
 
-ReceiverCommand::ReceiverCommand(IDeviceSet*iDeviceSet,
-                                 IDeviceSettings*subject)
-    :AbstractCommand(),_iDeviceSet(iDeviceSet),subject(subject)
+ReceiverCommand::ReceiverCommand(IDeviceSet* iDeviceSet,
+                                 IDeviceSettings* subject)
+    : AbstractCommand(), _iDeviceSet(iDeviceSet), subject(subject)
 {
 }
 
-ReceiverCommand::~ReceiverCommand()=default;
+ReceiverCommand::~ReceiverCommand() = default;
 
-AttenuatorCommand::AttenuatorCommand(IDeviceSet*syncManager,
-                                     IDeviceSettings*subject):
-    ReceiverCommand(syncManager,subject)
+AttenuatorCommand::AttenuatorCommand(IDeviceSet* syncManager,
+                                     IDeviceSettings* subject):
+    ReceiverCommand(syncManager, subject)
 {
 //    qDebug()<<"Set Attenuator"<<subject->getAttenuator();
 
@@ -61,17 +61,18 @@ void AttenuatorCommand::execute()
 
 //************************* PRES
 
-PreselectorCommand::PreselectorCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject){
+PreselectorCommand::PreselectorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)
+{
 //    qDebug()<<subject->getPreselectors();
 }
 
 void PreselectorCommand::execute()
 {
-    qDebug()<<"Set Pres";
+    qDebug() << "Set Pres";
     proto::receiver::Command command;
     //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
-    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
+    proto::receiver::Preselectors* preselectors = new proto::receiver::Preselectors;
     preselectors->set_low_frequency(subject->getPreselectors().first);
     preselectors->set_high_frequency(subject->getPreselectors().second);
     command.set_command_type(proto::receiver::SET_PRESELECTORS);
@@ -82,12 +83,12 @@ void PreselectorCommand::execute()
 
 //************************* PREAM
 
-PreamplifireCommand::PreamplifireCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject)    {}
+PreamplifireCommand::PreamplifireCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PreamplifireCommand::execute()
 {
-    qDebug()<<"Set Pream";
+    qDebug() << "Set Pream";
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
     command.set_preamplifier_enebled(subject->getPreamplifierEnabled());
@@ -97,8 +98,8 @@ void PreamplifireCommand::execute()
 
 //************************* ADC EN
 
-AdcEnabledCommand::AdcEnabledCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject)    {}
+AdcEnabledCommand::AdcEnabledCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void  AdcEnabledCommand::execute()
 {
@@ -110,27 +111,27 @@ void  AdcEnabledCommand::execute()
 
 //************************* ADC THR
 
-AdcThresholdCommand::AdcThresholdCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject)    {}
+AdcThresholdCommand::AdcThresholdCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void AdcThresholdCommand::execute()
 {
-    quint16 thr=subject->getAdcNoiceBlankerThreshold();
+    quint16 thr = subject->getAdcNoiceBlankerThreshold();
     proto::receiver::Command command;
-    void *value=&thr;
+    void* value = &thr;
     command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
-    command.set_adc_noice_blanker_threshold(value,sizeof(thr));
+    command.set_adc_noice_blanker_threshold(value, sizeof(thr));
     _iDeviceSet->setCommand(command);
 }
 
 //************************* POWER ON
 
-PowerCommandOn::PowerCommandOn(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject)    {}
+PowerCommandOn::PowerCommandOn(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PowerCommandOn::execute()
 {
-    qDebug()<<"Set Pream";
+    qDebug() << "Set Pream";
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::SET_POWER_ON);
     _iDeviceSet->setCommand(command);
@@ -138,8 +139,8 @@ void PowerCommandOn::execute()
 
 //************************* POWER OFF
 
-PowerCommandOff::PowerCommandOff(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    : ReceiverCommand(iDeviceSet,subject)    {}
+PowerCommandOff::PowerCommandOff(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PowerCommandOff::execute()
 {
@@ -150,19 +151,20 @@ void PowerCommandOff::execute()
 
 //************************* SETTINGS
 
-SettingsCommand::SettingsCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    :ReceiverCommand(iDeviceSet,subject)    {
+SettingsCommand::SettingsCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)
+{
 }
 
 void SettingsCommand::execute()
 {
-    DeviceSettings settings=subject->getSettings();
+    DeviceSettings settings = subject->getSettings();
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
 
     command.set_attenuator(settings.attenuator);
     //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
-    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
+    proto::receiver::Preselectors* preselectors = new proto::receiver::Preselectors;
     preselectors->set_low_frequency(settings.preselectors.first);
     preselectors->set_high_frequency(settings.preselectors.second);
     command.set_allocated_preselectors(preselectors);
@@ -170,9 +172,9 @@ void SettingsCommand::execute()
     command.set_preamplifier_enebled(settings.preamplifier);
     command.set_adc_noice_blanker_enebled(settings.adcEnabled);
 
-    quint16 threshold=settings.threshold;
-    void *value=&threshold;
-    command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
+    quint16 threshold = settings.threshold;
+    void* value = &threshold;
+    command.set_adc_noice_blanker_threshold(value, sizeof(threshold));
 
     command.set_ddc1_type(settings.ddcType);
     command.set_samples_per_buffer(settings.samplesPerBuffer);
@@ -182,8 +184,8 @@ void SettingsCommand::execute()
 
 //************************* START DDC
 
-StartDDC1Command::StartDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    :ReceiverCommand(iDeviceSet,subject)    {}
+StartDDC1Command::StartDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void StartDDC1Command::execute()
 {
@@ -195,8 +197,8 @@ void StartDDC1Command::execute()
 
 //************************* STOP DDC
 
-StopDDC1Command::StopDDC1Command(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    :ReceiverCommand(iDeviceSet,subject)    {}
+StopDDC1Command::StopDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void StopDDC1Command::execute()
 {
@@ -207,8 +209,8 @@ void StopDDC1Command::execute()
 
 //************************* RESTART
 
-SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    :ReceiverCommand(iDeviceSet,subject)    {}
+SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void SetDDC1TypeCommand::execute()
 {
@@ -220,8 +222,8 @@ void SetDDC1TypeCommand::execute()
 
 //************************* FREQ
 
-FrequencyCommand::FrequencyCommand(IDeviceSet*iDeviceSet,IDeviceSettings*subject)
-    :ReceiverCommand(iDeviceSet,subject)    {}
+FrequencyCommand::FrequencyCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+    : ReceiverCommand(iDeviceSet, subject)    {}
 
 void FrequencyCommand::execute()
 {
@@ -237,11 +239,11 @@ void FrequencyCommand::execute()
 //}
 //************************* MACRO
 
-MacroCommand::MacroCommand(){}
+MacroCommand::MacroCommand() {}
 
 void MacroCommand::execute()
 {
-    qDebug()<<"====================MackroCommand EXEC";
+    qDebug() << "====================MackroCommand EXEC";
 
     for(AbstractCommand* rc : _commands)
         rc->execute();
@@ -249,7 +251,7 @@ void MacroCommand::execute()
 
 void MacroCommand::addCommand(AbstractCommand* command)
 {
-    _commands<<command;
+    _commands << command;
 }
 
 void MacroCommand::removeCommand(AbstractCommand* command)

@@ -5,9 +5,9 @@
 
 class IDeviceSet
 {
-public:
-    virtual void setCommand(proto::receiver::Command& command)=0;
-    virtual void commandSucessed()=0;
+  public:
+    virtual void setCommand(proto::receiver::Command& command) = 0;
+    virtual void commandSucessed() = 0;
 
 };
 #endif // IDEVICESET_H

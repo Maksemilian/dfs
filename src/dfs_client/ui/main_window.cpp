@@ -20,17 +20,17 @@
 #include <QFile>
 #include <QSettings>
 //**************CONSTANTS*******************
-const QString MainWindow::SETTINGS_FILE_NAME="device_set.ini";
+const QString MainWindow::SETTINGS_FILE_NAME = "device_set.ini";
 
-MainWindow:: MainWindow(QWidget *parent):
-    QMainWindow(parent),ui(new Ui::MainWindow)
+MainWindow:: MainWindow(QWidget* parent):
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-    deviceSetListWidget=new DeviceSetListWidget(this);
-    setLeftDockWidget(deviceSetListWidget,"DeviceSetList");
+    deviceSetListWidget = new DeviceSetListWidget(this);
+    setLeftDockWidget(deviceSetListWidget, "DeviceSetList");
 
     //************SETTING TOOLBAR***************
     //****TOP
@@ -38,28 +38,28 @@ MainWindow:: MainWindow(QWidget *parent):
     ui->mainToolBar->layout()->setSpacing(10);
     ui->mainToolBar->setMovable(false);
     setTopToolBar(ui->mainToolBar);
-    toolBarMap.insert(Qt::TopToolBarArea,ui->mainToolBar);
+    toolBarMap.insert(Qt::TopToolBarArea, ui->mainToolBar);
 
     //****BOTTOM
 
-    QToolBar *bottomToolBar=new QToolBar;
+    QToolBar* bottomToolBar = new QToolBar;
     bottomToolBar->setMovable(false);
     bottomToolBar->layout()->setSpacing(10);
     setBottomToolBar(bottomToolBar);
-    addToolBar(Qt::BottomToolBarArea,bottomToolBar);
+    addToolBar(Qt::BottomToolBarArea, bottomToolBar);
 
-    toolBarMap.insert(Qt::BottomToolBarArea,bottomToolBar);
+    toolBarMap.insert(Qt::BottomToolBarArea, bottomToolBar);
 
     loadSettings();
 
     //************** ELIPSE PLOT***************************
-    plotMonitoring=new PlotMonitoring(this);
-    plotMonitoring->ds=this;
-    connect(deviceSetListWidget,&DeviceSetListWidget::ready,
-            plotMonitoring,&PlotMonitoring::onDeviceSetListReady);
+    plotMonitoring = new PlotMonitoring(this);
+    plotMonitoring->ds = this;
+    connect(deviceSetListWidget, &DeviceSetListWidget::ready,
+            plotMonitoring, &PlotMonitoring::onDeviceSetListReady);
 
-    connect(deviceSetListWidget,&DeviceSetListWidget::notReady,
-            plotMonitoring,&PlotMonitoring::onDeviceSetListNotReady);
+    connect(deviceSetListWidget, &DeviceSetListWidget::notReady,
+            plotMonitoring, &PlotMonitoring::onDeviceSetListNotReady);
 
     setCentralWidget(plotMonitoring);
 
@@ -75,60 +75,60 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setCentralWidget(QWidget *widget)
+void MainWindow::setCentralWidget(QWidget* widget)
 {
     centralWidget()->layout()->addWidget(widget);
 }
 
-void MainWindow::setLeftDockWidget(QWidget *widget,const QString &title)
+void MainWindow::setLeftDockWidget(QWidget* widget, const QString& title)
 {
-    QDockWidget *leftDockWidget=new QDockWidget(title,this);
+    QDockWidget* leftDockWidget = new QDockWidget(title, this);
     leftDockWidget->setWidget(widget);
-    addDockWidget(Qt::LeftDockWidgetArea,leftDockWidget);
+    addDockWidget(Qt::LeftDockWidgetArea, leftDockWidget);
 }
 
-void MainWindow::setRightDockWidget(QWidget *widget,const QString &title)
+void MainWindow::setRightDockWidget(QWidget* widget, const QString& title)
 {
-    QDockWidget *rightDockWidget=new QDockWidget(title,this);
+    QDockWidget* rightDockWidget = new QDockWidget(title, this);
     rightDockWidget->setWidget(widget);
-    addDockWidget(Qt::RightDockWidgetArea,rightDockWidget);
+    addDockWidget(Qt::RightDockWidgetArea, rightDockWidget);
 }
 
 //****************** SETTING TOP TOOL BAR *************************
 
-void MainWindow::setTopToolBar(QToolBar *topToolBar)
+void MainWindow::setTopToolBar(QToolBar* topToolBar)
 {
     if(!topToolBar) return;
 
     //DDC1 Frequency
-    MacroCommand *macroFreq=FactoryCommand::getMacroCommand();
+    MacroCommand* macroFreq = FactoryCommand::getMacroCommand();
     //    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
-    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget,this));
-    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
+    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
+    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget, this));
+    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
 
-    leDDC1Frequency =new FrequencyLineEdit(this);
-    leDDC1Frequency->setUserData(USER_DATA_ID,macroFreq);
-    connect(leDDC1Frequency,&FrequencyLineEdit::changed,
-            this,&MainWindow::widgetChanged);
+    leDDC1Frequency = new FrequencyLineEdit(this);
+    leDDC1Frequency->setUserData(USER_DATA_ID, macroFreq);
+    connect(leDDC1Frequency, &FrequencyLineEdit::changed,
+            this, &MainWindow::widgetChanged);
 
     //DDC1 Bandwith
-    MacroCommand *macroBandwith=FactoryCommand::getMacroCommand();
+    MacroCommand* macroBandwith = FactoryCommand::getMacroCommand();
     //    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
-    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(deviceSetListWidget,this));
-    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
+    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
+    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(deviceSetListWidget, this));
+    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
     //    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
-    cbDDC1Bandwith=new BandwithComboBox(this);
-    cbDDC1Bandwith->setUserData(USER_DATA_ID,macroBandwith);
-    connect(cbDDC1Bandwith,&BandwithComboBox::changed,this,&MainWindow::widgetChanged);
+    cbDDC1Bandwith = new BandwithComboBox(this);
+    cbDDC1Bandwith->setUserData(USER_DATA_ID, macroBandwith);
+    connect(cbDDC1Bandwith, &BandwithComboBox::changed, this, &MainWindow::widgetChanged);
 
     //Samples per Buffer
 
-    cbSamplesPerBuffer=new SampleRateComboBox(this);
+    cbSamplesPerBuffer = new SampleRateComboBox(this);
     cbSamplesPerBuffer->setEnabled(false);
-    connect(cbSamplesPerBuffer,&SampleRateComboBox::changed,this,&MainWindow::widgetChanged);
+    connect(cbSamplesPerBuffer, &SampleRateComboBox::changed, this, &MainWindow::widgetChanged);
 
     topToolBar->addWidget(leDDC1Frequency);
 
@@ -142,67 +142,67 @@ void MainWindow::setTopToolBar(QToolBar *topToolBar)
 
 //****************** SETTING BOTTOM TOOL BAR*************************
 
-void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
+void MainWindow::setBottomToolBar(QToolBar* bottomToolBar)
 {
     if(!bottomToolBar) return ;
     //power BUTTON
-    pbPower=new SwitchButton("On","Off",false,this);
-    connect(pbPower,&SwitchButton::changed,this,&MainWindow::widgetChanged);
-    MacroCommand*macroCommand=FactoryCommand::getMacroCommand();
-    macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget,this));
-    macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget,this));
-    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget,this));
+    pbPower = new SwitchButton("On", "Off", false, this);
+    connect(pbPower, &SwitchButton::changed, this, &MainWindow::widgetChanged);
+    MacroCommand* macroCommand = FactoryCommand::getMacroCommand();
+    macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget, this));
+    macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget, this));
+    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
     macroCommand->addCommand(FactoryCommand::getStartSendingStreamCommand(deviceSetListWidget));
     //    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
     //    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
-    pbPower->setUserData(USER_DATA_POWER_ON,macroCommand);
+    pbPower->setUserData(USER_DATA_POWER_ON, macroCommand);
 
-    MacroCommand*mc=FactoryCommand::getMacroCommand();
+    MacroCommand* mc = FactoryCommand::getMacroCommand();
     //    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget,this));
+    mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
     mc->addCommand(FactoryCommand::getStopSendingStreamCommand(deviceSetListWidget));
-    mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget,this));
+    mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget, this));
 
-    pbPower->setUserData(USER_DATA_POWER_OFF,mc);
+    pbPower->setUserData(USER_DATA_POWER_OFF, mc);
 
     //attenuator BUTTON
-    pbAttenuatorEnable=new SwitchButton("Atten Enable","Atten Disable",false,this);
+    pbAttenuatorEnable = new SwitchButton("Atten Enable", "Atten Disable", false, this);
     pbAttenuatorEnable->setUserData(USER_DATA_ID,
-                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
-    connect(pbAttenuatorEnable,&SwitchButton::changed,this,&MainWindow::widgetChanged);
+                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget, this));
+    connect(pbAttenuatorEnable, &SwitchButton::changed, this, &MainWindow::widgetChanged);
     //attenuator COMBO BOX
-    cbAttenuationLevel=new AttenuatorComboBox(this);
+    cbAttenuationLevel = new AttenuatorComboBox(this);
     cbAttenuationLevel->setUserData(USER_DATA_ID,
-                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget,this));
-    connect(cbAttenuationLevel,&AttenuatorComboBox::changed,
-            this,&MainWindow::widgetChanged);
+                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget, this));
+    connect(cbAttenuationLevel, &AttenuatorComboBox::changed,
+            this, &MainWindow::widgetChanged);
     //preamplifier BUTTON
-    pbPreamplifierEnable=new SwitchButton("Pream Enable","Pream Disable",false,this);
-    pbPreamplifierEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreamplifireCommand(deviceSetListWidget,this));
-    connect(pbPreamplifierEnable,&SwitchButton::changed,
-            this,&MainWindow::widgetChanged);
+    pbPreamplifierEnable = new SwitchButton("Pream Enable", "Pream Disable", false, this);
+    pbPreamplifierEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreamplifireCommand(deviceSetListWidget, this));
+    connect(pbPreamplifierEnable, &SwitchButton::changed,
+            this, &MainWindow::widgetChanged);
 
     //preseector BUTTON
-    pbPreselectorEnable=new SwitchButton("Pres Enable","Pres Disable",false,this);
-    pbPreselectorEnable->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
-    connect(pbPreselectorEnable,&SwitchButton::changed,this,&MainWindow::widgetChanged);
+    pbPreselectorEnable = new SwitchButton("Pres Enable", "Pres Disable", false, this);
+    pbPreselectorEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(deviceSetListWidget, this));
+    connect(pbPreselectorEnable, &SwitchButton::changed, this, &MainWindow::widgetChanged);
 
     //preseector LOW FREQUENCY COMBO BOX
-    preselectorWidget=new PreselectorWidget(this);
-    preselectorWidget->setUserData(USER_DATA_ID,FactoryCommand::getPreselectorCommand(deviceSetListWidget,this));
-    connect(preselectorWidget,&PreselectorWidget::changed,this,&MainWindow::widgetChanged);
+    preselectorWidget = new PreselectorWidget(this);
+    preselectorWidget->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(deviceSetListWidget, this));
+    connect(preselectorWidget, &PreselectorWidget::changed, this, &MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER BUTTON
-    pbAdcNoiceBlanckerEnabled=new SwitchButton("ADC Enable","ADC Disable",false,this);
-    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID,FactoryCommand::getAdcEnabledCommand(deviceSetListWidget,this));
-    connect(pbAdcNoiceBlanckerEnabled,&SwitchButton::changed,this,&MainWindow::widgetChanged);
+    pbAdcNoiceBlanckerEnabled = new SwitchButton("ADC Enable", "ADC Disable", false, this);
+    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID, FactoryCommand::getAdcEnabledCommand(deviceSetListWidget, this));
+    connect(pbAdcNoiceBlanckerEnabled, &SwitchButton::changed, this, &MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER LENE EDIT
-    leAdcNoiceBlanckerThreshold=new ToolBarLineEdit(this);
+    leAdcNoiceBlanckerThreshold = new ToolBarLineEdit(this);
     leAdcNoiceBlanckerThreshold->setFixedWidth(100);
-    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID,FactoryCommand::getAdcThresholdCommand(deviceSetListWidget,this));
-    connect(leAdcNoiceBlanckerThreshold,&ToolBarLineEdit::changed,this,&MainWindow::widgetChanged);
+    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID, FactoryCommand::getAdcThresholdCommand(deviceSetListWidget, this));
+    connect(leAdcNoiceBlanckerThreshold, &ToolBarLineEdit::changed, this, &MainWindow::widgetChanged);
 
     // End Widgets
 
@@ -226,13 +226,13 @@ void MainWindow::setBottomToolBar(QToolBar *bottomToolBar)
 
 void MainWindow::hideReceiverSettingsTool()
 {
-    for(QToolBar *toolBar:toolBarMap.values())
+    for(QToolBar* toolBar : toolBarMap.values())
         toolBar->setDisabled(true);
 }
 
 void MainWindow::showReceiverSettingsTool()
 {
-    for(QToolBar *toolBar:toolBarMap.values())
+    for(QToolBar* toolBar : toolBarMap.values())
         toolBar->setEnabled(true);
 }
 
@@ -245,26 +245,28 @@ void MainWindow::widgetChanged()
     {
         QVariant variant;
         if (widget == pbPower)
-        {//pb Power
-            quint8 state=pbPower->currentState() ?
-                        USER_DATA_POWER_ON : USER_DATA_POWER_OFF ;
+        {
+            //pb Power
+            quint8 state = pbPower->currentState() ?
+                           USER_DATA_POWER_ON : USER_DATA_POWER_OFF ;
 
             if(AbstractCommand* command =
-                    dynamic_cast<AbstractCommand*>(widget->userData(state)))
+                        dynamic_cast<AbstractCommand*>(widget->userData(state)))
                 command->execute();
 
-            if(pbPower->currentState())qDebug()<<"********COMMAND ON";
-            else qDebug()<<"********COMMAND OFF";
+            if(pbPower->currentState())qDebug() << "********COMMAND ON";
+            else qDebug() << "********COMMAND OFF";
 
             return;
         }
-        else if(widget==pbAttenuatorEnable)
-        {//pb Atten
-            if(pbAttenuatorEnable->currentState()==true)
+        else if(widget == pbAttenuatorEnable)
+        {
+            //pb Atten
+            if(pbAttenuatorEnable->currentState() == true)
             {
-                qDebug()<<"ATTENUATOR PB";
+                qDebug() << "ATTENUATOR PB";
 
-                if(AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
+                if(AbstractCommand* command = dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
                     command->execute();
 
                 cbAttenuationLevel->setEnabled(true);
@@ -277,11 +279,13 @@ void MainWindow::widgetChanged()
             return;
         }
         else if (widget == pbPreselectorEnable)
-        {//pb Preselectors
+        {
+            //pb Preselectors
             if(pbPreselectorEnable->currentState())
             {
                 preselectorWidget->setEnabled(true);
-            }else
+            }
+            else
             {
                 preselectorWidget->setDisabled(true);
                 return;
@@ -289,25 +293,35 @@ void MainWindow::widgetChanged()
         }
         else if (widget == pbAdcNoiceBlanckerEnabled)
         {
-            pbAdcNoiceBlanckerEnabled->currentState()?
-                        leAdcNoiceBlanckerThreshold->setEnabled(true):
-                        leAdcNoiceBlanckerThreshold->setDisabled(true);
-        }else if (widget == cbAttenuationLevel){//cb Atten
-        }else if (widget == preselectorWidget) {// Preselectors Widget
-        }else if (widget == pbPreamplifierEnable) {//pb Pream
-        }else if (widget == leAdcNoiceBlanckerThreshold) {
-        }else if (widget == leDDC1Frequency){
+            pbAdcNoiceBlanckerEnabled->currentState() ?
+            leAdcNoiceBlanckerThreshold->setEnabled(true) :
+            leAdcNoiceBlanckerThreshold->setDisabled(true);
+        }
+        else if (widget == cbAttenuationLevel)  //cb Atten
+        {
+        }
+        else if (widget == preselectorWidget)   // Preselectors Widget
+        {
+        }
+        else if (widget == pbPreamplifierEnable)   //pb Pream
+        {
+        }
+        else if (widget == leAdcNoiceBlanckerThreshold)
+        {
+        }
+        else if (widget == leDDC1Frequency)
+        {
         }
 
         //**********
 
-        if(AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
+        if(AbstractCommand* command = dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
             command->execute();
 
     }
     else
     {
-        qDebug()<<"BAD CAST TOOL WIDGET";
+        qDebug() << "BAD CAST TOOL WIDGET";
     }
 }
 
@@ -321,27 +335,28 @@ bool MainWindow::getPower()
 DeviceSettings  MainWindow::getSettings()
 {
     DeviceSettings ds;
-    ds.powerEnabled=pbPower->currentState();
+    ds.powerEnabled = pbPower->currentState();
 
-    if(ds.powerEnabled){
+    if(ds.powerEnabled)
+    {
         //qDebug()<<"POWER ON";
-        QString strAttenuationLevel=
-                cbAttenuationLevel->currentText().left(cbAttenuationLevel->currentText().indexOf(' '));
+        QString strAttenuationLevel =
+            cbAttenuationLevel->currentText().left(cbAttenuationLevel->currentText().indexOf(' '));
 
-        ds.attenuator=strAttenuationLevel.toUInt();
+        ds.attenuator = strAttenuationLevel.toUInt();
 
-        ds.preamplifier=pbPreamplifierEnable->currentState();
-        ds.adcEnabled=pbAdcNoiceBlanckerEnabled->currentState();
+        ds.preamplifier = pbPreamplifierEnable->currentState();
+        ds.adcEnabled = pbAdcNoiceBlanckerEnabled->currentState();
 
-        QPair<quint32,quint32>preselector=   preselectorWidget->getPreselectors();
+        QPair<quint32, quint32>preselector =   preselectorWidget->getPreselectors();
 
-        ds.preselectors.first=preselector.first;
-        ds.preselectors.second=preselector.second;
+        ds.preselectors.first = preselector.first;
+        ds.preselectors.second = preselector.second;
 
-        ds.threshold=leAdcNoiceBlanckerThreshold->text().toUShort();
-        ds.ddcType=static_cast<quint32>(cbDDC1Bandwith->currentIndex());
-        ds.frequency=leDDC1Frequency->getFrequencyValueInHz();
-        ds.samplesPerBuffer=cbSamplesPerBuffer->currentText().toUInt();
+        ds.threshold = leAdcNoiceBlanckerThreshold->text().toUShort();
+        ds.ddcType = static_cast<quint32>(cbDDC1Bandwith->currentIndex());
+        ds.frequency = leDDC1Frequency->getFrequencyValueInHz();
+        ds.samplesPerBuffer = cbSamplesPerBuffer->currentText().toUInt();
     }
     return ds;
 }
@@ -364,7 +379,7 @@ quint32 MainWindow::getBandwith()
 
 quint32 MainWindow::getSampleRateForBandwith()
 {
-    quint32 ddc1Bandwith=cbDDC1Bandwith->getCurrentBandwith();
+    quint32 ddc1Bandwith = cbDDC1Bandwith->getCurrentBandwith();
 
     //    qDebug()<<"Taken Samples Rate:"
     //           <<BandwithComboBox::bandwithAndSampleRateMap()[ddc1Bandwith];
@@ -379,8 +394,8 @@ quint32  MainWindow::getSamplesPerBuffer()
 
 quint32  MainWindow::getAttenuator()
 {
-    QString strAttenuationLevel= cbAttenuationLevel->currentText().left(cbAttenuationLevel->currentText().indexOf(' '));
-    quint32 atten=strAttenuationLevel.toUInt();
+    QString strAttenuationLevel = cbAttenuationLevel->currentText().left(cbAttenuationLevel->currentText().indexOf(' '));
+    quint32 atten = strAttenuationLevel.toUInt();
     return atten;
 }
 
@@ -389,7 +404,7 @@ bool  MainWindow::getPreamplifierEnabled()
     return pbPreamplifierEnable->currentState();
 }
 
-QPair<quint32,quint32>  MainWindow::getPreselectors()
+QPair<quint32, quint32>  MainWindow::getPreselectors()
 {
     return preselectorWidget->getPreselectors();
 }
@@ -418,21 +433,22 @@ quint16  MainWindow::getAdcNoiceBlankerThreshold()
 
 void MainWindow::loadSettings()
 {
-    QString  settingsFileName=QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME;
-    if(QFile::exists(settingsFileName)){
-        QSettings s(settingsFileName,QSettings::IniFormat);
+    QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME;
+    if(QFile::exists(settingsFileName))
+    {
+        QSettings s(settingsFileName, QSettings::IniFormat);
         s.beginGroup("attenuator");
 
         pbAttenuatorEnable->setCurrentState(s.value("enable").toBool());
-        cbAttenuationLevel->setCurrentText(QString::number(s.value("attenuation_level_db").toUInt())+" Db");
+        cbAttenuationLevel->setCurrentText(QString::number(s.value("attenuation_level_db").toUInt()) + " Db");
 
         s.endGroup();
 
         s.beginGroup("preselectors");
 
-        QPair<quint32,quint32>preselectors;
-        preselectors.first=s.value("low_frequency").toUInt();
-        preselectors.second=s.value("high_frequency").toUInt();
+        QPair<quint32, quint32>preselectors;
+        preselectors.first = s.value("low_frequency").toUInt();
+        preselectors.second = s.value("high_frequency").toUInt();
 
         cbAttenuationLevel->setEnabled(s.value("enable").toBool());
         pbPreselectorEnable->setCurrentState(s.value("enable").toBool());
@@ -445,9 +461,9 @@ void MainWindow::loadSettings()
         s.endGroup();
 
         s.beginGroup("adc_noice_blanker");
-        QPair<quint32,quint32>adcNoiceBlanker;
-        adcNoiceBlanker.first=s.value("enabled").toBool();
-        adcNoiceBlanker.second=s.value("threshold").toUInt();
+        QPair<quint32, quint32>adcNoiceBlanker;
+        adcNoiceBlanker.first = s.value("enabled").toBool();
+        adcNoiceBlanker.second = s.value("threshold").toUInt();
 
         leAdcNoiceBlanckerThreshold->setText(QString::number(adcNoiceBlanker.second));
         leAdcNoiceBlanckerThreshold->setEnabled(adcNoiceBlanker.first);
@@ -459,41 +475,44 @@ void MainWindow::loadSettings()
         cbDDC1Bandwith->setCurrentIndex(static_cast<int>(s.value("type_index").toUInt()));
         cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
         s.endGroup();
-    }else   qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
+    }
+    else   qDebug() << "FILE " << settingsFileName << "isn't exist";
 }
 
 void MainWindow::saveSetting()
 {
-    QString  settingsFileName=QApplication::applicationDirPath()+"/"+SETTINGS_FILE_NAME;
-    if(QFile::exists(settingsFileName)){
-        QSettings s(settingsFileName,QSettings::IniFormat);
+    QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME;
+    if(QFile::exists(settingsFileName))
+    {
+        QSettings s(settingsFileName, QSettings::IniFormat);
         s.beginGroup("attenuator");
-        s.setValue("enable",pbAttenuatorEnable->currentState());
-        s.setValue("attenuation_level_db",cbAttenuationLevel->getAttenuationLevel());
+        s.setValue("enable", pbAttenuatorEnable->currentState());
+        s.setValue("attenuation_level_db", cbAttenuationLevel->getAttenuationLevel());
         s.endGroup();
 
         s.beginGroup("preselectors");
-        s.setValue("enable",pbPreselectorEnable->currentState());
-        s.setValue("low_frequency",preselectorWidget->getPreselectors().first);
-        s.setValue("high_frequency",preselectorWidget->getPreselectors().second);
+        s.setValue("enable", pbPreselectorEnable->currentState());
+        s.setValue("low_frequency", preselectorWidget->getPreselectors().first);
+        s.setValue("high_frequency", preselectorWidget->getPreselectors().second);
         s.endGroup();
 
         s.beginGroup("preamplifier");
-        s.setValue("enabled",pbPreamplifierEnable->currentState());
+        s.setValue("enabled", pbPreamplifierEnable->currentState());
         s.endGroup();
 
         s.beginGroup("adc_noice_blanker");
-        s.setValue("enabled",pbAdcNoiceBlanckerEnabled->currentState());
-        s.setValue("threshold",leAdcNoiceBlanckerThreshold->getValue());
+        s.setValue("enabled", pbAdcNoiceBlanckerEnabled->currentState());
+        s.setValue("threshold", leAdcNoiceBlanckerThreshold->getValue());
         s.endGroup();
 
         s.beginGroup("ddc1");
-        s.setValue("frequency",leDDC1Frequency->getFrequencyValueInHz());
-        s.setValue("type_index",cbDDC1Bandwith->currentTypeIndex());
-        s.setValue("samples_per_buffer",cbSamplesPerBuffer->samplesPerBuffer());
+        s.setValue("frequency", leDDC1Frequency->getFrequencyValueInHz());
+        s.setValue("type_index", cbDDC1Bandwith->currentTypeIndex());
+        s.setValue("samples_per_buffer", cbSamplesPerBuffer->samplesPerBuffer());
         s.endGroup();
         s.sync();
-    }else  qDebug()<<"FILE "<<settingsFileName<<"isn't exist";
+    }
+    else  qDebug() << "FILE " << settingsFileName << "isn't exist";
 }
 /*
 void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)

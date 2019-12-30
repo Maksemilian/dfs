@@ -6,12 +6,13 @@
 #include <QMainWindow>
 #include <QMap>
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
-using UInt32Bandwth =quint32;
-using Uint32SampleRate=quint32;
+using UInt32Bandwth = quint32;
+using Uint32SampleRate = quint32;
 
 class ReceiverSettings;
 
@@ -34,18 +35,18 @@ class PlotMonitoring;
 
 class DeviceSetListWidget ;
 class MainWindow : public QMainWindow,
-        public IDeviceSettings
+    public IDeviceSettings
 {
     Q_OBJECT
 
     static const QString SETTINGS_FILE_NAME;
-    static const quint8 USER_DATA_ID=1;
+    static const quint8 USER_DATA_ID = 1;
 
-    static const quint8 USER_DATA_POWER_ON=2;
-    static const quint8 USER_DATA_POWER_OFF=3;
+    static const quint8 USER_DATA_POWER_ON = 2;
+    static const quint8 USER_DATA_POWER_OFF = 3;
 
-public:
-    explicit MainWindow(QWidget *parent = nullptr);
+  public:
+    explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow()override;
 
     bool getPower()override;
@@ -58,55 +59,55 @@ public:
     quint32 getAttenuator()override;
     bool getPreamplifierEnabled()override;
 
-    QPair<quint32,quint32> getPreselectors()override;
+    QPair<quint32, quint32> getPreselectors()override;
 
     bool getAdcNoiceBlankerEnabled()override;
     quint16 getAdcNoiceBlankerThreshold()override;
 
-    void setCentralWidget(QWidget *widget);
-    void setLeftDockWidget(QWidget*widget,const QString &title=QString());
-    void setRightDockWidget(QWidget*widget,const QString &title=QString());
-private:
+    void setCentralWidget(QWidget* widget);
+    void setLeftDockWidget(QWidget* widget, const QString& title = QString());
+    void setRightDockWidget(QWidget* widget, const QString& title = QString());
+  private:
     //**** SET TOOL BAR
-    void setTopToolBar(QToolBar *topToolBar);
-    void setBottomToolBar(QToolBar *bottomToolBar);
+    void setTopToolBar(QToolBar* topToolBar);
+    void setBottomToolBar(QToolBar* bottomToolBar);
 
     //MAIN WINDOW SETTINGS
     void loadSettings();
     void saveSetting();
-private slots:
+  private slots:
     void widgetChanged();
     void hideReceiverSettingsTool();
     void showReceiverSettingsTool();
-private:
-    Ui::MainWindow *ui;
+  private:
+    Ui::MainWindow* ui;
 
     //Top Widgets
-    FrequencyLineEdit *leDDC1Frequency;
-    ToolBarLineEdit *leAdcNoiceBlanckerThreshold;
+    FrequencyLineEdit* leDDC1Frequency;
+    ToolBarLineEdit* leAdcNoiceBlanckerThreshold;
 
-    BandwithComboBox *cbDDC1Bandwith;
-    SampleRateComboBox *cbSamplesPerBuffer;
-    AttenuatorComboBox *cbAttenuationLevel;
+    BandwithComboBox* cbDDC1Bandwith;
+    SampleRateComboBox* cbSamplesPerBuffer;
+    AttenuatorComboBox* cbAttenuationLevel;
 
     //Bottom Widgets
 
-    SwitchButton *pbAttenuatorEnable;
-    SwitchButton *pbPreamplifierEnable;
+    SwitchButton* pbAttenuatorEnable;
+    SwitchButton* pbPreamplifierEnable;
     SwitchButton* pbPreselectorEnable;
-    SwitchButton *pbAdcNoiceBlanckerEnabled;
-    SwitchButton *pbPower;
+    SwitchButton* pbAdcNoiceBlanckerEnabled;
+    SwitchButton* pbPower;
 
-    PreselectorWidget *preselectorWidget;
+    PreselectorWidget* preselectorWidget;
 
-    QMap<Qt::ToolBarArea,QToolBar*>toolBarMap;
+    QMap<Qt::ToolBarArea, QToolBar*>toolBarMap;
 
-    PlotMonitoring *plotMonitoring;
+    PlotMonitoring* plotMonitoring;
 
 //    ChannelPlot*channelPlot;//central widget
 //    ElipsPlot *elipsPlot;//right dock idget
 
-    DeviceSetListWidget *deviceSetListWidget;
+    DeviceSetListWidget* deviceSetListWidget;
 };
 
 

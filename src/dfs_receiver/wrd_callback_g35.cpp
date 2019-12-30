@@ -1,12 +1,12 @@
 #include "wrd_callback_g35.h"
 
-G35Callback::G35Callback(const ShPtrRingPacketBuffer &buffer, const TimeReader &timeReader)
-    :buffer(buffer),timeReader(timeReader)
+G35Callback::G35Callback(const ShPtrRingPacketBuffer& buffer, const TimeReader& timeReader)
+    : buffer(buffer), timeReader(timeReader)
 {
 
 }
 
-VOID __stdcall G35Callback::G35DDC_IFCallback(IG35DDCDevice *Device,CONST SHORT *Buffer,UINT32 NumberOfSamples,WORD MaxADCAmplitude,UINT32 ADCSamplingRate)
+VOID __stdcall G35Callback::G35DDC_IFCallback(IG35DDCDevice* Device, CONST SHORT* Buffer, UINT32 NumberOfSamples, WORD MaxADCAmplitude, UINT32 ADCSamplingRate)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);
@@ -15,13 +15,13 @@ VOID __stdcall G35Callback::G35DDC_IFCallback(IG35DDCDevice *Device,CONST SHORT 
     Q_UNUSED(ADCSamplingRate);
 }
 
-VOID __stdcall G35Callback::G35DDC_DDC1StreamCallback(IG35DDCDevice *Device,CONST VOID *Buffer,UINT32 NumberOfSamples,UINT32 BitsPerSample)
+VOID __stdcall G35Callback::G35DDC_DDC1StreamCallback(IG35DDCDevice* Device, CONST VOID* Buffer, UINT32 NumberOfSamples, UINT32 BitsPerSample)
 {
-    qDebug()<<"DDC_Stream_Callback";
+    qDebug() << "DDC_Stream_Callback";
 
 }
 
-BOOL __stdcall G35Callback::G35DDC_DDC1PlaybackStreamCallback(IG35DDCDevice *Device,VOID *Buffer,UINT32 NumberOfSamples,UINT32 BitsPerSample)
+BOOL __stdcall G35Callback::G35DDC_DDC1PlaybackStreamCallback(IG35DDCDevice* Device, VOID* Buffer, UINT32 NumberOfSamples, UINT32 BitsPerSample)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);
@@ -30,7 +30,7 @@ BOOL __stdcall G35Callback::G35DDC_DDC1PlaybackStreamCallback(IG35DDCDevice *Dev
     return true;
 }
 
-VOID __stdcall G35Callback::G35DDC_DDC2StreamCallback(IG35DDCDevice *Device,UINT32 Channel,CONST FLOAT *Buffer,UINT32 NumberOfSamples)
+VOID __stdcall G35Callback::G35DDC_DDC2StreamCallback(IG35DDCDevice* Device, UINT32 Channel, CONST FLOAT* Buffer, UINT32 NumberOfSamples)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);
@@ -38,8 +38,8 @@ VOID __stdcall G35Callback::G35DDC_DDC2StreamCallback(IG35DDCDevice *Device,UINT
     Q_UNUSED(Channel);
 }
 
-VOID __stdcall G35Callback::G35DDC_DDC2PreprocessedStreamCallback(IG35DDCDevice *Device,UINT32 Channel,CONST FLOAT *Buffer,
-                                                     UINT32 NumberOfSamples,FLOAT SlevelPeak,FLOAT SlevelRMS)
+VOID __stdcall G35Callback::G35DDC_DDC2PreprocessedStreamCallback(IG35DDCDevice* Device, UINT32 Channel, CONST FLOAT* Buffer,
+        UINT32 NumberOfSamples, FLOAT SlevelPeak, FLOAT SlevelRMS)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);
@@ -49,7 +49,7 @@ VOID __stdcall G35Callback::G35DDC_DDC2PreprocessedStreamCallback(IG35DDCDevice 
     Q_UNUSED(SlevelRMS);
 
 }
-VOID __stdcall G35Callback::G35DDC_AudioStreamCallback(IG35DDCDevice *Device,UINT32 Channel,UINT32 Type,CONST FLOAT *Buffer,UINT32 NumberOfSamples)
+VOID __stdcall G35Callback::G35DDC_AudioStreamCallback(IG35DDCDevice* Device, UINT32 Channel, UINT32 Type, CONST FLOAT* Buffer, UINT32 NumberOfSamples)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);
@@ -57,7 +57,7 @@ VOID __stdcall G35Callback::G35DDC_AudioStreamCallback(IG35DDCDevice *Device,UIN
     Q_UNUSED(Channel);
 
 }
-BOOL __stdcall G35Callback::G35DDC_AudioPlaybackStreamCallback(IG35DDCDevice *Device,UINT32 Channel,FLOAT *Buffer,UINT32 NumberOfSamples)
+BOOL __stdcall G35Callback::G35DDC_AudioPlaybackStreamCallback(IG35DDCDevice* Device, UINT32 Channel, FLOAT* Buffer, UINT32 NumberOfSamples)
 {
     Q_UNUSED(Device);
     Q_UNUSED(Buffer);

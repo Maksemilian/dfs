@@ -1,67 +1,67 @@
 #include "command_factory.h"
 #include "command_hierarch.h"
 
-FactoryCommand::FactoryCommand()=default;
+FactoryCommand::FactoryCommand() = default;
 
-AttenuatorCommand* FactoryCommand::getAttenuatorCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+AttenuatorCommand* FactoryCommand::getAttenuatorCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new AttenuatorCommand(syncManager,subject);
+    return new AttenuatorCommand(syncManager, subject);
 }
 
-PreselectorCommand* FactoryCommand::getPreselectorCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+PreselectorCommand* FactoryCommand::getPreselectorCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new PreselectorCommand(syncManager,subject);
+    return new PreselectorCommand(syncManager, subject);
 }
 
 
-PreamplifireCommand *FactoryCommand::getPreamplifireCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+PreamplifireCommand* FactoryCommand::getPreamplifireCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new PreamplifireCommand(syncManager,subject);
+    return new PreamplifireCommand(syncManager, subject);
 }
 
-AdcEnabledCommand *FactoryCommand::getAdcEnabledCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+AdcEnabledCommand* FactoryCommand::getAdcEnabledCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new AdcEnabledCommand(syncManager,subject);
+    return new AdcEnabledCommand(syncManager, subject);
 }
 
-AdcThresholdCommand *FactoryCommand::getAdcThresholdCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+AdcThresholdCommand* FactoryCommand::getAdcThresholdCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new AdcThresholdCommand(syncManager,subject);
+    return new AdcThresholdCommand(syncManager, subject);
 }
 
-PowerCommandOn *FactoryCommand ::getPowerComandOn(IDeviceSet *syncManager, IDeviceSettings *subject)
+PowerCommandOn* FactoryCommand ::getPowerComandOn(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-     return new PowerCommandOn(syncManager,subject);
+    return new PowerCommandOn(syncManager, subject);
 }
 
-PowerCommandOff *FactoryCommand ::getPowerComandOff(IDeviceSet *syncManager, IDeviceSettings *subject)
+PowerCommandOff* FactoryCommand ::getPowerComandOff(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-     return new PowerCommandOff(syncManager,subject);
+    return new PowerCommandOff(syncManager, subject);
 }
 
-SettingsCommand *FactoryCommand::getSettingsCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+SettingsCommand* FactoryCommand::getSettingsCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new SettingsCommand(syncManager,subject);
+    return new SettingsCommand(syncManager, subject);
 }
 
-StartDDC1Command *FactoryCommand::getStartDdc1Command(IDeviceSet *syncManager, IDeviceSettings *subject)
+StartDDC1Command* FactoryCommand::getStartDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new StartDDC1Command(syncManager,subject);
+    return new StartDDC1Command(syncManager, subject);
 }
 
-StopDDC1Command *FactoryCommand::getStopDdc1Command(IDeviceSet *syncManager, IDeviceSettings *subject)
+StopDDC1Command* FactoryCommand::getStopDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new StopDDC1Command(syncManager,subject);
+    return new StopDDC1Command(syncManager, subject);
 }
 
-SetDDC1TypeCommand *FactoryCommand::getSetDdc1Command(IDeviceSet *syncManager, IDeviceSettings *subject)
+SetDDC1TypeCommand* FactoryCommand::getSetDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new SetDDC1TypeCommand(syncManager,subject);
+    return new SetDDC1TypeCommand(syncManager, subject);
 }
 
-FrequencyCommand*FactoryCommand::getFrequencyCommand(IDeviceSet *syncManager, IDeviceSettings *subject)
+FrequencyCommand* FactoryCommand::getFrequencyCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
 {
-    return new FrequencyCommand(syncManager,subject);
+    return new FrequencyCommand(syncManager, subject);
 }
 
 AbstractCommand* FactoryCommand::getStartSendingStreamCommand(IDeviceSet* iDeviceSet)
@@ -75,7 +75,7 @@ AbstractCommand* FactoryCommand::getStopSendingStreamCommand(IDeviceSet* iDevice
 }
 
 
-MacroCommand *FactoryCommand::getMacroCommand()
+MacroCommand* FactoryCommand::getMacroCommand()
 {
     return new MacroCommand();
 }

@@ -16,16 +16,16 @@
 //**************************************** Receiver Station Client*****************************************
 
 const QByteArray serializeMessage(
-        const google::protobuf::Message &command)
+    const google::protobuf::Message& command)
 {
     std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
-    command.SerializeToArray(static_cast<void*>(bytesArray.data()),command.ByteSize());
-    return QByteArray(bytesArray.data(),command.ByteSize());
+    command.SerializeToArray(static_cast<void*>(bytesArray.data()), command.ByteSize());
+    return QByteArray(bytesArray.data(), command.ByteSize());
 }
 
 struct DeviceSetClient::Impl
 {
-    Impl():channel(std::make_unique<net::ChannelClient>())
+    Impl(): channel(std::make_unique<net::ChannelClient>())
     {
     }
     std::unique_ptr<net::ChannelClient> channel;
@@ -34,23 +34,23 @@ struct DeviceSetClient::Impl
     SignalStreamServer streamServer;
 };
 
-DeviceSetClient::DeviceSetClient(QObject *parent):
+DeviceSetClient::DeviceSetClient(QObject* parent):
     QObject(parent),
     d(std::make_unique<Impl>())
 {
-    connect(d->channel.get(),&net::ChannelClient::messageReceived,
-            this,&DeviceSetClient::onMessageReceived);
+    connect(d->channel.get(), &net::ChannelClient::messageReceived,
+            this, &DeviceSetClient::onMessageReceived);
 
-    connect(d->channel.get(),&net::ChannelClient::connected,
-            this,&DeviceSetClient::connected);
+    connect(d->channel.get(), &net::ChannelClient::connected,
+            this, &DeviceSetClient::connected);
 
-    connect(d->channel.get(),&net::ChannelClient::finished,
-            this,&DeviceSetClient::disconnected);
+    connect(d->channel.get(), &net::ChannelClient::finished,
+            this, &DeviceSetClient::disconnected);
 }
 
 void DeviceSetClient::setLiceningStreamPort(quint16 port)
 {
-    d->streamServer.listen(QHostAddress::Any,port);
+    d->streamServer.listen(QHostAddress::Any, port);
 }
 
 quint16 DeviceSetClient::liceningStreamPort()
@@ -58,8 +58,10 @@ quint16 DeviceSetClient::liceningStreamPort()
     return d->streamServer.serverPort();
 }
 
-const proto::receiver::DeviceSetInfo & DeviceSetClient::getDeviceSetInfo() const
-{ return d->currentDeviceSetInfo; }
+const proto::receiver::DeviceSetInfo& DeviceSetClient::getDeviceSetInfo() const
+{
+    return d->currentDeviceSetInfo;
+}
 
 QString DeviceSetClient::getStationAddress()const
 {
@@ -70,17 +72,18 @@ QStringList DeviceSetClient::receiverNameList()const
 {
     QStringList receiverNameList;
 
-    const proto::receiver::DeviceSetInfo &deviceSetInfo=getDeviceSetInfo();
-    for(int i=0;i<deviceSetInfo.device_info_size();i++){
-        receiverNameList<<deviceSetInfo.device_info(i).serial_number().data();
+    const proto::receiver::DeviceSetInfo& deviceSetInfo = getDeviceSetInfo();
+    for(int i = 0; i < deviceSetInfo.device_info_size(); i++)
+    {
+        receiverNameList << deviceSetInfo.device_info(i).serial_number().data();
     }
     return receiverNameList;
 }
 
-void DeviceSetClient::connectToHost(const QHostAddress &address, quint16 port)
+void DeviceSetClient::connectToHost(const QHostAddress& address, quint16 port)
 {
     setObjectName(address.toString());
-    d->channel->connectToHost(address.toString(),port,SessionType::SESSION_COMMAND);
+    d->channel->connectToHost(address.toString(), port, SessionType::SESSION_COMMAND);
 }
 
 void DeviceSetClient::disconnectFromHost()
@@ -92,52 +95,62 @@ ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
 {
     return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
 }
-DeviceSetClient::~DeviceSetClient(){}
+DeviceSetClient::~DeviceSetClient() {}
 
 QString DeviceSetClient::getCurrentDeviceSetName()const
 {
-    QString deviceSetName="DS#";
-    for (int i=0;i<d->currentDeviceSetInfo.device_info_size();i++){
-        deviceSetName+=d->currentDeviceSetInfo.device_info(i).serial_number().data();
-        qDebug()<<QString(d->currentDeviceSetInfo.device_info(i).serial_number().data());
-        if(i!=d->currentDeviceSetInfo.device_info_size()-1){
-            deviceSetName+="_";
+    QString deviceSetName = "DS#";
+    for (int i = 0; i < d->currentDeviceSetInfo.device_info_size(); i++)
+    {
+        deviceSetName += d->currentDeviceSetInfo.device_info(i).serial_number().data();
+        qDebug() << QString(d->currentDeviceSetInfo.device_info(i).serial_number().data());
+        if(i != d->currentDeviceSetInfo.device_info_size() - 1)
+        {
+            deviceSetName += "_";
         }
     }
     return deviceSetName;
 }
 
-void DeviceSetClient::onMessageReceived(const QByteArray &buffer)
+void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
 {
     //qDebug()<<"ReceiverStationClient::onMessageReceived"<<buffer.size();
     proto::receiver::HostToClient hostToClient;
-    if(!hostToClient.ParseFromArray(buffer.constData(),buffer.size())){
-        qDebug()<<"ERROR PARSE HOST_TO_CLIENT_MESSAGE";
+    if(!hostToClient.ParseFromArray(buffer.constData(), buffer.size()))
+    {
+        qDebug() << "ERROR PARSE HOST_TO_CLIENT_MESSAGE";
         return;
     }
 
-    if(hostToClient.has_command_answer()){
-        proto::receiver::Answer commandAnswer= hostToClient.command_answer();
+    if(hostToClient.has_command_answer())
+    {
+        proto::receiver::Answer commandAnswer = hostToClient.command_answer();
         readAnswerPacket(commandAnswer);
-    }else if (hostToClient.has_device_set_info()) {
-        d->currentDeviceSetInfo=hostToClient.device_set_info();
+    }
+    else if (hostToClient.has_device_set_info())
+    {
+        d->currentDeviceSetInfo = hostToClient.device_set_info();
         //        qDebug()<<"DeviceSetReadyForUse";
         emit deviceInfoUpdated();
-    }else if (hostToClient.is_ready()){
+    }
+    else if (hostToClient.is_ready())
+    {
         emit deviceSetReady();
     }
-    else qDebug()<<"ERROR MESSAGE RECEIVE";
+    else qDebug() << "ERROR MESSAGE RECEIVE";
 }
 
-void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
+void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer& answer)
 {
-    if(d->commandQueue.isEmpty()){
-        qDebug()<<"ERROR QUEUE IS EMPTY";
+    if(d->commandQueue.isEmpty())
+    {
+        qDebug() << "ERROR QUEUE IS EMPTY";
         return;
     }
 
-    if(answer.type()!=d->commandQueue.head()){
-        qDebug()<<"ERROR Answer type";
+    if(answer.type() != d->commandQueue.head())
+    {
+        qDebug() << "ERROR Answer type";
         return;
     }
 
@@ -145,69 +158,69 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
     {
         switch (answer.type())
         {
-        case proto::receiver::CommandType::SET_POWER_OFF:
-            qDebug()<<"SETED_POWER_OFF";
-            //            emit deviceSetPowerSetted(false);
-            break;
-        case proto::receiver::CommandType::SET_POWER_ON:
-            qDebug()<<"SETED_POWER_ON";
-            //            emit deviceSetPowerSetted(true);
-            break;
-        case proto::receiver::CommandType::SET_SETTINGS:
-            qDebug()<<"SETED_SETTINGS:";
-            //            emit deviceSetSettingsSetted();
-            break;
-        case proto::receiver::CommandType::SET_ATTENUATOR:
-            qDebug()<< "SETED_ATTENUATOR"<<objectName();
-            break;
-        case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
-            qDebug()<< "SETED_PREAMPLIFIER_ENABLED";
-            break;
-        case proto::receiver::CommandType::SET_PRESELECTORS:
-            qDebug()<< "SETED_PRESELECTORS";
-            break;
-        case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
-            qDebug()<< "SETED_NOICE_BLANKER_ENABLED";
-            break;
-        case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
-            qDebug()<< "SETED_ADC_NOICE_BLANKER_THRESHOLD";
-            break;
-        case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
-            qDebug()<< "SETED_FREQUENCY";
-            break;
-        case proto::receiver::CommandType::SET_DDC1_TYPE:
-            qDebug()<< "SETED_DDC1_TYPE";
-            //            emit deviceSetChangeBandwith();
-            break;
-        case proto::receiver::CommandType::START_DDC1:
-            qDebug()<<"STARTED_DDC1:";
-            emit ddc1StreamStarted();
-            break;
-        case proto::receiver::CommandType::STOP_DDC1:
-            qDebug()<<"STOPED_DDC1:";
-            emit ddc1StreamStoped();
-            break;
-        case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
-            qDebug()<<"SETTED_SHIFT_PHASE_DDC1";
-            break;
-        case proto::receiver::SET_DEVICE_INDEX:
-            qDebug()<<"SETTED_DEVICE_SET_INDEX";
-            break;
-        case proto::receiver::START_SENDING_DDC1_STREAM:
-            qDebug()<<"START_SENDING_DDC1_STREAM";
-            break;
-        case proto::receiver::STOP_SENDING_DDC1_STREAM:
-            qDebug()<<"STOP_SENDING_DDC1_STREAM";
-            break;
-        case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
-        case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
-            break;
+            case proto::receiver::CommandType::SET_POWER_OFF:
+                qDebug() << "SETED_POWER_OFF";
+                //            emit deviceSetPowerSetted(false);
+                break;
+            case proto::receiver::CommandType::SET_POWER_ON:
+                qDebug() << "SETED_POWER_ON";
+                //            emit deviceSetPowerSetted(true);
+                break;
+            case proto::receiver::CommandType::SET_SETTINGS:
+                qDebug() << "SETED_SETTINGS:";
+                //            emit deviceSetSettingsSetted();
+                break;
+            case proto::receiver::CommandType::SET_ATTENUATOR:
+                qDebug() << "SETED_ATTENUATOR" << objectName();
+                break;
+            case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
+                qDebug() << "SETED_PREAMPLIFIER_ENABLED";
+                break;
+            case proto::receiver::CommandType::SET_PRESELECTORS:
+                qDebug() << "SETED_PRESELECTORS";
+                break;
+            case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
+                qDebug() << "SETED_NOICE_BLANKER_ENABLED";
+                break;
+            case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
+                qDebug() << "SETED_ADC_NOICE_BLANKER_THRESHOLD";
+                break;
+            case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
+                qDebug() << "SETED_FREQUENCY";
+                break;
+            case proto::receiver::CommandType::SET_DDC1_TYPE:
+                qDebug() << "SETED_DDC1_TYPE";
+                //            emit deviceSetChangeBandwith();
+                break;
+            case proto::receiver::CommandType::START_DDC1:
+                qDebug() << "STARTED_DDC1:";
+                emit ddc1StreamStarted();
+                break;
+            case proto::receiver::CommandType::STOP_DDC1:
+                qDebug() << "STOPED_DDC1:";
+                emit ddc1StreamStoped();
+                break;
+            case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
+                qDebug() << "SETTED_SHIFT_PHASE_DDC1";
+                break;
+            case proto::receiver::SET_DEVICE_INDEX:
+                qDebug() << "SETTED_DEVICE_SET_INDEX";
+                break;
+            case proto::receiver::START_SENDING_DDC1_STREAM:
+                qDebug() << "START_SENDING_DDC1_STREAM";
+                break;
+            case proto::receiver::STOP_SENDING_DDC1_STREAM:
+                qDebug() << "STOP_SENDING_DDC1_STREAM";
+                break;
+            case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
+            case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
+                break;
         }
         emit commandSuccessed();
     }
     else
     {
-        qWarning()<<"ERROR RESPONSE"<<answer.type();
+        qWarning() << "ERROR RESPONSE" << answer.type();
         emit commandFailed(errorString(answer.type()));
     }
     //    qDebug()<<"DEQ_B";
@@ -215,9 +228,9 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer &answer)
     //    qDebug()<<"DEQ_E";
 }
 
-void DeviceSetClient::sendCommand(proto::receiver::Command &command)
+void DeviceSetClient::sendCommand(proto::receiver::Command& command)
 {
-    if(command.command_type()== proto::receiver::START_SENDING_DDC1_STREAM)
+    if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
     {
         command.set_stream_port(d->streamServer.serverPort());
     }
@@ -229,36 +242,38 @@ void DeviceSetClient::sendCommand(proto::receiver::Command &command)
 }
 QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 {
-    switch (commandType) {
-    case proto::receiver::CommandType::SET_POWER_ON:
-        return "ERROR Command Power on";
-    case proto::receiver::CommandType::SET_POWER_OFF:
-        return "ERROR Command Power off ";
-    case proto::receiver::CommandType::SET_SETTINGS:
-        return "ERROR Command Power set settings";
-    case proto::receiver::START_DDC1:
-        return"ERROR Command Power start ddc1";
-    case proto::receiver::STOP_DDC1:
-        return"ERROR Command Power stop ddc1";
-    case proto::receiver::SET_DDC1_TYPE:
-        return "ERROR Command Power set ddc1 type";
-    case proto::receiver::SET_DDC1_FREQUENCY:
-        return "ERROR Change Freq";
-    case proto::receiver::SET_PRESELECTORS:
-        return "ERROR Presselector check";
-    case proto::receiver::SET_PREAMPLIFIER_ENABLED:
-        return "ERROR Pream check";
-    case proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED:
-        return"ERROR ADC ENABLED CHECK";
-    case proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD:
-        return"ERROR ADC THRESHOLD CHECK";
-    case proto::receiver::SET_ATTENUATOR:
-        return "ERROR ATTENUATOR CHECK";
-    case proto::receiver::SET_SHIFT_PHASE_DDC:
-        return "ERROR SHIFT PHASE DDC1";
-    case proto::receiver::SET_DEVICE_INDEX:
-        return "ERROR COMMAND SET DEVICE SET INDEX";
-    default:return "UNKNOWN KOMMAND";
+    switch (commandType)
+    {
+        case proto::receiver::CommandType::SET_POWER_ON:
+            return "ERROR Command Power on";
+        case proto::receiver::CommandType::SET_POWER_OFF:
+            return "ERROR Command Power off ";
+        case proto::receiver::CommandType::SET_SETTINGS:
+            return "ERROR Command Power set settings";
+        case proto::receiver::START_DDC1:
+            return"ERROR Command Power start ddc1";
+        case proto::receiver::STOP_DDC1:
+            return"ERROR Command Power stop ddc1";
+        case proto::receiver::SET_DDC1_TYPE:
+            return "ERROR Command Power set ddc1 type";
+        case proto::receiver::SET_DDC1_FREQUENCY:
+            return "ERROR Change Freq";
+        case proto::receiver::SET_PRESELECTORS:
+            return "ERROR Presselector check";
+        case proto::receiver::SET_PREAMPLIFIER_ENABLED:
+            return "ERROR Pream check";
+        case proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED:
+            return"ERROR ADC ENABLED CHECK";
+        case proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD:
+            return"ERROR ADC THRESHOLD CHECK";
+        case proto::receiver::SET_ATTENUATOR:
+            return "ERROR ATTENUATOR CHECK";
+        case proto::receiver::SET_SHIFT_PHASE_DDC:
+            return "ERROR SHIFT PHASE DDC1";
+        case proto::receiver::SET_DEVICE_INDEX:
+            return "ERROR COMMAND SET DEVICE SET INDEX";
+        default:
+            return "UNKNOWN KOMMAND";
     }
 }
 

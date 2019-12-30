@@ -10,22 +10,22 @@
 #include <QPair>
 #include <memory>
 
-class CohG35DeviceSet:public IDevice
+class CohG35DeviceSet: public IDevice
 {
-public:
-    CohG35DeviceSet( ICohG35DDCDeviceSet *_deviceSet);
+  public:
+    CohG35DeviceSet( ICohG35DDCDeviceSet* _deviceSet);
     virtual ~CohG35DeviceSet();
-public:
+  public:
     bool setPower(bool state)override;
     bool setAttenuator(unsigned int attenuationLevel)override;
-    bool setPreselectors(unsigned int lowFrequency,unsigned int highFrequency)override;
+    bool setPreselectors(unsigned int lowFrequency, unsigned int highFrequency)override;
     bool setPreamplifierEnabled(bool state)override;
     bool setDDC1Frequency(unsigned int ddc1Frequency)override;
     bool setAdcNoiceBlankerEnabled(bool state)override;
     bool setAdcNoiceBlankerThreshold(unsigned short threshold)override;
     bool setDDC1Type(quint32 type)override;
 
-    bool setSettings(const DeviceSettings &settings)override;
+    bool setSettings(const DeviceSettings& settings)override;
     //*****Stram DDC1
     bool startDDC1(unsigned int sampesPerBuffer)override;
     bool stopDDC1()override;
@@ -34,10 +34,10 @@ public:
 
     COH_G35DDC_DEVICE_SET getDeviceSetInfo();
     QString getDeviceSetName();
-private:
+  private:
     void freeResource();
-private:
-    ICohG35DDCDeviceSet *_deviceSet=nullptr;
+  private:
+    ICohG35DDCDeviceSet* _deviceSet = nullptr;
     std::unique_ptr<CohG35Callback>uPtrCallback;
 };
 

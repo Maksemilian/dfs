@@ -8,51 +8,64 @@
 template<class T>
 class RingBuffer
 {
-public:
+  public:
     RingBuffer(int bufferSize):
         _array(new T[bufferSize]),
         _writeCounter(0),
         _readCounter(0),
-        _mask(bufferSize-1),
-        _size(bufferSize){  }
+        _mask(bufferSize - 1),
+        _size(bufferSize) {  }
 
-    void push(const T &packet){
+    void push(const T& packet)
+    {
         QWriteLocker writeLocker(&_mutex);
-        _array[_writeCounter++ &_mask]=packet;
+        _array[_writeCounter++ &_mask] = packet;
         _notEmpty.wakeOne();
     }
 
-    bool pop(T&packet){
+    bool pop(T& packet)
+    {
         QReadLocker readLocker(&_mutex);
-        if( _readCounter<_writeCounter){
-            packet=_array[_readCounter++ &_mask];
+        if( _readCounter < _writeCounter)
+        {
+            packet = _array[_readCounter++ &_mask];
             return true;
         }
-        else{
-            _notEmpty.wait(&_mutex,2);
+        else
+        {
+            _notEmpty.wait(&_mutex, 2);
             return false;
         }
     }
-    void reset(){
+    void reset()
+    {
         QReadLocker readLocker(&_mutex);
-        _writeCounter=0;
-        _readCounter=0;
+        _writeCounter = 0;
+        _readCounter = 0;
     }
 
-    int getIndexRead(){
+    int getIndexRead()
+    {
         return _readCounter;
     }
-    int getIndexWrite(){
+    int getIndexWrite()
+    {
         return _writeCounter;
     }
-    inline bool isReadable(){return _readCounter<_writeCounter;}
-    int size(){return _size;}
-private:
-    T *_array;
+    inline bool isReadable()
+    {
+        return _readCounter < _writeCounter;
+    }
+    int size()
+    {
+        return _size;
+    }
+  private:
+    T* _array;
     std::atomic<int> _writeCounter;
     std::atomic<int> _readCounter;
     std::atomic<int> _mask;
-    int _size=0;
+    int _size = 0;
     QReadWriteLock _mutex;
     QWaitCondition _notEmpty;
 };

@@ -1,4 +1,9 @@
+! include( format.astylerc){
+    error( "Couldn't find the format.astylerc file!" )
+}
+
 PROJECT_ROOT_PATH = $${PWD}/
+
 
 CONFIG(debug, debug|release) {
     BUILD_FLAG = debug

@@ -4,33 +4,33 @@
 #include "qcustomplot.h"
 #include <QMutex>
 
-class ElipseLine :public QCPItemLine
+class ElipseLine : public QCPItemLine
 {
     static const QColor blueColor;
     static const QString DEGREE_UNICODE_SYMBOL;
 
-public:
-    ElipseLine(const QPointF &posBegin,const QPointF &posEnd,
-               const QString &leftText,const QString &rightText,QCustomPlot*parent);
+  public:
+    ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
+               const QString& leftText, const QString& rightText, QCustomPlot* parent);
 };
 
-class ElipsPlot:public QCustomPlot
+class ElipsPlot: public QCustomPlot
 {
-    int LOWER_BORDER_X_AXIS =-750000;
-    int UPPER_BORDER_X_AXIS =750000;
-    int LOWER_BORDER_Y_AXIS =-750000;
+    int LOWER_BORDER_X_AXIS = -750000;
+    int UPPER_BORDER_X_AXIS = 750000;
+    int LOWER_BORDER_Y_AXIS = -750000;
     int UPPER_BORDER_Y_AXIS = 750000;
 
-    static const QPair<QPoint,QPoint> arrayPair[4];
+    static const QPair<QPoint, QPoint> arrayPair[4];
     static const QColor greenColor;
     static const QColor blueColor;
-public:
-    ElipsPlot(QWidget *parent=nullptr);
-    void update(int index,const float*sumDivData,quint32 dataSize);
-private:
-    void customEvent(QEvent *event)override;
-private:
-    QCPCurve *curve;
+  public:
+    ElipsPlot(QWidget* parent = nullptr);
+    void update(int index, const float* sumDivData, quint32 dataSize);
+  private:
+    void customEvent(QEvent* event)override;
+  private:
+    QCPCurve* curve;
     QList<ElipseLine*>lines;
     QMutex mutex;
 };

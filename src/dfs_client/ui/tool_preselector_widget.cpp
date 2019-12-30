@@ -4,9 +4,9 @@
 #include <QHBoxLayout>
 #include <QComboBox>
 
-const int PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE=5;
+const int PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE = 5;
 
-const quint32 PreselectorWidget::preselectorLowFrequency[PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE]=
+const quint32 PreselectorWidget::preselectorLowFrequency[PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE] =
 {
     0,
     850'000,
@@ -15,7 +15,7 @@ const quint32 PreselectorWidget::preselectorLowFrequency[PreselectorWidget::PRES
     11'800'000
 };
 
-const quint32 PreselectorWidget::preselectorHighFrequency[PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE]=
+const quint32 PreselectorWidget::preselectorHighFrequency[PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE] =
 {
     3'100'000,
     5'400'000,
@@ -24,22 +24,23 @@ const quint32 PreselectorWidget::preselectorHighFrequency[PreselectorWidget::PRE
     50'000'000
 };
 
-PreselectorWidget::PreselectorWidget(/*MainWindow*mainWindow,*/QWidget*parent)
-    :QWidget(parent)/*,IToolBarWidget(mainWindow)*/
+PreselectorWidget::PreselectorWidget(/*MainWindow*mainWindow,*/QWidget* parent)
+    : QWidget(parent) /*,IToolBarWidget(mainWindow)*/
 {
     setLayout(new QHBoxLayout);
-    cbLowFrequency=new QComboBox(this);
+    cbLowFrequency = new QComboBox(this);
 
-    connect(cbLowFrequency,static_cast<void(QComboBox::*)(const QString &strLowFrequency)>(&QComboBox::activated),
-            this,&PreselectorWidget::onPreselectorFrequencyChanged);
+    connect(cbLowFrequency, static_cast<void(QComboBox::*)(const QString& strLowFrequency)>(&QComboBox::activated),
+            this, &PreselectorWidget::onPreselectorFrequencyChanged);
 
     //preseector HIGH FREQUENCY COMBO BOX
-    cbHighFrequency=new QComboBox(this);
+    cbHighFrequency = new QComboBox(this);
 
-    connect(cbHighFrequency,static_cast<void(QComboBox::*)(const QString &strHighFrequency)>(&QComboBox::activated),
-            this,&PreselectorWidget::onPreselectorFrequencyChanged);
+    connect(cbHighFrequency, static_cast<void(QComboBox::*)(const QString& strHighFrequency)>(&QComboBox::activated),
+            this, &PreselectorWidget::onPreselectorFrequencyChanged);
 
-    for(int i=0;i<PRESELECTOR_FREQUENCY_SIZE;i++){
+    for(int i = 0; i < PRESELECTOR_FREQUENCY_SIZE; i++)
+    {
         cbLowFrequency->addItem(FrequencyLineEdit::formatingFrequencyToString(preselectorLowFrequency[i]));
         cbHighFrequency->addItem(FrequencyLineEdit::formatingFrequencyToString(preselectorHighFrequency[i]));
     }
@@ -47,20 +48,22 @@ PreselectorWidget::PreselectorWidget(/*MainWindow*mainWindow,*/QWidget*parent)
     layout()->addWidget(cbHighFrequency);
 }
 
-void PreselectorWidget::setWidgetData(const QPair<UInt32LowFreq,UInt32HeighFreq>&pair)
+void PreselectorWidget::setWidgetData(const QPair<UInt32LowFreq, UInt32HeighFreq>& pair)
 {
     cbLowFrequency->setCurrentText (FrequencyLineEdit::formatingFrequencyToString(pair.first));
     cbHighFrequency->setCurrentText(FrequencyLineEdit::formatingFrequencyToString(pair.second));
 }
 
-QPair<UInt32LowFreq,UInt32HeighFreq> PreselectorWidget::getPreselectors(){
-    return {
+QPair<UInt32LowFreq, UInt32HeighFreq> PreselectorWidget::getPreselectors()
+{
+    return
+    {
         FrequencyLineEdit::formatingStringFrequencyToNumber(cbLowFrequency->currentText()),
-                FrequencyLineEdit:: formatingStringFrequencyToNumber(cbHighFrequency->currentText())
+        FrequencyLineEdit:: formatingStringFrequencyToNumber(cbHighFrequency->currentText())
     };
 }
 
-void PreselectorWidget::onPreselectorFrequencyChanged(const QString &strFrequency)
+void PreselectorWidget::onPreselectorFrequencyChanged(const QString& strFrequency)
 {
     if(!strFrequency.isEmpty())
         changed();

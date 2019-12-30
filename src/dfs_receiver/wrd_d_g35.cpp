@@ -4,7 +4,7 @@
 
 #include <QDebug>
 
-G35Device::G35Device(IG35DDCDevice*device):_device(device)
+G35Device::G35Device(IG35DDCDevice* device): _device(device)
 {
 
 }
@@ -12,7 +12,7 @@ G35Device::G35Device(IG35DDCDevice*device):_device(device)
 G35DDC_DEVICE_INFO G35Device::getDeviceInfo()
 {
     G35DDC_DEVICE_INFO deviceInfo;
-    _device->GetDeviceInfo(&deviceInfo,sizeof (deviceInfo));
+    _device->GetDeviceInfo(&deviceInfo, sizeof (deviceInfo));
     return deviceInfo;
 }
 
@@ -20,7 +20,7 @@ void G35Device::setCallback(std::unique_ptr<G35Callback> callback)
 {
     if(!callback.get())return;
 
-    _callback=std::move(callback);
+    _callback = std::move(callback);
 
     _device->SetCallback(callback.get());
 }
@@ -42,7 +42,7 @@ bool G35Device::setPreamplifierEnabled(bool state)
 
 bool G35Device::setPreselectors(unsigned int lowFrequency, unsigned int highFrequency)
 {
-    return _device->SetPreselectors(lowFrequency,highFrequency);
+    return _device->SetPreselectors(lowFrequency, highFrequency);
 }
 
 bool G35Device::setAdcNoiceBlankerEnabled(bool state)
@@ -65,39 +65,39 @@ bool G35Device::setDDC1Type(unsigned int type)
     return  _device->SetDDC1(type);
 }
 
-bool G35Device::setSettings(const DeviceSettings &settings)
+bool G35Device::setSettings(const DeviceSettings& settings)
 {
-    bool succesed=false;
+    bool succesed = false;
 
-    succesed=setAttenuator(settings.attenuator);
-    qDebug()<<"======Comand  SET_ATTENUATOR "<<settings.attenuator<<"Db"<<"|| Succesed command"<<succesed;
+    succesed = setAttenuator(settings.attenuator);
+    qDebug() << "======Comand  SET_ATTENUATOR " << settings.attenuator << "Db" << "|| Succesed command" << succesed;
 
-    succesed=setPreselectors(settings.preselectors.first,settings.preselectors.second);
-    qDebug()<<"======Comand  SET_PRESELECTORS"<<"Frequency:"<<"Low "<<settings.preselectors.first<<"Hz"
-           <<"High "<<settings.preselectors.second<<"Hz"<<"|| Succesed command"<<succesed;
+    succesed = setPreselectors(settings.preselectors.first, settings.preselectors.second);
+    qDebug() << "======Comand  SET_PRESELECTORS" << "Frequency:" << "Low " << settings.preselectors.first << "Hz"
+             << "High " << settings.preselectors.second << "Hz" << "|| Succesed command" << succesed;
 
-    succesed=setPreamplifierEnabled(settings.preamplifier);
-    qDebug()<<"======Comand  SET_PREAMPLIFIED_ENABLED"<<settings.preamplifier<<"|| Succesed command"<<succesed;
+    succesed = setPreamplifierEnabled(settings.preamplifier);
+    qDebug() << "======Comand  SET_PREAMPLIFIED_ENABLED" << settings.preamplifier << "|| Succesed command" << succesed;
 
-    succesed=setAdcNoiceBlankerEnabled(settings.adcEnabled);
-    qDebug()<<"======Comand  SET_ADC_NOICE_BLANKER_ENABLED"<<settings.adcEnabled<<"|| Succesed command"<<succesed;
+    succesed = setAdcNoiceBlankerEnabled(settings.adcEnabled);
+    qDebug() << "======Comand  SET_ADC_NOICE_BLANKER_ENABLED" << settings.adcEnabled << "|| Succesed command" << succesed;
 
-    succesed=setAdcNoiceBlankerThreshold(settings.threshold);
-    qDebug()<<"======Comand  SET_ADC_NOICE_BLANKER_THRESHOLD"<<settings.threshold<<"|| Succesed command"<<succesed;
+    succesed = setAdcNoiceBlankerThreshold(settings.threshold);
+    qDebug() << "======Comand  SET_ADC_NOICE_BLANKER_THRESHOLD" << settings.threshold << "|| Succesed command" << succesed;
 
-    succesed=setDDC1Frequency(settings.frequency);
-    qDebug()<<"======Comand  SET_DDC1_FREQUENCY"<<settings.frequency<<"|| Succesed command"<<succesed;
+    succesed = setDDC1Frequency(settings.frequency);
+    qDebug() << "======Comand  SET_DDC1_FREQUENCY" << settings.frequency << "|| Succesed command" << succesed;
 
-    succesed=_device->SetDDC1(settings.ddcType);
-    qDebug()<<"======Comand  SET_DDC1_TYPE"<<settings.ddcType<<"|| Succesed command"<<succesed;
+    succesed = _device->SetDDC1(settings.ddcType);
+    qDebug() << "======Comand  SET_DDC1_TYPE" << settings.ddcType << "|| Succesed command" << succesed;
 
     return succesed;
 }
 
 bool G35Device::startDDC1(unsigned int samplesPerBuffer)
 {
-    Q_ASSERT_X(_device,"deviceSet is null","CohG35DeviceSet::startDDC1();");
-    bool success=false;
+    Q_ASSERT_X(_device, "deviceSet is null", "CohG35DeviceSet::startDDC1();");
+    bool success = false;
 //    if(!timeReader.isStarted())return false;
 //    if(_device){
 //        resetData();
@@ -111,7 +111,7 @@ bool G35Device::startDDC1(unsigned int samplesPerBuffer)
 
 bool G35Device::stopDDC1()
 {
-    bool success=false;
+    bool success = false;
 //    if(_device){
 //        success= _device->StopDDC1();
 //        buffer->reset();

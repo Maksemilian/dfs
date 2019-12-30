@@ -7,28 +7,32 @@
 
 //#include "wrd_callback.h"
 
-class TimeReader :public QObject
+class TimeReader : public QObject
 {
     Q_OBJECT
     TimeReader();
-public:
-    static TimeReader &instance();
-    inline bool isStarted(){return startedAtomWatch;}
+  public:
+    static TimeReader& instance();
+    inline bool isStarted()
+    {
+        return startedAtomWatch;
+    }
     void start();
     void stop();
-    void getTimeOfWeek(quint32 &timeOfWeek);
-    void getWeekNumber(quint16 &weekNumber);
+    void getTimeOfWeek(quint32& timeOfWeek);
+    void getWeekNumber(quint16& weekNumber);
 
-    void getTime(quint16 &weekNumber,quint32 &timeOfWeek);
+    void getTime(quint16& weekNumber, quint32& timeOfWeek);
 
     Q_SIGNAL void stopedTrimble();
-private:
-   void process();
-   inline void reset(){
-        weekNumber=0;
-        timeOfWeek=0;
+  private:
+    void process();
+    inline void reset()
+    {
+        weekNumber = 0;
+        timeOfWeek = 0;
     }
-private:
+  private:
     QReadWriteLock rwLock;
     QFutureWatcher<void> processFutureWatcher;
 

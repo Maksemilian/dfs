@@ -6,9 +6,9 @@
 class EchoServer : public QTcpServer
 {
     Q_OBJECT
-public:
+  public:
     EchoServer();
-private:
+  private:
     void incomingConnection(qintptr handle)override;
 };
 

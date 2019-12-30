@@ -4,11 +4,11 @@
 #include <QDebug>
 #include <QMouseEvent>
 
-const char *SwitchButton::STATE_BUTTON= "state_button";
+const char* SwitchButton::STATE_BUTTON = "state_button";
 
 
-SwitchButton::SwitchButton(/*MainWindow*mainWindow,*/QWidget *parent):
-    QPushButton(parent)/*,IToolBarWidget(mainWindow)*/{}
+SwitchButton::SwitchButton(/*MainWindow*mainWindow,*/QWidget* parent):
+    QPushButton(parent)/*,IToolBarWidget(mainWindow)*/ {}
 
 //SwitchButton::SwitchButton(QString nameOn, QString nameOff,bool clicked,
 //                           /*MainWindow*mainWindow,*/QWidget *parent)
@@ -17,16 +17,16 @@ SwitchButton::SwitchButton(/*MainWindow*mainWindow,*/QWidget *parent):
 //    setButtonStates(nameOn,nameOff,clicked);
 //}
 
-SwitchButton::SwitchButton(const QString &nameOn,const QString &nameOff,
-                           bool clicked,QWidget *parent):
+SwitchButton::SwitchButton(const QString& nameOn, const QString& nameOff,
+                           bool clicked, QWidget* parent):
     QPushButton (parent)/*,IToolBarWidget (nullptr)*/
 {
-    setButtonStates(nameOn,nameOff,clicked);
+    setButtonStates(nameOn, nameOff, clicked);
 }
 
-void SwitchButton::setButtonStates(QString nameOn, QString nameOff,bool clicked)
+void SwitchButton::setButtonStates(QString nameOn, QString nameOff, bool clicked)
 {
-    machine=new QStateMachine;
+    machine = new QStateMachine;
     stateFirst = new QState();///on
     stateFirst->setObjectName(nameOn);
     stateFirst->assignProperty(this, "text", nameOn);
@@ -34,38 +34,42 @@ void SwitchButton::setButtonStates(QString nameOn, QString nameOff,bool clicked)
 
     stateSecond = new QState();///off
     stateSecond->setObjectName(nameOff);
-    stateSecond->assignProperty(this, "text",nameOff );
+    stateSecond->assignProperty(this, "text", nameOff );
     stateSecond->assignProperty(this, STATE_BUTTON, true);
 
-    stateFirst->addTransition(this,&SwitchButton::clicked, stateSecond);
-    stateSecond->addTransition(this,&SwitchButton::clicked, stateFirst);
+    stateFirst->addTransition(this, &SwitchButton::clicked, stateSecond);
+    stateSecond->addTransition(this, &SwitchButton::clicked, stateFirst);
 
     machine->addState(stateFirst);
     machine->addState(stateSecond);
 
-    if(!clicked) {
+    if(!clicked)
+    {
         machine->setInitialState(stateFirst);
     }
-    else {
+    else
+    {
         machine->setInitialState(stateSecond);
     }
 
     machine->start();
 
-    connect(this,&SwitchButton::clicked,this,&SwitchButton::changedState);
+    connect(this, &SwitchButton::clicked, this, &SwitchButton::changedState);
 }
 
 void SwitchButton::changedState()
 {
-    if(property(STATE_BUTTON).toBool()){
-        setProperty(STATE_BUTTON,false);
+    if(property(STATE_BUTTON).toBool())
+    {
+        setProperty(STATE_BUTTON, false);
     }
-    else {
-        setProperty(STATE_BUTTON,true);
+    else
+    {
+        setProperty(STATE_BUTTON, true);
     }
     emit stateChanged(property(STATE_BUTTON).toBool());
     changed();
-    qDebug()<<"Changed SWITCH BUTTON";
+    qDebug() << "Changed SWITCH BUTTON";
 }
 
 bool SwitchButton::currentState()
@@ -75,18 +79,21 @@ bool SwitchButton::currentState()
 
 void SwitchButton::setCurrentState(bool clicked)
 {
-    qDebug()<<"Set Current:"<<clicked;
-    if(clicked){
+    qDebug() << "Set Current:" << clicked;
+    if(clicked)
+    {
         machine->setInitialState(stateSecond);
-    }else {
+    }
+    else
+    {
         machine->setInitialState(stateFirst);
     }
-    setProperty(STATE_BUTTON,clicked);
+    setProperty(STATE_BUTTON, clicked);
 }
 
-void SwitchButton::mousePressEvent(QMouseEvent *e)
+void SwitchButton::mousePressEvent(QMouseEvent* e)
 {
     Q_UNUSED(e);
-    if(cursor().shape()!=Qt::WaitCursor)
-       click();
+    if(cursor().shape() != Qt::WaitCursor)
+        click();
 }

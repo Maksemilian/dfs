@@ -36,16 +36,17 @@
 #define PROTOBUF_INTERNAL_EXPORT_device_5fset_5finfoT_2eproto
 
 // Internal implementation detail -- do not use these members.
-struct TableStruct_device_5fset_5finfoT_2eproto {
-  static const ::google::protobuf::internal::ParseTableField entries[]
+struct TableStruct_device_5fset_5finfoT_2eproto
+{
+    static const ::google::protobuf::internal::ParseTableField entries[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
+    static const ::google::protobuf::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::ParseTable schema[4]
+    static const ::google::protobuf::internal::ParseTable schema[4]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::google::protobuf::internal::FieldMetadata field_metadata[];
-  static const ::google::protobuf::internal::SerializationTable serialization_table[];
-  static const ::google::protobuf::uint32 offsets[];
+    static const ::google::protobuf::internal::FieldMetadata field_metadata[];
+    static const ::google::protobuf::internal::SerializationTable serialization_table[];
+    static const ::google::protobuf::uint32 offsets[];
 };
 void AddDescriptors_device_5fset_5finfoT_2eproto();
 class DeviceInfoT;
@@ -60,547 +61,629 @@ extern SignalDirectoryInfoTDefaultTypeInternal _SignalDirectoryInfoT_default_ins
 class SignalFileInfoT;
 class SignalFileInfoTDefaultTypeInternal;
 extern SignalFileInfoTDefaultTypeInternal _SignalFileInfoT_default_instance_;
-namespace google {
-namespace protobuf {
-template<> ::DeviceInfoT* Arena::CreateMaybeMessage<::DeviceInfoT>(Arena*);
-template<> ::DeviceSetInfoT* Arena::CreateMaybeMessage<::DeviceSetInfoT>(Arena*);
-template<> ::SignalDirectoryInfoT* Arena::CreateMaybeMessage<::SignalDirectoryInfoT>(Arena*);
-template<> ::SignalFileInfoT* Arena::CreateMaybeMessage<::SignalFileInfoT>(Arena*);
-}  // namespace protobuf
+namespace google
+{
+    namespace protobuf
+    {
+        template<> ::DeviceInfoT* Arena::CreateMaybeMessage<::DeviceInfoT>(Arena*);
+        template<> ::DeviceSetInfoT* Arena::CreateMaybeMessage<::DeviceSetInfoT>(Arena*);
+        template<> ::SignalDirectoryInfoT* Arena::CreateMaybeMessage<::SignalDirectoryInfoT>(Arena*);
+        template<> ::SignalFileInfoT* Arena::CreateMaybeMessage<::SignalFileInfoT>(Arena*);
+    }  // namespace protobuf
 }  // namespace google
 
 // ===================================================================
 
 class DeviceInfoT :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:DeviceInfoT) */ {
- public:
-  DeviceInfoT();
-  virtual ~DeviceInfoT();
+    public ::google::protobuf::Message   /* @@protoc_insertion_point(class_definition:DeviceInfoT) */
+{
+  public:
+    DeviceInfoT();
+    virtual ~DeviceInfoT();
 
-  DeviceInfoT(const DeviceInfoT& from);
+    DeviceInfoT(const DeviceInfoT& from);
 
-  inline DeviceInfoT& operator=(const DeviceInfoT& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  DeviceInfoT(DeviceInfoT&& from) noexcept
-    : DeviceInfoT() {
-    *this = ::std::move(from);
-  }
-
-  inline DeviceInfoT& operator=(DeviceInfoT&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
+    inline DeviceInfoT& operator=(const DeviceInfoT& from)
+    {
+        CopyFrom(from);
+        return *this;
     }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const DeviceInfoT& default_instance();
+#if LANG_CXX11
+    DeviceInfoT(DeviceInfoT&& from) noexcept
+        : DeviceInfoT()
+    {
+        *this = ::std::move(from);
+    }
 
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const DeviceInfoT* internal_default_instance() {
-    return reinterpret_cast<const DeviceInfoT*>(
-               &_DeviceInfoT_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    0;
+    inline DeviceInfoT& operator=(DeviceInfoT&& from) noexcept
+    {
+        if (GetArenaNoVirtual() == from.GetArenaNoVirtual())
+        {
+            if (this != &from) InternalSwap(&from);
+        }
+        else
+        {
+            CopyFrom(from);
+        }
+        return *this;
+    }
+#endif
+    static const ::google::protobuf::Descriptor* descriptor()
+    {
+        return default_instance().GetDescriptor();
+    }
+    static const DeviceInfoT& default_instance();
 
-  void Swap(DeviceInfoT* other);
-  friend void swap(DeviceInfoT& a, DeviceInfoT& b) {
-    a.Swap(&b);
-  }
+    static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+    static inline const DeviceInfoT* internal_default_instance()
+    {
+        return reinterpret_cast<const DeviceInfoT*>(
+                   &_DeviceInfoT_default_instance_);
+    }
+    static constexpr int kIndexInFileMessages =
+        0;
 
-  // implements Message ----------------------------------------------
+    void Swap(DeviceInfoT* other);
+    friend void swap(DeviceInfoT& a, DeviceInfoT& b)
+    {
+        a.Swap(&b);
+    }
 
-  inline DeviceInfoT* New() const final {
-    return CreateMaybeMessage<DeviceInfoT>(nullptr);
-  }
+    // implements Message ----------------------------------------------
 
-  DeviceInfoT* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<DeviceInfoT>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const DeviceInfoT& from);
-  void MergeFrom(const DeviceInfoT& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+    inline DeviceInfoT* New() const final
+    {
+        return CreateMaybeMessage<DeviceInfoT>(nullptr);
+    }
 
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+    DeviceInfoT* New(::google::protobuf::Arena* arena) const final
+    {
+        return CreateMaybeMessage<DeviceInfoT>(arena);
+    }
+    void CopyFrom(const ::google::protobuf::Message& from) final;
+    void MergeFrom(const ::google::protobuf::Message& from) final;
+    void CopyFrom(const DeviceInfoT& from);
+    void MergeFrom(const DeviceInfoT& from);
+    PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+    bool IsInitialized() const final;
+
+    size_t ByteSizeLong() const final;
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+    ::google::protobuf::internal::ParseFunc _ParseFunc() const final
+    {
+        return _InternalParse;
+    }
+#else
+    bool MergePartialFromCodedStream(
+        ::google::protobuf::io::CodedInputStream* input) final;
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    void SerializeWithCachedSizes(
+        ::google::protobuf::io::CodedOutputStream* output) const final;
+    ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::uint8* target) const final;
+    int GetCachedSize() const final
+    {
+        return _cached_size_.Get();
+    }
 
   private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(DeviceInfoT* other);
+    void SharedCtor();
+    void SharedDtor();
+    void SetCachedSize(int size) const final;
+    void InternalSwap(DeviceInfoT* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
+    inline ::google::protobuf::Arena* GetArenaNoVirtual() const
+    {
+        return nullptr;
+    }
+    inline void* MaybeArenaPtr() const
+    {
+        return nullptr;
+    }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const final;
+    ::google::protobuf::Metadata GetMetadata() const final;
 
-  // nested types ----------------------------------------------------
+    // nested types ----------------------------------------------------
 
-  // accessors -------------------------------------------------------
+    // accessors -------------------------------------------------------
 
-  // string serial_number = 1;
-  void clear_serial_number();
-  static const int kSerialNumberFieldNumber = 1;
-  const ::std::string& serial_number() const;
-  void set_serial_number(const ::std::string& value);
-  #if LANG_CXX11
-  void set_serial_number(::std::string&& value);
-  #endif
-  void set_serial_number(const char* value);
-  void set_serial_number(const char* value, size_t size);
-  ::std::string* mutable_serial_number();
-  ::std::string* release_serial_number();
-  void set_allocated_serial_number(::std::string* serial_number);
+    // string serial_number = 1;
+    void clear_serial_number();
+    static const int kSerialNumberFieldNumber = 1;
+    const ::std::string& serial_number() const;
+    void set_serial_number(const ::std::string& value);
+#if LANG_CXX11
+    void set_serial_number(::std::string&& value);
+#endif
+    void set_serial_number(const char* value);
+    void set_serial_number(const char* value, size_t size);
+    ::std::string* mutable_serial_number();
+    ::std::string* release_serial_number();
+    void set_allocated_serial_number(::std::string* serial_number);
 
-  // string interface_type = 4;
-  void clear_interface_type();
-  static const int kInterfaceTypeFieldNumber = 4;
-  const ::std::string& interface_type() const;
-  void set_interface_type(const ::std::string& value);
-  #if LANG_CXX11
-  void set_interface_type(::std::string&& value);
-  #endif
-  void set_interface_type(const char* value);
-  void set_interface_type(const char* value, size_t size);
-  ::std::string* mutable_interface_type();
-  ::std::string* release_interface_type();
-  void set_allocated_interface_type(::std::string* interface_type);
+    // string interface_type = 4;
+    void clear_interface_type();
+    static const int kInterfaceTypeFieldNumber = 4;
+    const ::std::string& interface_type() const;
+    void set_interface_type(const ::std::string& value);
+#if LANG_CXX11
+    void set_interface_type(::std::string&& value);
+#endif
+    void set_interface_type(const char* value);
+    void set_interface_type(const char* value, size_t size);
+    ::std::string* mutable_interface_type();
+    ::std::string* release_interface_type();
+    void set_allocated_interface_type(::std::string* interface_type);
 
-  // fixed32 ddc_type_count = 2;
-  void clear_ddc_type_count();
-  static const int kDdcTypeCountFieldNumber = 2;
-  ::google::protobuf::uint32 ddc_type_count() const;
-  void set_ddc_type_count(::google::protobuf::uint32 value);
+    // fixed32 ddc_type_count = 2;
+    void clear_ddc_type_count();
+    static const int kDdcTypeCountFieldNumber = 2;
+    ::google::protobuf::uint32 ddc_type_count() const;
+    void set_ddc_type_count(::google::protobuf::uint32 value);
 
-  // fixed32 channel_count = 3;
-  void clear_channel_count();
-  static const int kChannelCountFieldNumber = 3;
-  ::google::protobuf::uint32 channel_count() const;
-  void set_channel_count(::google::protobuf::uint32 value);
+    // fixed32 channel_count = 3;
+    void clear_channel_count();
+    static const int kChannelCountFieldNumber = 3;
+    ::google::protobuf::uint32 channel_count() const;
+    void set_channel_count(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:DeviceInfoT)
- private:
-  class HasBitSetters;
+    // @@protoc_insertion_point(class_scope:DeviceInfoT)
+  private:
+    class HasBitSetters;
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr serial_number_;
-  ::google::protobuf::internal::ArenaStringPtr interface_type_;
-  ::google::protobuf::uint32 ddc_type_count_;
-  ::google::protobuf::uint32 channel_count_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
+    ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+    ::google::protobuf::internal::ArenaStringPtr serial_number_;
+    ::google::protobuf::internal::ArenaStringPtr interface_type_;
+    ::google::protobuf::uint32 ddc_type_count_;
+    ::google::protobuf::uint32 channel_count_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
 };
 // -------------------------------------------------------------------
 
 class DeviceSetInfoT :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:DeviceSetInfoT) */ {
- public:
-  DeviceSetInfoT();
-  virtual ~DeviceSetInfoT();
+    public ::google::protobuf::Message   /* @@protoc_insertion_point(class_definition:DeviceSetInfoT) */
+{
+  public:
+    DeviceSetInfoT();
+    virtual ~DeviceSetInfoT();
 
-  DeviceSetInfoT(const DeviceSetInfoT& from);
+    DeviceSetInfoT(const DeviceSetInfoT& from);
 
-  inline DeviceSetInfoT& operator=(const DeviceSetInfoT& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  DeviceSetInfoT(DeviceSetInfoT&& from) noexcept
-    : DeviceSetInfoT() {
-    *this = ::std::move(from);
-  }
-
-  inline DeviceSetInfoT& operator=(DeviceSetInfoT&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
+    inline DeviceSetInfoT& operator=(const DeviceSetInfoT& from)
+    {
+        CopyFrom(from);
+        return *this;
     }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const DeviceSetInfoT& default_instance();
+#if LANG_CXX11
+    DeviceSetInfoT(DeviceSetInfoT&& from) noexcept
+        : DeviceSetInfoT()
+    {
+        *this = ::std::move(from);
+    }
 
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const DeviceSetInfoT* internal_default_instance() {
-    return reinterpret_cast<const DeviceSetInfoT*>(
-               &_DeviceSetInfoT_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    1;
+    inline DeviceSetInfoT& operator=(DeviceSetInfoT&& from) noexcept
+    {
+        if (GetArenaNoVirtual() == from.GetArenaNoVirtual())
+        {
+            if (this != &from) InternalSwap(&from);
+        }
+        else
+        {
+            CopyFrom(from);
+        }
+        return *this;
+    }
+#endif
+    static const ::google::protobuf::Descriptor* descriptor()
+    {
+        return default_instance().GetDescriptor();
+    }
+    static const DeviceSetInfoT& default_instance();
 
-  void Swap(DeviceSetInfoT* other);
-  friend void swap(DeviceSetInfoT& a, DeviceSetInfoT& b) {
-    a.Swap(&b);
-  }
+    static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+    static inline const DeviceSetInfoT* internal_default_instance()
+    {
+        return reinterpret_cast<const DeviceSetInfoT*>(
+                   &_DeviceSetInfoT_default_instance_);
+    }
+    static constexpr int kIndexInFileMessages =
+        1;
 
-  // implements Message ----------------------------------------------
+    void Swap(DeviceSetInfoT* other);
+    friend void swap(DeviceSetInfoT& a, DeviceSetInfoT& b)
+    {
+        a.Swap(&b);
+    }
 
-  inline DeviceSetInfoT* New() const final {
-    return CreateMaybeMessage<DeviceSetInfoT>(nullptr);
-  }
+    // implements Message ----------------------------------------------
 
-  DeviceSetInfoT* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<DeviceSetInfoT>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const DeviceSetInfoT& from);
-  void MergeFrom(const DeviceSetInfoT& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+    inline DeviceSetInfoT* New() const final
+    {
+        return CreateMaybeMessage<DeviceSetInfoT>(nullptr);
+    }
 
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+    DeviceSetInfoT* New(::google::protobuf::Arena* arena) const final
+    {
+        return CreateMaybeMessage<DeviceSetInfoT>(arena);
+    }
+    void CopyFrom(const ::google::protobuf::Message& from) final;
+    void MergeFrom(const ::google::protobuf::Message& from) final;
+    void CopyFrom(const DeviceSetInfoT& from);
+    void MergeFrom(const DeviceSetInfoT& from);
+    PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+    bool IsInitialized() const final;
+
+    size_t ByteSizeLong() const final;
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+    ::google::protobuf::internal::ParseFunc _ParseFunc() const final
+    {
+        return _InternalParse;
+    }
+#else
+    bool MergePartialFromCodedStream(
+        ::google::protobuf::io::CodedInputStream* input) final;
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    void SerializeWithCachedSizes(
+        ::google::protobuf::io::CodedOutputStream* output) const final;
+    ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::uint8* target) const final;
+    int GetCachedSize() const final
+    {
+        return _cached_size_.Get();
+    }
 
   private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(DeviceSetInfoT* other);
+    void SharedCtor();
+    void SharedDtor();
+    void SetCachedSize(int size) const final;
+    void InternalSwap(DeviceSetInfoT* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
+    inline ::google::protobuf::Arena* GetArenaNoVirtual() const
+    {
+        return nullptr;
+    }
+    inline void* MaybeArenaPtr() const
+    {
+        return nullptr;
+    }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const final;
+    ::google::protobuf::Metadata GetMetadata() const final;
 
-  // nested types ----------------------------------------------------
+    // nested types ----------------------------------------------------
 
-  // accessors -------------------------------------------------------
+    // accessors -------------------------------------------------------
 
-  // repeated .DeviceInfoT device_info = 1;
-  int device_info_size() const;
-  void clear_device_info();
-  static const int kDeviceInfoFieldNumber = 1;
-  ::DeviceInfoT* mutable_device_info(int index);
-  ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >*
-      mutable_device_info();
-  const ::DeviceInfoT& device_info(int index) const;
-  ::DeviceInfoT* add_device_info();
-  const ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >&
-      device_info() const;
+    // repeated .DeviceInfoT device_info = 1;
+    int device_info_size() const;
+    void clear_device_info();
+    static const int kDeviceInfoFieldNumber = 1;
+    ::DeviceInfoT* mutable_device_info(int index);
+    ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >*
+    mutable_device_info();
+    const ::DeviceInfoT& device_info(int index) const;
+    ::DeviceInfoT* add_device_info();
+    const ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >&
+    device_info() const;
 
-  // uint32 signal_port = 2;
-  void clear_signal_port();
-  static const int kSignalPortFieldNumber = 2;
-  ::google::protobuf::uint32 signal_port() const;
-  void set_signal_port(::google::protobuf::uint32 value);
+    // uint32 signal_port = 2;
+    void clear_signal_port();
+    static const int kSignalPortFieldNumber = 2;
+    ::google::protobuf::uint32 signal_port() const;
+    void set_signal_port(::google::protobuf::uint32 value);
 
-  // uint32 file_port = 3;
-  void clear_file_port();
-  static const int kFilePortFieldNumber = 3;
-  ::google::protobuf::uint32 file_port() const;
-  void set_file_port(::google::protobuf::uint32 value);
+    // uint32 file_port = 3;
+    void clear_file_port();
+    static const int kFilePortFieldNumber = 3;
+    ::google::protobuf::uint32 file_port() const;
+    void set_file_port(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:DeviceSetInfoT)
- private:
-  class HasBitSetters;
+    // @@protoc_insertion_point(class_scope:DeviceSetInfoT)
+  private:
+    class HasBitSetters;
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::DeviceInfoT > device_info_;
-  ::google::protobuf::uint32 signal_port_;
-  ::google::protobuf::uint32 file_port_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
+    ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+    ::google::protobuf::RepeatedPtrField< ::DeviceInfoT > device_info_;
+    ::google::protobuf::uint32 signal_port_;
+    ::google::protobuf::uint32 file_port_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
 };
 // -------------------------------------------------------------------
 
 class SignalFileInfoT :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:SignalFileInfoT) */ {
- public:
-  SignalFileInfoT();
-  virtual ~SignalFileInfoT();
+    public ::google::protobuf::Message   /* @@protoc_insertion_point(class_definition:SignalFileInfoT) */
+{
+  public:
+    SignalFileInfoT();
+    virtual ~SignalFileInfoT();
 
-  SignalFileInfoT(const SignalFileInfoT& from);
+    SignalFileInfoT(const SignalFileInfoT& from);
 
-  inline SignalFileInfoT& operator=(const SignalFileInfoT& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  SignalFileInfoT(SignalFileInfoT&& from) noexcept
-    : SignalFileInfoT() {
-    *this = ::std::move(from);
-  }
-
-  inline SignalFileInfoT& operator=(SignalFileInfoT&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
+    inline SignalFileInfoT& operator=(const SignalFileInfoT& from)
+    {
+        CopyFrom(from);
+        return *this;
     }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const SignalFileInfoT& default_instance();
+#if LANG_CXX11
+    SignalFileInfoT(SignalFileInfoT&& from) noexcept
+        : SignalFileInfoT()
+    {
+        *this = ::std::move(from);
+    }
 
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const SignalFileInfoT* internal_default_instance() {
-    return reinterpret_cast<const SignalFileInfoT*>(
-               &_SignalFileInfoT_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
+    inline SignalFileInfoT& operator=(SignalFileInfoT&& from) noexcept
+    {
+        if (GetArenaNoVirtual() == from.GetArenaNoVirtual())
+        {
+            if (this != &from) InternalSwap(&from);
+        }
+        else
+        {
+            CopyFrom(from);
+        }
+        return *this;
+    }
+#endif
+    static const ::google::protobuf::Descriptor* descriptor()
+    {
+        return default_instance().GetDescriptor();
+    }
+    static const SignalFileInfoT& default_instance();
 
-  void Swap(SignalFileInfoT* other);
-  friend void swap(SignalFileInfoT& a, SignalFileInfoT& b) {
-    a.Swap(&b);
-  }
+    static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+    static inline const SignalFileInfoT* internal_default_instance()
+    {
+        return reinterpret_cast<const SignalFileInfoT*>(
+                   &_SignalFileInfoT_default_instance_);
+    }
+    static constexpr int kIndexInFileMessages =
+        2;
 
-  // implements Message ----------------------------------------------
+    void Swap(SignalFileInfoT* other);
+    friend void swap(SignalFileInfoT& a, SignalFileInfoT& b)
+    {
+        a.Swap(&b);
+    }
 
-  inline SignalFileInfoT* New() const final {
-    return CreateMaybeMessage<SignalFileInfoT>(nullptr);
-  }
+    // implements Message ----------------------------------------------
 
-  SignalFileInfoT* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<SignalFileInfoT>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const SignalFileInfoT& from);
-  void MergeFrom(const SignalFileInfoT& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+    inline SignalFileInfoT* New() const final
+    {
+        return CreateMaybeMessage<SignalFileInfoT>(nullptr);
+    }
 
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+    SignalFileInfoT* New(::google::protobuf::Arena* arena) const final
+    {
+        return CreateMaybeMessage<SignalFileInfoT>(arena);
+    }
+    void CopyFrom(const ::google::protobuf::Message& from) final;
+    void MergeFrom(const ::google::protobuf::Message& from) final;
+    void CopyFrom(const SignalFileInfoT& from);
+    void MergeFrom(const SignalFileInfoT& from);
+    PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+    bool IsInitialized() const final;
+
+    size_t ByteSizeLong() const final;
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+    ::google::protobuf::internal::ParseFunc _ParseFunc() const final
+    {
+        return _InternalParse;
+    }
+#else
+    bool MergePartialFromCodedStream(
+        ::google::protobuf::io::CodedInputStream* input) final;
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    void SerializeWithCachedSizes(
+        ::google::protobuf::io::CodedOutputStream* output) const final;
+    ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::uint8* target) const final;
+    int GetCachedSize() const final
+    {
+        return _cached_size_.Get();
+    }
 
   private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(SignalFileInfoT* other);
+    void SharedCtor();
+    void SharedDtor();
+    void SetCachedSize(int size) const final;
+    void InternalSwap(SignalFileInfoT* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
+    inline ::google::protobuf::Arena* GetArenaNoVirtual() const
+    {
+        return nullptr;
+    }
+    inline void* MaybeArenaPtr() const
+    {
+        return nullptr;
+    }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const final;
+    ::google::protobuf::Metadata GetMetadata() const final;
 
-  // nested types ----------------------------------------------------
+    // nested types ----------------------------------------------------
 
-  // accessors -------------------------------------------------------
+    // accessors -------------------------------------------------------
 
-  // string name = 1;
-  void clear_name();
-  static const int kNameFieldNumber = 1;
-  const ::std::string& name() const;
-  void set_name(const ::std::string& value);
-  #if LANG_CXX11
-  void set_name(::std::string&& value);
-  #endif
-  void set_name(const char* value);
-  void set_name(const char* value, size_t size);
-  ::std::string* mutable_name();
-  ::std::string* release_name();
-  void set_allocated_name(::std::string* name);
+    // string name = 1;
+    void clear_name();
+    static const int kNameFieldNumber = 1;
+    const ::std::string& name() const;
+    void set_name(const ::std::string& value);
+#if LANG_CXX11
+    void set_name(::std::string&& value);
+#endif
+    void set_name(const char* value);
+    void set_name(const char* value, size_t size);
+    ::std::string* mutable_name();
+    ::std::string* release_name();
+    void set_allocated_name(::std::string* name);
 
-  // uint32 size = 2;
-  void clear_size();
-  static const int kSizeFieldNumber = 2;
-  ::google::protobuf::uint32 size() const;
-  void set_size(::google::protobuf::uint32 value);
+    // uint32 size = 2;
+    void clear_size();
+    static const int kSizeFieldNumber = 2;
+    ::google::protobuf::uint32 size() const;
+    void set_size(::google::protobuf::uint32 value);
 
-  // uint32 ddc_frequency = 3;
-  void clear_ddc_frequency();
-  static const int kDdcFrequencyFieldNumber = 3;
-  ::google::protobuf::uint32 ddc_frequency() const;
-  void set_ddc_frequency(::google::protobuf::uint32 value);
+    // uint32 ddc_frequency = 3;
+    void clear_ddc_frequency();
+    static const int kDdcFrequencyFieldNumber = 3;
+    ::google::protobuf::uint32 ddc_frequency() const;
+    void set_ddc_frequency(::google::protobuf::uint32 value);
 
-  // @@protoc_insertion_point(class_scope:SignalFileInfoT)
- private:
-  class HasBitSetters;
+    // @@protoc_insertion_point(class_scope:SignalFileInfoT)
+  private:
+    class HasBitSetters;
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr name_;
-  ::google::protobuf::uint32 size_;
-  ::google::protobuf::uint32 ddc_frequency_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
+    ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+    ::google::protobuf::internal::ArenaStringPtr name_;
+    ::google::protobuf::uint32 size_;
+    ::google::protobuf::uint32 ddc_frequency_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
 };
 // -------------------------------------------------------------------
 
 class SignalDirectoryInfoT :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:SignalDirectoryInfoT) */ {
- public:
-  SignalDirectoryInfoT();
-  virtual ~SignalDirectoryInfoT();
+    public ::google::protobuf::Message   /* @@protoc_insertion_point(class_definition:SignalDirectoryInfoT) */
+{
+  public:
+    SignalDirectoryInfoT();
+    virtual ~SignalDirectoryInfoT();
 
-  SignalDirectoryInfoT(const SignalDirectoryInfoT& from);
+    SignalDirectoryInfoT(const SignalDirectoryInfoT& from);
 
-  inline SignalDirectoryInfoT& operator=(const SignalDirectoryInfoT& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  SignalDirectoryInfoT(SignalDirectoryInfoT&& from) noexcept
-    : SignalDirectoryInfoT() {
-    *this = ::std::move(from);
-  }
-
-  inline SignalDirectoryInfoT& operator=(SignalDirectoryInfoT&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
+    inline SignalDirectoryInfoT& operator=(const SignalDirectoryInfoT& from)
+    {
+        CopyFrom(from);
+        return *this;
     }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return default_instance().GetDescriptor();
-  }
-  static const SignalDirectoryInfoT& default_instance();
+#if LANG_CXX11
+    SignalDirectoryInfoT(SignalDirectoryInfoT&& from) noexcept
+        : SignalDirectoryInfoT()
+    {
+        *this = ::std::move(from);
+    }
 
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const SignalDirectoryInfoT* internal_default_instance() {
-    return reinterpret_cast<const SignalDirectoryInfoT*>(
-               &_SignalDirectoryInfoT_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    3;
+    inline SignalDirectoryInfoT& operator=(SignalDirectoryInfoT&& from) noexcept
+    {
+        if (GetArenaNoVirtual() == from.GetArenaNoVirtual())
+        {
+            if (this != &from) InternalSwap(&from);
+        }
+        else
+        {
+            CopyFrom(from);
+        }
+        return *this;
+    }
+#endif
+    static const ::google::protobuf::Descriptor* descriptor()
+    {
+        return default_instance().GetDescriptor();
+    }
+    static const SignalDirectoryInfoT& default_instance();
 
-  void Swap(SignalDirectoryInfoT* other);
-  friend void swap(SignalDirectoryInfoT& a, SignalDirectoryInfoT& b) {
-    a.Swap(&b);
-  }
+    static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+    static inline const SignalDirectoryInfoT* internal_default_instance()
+    {
+        return reinterpret_cast<const SignalDirectoryInfoT*>(
+                   &_SignalDirectoryInfoT_default_instance_);
+    }
+    static constexpr int kIndexInFileMessages =
+        3;
 
-  // implements Message ----------------------------------------------
+    void Swap(SignalDirectoryInfoT* other);
+    friend void swap(SignalDirectoryInfoT& a, SignalDirectoryInfoT& b)
+    {
+        a.Swap(&b);
+    }
 
-  inline SignalDirectoryInfoT* New() const final {
-    return CreateMaybeMessage<SignalDirectoryInfoT>(nullptr);
-  }
+    // implements Message ----------------------------------------------
 
-  SignalDirectoryInfoT* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<SignalDirectoryInfoT>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const SignalDirectoryInfoT& from);
-  void MergeFrom(const SignalDirectoryInfoT& from);
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
+    inline SignalDirectoryInfoT* New() const final
+    {
+        return CreateMaybeMessage<SignalDirectoryInfoT>(nullptr);
+    }
 
-  size_t ByteSizeLong() const final;
-  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
-  ::google::protobuf::internal::ParseFunc _ParseFunc() const final { return _InternalParse; }
-  #else
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
+    SignalDirectoryInfoT* New(::google::protobuf::Arena* arena) const final
+    {
+        return CreateMaybeMessage<SignalDirectoryInfoT>(arena);
+    }
+    void CopyFrom(const ::google::protobuf::Message& from) final;
+    void MergeFrom(const ::google::protobuf::Message& from) final;
+    void CopyFrom(const SignalDirectoryInfoT& from);
+    void MergeFrom(const SignalDirectoryInfoT& from);
+    PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+    bool IsInitialized() const final;
+
+    size_t ByteSizeLong() const final;
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    static const char* _InternalParse(const char* begin, const char* end, void* object, ::google::protobuf::internal::ParseContext* ctx);
+    ::google::protobuf::internal::ParseFunc _ParseFunc() const final
+    {
+        return _InternalParse;
+    }
+#else
+    bool MergePartialFromCodedStream(
+        ::google::protobuf::io::CodedInputStream* input) final;
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+    void SerializeWithCachedSizes(
+        ::google::protobuf::io::CodedOutputStream* output) const final;
+    ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+        ::google::protobuf::uint8* target) const final;
+    int GetCachedSize() const final
+    {
+        return _cached_size_.Get();
+    }
 
   private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(SignalDirectoryInfoT* other);
+    void SharedCtor();
+    void SharedDtor();
+    void SetCachedSize(int size) const final;
+    void InternalSwap(SignalDirectoryInfoT* other);
   private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return nullptr;
-  }
-  inline void* MaybeArenaPtr() const {
-    return nullptr;
-  }
+    inline ::google::protobuf::Arena* GetArenaNoVirtual() const
+    {
+        return nullptr;
+    }
+    inline void* MaybeArenaPtr() const
+    {
+        return nullptr;
+    }
   public:
 
-  ::google::protobuf::Metadata GetMetadata() const final;
+    ::google::protobuf::Metadata GetMetadata() const final;
 
-  // nested types ----------------------------------------------------
+    // nested types ----------------------------------------------------
 
-  // accessors -------------------------------------------------------
+    // accessors -------------------------------------------------------
 
-  // repeated .SignalFileInfoT signal_file_info = 1;
-  int signal_file_info_size() const;
-  void clear_signal_file_info();
-  static const int kSignalFileInfoFieldNumber = 1;
-  ::SignalFileInfoT* mutable_signal_file_info(int index);
-  ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >*
-      mutable_signal_file_info();
-  const ::SignalFileInfoT& signal_file_info(int index) const;
-  ::SignalFileInfoT* add_signal_file_info();
-  const ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >&
-      signal_file_info() const;
+    // repeated .SignalFileInfoT signal_file_info = 1;
+    int signal_file_info_size() const;
+    void clear_signal_file_info();
+    static const int kSignalFileInfoFieldNumber = 1;
+    ::SignalFileInfoT* mutable_signal_file_info(int index);
+    ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >*
+    mutable_signal_file_info();
+    const ::SignalFileInfoT& signal_file_info(int index) const;
+    ::SignalFileInfoT* add_signal_file_info();
+    const ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >&
+    signal_file_info() const;
 
-  // @@protoc_insertion_point(class_scope:SignalDirectoryInfoT)
- private:
-  class HasBitSetters;
+    // @@protoc_insertion_point(class_scope:SignalDirectoryInfoT)
+  private:
+    class HasBitSetters;
 
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT > signal_file_info_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
+    ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+    ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT > signal_file_info_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    friend struct ::TableStruct_device_5fset_5finfoT_2eproto;
 };
 // ===================================================================
 
@@ -608,143 +691,173 @@ class SignalDirectoryInfoT :
 // ===================================================================
 
 #ifdef __GNUC__
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
 // DeviceInfoT
 
 // string serial_number = 1;
-inline void DeviceInfoT::clear_serial_number() {
-  serial_number_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void DeviceInfoT::clear_serial_number()
+{
+    serial_number_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& DeviceInfoT::serial_number() const {
-  // @@protoc_insertion_point(field_get:DeviceInfoT.serial_number)
-  return serial_number_.GetNoArena();
+inline const ::std::string& DeviceInfoT::serial_number() const
+{
+    // @@protoc_insertion_point(field_get:DeviceInfoT.serial_number)
+    return serial_number_.GetNoArena();
 }
-inline void DeviceInfoT::set_serial_number(const ::std::string& value) {
-  
-  serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:DeviceInfoT.serial_number)
+inline void DeviceInfoT::set_serial_number(const ::std::string& value)
+{
+
+    serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+    // @@protoc_insertion_point(field_set:DeviceInfoT.serial_number)
 }
 #if LANG_CXX11
-inline void DeviceInfoT::set_serial_number(::std::string&& value) {
-  
-  serial_number_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:DeviceInfoT.serial_number)
+inline void DeviceInfoT::set_serial_number(::std::string&& value)
+{
+
+    serial_number_.SetNoArena(
+        &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+    // @@protoc_insertion_point(field_set_rvalue:DeviceInfoT.serial_number)
 }
 #endif
-inline void DeviceInfoT::set_serial_number(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:DeviceInfoT.serial_number)
+inline void DeviceInfoT::set_serial_number(const char* value)
+{
+    GOOGLE_DCHECK(value != nullptr);
+
+    serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+    // @@protoc_insertion_point(field_set_char:DeviceInfoT.serial_number)
 }
-inline void DeviceInfoT::set_serial_number(const char* value, size_t size) {
-  
-  serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:DeviceInfoT.serial_number)
+inline void DeviceInfoT::set_serial_number(const char* value, size_t size)
+{
+
+    serial_number_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+                              ::std::string(reinterpret_cast<const char*>(value), size));
+    // @@protoc_insertion_point(field_set_pointer:DeviceInfoT.serial_number)
 }
-inline ::std::string* DeviceInfoT::mutable_serial_number() {
-  
-  // @@protoc_insertion_point(field_mutable:DeviceInfoT.serial_number)
-  return serial_number_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* DeviceInfoT::mutable_serial_number()
+{
+
+    // @@protoc_insertion_point(field_mutable:DeviceInfoT.serial_number)
+    return serial_number_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* DeviceInfoT::release_serial_number() {
-  // @@protoc_insertion_point(field_release:DeviceInfoT.serial_number)
-  
-  return serial_number_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* DeviceInfoT::release_serial_number()
+{
+    // @@protoc_insertion_point(field_release:DeviceInfoT.serial_number)
+
+    return serial_number_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void DeviceInfoT::set_allocated_serial_number(::std::string* serial_number) {
-  if (serial_number != nullptr) {
-    
-  } else {
-    
-  }
-  serial_number_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), serial_number);
-  // @@protoc_insertion_point(field_set_allocated:DeviceInfoT.serial_number)
+inline void DeviceInfoT::set_allocated_serial_number(::std::string* serial_number)
+{
+    if (serial_number != nullptr)
+    {
+
+    }
+    else
+    {
+
+    }
+    serial_number_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), serial_number);
+    // @@protoc_insertion_point(field_set_allocated:DeviceInfoT.serial_number)
 }
 
 // fixed32 ddc_type_count = 2;
-inline void DeviceInfoT::clear_ddc_type_count() {
-  ddc_type_count_ = 0u;
+inline void DeviceInfoT::clear_ddc_type_count()
+{
+    ddc_type_count_ = 0u;
 }
-inline ::google::protobuf::uint32 DeviceInfoT::ddc_type_count() const {
-  // @@protoc_insertion_point(field_get:DeviceInfoT.ddc_type_count)
-  return ddc_type_count_;
+inline ::google::protobuf::uint32 DeviceInfoT::ddc_type_count() const
+{
+    // @@protoc_insertion_point(field_get:DeviceInfoT.ddc_type_count)
+    return ddc_type_count_;
 }
-inline void DeviceInfoT::set_ddc_type_count(::google::protobuf::uint32 value) {
-  
-  ddc_type_count_ = value;
-  // @@protoc_insertion_point(field_set:DeviceInfoT.ddc_type_count)
+inline void DeviceInfoT::set_ddc_type_count(::google::protobuf::uint32 value)
+{
+
+    ddc_type_count_ = value;
+    // @@protoc_insertion_point(field_set:DeviceInfoT.ddc_type_count)
 }
 
 // fixed32 channel_count = 3;
-inline void DeviceInfoT::clear_channel_count() {
-  channel_count_ = 0u;
+inline void DeviceInfoT::clear_channel_count()
+{
+    channel_count_ = 0u;
 }
-inline ::google::protobuf::uint32 DeviceInfoT::channel_count() const {
-  // @@protoc_insertion_point(field_get:DeviceInfoT.channel_count)
-  return channel_count_;
+inline ::google::protobuf::uint32 DeviceInfoT::channel_count() const
+{
+    // @@protoc_insertion_point(field_get:DeviceInfoT.channel_count)
+    return channel_count_;
 }
-inline void DeviceInfoT::set_channel_count(::google::protobuf::uint32 value) {
-  
-  channel_count_ = value;
-  // @@protoc_insertion_point(field_set:DeviceInfoT.channel_count)
+inline void DeviceInfoT::set_channel_count(::google::protobuf::uint32 value)
+{
+
+    channel_count_ = value;
+    // @@protoc_insertion_point(field_set:DeviceInfoT.channel_count)
 }
 
 // string interface_type = 4;
-inline void DeviceInfoT::clear_interface_type() {
-  interface_type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void DeviceInfoT::clear_interface_type()
+{
+    interface_type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& DeviceInfoT::interface_type() const {
-  // @@protoc_insertion_point(field_get:DeviceInfoT.interface_type)
-  return interface_type_.GetNoArena();
+inline const ::std::string& DeviceInfoT::interface_type() const
+{
+    // @@protoc_insertion_point(field_get:DeviceInfoT.interface_type)
+    return interface_type_.GetNoArena();
 }
-inline void DeviceInfoT::set_interface_type(const ::std::string& value) {
-  
-  interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:DeviceInfoT.interface_type)
+inline void DeviceInfoT::set_interface_type(const ::std::string& value)
+{
+
+    interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+    // @@protoc_insertion_point(field_set:DeviceInfoT.interface_type)
 }
 #if LANG_CXX11
-inline void DeviceInfoT::set_interface_type(::std::string&& value) {
-  
-  interface_type_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:DeviceInfoT.interface_type)
+inline void DeviceInfoT::set_interface_type(::std::string&& value)
+{
+
+    interface_type_.SetNoArena(
+        &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+    // @@protoc_insertion_point(field_set_rvalue:DeviceInfoT.interface_type)
 }
 #endif
-inline void DeviceInfoT::set_interface_type(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:DeviceInfoT.interface_type)
+inline void DeviceInfoT::set_interface_type(const char* value)
+{
+    GOOGLE_DCHECK(value != nullptr);
+
+    interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+    // @@protoc_insertion_point(field_set_char:DeviceInfoT.interface_type)
 }
-inline void DeviceInfoT::set_interface_type(const char* value, size_t size) {
-  
-  interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:DeviceInfoT.interface_type)
+inline void DeviceInfoT::set_interface_type(const char* value, size_t size)
+{
+
+    interface_type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+                               ::std::string(reinterpret_cast<const char*>(value), size));
+    // @@protoc_insertion_point(field_set_pointer:DeviceInfoT.interface_type)
 }
-inline ::std::string* DeviceInfoT::mutable_interface_type() {
-  
-  // @@protoc_insertion_point(field_mutable:DeviceInfoT.interface_type)
-  return interface_type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* DeviceInfoT::mutable_interface_type()
+{
+
+    // @@protoc_insertion_point(field_mutable:DeviceInfoT.interface_type)
+    return interface_type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* DeviceInfoT::release_interface_type() {
-  // @@protoc_insertion_point(field_release:DeviceInfoT.interface_type)
-  
-  return interface_type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* DeviceInfoT::release_interface_type()
+{
+    // @@protoc_insertion_point(field_release:DeviceInfoT.interface_type)
+
+    return interface_type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void DeviceInfoT::set_allocated_interface_type(::std::string* interface_type) {
-  if (interface_type != nullptr) {
-    
-  } else {
-    
-  }
-  interface_type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), interface_type);
-  // @@protoc_insertion_point(field_set_allocated:DeviceInfoT.interface_type)
+inline void DeviceInfoT::set_allocated_interface_type(::std::string* interface_type)
+{
+    if (interface_type != nullptr)
+    {
+
+    }
+    else
+    {
+
+    }
+    interface_type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), interface_type);
+    // @@protoc_insertion_point(field_set_allocated:DeviceInfoT.interface_type)
 }
 
 // -------------------------------------------------------------------
@@ -752,61 +865,74 @@ inline void DeviceInfoT::set_allocated_interface_type(::std::string* interface_t
 // DeviceSetInfoT
 
 // repeated .DeviceInfoT device_info = 1;
-inline int DeviceSetInfoT::device_info_size() const {
-  return device_info_.size();
+inline int DeviceSetInfoT::device_info_size() const
+{
+    return device_info_.size();
 }
-inline void DeviceSetInfoT::clear_device_info() {
-  device_info_.Clear();
+inline void DeviceSetInfoT::clear_device_info()
+{
+    device_info_.Clear();
 }
-inline ::DeviceInfoT* DeviceSetInfoT::mutable_device_info(int index) {
-  // @@protoc_insertion_point(field_mutable:DeviceSetInfoT.device_info)
-  return device_info_.Mutable(index);
+inline ::DeviceInfoT* DeviceSetInfoT::mutable_device_info(int index)
+{
+    // @@protoc_insertion_point(field_mutable:DeviceSetInfoT.device_info)
+    return device_info_.Mutable(index);
 }
 inline ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >*
-DeviceSetInfoT::mutable_device_info() {
-  // @@protoc_insertion_point(field_mutable_list:DeviceSetInfoT.device_info)
-  return &device_info_;
+DeviceSetInfoT::mutable_device_info()
+{
+    // @@protoc_insertion_point(field_mutable_list:DeviceSetInfoT.device_info)
+    return &device_info_;
 }
-inline const ::DeviceInfoT& DeviceSetInfoT::device_info(int index) const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfoT.device_info)
-  return device_info_.Get(index);
+inline const ::DeviceInfoT& DeviceSetInfoT::device_info(int index) const
+{
+    // @@protoc_insertion_point(field_get:DeviceSetInfoT.device_info)
+    return device_info_.Get(index);
 }
-inline ::DeviceInfoT* DeviceSetInfoT::add_device_info() {
-  // @@protoc_insertion_point(field_add:DeviceSetInfoT.device_info)
-  return device_info_.Add();
+inline ::DeviceInfoT* DeviceSetInfoT::add_device_info()
+{
+    // @@protoc_insertion_point(field_add:DeviceSetInfoT.device_info)
+    return device_info_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::DeviceInfoT >&
-DeviceSetInfoT::device_info() const {
-  // @@protoc_insertion_point(field_list:DeviceSetInfoT.device_info)
-  return device_info_;
+DeviceSetInfoT::device_info() const
+{
+    // @@protoc_insertion_point(field_list:DeviceSetInfoT.device_info)
+    return device_info_;
 }
 
 // uint32 signal_port = 2;
-inline void DeviceSetInfoT::clear_signal_port() {
-  signal_port_ = 0u;
+inline void DeviceSetInfoT::clear_signal_port()
+{
+    signal_port_ = 0u;
 }
-inline ::google::protobuf::uint32 DeviceSetInfoT::signal_port() const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfoT.signal_port)
-  return signal_port_;
+inline ::google::protobuf::uint32 DeviceSetInfoT::signal_port() const
+{
+    // @@protoc_insertion_point(field_get:DeviceSetInfoT.signal_port)
+    return signal_port_;
 }
-inline void DeviceSetInfoT::set_signal_port(::google::protobuf::uint32 value) {
-  
-  signal_port_ = value;
-  // @@protoc_insertion_point(field_set:DeviceSetInfoT.signal_port)
+inline void DeviceSetInfoT::set_signal_port(::google::protobuf::uint32 value)
+{
+
+    signal_port_ = value;
+    // @@protoc_insertion_point(field_set:DeviceSetInfoT.signal_port)
 }
 
 // uint32 file_port = 3;
-inline void DeviceSetInfoT::clear_file_port() {
-  file_port_ = 0u;
+inline void DeviceSetInfoT::clear_file_port()
+{
+    file_port_ = 0u;
 }
-inline ::google::protobuf::uint32 DeviceSetInfoT::file_port() const {
-  // @@protoc_insertion_point(field_get:DeviceSetInfoT.file_port)
-  return file_port_;
+inline ::google::protobuf::uint32 DeviceSetInfoT::file_port() const
+{
+    // @@protoc_insertion_point(field_get:DeviceSetInfoT.file_port)
+    return file_port_;
 }
-inline void DeviceSetInfoT::set_file_port(::google::protobuf::uint32 value) {
-  
-  file_port_ = value;
-  // @@protoc_insertion_point(field_set:DeviceSetInfoT.file_port)
+inline void DeviceSetInfoT::set_file_port(::google::protobuf::uint32 value)
+{
+
+    file_port_ = value;
+    // @@protoc_insertion_point(field_set:DeviceSetInfoT.file_port)
 }
 
 // -------------------------------------------------------------------
@@ -814,84 +940,102 @@ inline void DeviceSetInfoT::set_file_port(::google::protobuf::uint32 value) {
 // SignalFileInfoT
 
 // string name = 1;
-inline void SignalFileInfoT::clear_name() {
-  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void SignalFileInfoT::clear_name()
+{
+    name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& SignalFileInfoT::name() const {
-  // @@protoc_insertion_point(field_get:SignalFileInfoT.name)
-  return name_.GetNoArena();
+inline const ::std::string& SignalFileInfoT::name() const
+{
+    // @@protoc_insertion_point(field_get:SignalFileInfoT.name)
+    return name_.GetNoArena();
 }
-inline void SignalFileInfoT::set_name(const ::std::string& value) {
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:SignalFileInfoT.name)
+inline void SignalFileInfoT::set_name(const ::std::string& value)
+{
+
+    name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+    // @@protoc_insertion_point(field_set:SignalFileInfoT.name)
 }
 #if LANG_CXX11
-inline void SignalFileInfoT::set_name(::std::string&& value) {
-  
-  name_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:SignalFileInfoT.name)
+inline void SignalFileInfoT::set_name(::std::string&& value)
+{
+
+    name_.SetNoArena(
+        &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+    // @@protoc_insertion_point(field_set_rvalue:SignalFileInfoT.name)
 }
 #endif
-inline void SignalFileInfoT::set_name(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:SignalFileInfoT.name)
+inline void SignalFileInfoT::set_name(const char* value)
+{
+    GOOGLE_DCHECK(value != nullptr);
+
+    name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+    // @@protoc_insertion_point(field_set_char:SignalFileInfoT.name)
 }
-inline void SignalFileInfoT::set_name(const char* value, size_t size) {
-  
-  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:SignalFileInfoT.name)
+inline void SignalFileInfoT::set_name(const char* value, size_t size)
+{
+
+    name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+                     ::std::string(reinterpret_cast<const char*>(value), size));
+    // @@protoc_insertion_point(field_set_pointer:SignalFileInfoT.name)
 }
-inline ::std::string* SignalFileInfoT::mutable_name() {
-  
-  // @@protoc_insertion_point(field_mutable:SignalFileInfoT.name)
-  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* SignalFileInfoT::mutable_name()
+{
+
+    // @@protoc_insertion_point(field_mutable:SignalFileInfoT.name)
+    return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* SignalFileInfoT::release_name() {
-  // @@protoc_insertion_point(field_release:SignalFileInfoT.name)
-  
-  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::std::string* SignalFileInfoT::release_name()
+{
+    // @@protoc_insertion_point(field_release:SignalFileInfoT.name)
+
+    return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void SignalFileInfoT::set_allocated_name(::std::string* name) {
-  if (name != nullptr) {
-    
-  } else {
-    
-  }
-  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
-  // @@protoc_insertion_point(field_set_allocated:SignalFileInfoT.name)
+inline void SignalFileInfoT::set_allocated_name(::std::string* name)
+{
+    if (name != nullptr)
+    {
+
+    }
+    else
+    {
+
+    }
+    name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+    // @@protoc_insertion_point(field_set_allocated:SignalFileInfoT.name)
 }
 
 // uint32 size = 2;
-inline void SignalFileInfoT::clear_size() {
-  size_ = 0u;
+inline void SignalFileInfoT::clear_size()
+{
+    size_ = 0u;
 }
-inline ::google::protobuf::uint32 SignalFileInfoT::size() const {
-  // @@protoc_insertion_point(field_get:SignalFileInfoT.size)
-  return size_;
+inline ::google::protobuf::uint32 SignalFileInfoT::size() const
+{
+    // @@protoc_insertion_point(field_get:SignalFileInfoT.size)
+    return size_;
 }
-inline void SignalFileInfoT::set_size(::google::protobuf::uint32 value) {
-  
-  size_ = value;
-  // @@protoc_insertion_point(field_set:SignalFileInfoT.size)
+inline void SignalFileInfoT::set_size(::google::protobuf::uint32 value)
+{
+
+    size_ = value;
+    // @@protoc_insertion_point(field_set:SignalFileInfoT.size)
 }
 
 // uint32 ddc_frequency = 3;
-inline void SignalFileInfoT::clear_ddc_frequency() {
-  ddc_frequency_ = 0u;
+inline void SignalFileInfoT::clear_ddc_frequency()
+{
+    ddc_frequency_ = 0u;
 }
-inline ::google::protobuf::uint32 SignalFileInfoT::ddc_frequency() const {
-  // @@protoc_insertion_point(field_get:SignalFileInfoT.ddc_frequency)
-  return ddc_frequency_;
+inline ::google::protobuf::uint32 SignalFileInfoT::ddc_frequency() const
+{
+    // @@protoc_insertion_point(field_get:SignalFileInfoT.ddc_frequency)
+    return ddc_frequency_;
 }
-inline void SignalFileInfoT::set_ddc_frequency(::google::protobuf::uint32 value) {
-  
-  ddc_frequency_ = value;
-  // @@protoc_insertion_point(field_set:SignalFileInfoT.ddc_frequency)
+inline void SignalFileInfoT::set_ddc_frequency(::google::protobuf::uint32 value)
+{
+
+    ddc_frequency_ = value;
+    // @@protoc_insertion_point(field_set:SignalFileInfoT.ddc_frequency)
 }
 
 // -------------------------------------------------------------------
@@ -899,37 +1043,44 @@ inline void SignalFileInfoT::set_ddc_frequency(::google::protobuf::uint32 value)
 // SignalDirectoryInfoT
 
 // repeated .SignalFileInfoT signal_file_info = 1;
-inline int SignalDirectoryInfoT::signal_file_info_size() const {
-  return signal_file_info_.size();
+inline int SignalDirectoryInfoT::signal_file_info_size() const
+{
+    return signal_file_info_.size();
 }
-inline void SignalDirectoryInfoT::clear_signal_file_info() {
-  signal_file_info_.Clear();
+inline void SignalDirectoryInfoT::clear_signal_file_info()
+{
+    signal_file_info_.Clear();
 }
-inline ::SignalFileInfoT* SignalDirectoryInfoT::mutable_signal_file_info(int index) {
-  // @@protoc_insertion_point(field_mutable:SignalDirectoryInfoT.signal_file_info)
-  return signal_file_info_.Mutable(index);
+inline ::SignalFileInfoT* SignalDirectoryInfoT::mutable_signal_file_info(int index)
+{
+    // @@protoc_insertion_point(field_mutable:SignalDirectoryInfoT.signal_file_info)
+    return signal_file_info_.Mutable(index);
 }
 inline ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >*
-SignalDirectoryInfoT::mutable_signal_file_info() {
-  // @@protoc_insertion_point(field_mutable_list:SignalDirectoryInfoT.signal_file_info)
-  return &signal_file_info_;
+SignalDirectoryInfoT::mutable_signal_file_info()
+{
+    // @@protoc_insertion_point(field_mutable_list:SignalDirectoryInfoT.signal_file_info)
+    return &signal_file_info_;
 }
-inline const ::SignalFileInfoT& SignalDirectoryInfoT::signal_file_info(int index) const {
-  // @@protoc_insertion_point(field_get:SignalDirectoryInfoT.signal_file_info)
-  return signal_file_info_.Get(index);
+inline const ::SignalFileInfoT& SignalDirectoryInfoT::signal_file_info(int index) const
+{
+    // @@protoc_insertion_point(field_get:SignalDirectoryInfoT.signal_file_info)
+    return signal_file_info_.Get(index);
 }
-inline ::SignalFileInfoT* SignalDirectoryInfoT::add_signal_file_info() {
-  // @@protoc_insertion_point(field_add:SignalDirectoryInfoT.signal_file_info)
-  return signal_file_info_.Add();
+inline ::SignalFileInfoT* SignalDirectoryInfoT::add_signal_file_info()
+{
+    // @@protoc_insertion_point(field_add:SignalDirectoryInfoT.signal_file_info)
+    return signal_file_info_.Add();
 }
 inline const ::google::protobuf::RepeatedPtrField< ::SignalFileInfoT >&
-SignalDirectoryInfoT::signal_file_info() const {
-  // @@protoc_insertion_point(field_list:SignalDirectoryInfoT.signal_file_info)
-  return signal_file_info_;
+SignalDirectoryInfoT::signal_file_info() const
+{
+    // @@protoc_insertion_point(field_list:SignalDirectoryInfoT.signal_file_info)
+    return signal_file_info_;
 }
 
 #ifdef __GNUC__
-  #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 

@@ -7,11 +7,11 @@
 #include <QDebug>
 
 //NOTE - НАХОДИТЬСЯ В utility
-using DeleterTypeIpp8u=std::function<void(Ipp8u*)>;
+using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 
 struct BlockEqualizer::Impl
 {
-    Impl(const std::vector<Ipp32fc>&shiftBuffer,quint32 blockSize):
+    Impl(const std::vector<Ipp32fc>& shiftBuffer, quint32 blockSize):
         dstFftFwd(VectorIpp32fc(blockSize)),
         dstMagn(VectorIpp32f(blockSize)),
         dstPhase(VectorIpp32f(blockSize)),
@@ -20,13 +20,14 @@ struct BlockEqualizer::Impl
         shiftBufferT(shiftBuffer)
     {    }
 
-    DeleterTypeIpp8u deleterUniquePtrForIpp8u=[](Ipp8u*v){
+    DeleterTypeIpp8u deleterUniquePtrForIpp8u = [](Ipp8u* v)
+    {
         ippFree(v);
     };
 
-    std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemInit;
-    std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemBuffer;
-    std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemSpec;
+    std::unique_ptr<Ipp8u, DeleterTypeIpp8u> pMemInit;
+    std::unique_ptr<Ipp8u, DeleterTypeIpp8u> pMemBuffer;
+    std::unique_ptr<Ipp8u, DeleterTypeIpp8u> pMemSpec;
 
     VectorIpp32fc dstFftFwd;
     VectorIpp32f dstMagn;
@@ -37,8 +38,8 @@ struct BlockEqualizer::Impl
     VectorIpp32fc shiftBufferT;
 };
 
-BlockEqualizer::BlockEqualizer(const VectorIpp32fc &shiftBuffer,quint32 blockSize):
-    d(std::make_unique<Impl>(shiftBuffer,blockSize))
+BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize):
+    d(std::make_unique<Impl>(shiftBuffer, blockSize))
 {
     initFftBuffers(calcFftOrder(blockSize));
 }
@@ -47,119 +48,132 @@ BlockEqualizer::~BlockEqualizer() = default;
 
 void BlockEqualizer::initFftBuffers(int FFTOrder)
 {
-    qDebug()<<"BlockAlinement::init FFTOrder"<<FFTOrder;
-    Q_ASSERT_X(FFTOrder>0,"BlockAlinement::initFftBuffers","fft order below 0");
+    qDebug() << "BlockAlinement::init FFTOrder" << FFTOrder;
+    Q_ASSERT_X(FFTOrder > 0, "BlockAlinement::initFftBuffers", "fft order below 0");
 
     int sizeSpec = 0;
     int sizeInit = 0;
     int sizeBuffer = 0;
 
-    int flag =IPP_FFT_DIV_FWD_BY_N;
+    int flag = IPP_FFT_DIV_FWD_BY_N;
     ippsFFTGetSize_C_32fc(FFTOrder, flag, ippAlgHintNone,
                           &sizeSpec, &sizeInit, &sizeBuffer);
 
-    std::unique_ptr<Ipp8u,DeleterTypeIpp8u>pMemSpecLocal(static_cast<Ipp8u*>(ippMalloc(sizeSpec)),
-                                                         d->deleterUniquePtrForIpp8u);
-    d->pMemSpec=std::move(pMemSpecLocal);
-    if (sizeInit > 0){
-        std::unique_ptr<Ipp8u,DeleterTypeIpp8u>pMemInitLocal(static_cast<Ipp8u*>(ippMalloc(sizeInit)),
-                                                             d->deleterUniquePtrForIpp8u);
-        d->pMemInit=std::move(pMemInitLocal);
+    std::unique_ptr<Ipp8u, DeleterTypeIpp8u>pMemSpecLocal(static_cast<Ipp8u*>(ippMalloc(sizeSpec)),
+            d->deleterUniquePtrForIpp8u);
+    d->pMemSpec = std::move(pMemSpecLocal);
+    if (sizeInit > 0)
+    {
+        std::unique_ptr<Ipp8u, DeleterTypeIpp8u>pMemInitLocal(static_cast<Ipp8u*>(ippMalloc(sizeInit)),
+                d->deleterUniquePtrForIpp8u);
+        d->pMemInit = std::move(pMemInitLocal);
     }
-    if (sizeBuffer > 0){
-        std::unique_ptr<Ipp8u,DeleterTypeIpp8u> pMemBufferLocal(static_cast<Ipp8u*>(ippMalloc(sizeBuffer)),
-                                                                d->deleterUniquePtrForIpp8u);
-        d->pMemBuffer=std::move(pMemBufferLocal);
+    if (sizeBuffer > 0)
+    {
+        std::unique_ptr<Ipp8u, DeleterTypeIpp8u> pMemBufferLocal(static_cast<Ipp8u*>(ippMalloc(sizeBuffer)),
+                d->deleterUniquePtrForIpp8u);
+        d->pMemBuffer = std::move(pMemBufferLocal);
     }
 
-    ippsFFTInit_C_32fc(nullptr, FFTOrder, flag, ippAlgHintNone,d->pMemSpec.get(), d->pMemInit.get());
-    qDebug()<<"BlockAlinement::init End";
+    ippsFFTInit_C_32fc(nullptr, FFTOrder, flag, ippAlgHintNone, d->pMemSpec.get(), d->pMemInit.get());
+    qDebug() << "BlockAlinement::init End";
 }
 
-void BlockEqualizer::equate(Ipp32fc *blockData, quint32 blockSize,
+void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
                             double shift, quint32 ddcFrequency,
                             quint32 sampleRate, double deltaStart) const
 {
-    quint32 shiftW=static_cast<quint32>(shift);
-    double shiftF=shift-shiftW;
+    quint32 shiftW = static_cast<quint32>(shift);
+    double shiftF = shift - shiftW;
     //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
-    shiftWhole(blockData,blockSize,shiftW);
+    shiftWhole(blockData, blockSize, shiftW);
 
     //    qDebug()<<"SHIFT WHOLE END";
 
-    shiftFruction(blockData,blockSize,shiftF);
+    shiftFruction(blockData, blockSize, shiftF);
     //    qDebug()<<"SHIFT FRUCTION END";
-    double teta=(ddcFrequency/sampleRate)*2*IPP_PI*deltaStart;
+    double teta = (ddcFrequency / sampleRate) * 2 * IPP_PI * deltaStart;
 
-    shiftTest(blockData,blockSize,teta);
-    qDebug()<<"*******TETA:"<<teta<<ddcFrequency<<sampleRate<<deltaStart;
+    shiftTest(blockData, blockSize, teta);
+    qDebug() << "*******TETA:" << teta << ddcFrequency << sampleRate << deltaStart;
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
 
-void BlockEqualizer::shiftWhole(Ipp32fc *blockData, quint32 blockSize, quint32 shift) const
+void BlockEqualizer::shiftWhole(Ipp32fc* blockData, quint32 blockSize, quint32 shift) const
 {
-    Q_ASSERT_X(shift<blockSize,"SignalSync::shift64","shift > blockSize");
+    Q_ASSERT_X(shift < blockSize, "SignalSync::shift64", "shift > blockSize");
 
     std::vector<Ipp32fc> bufArray(blockSize);
 
-    for(quint32 i=0;i<shift;i++){
-        bufArray[i]=d->shiftBufferT[i];
-        d->shiftBufferT[i]=blockData[blockSize-shift+i];
+    for(quint32 i = 0; i < shift; i++)
+    {
+        bufArray[i] = d->shiftBufferT[i];
+        d->shiftBufferT[i] = blockData[blockSize - shift + i];
     }
 
-    for(quint32 i=0;i<(blockSize-shift);i++)
-        bufArray[i+shift]=blockData[i];
+    for(quint32 i = 0; i < (blockSize - shift); i++)
+    {
+        bufArray[i + shift] = blockData[i];
+    }
 
-    for(quint32 i=0;i<blockSize;i++)
-        blockData[i]=bufArray[i];
+    for(quint32 i = 0; i < blockSize; i++)
+    {
+        blockData[i] = bufArray[i];
+    }
 }
 
-void BlockEqualizer::shiftFruction(Ipp32fc *blockData, quint32 dataSize, double phaseAngle) const
+void BlockEqualizer::shiftFruction(Ipp32fc* blockData, quint32 dataSize, double phaseAngle) const
 {
-    IppsFFTSpec_C_32fc *pSpec=reinterpret_cast<IppsFFTSpec_C_32fc *>(d->pMemSpec.get());
+    IppsFFTSpec_C_32fc* pSpec = reinterpret_cast<IppsFFTSpec_C_32fc*>(d->pMemSpec.get());
     //1---FFT FWD
     ippsFFTFwd_CToC_32fc(blockData, d->dstFftFwd.data(), pSpec, d->pMemBuffer.get());
     //2---CART TO POLAR
-    ippsCartToPolar_32fc(d->dstFftFwd.data(),d->dstMagn.data(),d->dstPhase.data(),static_cast<int>(dataSize));
+    ippsCartToPolar_32fc(d->dstFftFwd.data(), d->dstMagn.data(), d->dstPhase.data(), static_cast<int>(dataSize));
     //3--SWAP PART BLOCK SIGNAL
-    swapHalfPhaseValues(d->dstPhase.data(),dataSize);
+    swapHalfPhaseValues(d->dstPhase.data(), dataSize);
     //4--SHIFT INCREMENT DST POLAR ON ADC
-    incrementPhaseValuesOnAngle(d->dstPhase.data(),dataSize,static_cast<float>(phaseAngle));
+    incrementPhaseValuesOnAngle(d->dstPhase.data(), dataSize, static_cast<float>(phaseAngle));
     //5--SWAP PART BLOCK SIGNAL
-    swapHalfPhaseValues(d->dstPhase.data(),dataSize);
+    swapHalfPhaseValues(d->dstPhase.data(), dataSize);
     //6--POLAR TO CART
-    ippsPolarToCart_32fc(d->dstMagn.data(),d->dstPhase.data(),d->dstCart32.data(),static_cast<int>(dataSize));
+    ippsPolarToCart_32fc(d->dstMagn.data(), d->dstPhase.data(), d->dstCart32.data(), static_cast<int>(dataSize));
     //7--FFT INV
-    ippsFFTInv_CToC_32fc(d->dstCart32.data(),blockData,pSpec,d->pMemBuffer.get());
+    ippsFFTInv_CToC_32fc(d->dstCart32.data(), blockData, pSpec, d->pMemBuffer.get());
 }
 
-void BlockEqualizer::shiftTest(Ipp32fc *blockData, quint32 blockSize, double teta) const
+void BlockEqualizer::shiftTest(Ipp32fc* blockData, quint32 blockSize, double teta) const
 {
     Ipp32fc val;
     //    val.re=static_cast<float>(cos(teta));
     //    val.im=static_cast<float>(sin(teta));
-    val.re=static_cast<float>(cos(fmod(teta,(2*IPP_PI))));
-    val.im=static_cast<float>(sin(fmod(teta,(2*IPP_PI))));
-    qDebug()<<"VAL"<<val.re<<val.im<<static_cast<quint64>(teta)<<fmod(teta,(2*IPP_PI));
-    ippsMulC_32fc(blockData, val, blockData,static_cast<int>(blockSize));
+    val.re = static_cast<float>(cos(fmod(teta, (2 * IPP_PI))));
+    val.im = static_cast<float>(sin(fmod(teta, (2 * IPP_PI))));
+    qDebug() << "VAL" << val.re << val.im << static_cast<quint64>(teta) << fmod(teta, (2 * IPP_PI));
+    ippsMulC_32fc(blockData, val, blockData, static_cast<int>(blockSize));
     //    ippsMulC_32fc(blockData, val, d->dstFinalRez.get(),static_cast<int>(blockSize));
     //    blockData=d->dstFinalRez.get();
 }
 
 int  BlockEqualizer::calcFftOrder(quint32 number)
 {
-    int count=2;//2 в 0 , 2 в 1
-    quint32 bufValue=2;
-    for(int i=2;i<=16;i++){
-        bufValue*=2;
-        if(bufValue==number)
+    int count = 2; //2 в 0 , 2 в 1
+    quint32 bufValue = 2;
+    for(int i = 2; i <= 16; i++)
+    {
+        bufValue *= 2;
+        if(bufValue == number)
+        {
             break;
+        }
         count++;
     }
-    qDebug()<<bufValue<<number;
-    if(bufValue==number){
+    qDebug() << bufValue << number;
+    if(bufValue == number)
+    {
         return count;
-    }else{
+    }
+    else
+    {
         return -1;
     }
 }
@@ -170,12 +184,13 @@ int  BlockEqualizer::calcFftOrder(quint32 number)
  * \param phaseValues массив фаз сигнала
  * \param size
  */
-void BlockEqualizer::swapHalfPhaseValues(Ipp32f *phaseValues, quint32 size)const
+void BlockEqualizer::swapHalfPhaseValues(Ipp32f* phaseValues, quint32 size)const
 {
-    for(quint32 i=0;i<size/2;i++){
-        Ipp32f temp=phaseValues[i+size/2];
-        phaseValues[i+size/2]=phaseValues[i];
-        phaseValues[i]=temp;
+    for(quint32 i = 0; i < size / 2; i++)
+    {
+        Ipp32f temp = phaseValues[i + size / 2];
+        phaseValues[i + size / 2] = phaseValues[i];
+        phaseValues[i] = temp;
     }
 }
 
@@ -186,8 +201,10 @@ void BlockEqualizer::swapHalfPhaseValues(Ipp32f *phaseValues, quint32 size)const
  * \param size
  * \param phaseAngle
  */
-void BlockEqualizer::incrementPhaseValuesOnAngle(Ipp32f *phaseData,quint32 size,float phaseAngle)const
+void BlockEqualizer::incrementPhaseValuesOnAngle(Ipp32f* phaseData, quint32 size, float phaseAngle)const
 {
-    for(quint32 i=0;i<size;i++)
-        phaseData[i]+=phaseAngle;
+    for(quint32 i = 0; i < size; i++)
+    {
+        phaseData[i] += phaseAngle;
+    }
 }

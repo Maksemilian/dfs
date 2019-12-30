@@ -9,59 +9,67 @@
 
 using namespace std;
 
-TimeReader &TimeReader::instance()
+TimeReader& TimeReader::instance()
 {
     static TimeReader timeReader;
     return timeReader;
 }
 
-TimeReader::TimeReader():startedAtomWatch(false),weekNumber(0),timeOfWeek(0){
+TimeReader::TimeReader(): startedAtomWatch(false), weekNumber(0), timeOfWeek(0)
+{
 }
 
-void TimeReader::getTime(quint16 &weekNumber, quint32 &timeOfWeek)
+void TimeReader::getTime(quint16& weekNumber, quint32& timeOfWeek)
 {
     QReadLocker readLocker(&rwLock);
-    weekNumber=this->weekNumber;
-    timeOfWeek=this->timeOfWeek;
+    weekNumber = this->weekNumber;
+    timeOfWeek = this->timeOfWeek;
 }
 
-void TimeReader::getTimeOfWeek(quint32 &timeOfWeek){
+void TimeReader::getTimeOfWeek(quint32& timeOfWeek)
+{
     QReadLocker readLocker(&rwLock);
-    timeOfWeek=this->timeOfWeek;
+    timeOfWeek = this->timeOfWeek;
 }
 
-void TimeReader::getWeekNumber(quint16 &weekNumber){
+void TimeReader::getWeekNumber(quint16& weekNumber)
+{
     QReadLocker readLocker(&rwLock);
-    weekNumber=this->weekNumber;
+    weekNumber = this->weekNumber;
 }
 
-void TimeReader::start(){
+void TimeReader::start()
+{
     reset();
-    startedAtomWatch=true;
+    startedAtomWatch = true;
     std::shared_ptr<QMetaObject::Connection> sharedPtrConnection(new QMetaObject::Connection) ;
-    *sharedPtrConnection  =connect(&processFutureWatcher,&QFutureWatcher<void>::finished,[this,sharedPtrConnection]{
+    *sharedPtrConnection  = connect(&processFutureWatcher, &QFutureWatcher<void>::finished, [this, sharedPtrConnection]
+    {
         disconnect(*sharedPtrConnection);
         emit stopedTrimble();
     });
 
-    processFutureWatcher.setFuture(QtConcurrent::run(this,&TimeReader::process));
+    processFutureWatcher.setFuture(QtConcurrent::run(this, &TimeReader::process));
 }
 
-void TimeReader::stop(){
-    startedAtomWatch=false;
+void TimeReader::stop()
+{
+    startedAtomWatch = false;
     processFutureWatcher.waitForFinished();
 }
 
-void TimeReader::process(){
+void TimeReader::process()
+{
     QSerialPort comPort;
 
-   for (QSerialPortInfo info:QSerialPortInfo::availablePorts())
-   {
-       if(!info.isBusy()){
-           comPort.setPortName(info.portName());
-           break;
-       }
-   }
+    for (QSerialPortInfo info : QSerialPortInfo::availablePorts())
+    {
+        if(!info.isBusy())
+        {
+            comPort.setPortName(info.portName());
+            break;
+        }
+    }
     comPort.setBaudRate(QSerialPort::Baud9600);
     comPort.setDataBits(QSerialPort::Data8);
     comPort.setParity(QSerialPort::NoParity);
@@ -77,11 +85,11 @@ void TimeReader::process(){
             parser.receivePacket(&comPort);
 
             rwLock.lockForWrite();
-            if (parser.getCurrentPacket()==TsipParser::PN_AB)
+            if (parser.getCurrentPacket() == TsipParser::PN_AB)
             {
-                packetAB=parser.getPacketAB();
-                timeOfWeek=packetAB.ulTimeOfWeek;
-                weekNumber=packetAB.usWeekNumber;
+                packetAB = parser.getPacketAB();
+                timeOfWeek = packetAB.ulTimeOfWeek;
+                weekNumber = packetAB.usWeekNumber;
             }
             rwLock.unlock();
         }
@@ -89,7 +97,7 @@ void TimeReader::process(){
     }
     else
     {
-        qDebug()<<"SERIAL PORT ERROR"<<comPort.error()<<comPort.portName();
+        qDebug() << "SERIAL PORT ERROR" << comPort.error() << comPort.portName();
     }
     comPort.close();
 }

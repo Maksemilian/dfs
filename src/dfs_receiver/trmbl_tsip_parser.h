@@ -15,59 +15,66 @@
 
 class QSerialPort;
 
-template<typename T,int SIZE>
-union AliasCast{
+template<typename T, int SIZE>
+union AliasCast
+{
     T value;
     quint8 byteArray[SIZE];
 };
 
-class TsipParser:public QObject
+class TsipParser: public QObject
 {
     Q_OBJECT
-    struct PacketBase{
+    struct PacketBase
+    {
         int number;
-        PacketBase():number(0){}
+        PacketBase(): number(0) {}
     };
-public:
-    enum PacketName{PN_AB,PN_AC};
+  public:
+    enum PacketName {PN_AB, PN_AC};
 
-    struct PacketAB:public PacketBase{
+    struct PacketAB: public PacketBase
+    {
         quint32 ulTimeOfWeek;
         quint16 usWeekNumber;
-        PacketAB():ulTimeOfWeek(0),usWeekNumber(0){}
+        PacketAB(): ulTimeOfWeek(0), usWeekNumber(0) {}
     };
 
-    struct PacketAC:public PacketBase{
+    struct PacketAC: public PacketBase
+    {
         float fltPPSQuality;
-        PacketAC():fltPPSQuality(0){}
+        PacketAC(): fltPPSQuality(0) {}
     };
 
-    explicit TsipParser(QObject *parent = nullptr);
+    explicit TsipParser(QObject* parent = nullptr);
 
     void parsePkt   (quint8 ucPkt[], int nPktLen);
-    void receivePacket(QSerialPort *port);
+    void receivePacket(QSerialPort* port);
 
-    PacketName getCurrentPacket(){
+    PacketName getCurrentPacket()
+    {
         return currentPacket;
     }
-    PacketAB getPacketAB(){
+    PacketAB getPacketAB()
+    {
         return packetAB;
     }
-    PacketAC getPacketAC(){
+    PacketAC getPacketAC()
+    {
         return packetAC;
     }
-private:
+  private:
     void parse0x8F (quint8 ucData[], int nLen);
     void parse0x8FAB (quint8 ucData[], int nLen);
     void parse0x8FAC (quint8 ucData[], int nLen);
 
-    quint16 getUShort (quint8 *pucBuf);
-    quint32 getULong (quint8 *pucBuf);
-    qint32  getLong (quint8 *pucBuf);
-    qint16  getShort (quint8 *pucBuf);
+    quint16 getUShort (quint8* pucBuf);
+    quint32 getULong (quint8* pucBuf);
+    qint32  getLong (quint8* pucBuf);
+    qint16  getShort (quint8* pucBuf);
     double  getDouble (quint8* pucBuf);
-    float   getSingle (quint8 *pucBuf);
-private:
+    float   getSingle (quint8* pucBuf);
+  private:
     quint8 ucPkt[MAX_TSIP_PKT_LEN];
 
     int nPktLen;

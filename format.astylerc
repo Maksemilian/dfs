@@ -1,0 +1,11 @@
+--style=allman
+
+--indent-namespaces
+--indent-modifiers 
+--indent-switches
+
+--align-pointer=type 
+--align-reference=type 
+
+--pad-oper
+--add-braces

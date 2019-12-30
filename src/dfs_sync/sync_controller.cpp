@@ -17,7 +17,7 @@ struct SyncController::Impl
     ShPtrIpp32fcBuffer sumDivBuffer;
 
     QFutureWatcher<void> fw;
-    SyncProcess *shiftFinder=nullptr;
+    SyncProcess* shiftFinder = nullptr;
 };
 
 SyncController::SyncController():
@@ -39,7 +39,7 @@ ShPtrIpp32fcBuffer SyncController::sumDivMethodBuffer()
     return d->sumDivBuffer;
 }
 
-SyncController::~SyncController()= default;
+SyncController::~SyncController() = default;
 
 
 //************* START / STOP SYNC *************************************
@@ -48,22 +48,22 @@ SyncController::~SyncController()= default;
  * \brief SyncPairChannel::start
  */
 void SyncController::start(const ShPtrPacketBufferPair inPacketBuffers,
-                            quint32 ddcFrequency,
-                            quint32 sampleRate,
-                            quint32 blockSize)
+                           quint32 ddcFrequency,
+                           quint32 sampleRate,
+                           quint32 blockSize)
 {
-    qDebug()<<"******SyncPairChannel::start();";
+    qDebug() << "******SyncPairChannel::start();";
 
-    d->shiftFinder=new SyncProcess(d->syncBuffer1,
-                                   d->syncBuffer2,
-                                   d->sumDivBuffer);
+    d->shiftFinder = new SyncProcess(d->syncBuffer1,
+                                     d->syncBuffer2,
+                                     d->sumDivBuffer);
 
-    QObject::connect(d->shiftFinder,&SyncProcess::finished,
-            d->shiftFinder,&SyncProcess::deleteLater);
+    QObject::connect(d->shiftFinder, &SyncProcess::finished,
+                     d->shiftFinder, &SyncProcess::deleteLater);
 
-    d->fw.setFuture(QtConcurrent::run(d->shiftFinder,&SyncProcess::start,
+    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &SyncProcess::start,
                                       inPacketBuffers,
-                                      ddcFrequency,sampleRate,blockSize));
+                                      ddcFrequency, sampleRate, blockSize));
 }
 
 /*!
@@ -72,6 +72,6 @@ void SyncController::start(const ShPtrPacketBufferPair inPacketBuffers,
 void SyncController::stop()
 {
     d->shiftFinder->stop();
-    qDebug()<<"SyncPairChannel::stop();";
+    qDebug() << "SyncPairChannel::stop();";
 }
 
