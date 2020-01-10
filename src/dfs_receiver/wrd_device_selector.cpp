@@ -41,7 +41,7 @@ ShPtrDevice DeviceFactory::createCohG35Device(unsigned int deviceSetIndex,
     {
         qDebug() << "DEMO_MODE_SELECTED";
         countDeviceInSet = 1;
-        deviceInfoMas = G35DDC_OPEN_DEMO_SET;
+        deviceInfoMas = dynamic_cast<G35DDC_DEVICE_INFO*>(G35DDC_OPEN_DEMO_SET);
     }
     if(deviceSet->Open(deviceInfoMas, countDeviceInSet))
     {
@@ -49,7 +49,9 @@ ShPtrDevice DeviceFactory::createCohG35Device(unsigned int deviceSetIndex,
         if(!demoMode)
         {
             for(quint32 deviceIndex = 0; deviceIndex < countDeviceInSet; deviceIndex++)
+            {
                 qDebug() << "|_____SerialNumber:" << deviceInfoMas[deviceIndex].SerialNumber;
+            }
 
             delete []deviceInfoMas;
         }
@@ -124,7 +126,7 @@ ShPtrDevice DeviceFactory::createSingleG35Device(unsigned int deviceIndex,
     }
     else
     {
-        printf("Failed to open device. Error code=%08X\n", GetLastError());
+        printf("Failed to open device. Error code= %08lu\n", GetLastError());
     }
     return nullptr;
 }
@@ -140,8 +142,6 @@ ShPtrDevice DeviceFactory::createSingleG35Device(unsigned int deviceIndex,
 //    return number;
 //}
 /*
-//*************
-
 //class DeviceSelector
 //{
 //public:

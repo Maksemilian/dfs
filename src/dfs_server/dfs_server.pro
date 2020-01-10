@@ -35,30 +35,6 @@ LIBS += -L$${LIBS_PATH}/dfs_proto/lib -ldfs_proto$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_receiver/lib -ldfs_receiver$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
-#LIBS += -ldfs_net$${LIB_SUFFIX}
-#LIBS += -ldfs_proto$${LIB_SUFFIX}
-#LIBS += -lprotobuf$${LIB_SUFFIX}
-
-#PRE_TARGETDEPS += \
-#$${LIBS_PATH}/dfs_net/lib/$${LIBPREFIX}dfs_net$${LIB_SUFFIX}.a \
-#$${LIBS_PATH}/dfs_proto/lib/$${LIBPREFIX}dfs_proto$${LIB_SUFFIX}.a \
-#$${LIBS_PATH}/dfs_receiver/lib/$${LIBPREFIX}dfs_receiver$${LIB_SUFFIX}.a
-
-#DEPENDENCY_LIBRARIES = dfs_net dfs_proto dfs_receiver
-
-#SONAME = a
-#for(dep, DEPENDENCY_LIBRARIES) {
-#    #message($$TARGET depends on $$dep ($${DESTDIR}/$${dep}.$${SONAME}))
-##    LIBS += $${DESTDIR}/lib$${dep}.$${SONAME}
-#    DEPENDPATH +=
-#    PRE_TARGETDEPS += $${LIBS_PATH}/$${dep}/lib/lib$${dep}$${LIB_SUFFIX}.$${SONAME}
-#}
-
-#! include( ../../dep.pri ) {
-#    error( "Couldn't find the dep.pri file!" )
-#}
-
-
 HEADERS += device_set_selector.h \
     host_server.h \
     host_ds.h
@@ -73,16 +49,3 @@ SOURCES += main.cpp \
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-#INCLUDEPATH += $${LIBS_PATH}/proto/include
-#INCLUDEPATH += $${LIBS_PATH}/common/include
-#при добавлении нижней строки происходит error
-#:-1: ошибка: cannot open output file release/ProcessingSignalClient.exe: Permission denied
-
-#******************
-#PRE_TARGETDEPS +=$${LIBS_PATH}/common/lib/libcommonlib.a
-#PRE_TARGETDEPS +=$${LIBS_PATH}/proto/lib/libdfs_proto.a

@@ -20,11 +20,14 @@ class PhaseValidator: public QValidator
   public:
     State validate(QString& str, int& pos)const override
     {
+        Q_UNUSED(pos);
         if(str.contains(QRegExp("[0-9]")))
         {
             double val = str.toDouble();
             if(val >= -180 && val <= 180)
+            {
                 return  Acceptable;
+            }
             else
             {
                 return Intermediate;
@@ -34,7 +37,10 @@ class PhaseValidator: public QValidator
         {
             qDebug() << "ELSE REG";
         }
-        if(str.isEmpty())    return Intermediate;
+        if(str.isEmpty())
+        {
+            return Intermediate;
+        }
         return Invalid;
     }
 };

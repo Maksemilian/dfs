@@ -13,10 +13,6 @@ LIB_NAME = dfs_sync
     error( "Couldn't find the copy_files.pri file!" )
 }
 
-#headers.path = $${LIBS_PATH}/dfs_sync/include
-#headers.files   += $$files($${PWD}/*.h)
-#INSTALLS       += headers
-
 QT       +=core
 
 DEBUG_TARGET = dfs_syncd

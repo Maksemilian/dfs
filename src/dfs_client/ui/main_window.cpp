@@ -98,7 +98,10 @@ void MainWindow::setRightDockWidget(QWidget* widget, const QString& title)
 
 void MainWindow::setTopToolBar(QToolBar* topToolBar)
 {
-    if(!topToolBar) return;
+    if(!topToolBar)
+    {
+        return;
+    }
 
     //DDC1 Frequency
     MacroCommand* macroFreq = FactoryCommand::getMacroCommand();
@@ -144,7 +147,10 @@ void MainWindow::setTopToolBar(QToolBar* topToolBar)
 
 void MainWindow::setBottomToolBar(QToolBar* bottomToolBar)
 {
-    if(!bottomToolBar) return ;
+    if(!bottomToolBar)
+    {
+        return ;
+    }
     //power BUTTON
     pbPower = new SwitchButton("On", "Off", false, this);
     connect(pbPower, &SwitchButton::changed, this, &MainWindow::widgetChanged);
@@ -227,13 +233,17 @@ void MainWindow::setBottomToolBar(QToolBar* bottomToolBar)
 void MainWindow::hideReceiverSettingsTool()
 {
     for(QToolBar* toolBar : toolBarMap.values())
+    {
         toolBar->setDisabled(true);
+    }
 }
 
 void MainWindow::showReceiverSettingsTool()
 {
     for(QToolBar* toolBar : toolBarMap.values())
+    {
         toolBar->setEnabled(true);
+    }
 }
 
 
@@ -252,10 +262,18 @@ void MainWindow::widgetChanged()
 
             if(AbstractCommand* command =
                         dynamic_cast<AbstractCommand*>(widget->userData(state)))
+            {
                 command->execute();
+            }
 
-            if(pbPower->currentState())qDebug() << "********COMMAND ON";
-            else qDebug() << "********COMMAND OFF";
+            if(pbPower->currentState())
+            {
+                qDebug() << "********COMMAND ON";
+            }
+            else
+            {
+                qDebug() << "********COMMAND OFF";
+            }
 
             return;
         }
@@ -267,7 +285,9 @@ void MainWindow::widgetChanged()
                 qDebug() << "ATTENUATOR PB";
 
                 if(AbstractCommand* command = dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
+                {
                     command->execute();
+                }
 
                 cbAttenuationLevel->setEnabled(true);
             }
@@ -316,7 +336,9 @@ void MainWindow::widgetChanged()
         //**********
 
         if(AbstractCommand* command = dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID)))
+        {
             command->execute();
+        }
 
     }
     else
@@ -476,7 +498,10 @@ void MainWindow::loadSettings()
         cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
         s.endGroup();
     }
-    else   qDebug() << "FILE " << settingsFileName << "isn't exist";
+    else
+    {
+        qDebug() << "FILE " << settingsFileName << "isn't exist";
+    }
 }
 
 void MainWindow::saveSetting()
@@ -512,7 +537,10 @@ void MainWindow::saveSetting()
         s.endGroup();
         s.sync();
     }
-    else  qDebug() << "FILE " << settingsFileName << "isn't exist";
+    else
+    {
+        qDebug() << "FILE " << settingsFileName << "isn't exist";
+    }
 }
 /*
 void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
@@ -559,7 +587,6 @@ void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
         }else if (widget==leDDC1Frequency){
         }
 
-        //**********
         AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
         if(command)
             command->execute();

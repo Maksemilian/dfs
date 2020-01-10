@@ -40,6 +40,7 @@ class DeviceWidgetCreator: public QDialog
         gl->addWidget(new QLabel("Port:", this), 1, 0);
         gl->addWidget(_lePort, 1, 1);
     }
+    virtual ~DeviceWidgetCreator() override {}
   private:
     QLineEdit* _leIpAddress;
     QLineEdit* _lePort;
@@ -75,7 +76,6 @@ DeviceSetListWidget::DeviceSetListWidget(QWidget* parent)
     connect(pbAddDeviceWidget, &QPushButton::clicked,
             [this]
     {
-        bool ok;
         QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                              tr("User name:"), QLineEdit::Normal);
         QStringList stringList = text.split(":");
@@ -117,7 +117,9 @@ void DeviceSetListWidget::setCommand(proto::receiver::Command& command)
     setCursor(Qt::WaitCursor);
 
     if(_commandQueue.isEmpty())
+    {
         setAllDeviceSet(command);
+    }
 
     _commandQueue.enqueue(command);
 }
@@ -173,7 +175,9 @@ QList<DeviceSetWidget*> DeviceSetListWidget::createdDeviceSetWidgets()
     {
         if(DeviceSetWidget* widget =
                     qobject_cast<DeviceSetWidget*>(_listWidget->itemWidget(item)))
+        {
             devieceWidgets.append(widget);
+        }
     }
     return devieceWidgets;
 }
@@ -228,7 +232,10 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget* deviceSetWidget)
         {
             setAllDeviceSet(_commandQueue.head());
         }
-        else setCursor(Qt::ArrowCursor);
+        else
+        {
+            setCursor(Qt::ArrowCursor);
+        }
     });
 
     QListWidgetItem* stationPanelItem = new QListWidgetItem(_listWidget);
@@ -243,7 +250,10 @@ void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget* deviceSetWidget)
     {
         qDebug() << "FIND CHILD";
     }
-    else qDebug() << "NOT FIND CHILD";
+    else
+    {
+        qDebug() << "NOT FIND CHILD";
+    }
 }
 
 void DeviceSetListWidget::removeDeviceSetWidget(DeviceSetWidget* deviceSetWidget)
@@ -255,7 +265,10 @@ void DeviceSetListWidget::removeDeviceSetWidget(DeviceSetWidget* deviceSetWidget
     {
         qDebug() << "FIND CHILD";
     }
-    else qDebug() << "NOT FIND CHILD";
+    else
+    {
+        qDebug() << "NOT FIND CHILD";
+    }
 
     for(int i = 0; i < _listWidget->count(); i++)
     {
@@ -286,7 +299,10 @@ void DeviceSetListWidget::connectToSelectedDeviceSet()
             widget->connectToDeviceSet();
             _connectedDeviceSetWidgetList.append(widget);
         }
-        else qDebug() << "NULL DEVICE SET WIDGET";
+        else
+        {
+            qDebug() << "NULL DEVICE SET WIDGET";
+        }
 
     }
     setCursor(Qt::WaitCursor);
@@ -305,7 +321,10 @@ void DeviceSetListWidget::disconnectFromSelectedDeviceSet()
         {
             widget->disconnectFromDeviceSet();
         }
-        else qDebug() << "NULL DEVICE SET WIDGET";
+        else
+        {
+            qDebug() << "NULL DEVICE SET WIDGET";
+        }
 
     }
     setCursor(Qt::WaitCursor);
@@ -354,7 +373,9 @@ void DeviceSetListWidget::setCursor(const QCursor& cursor)
 {
     //TODO НЕПОНЯТНО ПОЧЕМУ ДВА PARENT WIDGET НУЖНО СТАВИТЬ
     if(parentWidget())
+    {
         parentWidget()->parentWidget()->setCursor(cursor);
+    }
 }
 
 void DeviceSetListWidget::onRemoveDeviceSetWidget()
@@ -373,6 +394,7 @@ void DeviceSetListWidget::onRemoveDeviceSetWidget()
 
 void DeviceSetListWidget::onStationItemSelected(QListWidgetItem* item)
 {
+    Q_UNUSED(item);
     qDebug() << "Station Panel Clicked";
     if(_listWidget->selectedItems().isEmpty())
     {

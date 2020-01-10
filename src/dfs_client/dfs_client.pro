@@ -83,27 +83,3 @@ SOURCES += \
 
 FORMS += \
     ui/main_window.ui \
-
-#при добавлении нижней строки происходит error
-#:-1: ошибка: cannot open output file release/ProcessingSignalClient.exe: Permission denied
-
-#INCLUDEPATH += $${PROJECT_ROOT_PATH}/src/dfs_proto
-#LIBS += -L$${LIBS_PATH}/
-
-#LIBS += -L$${LIBS_PATH}/client/common/lib
-#LIBS += -L$${LIBS_PATH}/client/proto/lib
-#PRE_TARGETDEPS +=$${LIBS_PATH}/common/lib/libcommonlib.a
-#PRE_TARGETDEPS +=$${LIBS_PATH}/proto/lib/libdfs_proto.a
-
-## Добавляем модуль file_copies
-#CONFIG += file_copies
-## Добавляем переменную, описывающую копируемые файлы
-#COPIES += protobuf_incl
-## Определяем, с каким расширением нам необохдимо скопировать файлы и по какому пути они расположены
-#protobuf_incl.files = $$files($${PWD}/lib/proto/lib/include/*.pb.h)
-## Указываем путь, куда копировать файлы
-#protobuf_incl.path = $${LIBS_PATH}/client/proto/include
-
-#headers.path    = $${LIBS_PATH}/client/proto/include
-#headers.files   += $$files($${LIBS_PATH}/proto/include/*.pb.h)
-#INSTALLS       += headers

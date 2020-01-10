@@ -18,7 +18,10 @@ G35DDC_DEVICE_INFO G35Device::getDeviceInfo()
 
 void G35Device::setCallback(std::unique_ptr<G35Callback> callback)
 {
-    if(!callback.get())return;
+    if(!callback.get())
+    {
+        return;
+    }
 
     _callback = std::move(callback);
 
@@ -97,6 +100,7 @@ bool G35Device::setSettings(const DeviceSettings& settings)
 bool G35Device::startDDC1(unsigned int samplesPerBuffer)
 {
     Q_ASSERT_X(_device, "deviceSet is null", "CohG35DeviceSet::startDDC1();");
+    Q_UNUSED( samplesPerBuffer);
     bool success = false;
 //    if(!timeReader.isStarted())return false;
 //    if(_device){

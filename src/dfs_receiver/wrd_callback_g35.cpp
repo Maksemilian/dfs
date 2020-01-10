@@ -18,7 +18,10 @@ VOID __stdcall G35Callback::G35DDC_IFCallback(IG35DDCDevice* Device, CONST SHORT
 VOID __stdcall G35Callback::G35DDC_DDC1StreamCallback(IG35DDCDevice* Device, CONST VOID* Buffer, UINT32 NumberOfSamples, UINT32 BitsPerSample)
 {
     qDebug() << "DDC_Stream_Callback";
-
+    Q_UNUSED(Device);
+    Q_UNUSED(Buffer);
+    Q_UNUSED(NumberOfSamples);
+    Q_UNUSED(BitsPerSample);
 }
 
 BOOL __stdcall G35Callback::G35DDC_DDC1PlaybackStreamCallback(IG35DDCDevice* Device, VOID* Buffer, UINT32 NumberOfSamples, UINT32 BitsPerSample)
@@ -55,6 +58,7 @@ VOID __stdcall G35Callback::G35DDC_AudioStreamCallback(IG35DDCDevice* Device, UI
     Q_UNUSED(Buffer);
     Q_UNUSED(NumberOfSamples);
     Q_UNUSED(Channel);
+    Q_UNUSED(Type);
 
 }
 BOOL __stdcall G35Callback::G35DDC_AudioPlaybackStreamCallback(IG35DDCDevice* Device, UINT32 Channel, FLOAT* Buffer, UINT32 NumberOfSamples)

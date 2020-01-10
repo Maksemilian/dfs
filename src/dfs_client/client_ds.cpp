@@ -137,7 +137,10 @@ void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
     {
         emit deviceSetReady();
     }
-    else qDebug() << "ERROR MESSAGE RECEIVE";
+    else
+    {
+        qDebug() << "ERROR MESSAGE RECEIVE";
+    }
 }
 
 void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer& answer)
@@ -212,8 +215,11 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer& answer)
             case proto::receiver::STOP_SENDING_DDC1_STREAM:
                 qDebug() << "STOP_SENDING_DDC1_STREAM";
                 break;
+            case proto::receiver::SET_DEVICE_MODE:
+            case proto::receiver::UNKNOWN_COMMAND:
             case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
             case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
+                qDebug() << "WARNING:" << "UNUSED ENUMERATION VALUE";
                 break;
         }
         emit commandSuccessed();
@@ -278,7 +284,6 @@ QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 }
 
 /*
-//***************************** COMMAND SENDING ***************************
 
 void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
 {
