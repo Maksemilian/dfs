@@ -4,13 +4,27 @@
 
 QT       += core gui network
 
-DEFINES +=QT_MESSAGELOGCONTEXT
+DEFINES += QT_MESSAGELOGCONTEXT
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += printsupport
 
 
 TARGET = Client
 TEMPLATE = app
+
+DEBUG_TARGET = clientd
+RELEASE_TARGET = client
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+#    CONFIG += console
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 CONFIG +=console
 CONFIG += c++14
 
@@ -26,8 +40,8 @@ INCLUDEPATH += $${LIBS_PATH}/google/include
 LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_sync/lib  -ldfs_sync$${LIB_SUFFIX}
-LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 
+LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 LIBS += -L$${LIBS_PATH}/plot/lib -lqcustomplot$${LIB_SUFFIX}2
 LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 

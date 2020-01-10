@@ -3,7 +3,6 @@
 
 #include "receiver.pb.h"
 #include "i_deviceset.h"
-#include "sync_pair_channel.h"
 
 #include <QListWidget>
 #include <QQueue>

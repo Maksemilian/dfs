@@ -2,15 +2,27 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-headers.path = $${LIBS_PATH}/dfs_net/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
+LIB_NAME = dfs_net
+
+! include( ../../copy_files.pri ) {
+    error( "Couldn't find the copy_files.pri file!" )
+}
 
 QT += core
 QT += network
 QT -= gui
 
-TARGET = dfs_net
+DEBUG_TARGET = dfs_netd
+RELEASE_TARGET = dfs_net
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+}
+
 TEMPLATE = lib
 
 CONFIG += staticlib
@@ -21,8 +33,8 @@ DESTDIR =$${LIBS_PATH}/dfs_net/lib
 INCLUDEPATH += $${LIBS_PATH}/google/include
 INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
 
-#LIBS += $${LIBS_PATH}/google/lib -lprotobuf
 LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
+#LIBS += $${LIBS_PATH}/google/lib -lprotobuf
 
 HEADERS += \
     channel.h \
@@ -35,71 +47,3 @@ SOURCES += \
     channel_host.cpp
 
 DEFINES += QT_DEPRECATED_WARNINGS
-
-#************** DEL ***************
-#INCLUDEPATH += $${LIBS_PATH}/dfs_proto/include
-#LIBS += $${LIBS_PATH}/dfs_proto/lib
-
-
-#INCLUDEPATH += "C:\Qt\include\google\protobuf_3_4_1"
-#INCLUDEPATH += "C:\Qt\include\google\protobuf_3_7_1"
-#LIBS += -L "C:\Qt\lib\google" -lprotobufd
-#LIBS += -lprotobuf$${LIB_SUFFIX}
-#message("COMMON" $${PROJECT_ROOT_PATH})
-
-#INCLUDEPATH += $${LIBS_PATH}/google/include
-#INCLUDEPATH += $${LIBS_PATH}/proto/include
-#LIBS += -L$${LIBS_PATH}/google/lib
-#LIBS += -L$${LIBS_PATH}/proto/lib
-
-## Добавляем модуль file_copies
-#CONFIG += file_copies
-## Добавляем переменную, описывающую копируемые файлы
-#COPIES += common_incl
-## Определяем, с каким расширением нам необохдимо скопировать файлы и по какому пути они расположены
-#common_incl.files = $$files($${PWD}/*.h)
-## Указываем путь, куда копировать файлы
-#common_incl.path = $${LIBS_PATH}/common/include
-
-#*************************  COPY INCLUDE *************************
-
-#copytarget.path    = $${LIBS_PATH}/common/include
-#copytarget.files  += $$files($${PWD}/*.h)
-### wildcard for filename1 filename2 filename3 ...
-
-##message("found files for copytarget: "$$copytarget.files)
-#win32: copytarget.files ~= s,/,\\,g
-
-### === copy compiler for makefile ===
-#DIR_INCL=include
-
-#DirSep = /
-#win32: DirSep = \\
-
-#for(f,copytarget.files) tmp += $${f} ## make absolute paths
-#copycompiler.input        = tmp
-
-##message("Input: " $$copycompiler.input)
-#isEmpty(DESTDIR):DESTDIR=.
-#copycompiler.output       = $$DESTDIR$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-##copycompiler.output       = $$DESTDIR$$DirSep$$DIR_INCL$$DirSep${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-#message("copycompiler.output: " $$copycompiler.output)
-
-#copycompiler.commands     = $(COPY_FILE) ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
-
-#copycompiler.CONFIG       = no_link no_clean
-### other CONFIG options are: depends explicit_dependencies target_predeps
-
-#copycompiler.variable_out = QMAKE_DISTCLEAN
-#QMAKE_EXTRA_COMPILERS += copycompiler
-
-### == makefile copy target ===
-#copyfiles.recurse_target = compiler_copycompiler_make_all
-#copyfiles.depends        = $$copyfiles.recurse_target
-#copyfiles.CONFIG        += recursive
-#QMAKE_EXTRA_TARGETS += copyfiles
-#POST_TARGETDEPS     += copyfiles ## copy files after source compilation
-
-#INSTALLS += copytarget
-
-

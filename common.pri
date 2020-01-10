@@ -2,7 +2,7 @@
     error( "Couldn't find the format.astylerc file!" )
 }
 
-PROJECT_ROOT_PATH = $${PWD}/
+PROJECT_ROOT_PATH = $${PWD}
 
 
 CONFIG(debug, debug|release) {
@@ -12,6 +12,7 @@ CONFIG(debug, debug|release) {
     BUILD_FLAG = release
 }
 
+LIBPREFIX = lib
 LIBS_PATH = $${PROJECT_ROOT_PATH}/lib
 #message(COMMON_T: $${PROJECT_ROOT_PATH}/lib);
 BIN_PATH = $${PROJECT_ROOT_PATH}/bin

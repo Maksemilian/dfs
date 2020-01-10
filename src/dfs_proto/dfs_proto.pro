@@ -2,13 +2,26 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-##****************** copy 2 ВО ВРЕМЯ ЗАПУСКА APP КОМИТИТЬ
+LIB_NAME = dfs_proto
 
-#headers.path = $${LIBS_PATH}/dfs_proto/include
-#headers.files   += $$files($${PWD}/*.pb.h)
-#INSTALLS       += headers
+! include( ../../copy_files.pri ) {
+    error( "Couldn't find the copy_files.pri file!" )
+}
 
-TARGET = dfs_proto
+
+DEBUG_TARGET = dfs_protod
+RELEASE_TARGET = dfs_proto
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+#    CONFIG += console
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
 TEMPLATE = aux
 
 PROTOS = $$files(*.proto)
@@ -52,11 +65,20 @@ protobuf_obj.output = $${OBJECTS_DIR}/${QMAKE_FILE_BASE}.o
 protobuf_obj.commands = g++ -c ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
 protobuf_obj.variable_out = OBJECTS
 protobuf_obj.CONFIG = target_predeps
-QMAKE_EXTRA_COMPILERS +=protobuf_obj
+QMAKE_EXTRA_COMPILERS += protobuf_obj
 
 protobuf_lib.name=proto lib
 protobuf_lib.input = OBJECTS
-protobuf_lib.output = $${LIBS_PATH}/dfs_proto/lib/libdfs_proto.a
+
+CONFIG(debug, debug|release){
+protobuf_lib.output = $${LIBS_PATH}/dfs_proto/lib/lib$${DEBUG_TARGET}.a
+}
+
+CONFIG(release, debug|release){
+protobuf_lib.output = $${LIBS_PATH}/dfs_proto/lib/lib$${RELEASE_TARGET}.a
+}
+
+
 protobuf_lib.commands = ar -cr ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
 #без этой строки
 protobuf_lib.CONFIG += combine target_predeps
@@ -65,7 +87,7 @@ protobuf_lib.CONFIG += combine target_predeps
 #ar: невозможно переименовать <libprotomessages.a>; причина: File exists
 #mingw32-make: *** [Makefile.Release:119: libprotomessages.a] Error 1
 
-QMAKE_EXTRA_COMPILERS +=protobuf_lib
+QMAKE_EXTRA_COMPILERS += protobuf_lib
 
 
 

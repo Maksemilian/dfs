@@ -2,15 +2,31 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-headers.path = $${LIBS_PATH}/dfs_receiver/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
+LIB_NAME = dfs_receiver
+
+! include( ../../copy_files.pri ) {
+    error( "Couldn't find the copy_files.pri file!" )
+}
+
+#headers.path = $${LIBS_PATH}/dfs_receiver/include
+#headers.files   += $$files($${PWD}/*.h)
+#INSTALLS       += headers
 
 QT += core
 QT += serialport
 
-TARGET =dfs_receiver
 TEMPLATE = lib
+
+DEBUG_TARGET = dfs_receiverd
+RELEASE_TARGET = dfs_receiver
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+}
 
 CONFIG += staticlib
 CONFIG += c++14

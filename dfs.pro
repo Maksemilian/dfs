@@ -1,23 +1,28 @@
 TEMPLATE = subdirs
 
+#CONFIG += ordered
 
 SUBDIRS += \
-          src/dfs_client  \
-          src/dfs_server  \
+          src/dfs_base \
+#dfs_proto нужно собирать один раз
+# а потом иключать из SUBDIRS
+#иначе он будет собираться при каждом запуске client and server
+#          src/dfs_proto \
           src/dfs_net \
-          src/dfs_proto \
           src/dfs_receiver \
           src/dfs_sync \
-          src/dfs_base \
-          tests/test_dfs_net \
+          src/dfs_client  \
+          src/dfs_server  \
+          tests/test_dfs_net
 
+#dfs_client.depends = src/dfs_base src/dfs_proto src/dfs_net src/dfs_receiver
 
+#dfs_net.depends = src/dfs_proto
 
+#dfs_receiver.depends = src/dfs_base src/dfs_proto
 
-#client.depends = common
-#client.depends = dfs_proto
+#dfs_sync.depends = src/dfs_base src/dfs_proto
 
-#server.depends = common
-#server.depends = dfs_proto
+#dfs_server.depends = src/dfs_base src/dfs_proto src/dfs_net  src/dfs_receiver
 
-#common.depends = dfs_proto
+#test_dfs_net.depends = src/dfs_proto src/dfs_net

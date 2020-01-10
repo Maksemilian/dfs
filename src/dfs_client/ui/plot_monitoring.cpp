@@ -1,9 +1,10 @@
 #include "plot_monitoring.h"
-#include "sync_pair_channel.h"
 #include "client_ds_ui.h"
 #include "i_device_settings.h"
+
 #include "plot_elipse.h"
 #include "plot_channel.h"
+
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 
@@ -54,13 +55,19 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
         while (!quit)
         {
             if(sync->syncBuffer1()->pop(packet[CHANNEL_FIRST]))
+            {
                 isFirstStationReadedPacket = true;
+            }
 
             if(sync->syncBuffer2()->pop(packet[CHANNEL_SECOND]))
+            {
                 isSecondStationReadedPacket = true;
+            }
 
             if(sync->sumDivMethodBuffer()->pop(v))
+            {
                 isElips = true;
+            }
 
             if(isFirstStationReadedPacket && isSecondStationReadedPacket && isElips)
             {

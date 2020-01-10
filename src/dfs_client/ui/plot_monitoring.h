@@ -2,9 +2,8 @@
 #define PLOT_MONITORING_H
 
 #include <QWidget>
-#include "sync_pair_channel.h"
 //#include <memory>
-
+#include "sync_controller.h"
 class IDeviceSettings;
 class ChannelPlot;
 class ElipsPlot ;

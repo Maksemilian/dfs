@@ -7,13 +7,30 @@
     error( "Couldn't find the common.pri file!" )
 }
 
-headers.path = $${LIBS_PATH}/dfs_sync/include
-headers.files   += $$files($${PWD}/*.h)
-INSTALLS       += headers
+LIB_NAME = dfs_sync
+
+! include( ../../copy_files.pri ) {
+    error( "Couldn't find the copy_files.pri file!" )
+}
+
+#headers.path = $${LIBS_PATH}/dfs_sync/include
+#headers.files   += $$files($${PWD}/*.h)
+#INSTALLS       += headers
 
 QT       +=core
 
-TARGET = dfs_sync
+DEBUG_TARGET = dfs_syncd
+RELEASE_TARGET = dfs_sync
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+#    CONFIG += console
+#    DEFINES += QT_NO_DEBUG_OUTPUT
+}
 TEMPLATE = lib
 
 CONFIG += staticlib

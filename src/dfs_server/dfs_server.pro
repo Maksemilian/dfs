@@ -5,7 +5,16 @@
 QT +=   core serialport
 QT +=   network
 
-TARGET = Server
+DEBUG_TARGET = serverd
+RELEASE_TARGET = server
+
+CONFIG(debug, debug|release){
+    TARGET = $$DEBUG_TARGET
+}
+
+CONFIG(release, debug|release){
+    TARGET = $$RELEASE_TARGET
+}
 
 CONFIG += console c++14
 CONFIG -= app_bundle
@@ -29,6 +38,26 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 #LIBS += -ldfs_net$${LIB_SUFFIX}
 #LIBS += -ldfs_proto$${LIB_SUFFIX}
 #LIBS += -lprotobuf$${LIB_SUFFIX}
+
+#PRE_TARGETDEPS += \
+#$${LIBS_PATH}/dfs_net/lib/$${LIBPREFIX}dfs_net$${LIB_SUFFIX}.a \
+#$${LIBS_PATH}/dfs_proto/lib/$${LIBPREFIX}dfs_proto$${LIB_SUFFIX}.a \
+#$${LIBS_PATH}/dfs_receiver/lib/$${LIBPREFIX}dfs_receiver$${LIB_SUFFIX}.a
+
+#DEPENDENCY_LIBRARIES = dfs_net dfs_proto dfs_receiver
+
+#SONAME = a
+#for(dep, DEPENDENCY_LIBRARIES) {
+#    #message($$TARGET depends on $$dep ($${DESTDIR}/$${dep}.$${SONAME}))
+##    LIBS += $${DESTDIR}/lib$${dep}.$${SONAME}
+#    DEPENDPATH +=
+#    PRE_TARGETDEPS += $${LIBS_PATH}/$${dep}/lib/lib$${dep}$${LIB_SUFFIX}.$${SONAME}
+#}
+
+#! include( ../../dep.pri ) {
+#    error( "Couldn't find the dep.pri file!" )
+#}
+
 
 HEADERS += device_set_selector.h \
     host_server.h \
