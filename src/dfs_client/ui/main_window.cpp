@@ -14,11 +14,15 @@
 #include "client_ds_ui.h"
 #include "client_ds_ui_list.h"
 
+#include "tree_devices.h"
+
 #include <QDockWidget>
 #include <QCheckBox>
 #include <QDebug>
 #include <QFile>
 #include <QSettings>
+#include <QStackedWidget>
+
 //**************CONSTANTS*******************
 const QString MainWindow::SETTINGS_FILE_NAME = "device_set.ini";
 
@@ -30,7 +34,12 @@ MainWindow:: MainWindow(QWidget* parent):
     setObjectName("MainWindow");
 
     deviceSetListWidget = new DeviceSetListWidget(this);
-    setLeftDockWidget(deviceSetListWidget, "DeviceSetList");
+
+    stackWidget = new QStackedWidget(this);
+    stackWidget->addWidget(new TreeDevices(this));
+    stackWidget->addWidget(deviceSetListWidget);
+//    setLeftDockWidget(deviceSetListWidget, "DeviceSetList");
+    setLeftDockWidget(stackWidget, "DeviceSetList");
 
     //************SETTING TOOLBAR***************
     //****TOP
@@ -84,7 +93,21 @@ void MainWindow::setLeftDockWidget(QWidget* widget, const QString& title)
 {
     QDockWidget* leftDockWidget = new QDockWidget(title, this);
     leftDockWidget->setWidget(widget);
+    QPushButton* pbChangeWidget = new QPushButton("change");
+    connect(pbChangeWidget, &QPushButton::clicked, [this]
+    {
+        if(stackWidget->currentIndex() == 0)
+        {
+            stackWidget->setCurrentIndex(1);
+        }
+        else
+        {
+            stackWidget->setCurrentIndex(0);
+        }
+    });
+    leftDockWidget->setTitleBarWidget(pbChangeWidget);
     addDockWidget(Qt::LeftDockWidgetArea, leftDockWidget);
+
 }
 
 void MainWindow::setRightDockWidget(QWidget* widget, const QString& title)
@@ -456,52 +479,52 @@ quint16  MainWindow::getAdcNoiceBlankerThreshold()
 void MainWindow::loadSettings()
 {
     QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME;
-    if(QFile::exists(settingsFileName))
-    {
-        QSettings s(settingsFileName, QSettings::IniFormat);
-        s.beginGroup("attenuator");
+//    if(QFile::exists(settingsFileName))
+//    {
+    QSettings s(settingsFileName, QSettings::IniFormat);
+    s.beginGroup("attenuator");
 
-        pbAttenuatorEnable->setCurrentState(s.value("enable").toBool());
-        cbAttenuationLevel->setCurrentText(QString::number(s.value("attenuation_level_db").toUInt()) + " Db");
+    pbAttenuatorEnable->setCurrentState(s.value("enable").toBool());
+    cbAttenuationLevel->setCurrentText(QString::number(s.value("attenuation_level_db").toUInt()) + " Db");
 
-        s.endGroup();
+    s.endGroup();
 
-        s.beginGroup("preselectors");
+    s.beginGroup("preselectors");
 
-        QPair<quint32, quint32>preselectors;
-        preselectors.first = s.value("low_frequency").toUInt();
-        preselectors.second = s.value("high_frequency").toUInt();
+    QPair<quint32, quint32>preselectors;
+    preselectors.first = s.value("low_frequency").toUInt();
+    preselectors.second = s.value("high_frequency").toUInt();
 
-        cbAttenuationLevel->setEnabled(s.value("enable").toBool());
-        pbPreselectorEnable->setCurrentState(s.value("enable").toBool());
-        preselectorWidget->setWidgetData(preselectors);
+    cbAttenuationLevel->setEnabled(s.value("enable").toBool());
+    pbPreselectorEnable->setCurrentState(s.value("enable").toBool());
+    preselectorWidget->setWidgetData(preselectors);
 
-        s.endGroup();
+    s.endGroup();
 
-        s.beginGroup("preamplifier");
-        pbPreamplifierEnable->setCurrentState(s.value("enabled").toBool());
-        s.endGroup();
+    s.beginGroup("preamplifier");
+    pbPreamplifierEnable->setCurrentState(s.value("enabled").toBool());
+    s.endGroup();
 
-        s.beginGroup("adc_noice_blanker");
-        QPair<quint32, quint32>adcNoiceBlanker;
-        adcNoiceBlanker.first = s.value("enabled").toBool();
-        adcNoiceBlanker.second = s.value("threshold").toUInt();
+    s.beginGroup("adc_noice_blanker");
+    QPair<quint32, quint32>adcNoiceBlanker;
+    adcNoiceBlanker.first = s.value("enabled").toBool();
+    adcNoiceBlanker.second = s.value("threshold").toUInt();
 
-        leAdcNoiceBlanckerThreshold->setText(QString::number(adcNoiceBlanker.second));
-        leAdcNoiceBlanckerThreshold->setEnabled(adcNoiceBlanker.first);
+    leAdcNoiceBlanckerThreshold->setText(QString::number(adcNoiceBlanker.second));
+    leAdcNoiceBlanckerThreshold->setEnabled(adcNoiceBlanker.first);
 
-        s.endGroup();
+    s.endGroup();
 
-        s.beginGroup("ddc1");
-        leDDC1Frequency->setFrequencyValueInHz(s.value("frequency").toUInt());
-        cbDDC1Bandwith->setCurrentIndex(static_cast<int>(s.value("type_index").toUInt()));
-        cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
-        s.endGroup();
-    }
-    else
-    {
-        qDebug() << "FILE " << settingsFileName << "isn't exist";
-    }
+    s.beginGroup("ddc1");
+    leDDC1Frequency->setFrequencyValueInHz(s.value("frequency").toUInt());
+    cbDDC1Bandwith->setCurrentIndex(static_cast<int>(s.value("type_index").toUInt()));
+    cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
+    s.endGroup();
+//    }
+//    else
+//    {
+//        qDebug() << "FILE " << settingsFileName << "isn't exist";
+//    }
 }
 
 void MainWindow::saveSetting()

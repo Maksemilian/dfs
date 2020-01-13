@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 # включать только при полной сборке
 # и выключать при запусках client and server
-CONFIG += ordered
+#CONFIG += ordered
 
 SUBDIRS += \
           src/dfs_base \

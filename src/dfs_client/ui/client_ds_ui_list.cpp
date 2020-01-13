@@ -191,22 +191,22 @@ void DeviceSetListWidget::saveSettings()
 
     QSettings s(settingsFileName, QSettings::IniFormat);
     s.clear();
-    if(QFile::exists(settingsFileName))
+//    if(QFile::exists(settingsFileName))
+//    {
+    qDebug() << "SIZE:" << _allDeviceSetWidgetList.size();
+    for(int i = 0; i < _allDeviceSetWidgetList.size(); ++i)
     {
-        qDebug() << "SIZE:" << _allDeviceSetWidgetList.size();
-        for(int i = 0; i < _allDeviceSetWidgetList.size(); ++i)
-        {
 
-            s.beginGroup(prefix + "_" + QString::number(i + 1));
+        s.beginGroup(prefix + "_" + QString::number(i + 1));
 
-            s.setValue("ip", _allDeviceSetWidgetList[i]->address());
-            s.setValue("port", _allDeviceSetWidgetList[i]->port());
+        s.setValue("ip", _allDeviceSetWidgetList[i]->address());
+        s.setValue("port", _allDeviceSetWidgetList[i]->port());
 
-            s.endGroup();
-            qDebug() << "Dws" << _allDeviceSetWidgetList[i];
-        }
-        s.sync();
+        s.endGroup();
+        qDebug() << "Dws" << _allDeviceSetWidgetList[i];
     }
+    s.sync();
+//    }
 }
 
 void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget* deviceSetWidget)

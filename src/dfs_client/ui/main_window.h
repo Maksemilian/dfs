@@ -34,6 +34,9 @@ class ElipsPlot ;
 class PlotMonitoring;
 
 class DeviceSetListWidget ;
+
+class QStackedWidget;
+
 class MainWindow : public QMainWindow,
     public IDeviceSettings
 {
@@ -106,7 +109,7 @@ class MainWindow : public QMainWindow,
 
 //    ChannelPlot*channelPlot;//central widget
 //    ElipsPlot *elipsPlot;//right dock idget
-
+    QStackedWidget* stackWidget;
     DeviceSetListWidget* deviceSetListWidget;
 };
 

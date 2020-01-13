@@ -62,7 +62,8 @@ HEADERS += \
     command_hierarch.h \
     command_factory.h \
     client_ds.h \
-    client_signal_stream_server.h
+    client_signal_stream_server.h \
+    ui/tree_devices.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -79,7 +80,8 @@ SOURCES += \
     command_hierarch.cpp \
     command_factory.cpp \
     main.cpp \
-    client_signal_stream_server.cpp
+    client_signal_stream_server.cpp \
+    ui/tree_devices.cpp
 
 FORMS += \
     ui/main_window.ui \
