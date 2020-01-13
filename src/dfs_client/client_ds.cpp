@@ -13,6 +13,7 @@
 #include <QFutureWatcher>
 
 #include <QHostAddress>
+
 //**************************************** Receiver Station Client*****************************************
 
 const QByteArray serializeMessage(
@@ -95,6 +96,7 @@ ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
 {
     return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
 }
+
 DeviceSetClient::~DeviceSetClient() {}
 
 QString DeviceSetClient::getCurrentDeviceSetName()const
@@ -246,6 +248,7 @@ void DeviceSetClient::sendCommand(proto::receiver::Command& command)
     clientToHost.mutable_command()->CopyFrom(command);
     d->channel->writeToConnection(serializeMessage(clientToHost));
 }
+
 QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
 {
     switch (commandType)
