@@ -12,12 +12,14 @@ class TreeDevices : public QWidget
   public:
     TreeDevices(QWidget* parent = nullptr);
     ~TreeDevices();
+    void connectToAllComputer();
   private:
     void saveSettings();
     void loadSettings();
   private:
     QTreeWidget* _twDevices;
     QPushButton* _pbAddDevice;
+    QPushButton* _pbConnectAll;
 };
 
 #endif // TREE_DEVICES_H

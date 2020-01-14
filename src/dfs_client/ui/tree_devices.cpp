@@ -1,4 +1,5 @@
 #include "tree_devices.h"
+#include "tree_pc_item.h"
 
 #include <QPushButton>
 #include <QTreeWidget>
@@ -6,6 +7,7 @@
 #include <QInputDialog>
 #include <QSettings>
 #include <QFile>
+#include <QApplication>
 
 const QString TreeDevices::SETTINGS_FILE_NAME = "tree_devices.ini";
 
@@ -26,9 +28,10 @@ TreeDevices::TreeDevices(QWidget* parent):
         QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                              tr("User name:"), QLineEdit::Normal);
         QStringList stringList = text.split(":");
-        QTreeWidgetItem* pcItem = new QTreeWidgetItem(_twDevices, {stringList[0] + ":" + stringList[1]});
-        _twDevices->addTopLevelItem(pcItem);
+        _twDevices->addTopLevelItem(
+            new TreePcWidgetItem(stringList[0], stringList[1], _twDevices));
     });
+    _twDevices->setAutoFillBackground(true);
     loadSettings();
 }
 
@@ -37,24 +40,33 @@ TreeDevices::~TreeDevices()
     saveSettings();
 }
 
+void TreeDevices::connectToAllComputer()
+{
+
+}
+
 void TreeDevices::saveSettings()
 {
-    QSettings settings(SETTINGS_FILE_NAME, QSettings::IniFormat);
+    QSettings settings(QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME, QSettings::IniFormat);
     QString prefix = "PC_";
     for (int i = 0; i < _twDevices->topLevelItemCount(); ++i)
     {
-        settings.beginGroup(prefix + QString::number(i));
-        QStringList ipAndPort = _twDevices->topLevelItem(i)->text(0).split(":");
-        settings.setValue("ip", ipAndPort[0]);
-        settings.setValue("port", ipAndPort[1]);
-        settings.endGroup();
+        if(TreePcWidgetItem* item =
+                    dynamic_cast<TreePcWidgetItem*>(_twDevices->topLevelItem(i)))
+
+        {
+            settings.beginGroup(prefix + QString::number(i));
+            settings.setValue("ip", item->getIpAddress());
+            settings.setValue("port", item->getPort());
+            settings.endGroup();
+        }
     }
 
 }
 
 void TreeDevices::loadSettings()
 {
-    QSettings s(SETTINGS_FILE_NAME, QSettings::IniFormat);
+    QSettings s(QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME, QSettings::IniFormat);
     QStringList groups = s.childGroups();
     for(const auto& group : groups)
     {
@@ -63,8 +75,7 @@ void TreeDevices::loadSettings()
         QString ip = s.value("ip").toString();
         QString port = s.value("port").toString();
 
-        QTreeWidgetItem* pcItem = new QTreeWidgetItem(_twDevices, {ip + ":" + port});
-        _twDevices->addTopLevelItem(pcItem);
+        _twDevices->addTopLevelItem(new TreePcWidgetItem(ip, port, _twDevices));
 
         s.endGroup();
     }

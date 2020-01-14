@@ -1,6 +1,5 @@
 #include "client_ds.h"
 
-#include "channel_client.h"
 #include "client_signal_stream_server.h"
 
 #include "receiver.pb.h"
@@ -16,37 +15,20 @@
 
 //**************************************** Receiver Station Client*****************************************
 
-const QByteArray serializeMessage(
-    const google::protobuf::Message& command)
-{
-    std::vector<char>bytesArray(static_cast<unsigned int>(command.ByteSize()));
-    command.SerializeToArray(static_cast<void*>(bytesArray.data()), command.ByteSize());
-    return QByteArray(bytesArray.data(), command.ByteSize());
-}
-
 struct DeviceSetClient::Impl
 {
-    Impl(): channel(std::make_unique<net::ChannelClient>())
+    Impl()
     {
     }
-    std::unique_ptr<net::ChannelClient> channel;
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
     SignalStreamServer streamServer;
 };
 
-DeviceSetClient::DeviceSetClient(QObject* parent):
-    QObject(parent),
-    d(std::make_unique<Impl>())
+DeviceSetClient::DeviceSetClient(QObject* parent)
+    :    Client (parent),
+         d(std::make_unique<Impl>())
 {
-    connect(d->channel.get(), &net::ChannelClient::messageReceived,
-            this, &DeviceSetClient::onMessageReceived);
-
-    connect(d->channel.get(), &net::ChannelClient::connected,
-            this, &DeviceSetClient::connected);
-
-    connect(d->channel.get(), &net::ChannelClient::finished,
-            this, &DeviceSetClient::disconnected);
 }
 
 void DeviceSetClient::setLiceningStreamPort(quint16 port)
@@ -64,11 +46,6 @@ const proto::receiver::DeviceSetInfo& DeviceSetClient::getDeviceSetInfo() const
     return d->currentDeviceSetInfo;
 }
 
-QString DeviceSetClient::getStationAddress()const
-{
-    return QHostAddress(d->channel->peerAddress().toIPv4Address()).toString();
-}
-
 QStringList DeviceSetClient::receiverNameList()const
 {
     QStringList receiverNameList;
@@ -79,17 +56,6 @@ QStringList DeviceSetClient::receiverNameList()const
         receiverNameList << deviceSetInfo.device_info(i).serial_number().data();
     }
     return receiverNameList;
-}
-
-void DeviceSetClient::connectToHost(const QHostAddress& address, quint16 port)
-{
-    setObjectName(address.toString());
-    d->channel->connectToHost(address.toString(), port, SessionType::SESSION_COMMAND);
-}
-
-void DeviceSetClient::disconnectFromHost()
-{
-    d->channel->disconnectFromHost();
 }
 
 ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
@@ -246,7 +212,8 @@ void DeviceSetClient::sendCommand(proto::receiver::Command& command)
     proto::receiver::ClientToHost clientToHost;
     //TODO ПОНЯТЬ КАК РАБОТАЕТ
     clientToHost.mutable_command()->CopyFrom(command);
-    d->channel->writeToConnection(serializeMessage(clientToHost));
+    // d->channel->writeToConnection(serializeMessage(clientToHost));
+    sendMessage(clientToHost);
 }
 
 QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)

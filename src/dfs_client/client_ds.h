@@ -4,38 +4,37 @@
 #include "receiver.pb.h"
 #include "ring_buffer.h"
 
+#include "client.h"
+
 #include <QObject>
 
 using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class QHostAddress;
 
-class DeviceSetClient: public QObject
+class DeviceSetClient: public Client
 {
     Q_OBJECT
   public:
     DeviceSetClient(QObject* parent = nullptr);
     ~DeviceSetClient();
 
-    void connectToHost(const QHostAddress& address, quint16 port);
-    void disconnectFromHost();
     void sendCommand(proto::receiver::Command& command);
+
     void setLiceningStreamPort(quint16 port);
     quint16 liceningStreamPort();
     const proto::receiver::DeviceSetInfo& getDeviceSetInfo()const;
     QString getCurrentDeviceSetName()const;
 
     QStringList receiverNameList()const;
-    QString getStationAddress()const;
     ShPtrPacketBuffer getDDC1Buffer()const;
   signals:
-    void connected();
-    void disconnected();
-
     void commandSuccessed();
     void commandFailed(const QString& errorString);
+
     void deviceSetReady();
     void deviceInfoUpdated();
+
     void ddc1StreamStarted();
     void ddc1StreamStoped();
 
