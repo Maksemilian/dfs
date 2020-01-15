@@ -64,7 +64,7 @@ MainWindow:: MainWindow(QWidget* parent):
     //************** ELIPSE PLOT***************************
     plotMonitoring = new PlotMonitoring(this);
     plotMonitoring->ds = this;
-    connect(deviceSetListWidget, &DeviceSetListWidget::ready,
+    connect(deviceSetListWidget, &DeviceSetListWidget::readyTest,
             plotMonitoring, &PlotMonitoring::onDeviceSetListReady);
 
     connect(deviceSetListWidget, &DeviceSetListWidget::notReady,

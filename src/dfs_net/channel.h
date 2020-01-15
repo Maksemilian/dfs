@@ -26,6 +26,7 @@ namespace net
         bool isWritable();
         bool flush();
         void moveToThread(QThread* thread);
+
       signals:
         void messageReceived(const QByteArray& buffer);
         void finished();

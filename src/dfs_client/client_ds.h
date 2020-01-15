@@ -33,7 +33,7 @@ class DeviceSetClient: public Client
     void commandFailed(const QString& errorString);
 
     void deviceSetReady();
-    void deviceInfoUpdated();
+    void deviceInfoUpdated(const QStringList& receivers);
 
     void ddc1StreamStarted();
     void ddc1StreamStoped();

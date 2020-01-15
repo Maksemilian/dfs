@@ -17,6 +17,7 @@ namespace net
         void disconnectFromHost();
         void waitForConnected(int time = 30000);
         void waitForDisconnected(int time = 30000);
+        bool isConnected();
       signals:
         void connected();
         void disconnected();

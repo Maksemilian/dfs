@@ -99,7 +99,7 @@ void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
     {
         d->currentDeviceSetInfo = hostToClient.device_set_info();
         //        qDebug()<<"DeviceSetReadyForUse";
-        emit deviceInfoUpdated();
+        emit deviceInfoUpdated(receiverNameList());
     }
     else if (hostToClient.is_ready())
     {

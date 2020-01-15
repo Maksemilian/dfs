@@ -41,6 +41,15 @@ namespace net
 //{
 
 //}
+    bool ChannelClient::isConnected()
+    {
+        if(_channelState == ChannelClient::ESTABLISHED)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     void ChannelClient::connectToHost(const QString& address, quint16 port, SessionType sesionType)
     {

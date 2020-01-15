@@ -23,8 +23,8 @@ PlotMonitoring::PlotMonitoring(QWidget* paret)
 //    sync->setSumDivUpdater(elipsPlot);
 //    sync->setSyncSignalUpdater(channelPlot);
 }
-
-void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
+void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers)
+//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
 {
     quit = false;
     qDebug() << "START SYNC" << ds->getDDC1Frequency()
@@ -32,8 +32,8 @@ void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
              << ds->getSamplesPerBuffer();
 
     ShPtrPacketBufferPair bufferPair;
-    bufferPair.first = dsList.first()->ddc1Buffer();
-    bufferPair.second = dsList.last()->ddc1Buffer();
+    bufferPair.first = buffers.front();
+    bufferPair.second = buffers.back();
     sync->start(bufferPair,
                 ds->getDDC1Frequency(),
                 ds->getSampleRateForBandwith(),

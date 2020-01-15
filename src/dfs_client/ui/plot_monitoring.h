@@ -10,6 +10,8 @@ class ElipsPlot ;
 class DeviceSetWidget;
 class SyncController;
 
+using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
+
 class PlotMonitoring : public QWidget
 {
     Q_OBJECT
@@ -23,7 +25,8 @@ class PlotMonitoring : public QWidget
     PlotMonitoring(QWidget* parent = nullptr);
     IDeviceSettings* ds = nullptr;
   public:
-    void onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList);
+//    void onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList);
+    void onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers);
     void onDeviceSetListNotReady();
   private:
     ChannelPlot* channelPlot; //central widget
