@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto.desctop;
+
+message DeviceInfo
+{
+string serial_number=1;
+fixed32 ddc_type_count=2;
+fixed32 channel_count=3;
+string interface_type=4;
+}
+
+message DeviceSetInfo
+{
+repeated DeviceInfo device_info=1;
+}
+
+message DesctopInfo
+{
+repeated DeviceSetInfo device_set_info= 1;
+}

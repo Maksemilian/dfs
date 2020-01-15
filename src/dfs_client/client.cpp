@@ -24,10 +24,10 @@ Client::Client(QObject* parent):
             this, &Client::disconnected);
 }
 
-void Client::connectToHost(const QHostAddress& address, quint16 port)
+void Client::connectToHost(const QString& address, quint16 port, SessionType type)
 {
-    setObjectName(address.toString());
-    channel->connectToHost(address.toString(), port, SessionType::SESSION_COMMAND);
+    setObjectName(address);
+    channel->connectToHost(address, port, type);
 }
 
 void Client::disconnectFromHost()

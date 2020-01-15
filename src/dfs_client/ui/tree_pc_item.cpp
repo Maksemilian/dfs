@@ -27,22 +27,26 @@ void PcWidget::onConnected()
 TreePcWidgetItem::TreePcWidgetItem(const QString& ipAddress, const QString& port,
                                    QTreeWidget* parent)
     : QTreeWidgetItem (parent),
-      _pcWidget(new PcWidget(ipAddress, port))
+      _pcWidget(new PcWidget(ipAddress, port)),
+      _desctopClient(std::make_unique<DesctopClient>())
 {
     setText(0, ipAddress + " : " + port);
 
     this->setExpanded(true);
 
-    onInfoUpdate();
+//    connect(_desctopClient, &DesctopClient::desctopInfoReceived,
+//            this, &TreePcWidgetItem::onInfoUpdate);
+
 }
 
 void TreePcWidgetItem::connectToComputer()
 {
-
+    _desctopClient->connectToHost(getIpAddress(), getPort().toUShort());
 }
 
-void TreePcWidgetItem::onInfoUpdate()
+void TreePcWidgetItem::onInfoUpdate(const proto::desctop::DesctopInfo& desctopInfo)
 {
+    /*
     QList<proto::receiver::DeviceSetInfo>list = getTestDeviceSetList();
     int dsCount = 0;
     for (const auto& ds : list)
@@ -56,6 +60,21 @@ void TreePcWidgetItem::onInfoUpdate()
             dsItem->addChild(devItem);
         }
         ++dsCount;
+    }
+    */
+    int deviceSetInfoSize = desctopInfo.device_set_info_size();
+
+    for (int i = 0; i < deviceSetInfoSize; ++i)
+    {
+        QTreeWidgetItem* dsItem = new QTreeWidgetItem(this, {"DS_" + QString::number(i)});
+        this->addChild(dsItem);
+        dsItem->setExpanded(true);
+        const auto& ds = desctopInfo.device_set_info(i);
+        for(int deviceIndex = 0; deviceIndex < ds.device_info_size(); ++deviceIndex)
+        {
+            QTreeWidgetItem* devItem = new QTreeWidgetItem(dsItem, {ds.device_info(deviceIndex).serial_number().data()});
+            dsItem->addChild(devItem);
+        }
     }
 }
 

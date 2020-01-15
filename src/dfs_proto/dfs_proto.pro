@@ -96,14 +96,18 @@ HEADERS += \
     device_set_info.pb.h \
     packet.pb.h \
     key_exchange.pb.h \
-    receiver.pb.h
+    receiver.pb.h \
+    desctop.pb.h \
+    desctop.pb.h
 
 SOURCES += \
     command.pb.cc \
     device_set_info.pb.cc \
     packet.pb.cc \
     key_exchange.pb.cc \
-    receiver.pb.cc
+    receiver.pb.cc \
+    desctop.pb.cc \
+    desctop.pb.cc
 
 #DISTFILES += \
 #    device_set_info.proto \
@@ -261,6 +265,9 @@ SOURCES += \
 ##libt.CONFIG = target_predeps
 ###lib.variable_out = PRE_TARGETDEPS
 ##QMAKE_EXTRA_COMPILERS +=libt
+
+DISTFILES += \
+    desctop.proto
 
 
 

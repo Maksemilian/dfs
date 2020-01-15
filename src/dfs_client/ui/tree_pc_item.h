@@ -5,6 +5,7 @@
 #include <QTreeWidgetItem>
 
 #include "receiver.pb.h"
+#include "client_desctop.h"
 
 class QTextEdit;
 class TreePcWidgetItem;
@@ -30,10 +31,11 @@ class TreePcWidgetItem : public QTreeWidgetItem
     QString getPort();
     void connectToComputer();
   private:
-    void onInfoUpdate();
+    void onInfoUpdate(const proto::desctop::DesctopInfo& desctopInfo);
     QList<proto::receiver::DeviceSetInfo>getTestDeviceSetList();
   private:
     PcWidget* _pcWidget;
+    std::unique_ptr<DesctopClient> _desctopClient;
 
 };
 

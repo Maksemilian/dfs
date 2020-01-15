@@ -65,7 +65,8 @@ HEADERS += \
     client_signal_stream_server.h \
     ui/tree_devices.h \
     ui/tree_pc_item.h \
-    client.h
+    client.h \
+    client_desctop.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -85,7 +86,8 @@ SOURCES += \
     client_signal_stream_server.cpp \
     ui/tree_devices.cpp \
     ui/tree_pc_item.cpp \
-    client.cpp
+    client.cpp \
+    client_desctop.cpp
 
 FORMS += \
     ui/main_window.ui \

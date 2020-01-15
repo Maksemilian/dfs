@@ -4,7 +4,6 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QComboBox>
-#include <QHostAddress>
 #include <QTimer>
 #include <QMessageBox>
 #include <QLineEdit>
@@ -130,8 +129,8 @@ DeviceSetWidget::DeviceSetWidget(const QString& address, quint16 port):
 
 void DeviceSetWidget::connectToDeviceSet()
 {
-    _deviceSetClient->connectToHost(QHostAddress(_lbAddresText->text()),
-                                    _lbPort->text().toUShort());
+    _deviceSetClient->connectToHost(_lbAddresText->text(),
+                                    _lbPort->text().toUShort(), SessionType::SESSION_COMMAND);
 }
 
 void DeviceSetWidget::disconnectFromDeviceSet()

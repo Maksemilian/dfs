@@ -13,7 +13,7 @@ class Client: public QObject
     Q_OBJECT
   public:
     Client(QObject* parent = nullptr);
-    void connectToHost(const QHostAddress& address, quint16 port);
+    void connectToHost(const QString& address, quint16 port, SessionType type = SESSION_UNKNOWN);
     void disconnectFromHost();
     void sendMessage(const google::protobuf::Message& message);
     virtual void onMessageReceived(const QByteArray& buffer) = 0;

@@ -138,33 +138,6 @@ void DeviceSetListWidget::setAllDeviceSet( proto::receiver::Command& command)
     }
 }
 
-void DeviceSetListWidget::loadSettings()
-{
-    QString settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
-//    qDebug()<<"DeviceSetListWidget::loadSettings()"<<settingsFileName;
-
-    if(QFile::exists(settingsFileName))
-    {
-
-        QSettings s(settingsFileName, QSettings::IniFormat);
-        QStringList groups = s.childGroups();
-        quint16 groupCounter = 1;
-        for(const auto& group : groups)
-        {
-            s.beginGroup(group);
-
-            QString ip = s.value("ip").toString();
-            quint16 port = static_cast<quint16>(s.value("port").toUInt());
-
-            DeviceSetWidget* widget = new DeviceSetWidget(ip, port);
-            widget->setListeningStreamPort(PORT + groupCounter);
-            addDeviceSetWidget(widget);
-
-            s.endGroup();
-            ++groupCounter;
-        }
-    }
-}
 
 QList<DeviceSetWidget*> DeviceSetListWidget::createdDeviceSetWidgets()
 {
@@ -182,32 +155,7 @@ QList<DeviceSetWidget*> DeviceSetListWidget::createdDeviceSetWidgets()
     return devieceWidgets;
 }
 
-void DeviceSetListWidget::saveSettings()
-{
-    QString prefix = "device";
 
-    QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
-//    qDebug()<<"DeviceSetListWidget::saveSettings()"<<settingsFileName<<_listWidget->count();
-
-    QSettings s(settingsFileName, QSettings::IniFormat);
-    s.clear();
-//    if(QFile::exists(settingsFileName))
-//    {
-    qDebug() << "SIZE:" << _allDeviceSetWidgetList.size();
-    for(int i = 0; i < _allDeviceSetWidgetList.size(); ++i)
-    {
-
-        s.beginGroup(prefix + "_" + QString::number(i + 1));
-
-        s.setValue("ip", _allDeviceSetWidgetList[i]->address());
-        s.setValue("port", _allDeviceSetWidgetList[i]->port());
-
-        s.endGroup();
-        qDebug() << "Dws" << _allDeviceSetWidgetList[i];
-    }
-    s.sync();
-//    }
-}
 
 void DeviceSetListWidget::addDeviceSetWidget(DeviceSetWidget* deviceSetWidget)
 {
@@ -426,4 +374,61 @@ void DeviceSetListWidget::onAddDeviceSetWidget()
     else   QMessageBox::
         warning(this, "Creation Device Set Client faild", "address:port");
 
+}
+
+//************** LOAD\SAVE SETTINGS
+
+void DeviceSetListWidget::loadSettings()
+{
+    QString settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
+//    qDebug()<<"DeviceSetListWidget::loadSettings()"<<settingsFileName;
+
+    if(QFile::exists(settingsFileName))
+    {
+
+        QSettings s(settingsFileName, QSettings::IniFormat);
+        QStringList groups = s.childGroups();
+        quint16 groupCounter = 1;
+        for(const auto& group : groups)
+        {
+            s.beginGroup(group);
+
+            QString ip = s.value("ip").toString();
+            quint16 port = static_cast<quint16>(s.value("port").toUInt());
+
+            DeviceSetWidget* widget = new DeviceSetWidget(ip, port);
+            widget->setListeningStreamPort(PORT + groupCounter);
+            addDeviceSetWidget(widget);
+
+            s.endGroup();
+            ++groupCounter;
+        }
+    }
+}
+
+void DeviceSetListWidget::saveSettings()
+{
+    QString prefix = "device";
+
+    QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
+//    qDebug()<<"DeviceSetListWidget::saveSettings()"<<settingsFileName<<_listWidget->count();
+
+    QSettings s(settingsFileName, QSettings::IniFormat);
+    s.clear();
+//    if(QFile::exists(settingsFileName))
+//    {
+    qDebug() << "SIZE:" << _allDeviceSetWidgetList.size();
+    for(int i = 0; i < _allDeviceSetWidgetList.size(); ++i)
+    {
+
+        s.beginGroup(prefix + "_" + QString::number(i + 1));
+
+        s.setValue("ip", _allDeviceSetWidgetList[i]->address());
+        s.setValue("port", _allDeviceSetWidgetList[i]->port());
+
+        s.endGroup();
+        qDebug() << "Dws" << _allDeviceSetWidgetList[i];
+    }
+    s.sync();
+//    }
 }
