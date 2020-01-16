@@ -17,8 +17,7 @@ class QPushButton;
 class SwitchButton;
 class IDeviceSettings;
 class QListWidgetItem;
-class DeviceSetListWidget :
-//        public QListWidget,
+class DeviceListWidget :
     public QWidget,
     public IDeviceSet
 {
@@ -31,8 +30,8 @@ class DeviceSetListWidget :
     static const int TIME_WAIT_CONNECTION = 5000;
     static const int TIME_CHECK = 500;
   public:
-    DeviceSetListWidget(QWidget* parent = nullptr);
-    ~DeviceSetListWidget() override;
+    DeviceListWidget(QWidget* parent = nullptr);
+    ~DeviceListWidget() override;
     void addDeviceSetWidget(const ConnectData& connectData, DeviceWidget* deviceSetWidget);
     void removeDeviceSetWidget(DeviceWidget* deviceSetWidget);
     void setCommand(proto::receiver::Command& command)override;
@@ -42,13 +41,11 @@ class DeviceSetListWidget :
     void ready(const std::vector<ShPtrPacketBuffer>& buffers);
     void notReady();
   public slots:
-    void connectToSelectedDeviceSet();
-    void disconnectFromSelectedDeviceSet();
+    void startDeviceClients();
+    void stopDeviceClients();
   private slots:
-    void onDeviceSelected(QListWidgetItem* item);
     void onAddDevice();
     void onRemoveDevice();
-    void onTest(bool state);
   private:
     void setAllDeviceSet(proto::receiver::Command& command);
 

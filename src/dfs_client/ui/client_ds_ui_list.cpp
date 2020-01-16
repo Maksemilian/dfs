@@ -19,11 +19,11 @@
 #include <QLabel>
 #include <QInputDialog>
 
-const QString DeviceSetListWidget::SETTINGS_FILE = "client_device_set_list.ini";
+const QString DeviceListWidget::SETTINGS_FILE = "client_device_set_list.ini";
 //const QString DeviceSetListWidget::SETTINGS_FILE="ds_list.ini";
 
-const QString DeviceSetListWidget::STRING_CONNECT = "connect";
-const QString DeviceSetListWidget::STRING_DISCONNECT = "disconnect";
+const QString DeviceListWidget::STRING_CONNECT = "connect";
+const QString DeviceListWidget::STRING_DISCONNECT = "disconnect";
 
 class DeviceWidgetCreator: public QDialog
 {
@@ -46,7 +46,7 @@ class DeviceWidgetCreator: public QDialog
     QLineEdit* _lePort;
 };
 
-DeviceSetListWidget::DeviceSetListWidget(QWidget* parent)
+DeviceListWidget::DeviceListWidget(QWidget* parent)
     : QWidget(parent), _listWidget(new QListWidget(this))
 {
     setLayout(new QVBoxLayout);
@@ -55,19 +55,26 @@ DeviceSetListWidget::DeviceSetListWidget(QWidget* parent)
     _pbConnectToStation = new SwitchButton(STRING_CONNECT, STRING_DISCONNECT,
                                            false, this);
 
-    //    _pbConnectToStation->setCurrentState(false);
-
     layout()->addWidget(_listWidget);
     layout()->addWidget(_pbConnectToStation);
 
-    connect(_listWidget, &QListWidget::itemClicked,
-            this, &DeviceSetListWidget::onDeviceSelected);
-
     connect(_pbConnectToStation, &SwitchButton::stateChanged,
-            this, &DeviceSetListWidget::onTest);
+            [this](bool state)
+    {
+        qDebug() << "State:" << state;
+        if(state)
+        {
+            startDeviceClients();
+        }
+        else
+        {
+            stopDeviceClients();
+        }
+    });
 
-    connect(this, &DeviceSetListWidget::allConnectedState,
+    connect(this, &DeviceListWidget::allConnectedState,
             _pbConnectToStation, &SwitchButton::setCurrentState);
+
     QPushButton* pbAddDeviceWidget = new QPushButton("Add");
     QPushButton* pbRemoveDeviceWidget = new QPushButton("Remove");
 
@@ -75,22 +82,33 @@ DeviceSetListWidget::DeviceSetListWidget(QWidget* parent)
     layout()->addWidget(pbRemoveDeviceWidget);
 
     connect(pbAddDeviceWidget, &QPushButton::clicked,
-            this, &DeviceSetListWidget::onAddDevice);
+            this, &DeviceListWidget::onAddDevice);
 
     connect(pbRemoveDeviceWidget, &QPushButton::clicked,
-            this, &DeviceSetListWidget::onRemoveDevice);
+            this, &DeviceListWidget::onRemoveDevice);
 
+    connect(_listWidget, &QListWidget::itemSelectionChanged,
+            [this]
+    {
+        qDebug() << "Station Panel Clicked";
+        if(_listWidget->selectedItems().isEmpty())
+        {
+            _pbConnectToStation->setEnabled(false);
+        }
+        else
+        {
+            _pbConnectToStation->setEnabled(true);
+        }
+    });
     loadSettings();
 }
 
-DeviceSetListWidget::~DeviceSetListWidget()
+DeviceListWidget::~DeviceListWidget()
 {
-    qDebug() << "DESTR_BEGIN";
     saveSettings();
-    qDebug() << "DESTR_END";
 }
 
-void DeviceSetListWidget::setCursor(const QCursor& cursor)
+void DeviceListWidget::setCursor(const QCursor& cursor)
 {
     //TODO НЕПОНЯТНО ПОЧЕМУ ДВА PARENT WIDGET НУЖНО СТАВИТЬ
     if(parentWidget())
@@ -99,7 +117,7 @@ void DeviceSetListWidget::setCursor(const QCursor& cursor)
     }
 }
 
-void DeviceSetListWidget::addDeviceSetWidget(const ConnectData& connectData,
+void DeviceListWidget::addDeviceSetWidget(const ConnectData& connectData,
         DeviceWidget* deviceSetWidget)
 {
     QListWidgetItem* deviceItem = new QListWidgetItem(_listWidget);
@@ -124,7 +142,7 @@ void DeviceSetListWidget::addDeviceSetWidget(const ConnectData& connectData,
                 buffers.push_back(device.second->getDDC1Buffer());
             }
 //            emit  ready(_connectedDeviceSetWidgetList);
-            emit readyTest(buffers);
+            emit ready(buffers);
         }
         else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)
         {
@@ -155,8 +173,7 @@ void DeviceSetListWidget::addDeviceSetWidget(const ConnectData& connectData,
     deviceSetClient->setLiceningStreamPort(PORT + static_cast<quint16>(_deviceses.size()));
 }
 
-
-void DeviceSetListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
+void DeviceListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
 {
     for (auto& device : _deviceses)
     {
@@ -175,7 +192,7 @@ void DeviceSetListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
     }
 }
 
-void DeviceSetListWidget::connectToSelectedDeviceSet()
+void DeviceListWidget::startDeviceClients()
 {
     QList<QListWidgetItem*> items = _listWidget->selectedItems();
 
@@ -199,7 +216,7 @@ void DeviceSetListWidget::connectToSelectedDeviceSet()
 
 }
 
-void DeviceSetListWidget::disconnectFromSelectedDeviceSet()
+void DeviceListWidget::stopDeviceClients()
 {
     QList<QListWidgetItem*> items = _listWidget->selectedItems();
 
@@ -221,7 +238,7 @@ void DeviceSetListWidget::disconnectFromSelectedDeviceSet()
 
 }
 
-void DeviceSetListWidget::setCommand(proto::receiver::Command& command)
+void DeviceListWidget::setCommand(proto::receiver::Command& command)
 {
     setCursor(Qt::WaitCursor);
 
@@ -233,7 +250,7 @@ void DeviceSetListWidget::setCommand(proto::receiver::Command& command)
     _commandQueue.enqueue(command);
 }
 
-void DeviceSetListWidget::setAllDeviceSet( proto::receiver::Command& command)
+void DeviceListWidget::setAllDeviceSet( proto::receiver::Command& command)
 {
     QList<QListWidgetItem*> items = _listWidget->selectedItems();
 
@@ -244,7 +261,7 @@ void DeviceSetListWidget::setAllDeviceSet( proto::receiver::Command& command)
     }
 }
 
-void DeviceSetListWidget::onAddDevice()
+void DeviceListWidget::onAddDevice()
 {
     bool ok;
     QString text = QInputDialog::getText(this, "Creation Device Set Client",
@@ -266,7 +283,7 @@ void DeviceSetListWidget::onAddDevice()
 
 }
 
-void DeviceSetListWidget::onRemoveDevice()
+void DeviceListWidget::onRemoveDevice()
 {
     QList<QListWidgetItem*> selectedItems = _listWidget->selectedItems();
     for(QListWidgetItem* selectedItem : selectedItems)
@@ -278,23 +295,9 @@ void DeviceSetListWidget::onRemoveDevice()
     }
 }
 
-void DeviceSetListWidget::onDeviceSelected(QListWidgetItem* item)
-{
-    Q_UNUSED(item);
-    qDebug() << "Station Panel Clicked";
-    if(_listWidget->selectedItems().isEmpty())
-    {
-        _pbConnectToStation->setEnabled(false);
-    }
-    else
-    {
-        _pbConnectToStation->setEnabled(true);
-    }
-}
-
 //************** LOAD\SAVE SETTINGS
 
-void DeviceSetListWidget::loadSettings()
+void DeviceListWidget::loadSettings()
 {
     QString settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
     //    qDebug()<<"DeviceSetListWidget::loadSettings()"<<settingsFileName;
@@ -320,7 +323,7 @@ void DeviceSetListWidget::loadSettings()
     }
 }
 
-void DeviceSetListWidget::saveSettings()
+void DeviceListWidget::saveSettings()
 {
     QSettings s( QApplication::applicationDirPath() + "/" + SETTINGS_FILE,
                  QSettings::IniFormat);
@@ -346,18 +349,32 @@ void DeviceSetListWidget::saveSettings()
     s.sync();
 }
 
-void DeviceSetListWidget::onTest(bool state)
-{
-    qDebug() << "State:" << state;
-    if(state)
-    {
-        connectToSelectedDeviceSet();
-    }
-    else
-    {
-        disconnectFromSelectedDeviceSet();
-    }
-}
+//void DeviceListWidget::onDeviceSelected(QListWidgetItem* item)
+//{
+//    Q_UNUSED(item);
+//    qDebug() << "Station Panel Clicked";
+//    if(_listWidget->selectedItems().isEmpty())
+//    {
+//        _pbConnectToStation->setEnabled(false);
+//    }
+//    else
+//    {
+//        _pbConnectToStation->setEnabled(true);
+//    }
+//}
+
+//void DeviceListWidget::onTest(bool state)
+//{
+//    qDebug() << "State:" << state;
+//    if(state)
+//    {
+//        startDeviceClients();
+//    }
+//    else
+//    {
+//        stopDeviceClients();
+//    }
+//}
 
 //void DeviceSetListWidget::onDeviceSetUpdate(quint32 numberDeviceSet)
 //{

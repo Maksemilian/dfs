@@ -33,7 +33,7 @@ MainWindow:: MainWindow(QWidget* parent):
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-    deviceSetListWidget = new DeviceSetListWidget(this);
+    deviceSetListWidget = new DeviceListWidget(this);
 
     stackWidget = new QStackedWidget(this);
     stackWidget->addWidget(new TreeDevices(this));
@@ -64,10 +64,10 @@ MainWindow:: MainWindow(QWidget* parent):
     //************** ELIPSE PLOT***************************
     plotMonitoring = new PlotMonitoring(this);
     plotMonitoring->ds = this;
-    connect(deviceSetListWidget, &DeviceSetListWidget::ready,
+    connect(deviceSetListWidget, &DeviceListWidget::ready,
             plotMonitoring, &PlotMonitoring::onDeviceSetListReady);
 
-    connect(deviceSetListWidget, &DeviceSetListWidget::notReady,
+    connect(deviceSetListWidget, &DeviceListWidget::notReady,
             plotMonitoring, &PlotMonitoring::onDeviceSetListNotReady);
 
     setCentralWidget(plotMonitoring);
