@@ -68,6 +68,7 @@ DeviceSetListWidget::DeviceSetListWidget(QWidget* parent)
 
     connect(this, &DeviceSetListWidget::allConnectedState,
             _pbConnectToStation, &SwitchButton::setCurrentState);
+    
     QPushButton* pbAddDeviceWidget = new QPushButton("Add");
     QPushButton* pbRemoveDeviceWidget = new QPushButton("Remove");
 
@@ -124,7 +125,7 @@ void DeviceSetListWidget::addDeviceSetWidget(const ConnectData& connectData,
                 buffers.push_back(device.second->getDDC1Buffer());
             }
 //            emit  ready(_connectedDeviceSetWidgetList);
-            emit readyTest(buffers);
+            emit ready(buffers);
         }
         else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)
         {
@@ -175,7 +176,7 @@ void DeviceSetListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
     }
 }
 
-void DeviceSetListWidget::connectToSelectedDeviceSet()
+void DeviceSetListWidget::startDeviceClients()
 {
     QList<QListWidgetItem*> items = _listWidget->selectedItems();
 
@@ -199,7 +200,7 @@ void DeviceSetListWidget::connectToSelectedDeviceSet()
 
 }
 
-void DeviceSetListWidget::disconnectFromSelectedDeviceSet()
+void DeviceSetListWidget::stopDeviceClients()
 {
     QList<QListWidgetItem*> items = _listWidget->selectedItems();
 
@@ -351,11 +352,11 @@ void DeviceSetListWidget::onTest(bool state)
     qDebug() << "State:" << state;
     if(state)
     {
-        connectToSelectedDeviceSet();
+        startDeviceClients();
     }
     else
     {
-        disconnectFromSelectedDeviceSet();
+        stopDeviceClients();
     }
 }
 

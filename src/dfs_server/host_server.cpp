@@ -89,9 +89,13 @@ void StreamServer::createSession(net::ChannelHost* channelHost)
         connect(deviceSetClient, &DeviceSetClient::deviceDisconnected,
                 this, &StreamServer::onChannelDisconnected);
         //TODO ОТПРАВИТЬ СООБЩЕНИЕ О ГОТОВНОСТИ
-        deviceSetClient->sendDevieSetStatus();
+//        deviceSetClient->sendDevieSetStatus();
+        deviceSetClient->sendDeviceSetInfo();
         _client.append(deviceSetClient);
     }
-    else qDebug() << "ERROR SESSION TYPE";
+    else
+    {
+        qDebug() << "ERROR SESSION TYPE";
+    }
 }
 

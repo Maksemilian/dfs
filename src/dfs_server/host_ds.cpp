@@ -33,24 +33,30 @@ struct DeviceSetClient::Impl
     Impl(net::ChannelHost* channel):
         channel(channel),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-        //        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
-        deviceMode(proto::receiver::DM_COHERENT)
+//                deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+        device( DeviceFactory::createCohG35Device(0,
+                buffer,
+                false))
+//        deviceMode(proto::receiver::DM_COHERENT)
     {}
 
     Impl(net::ChannelHost* channel,
          const std::shared_ptr<IDevice>& deviceSet):
         channel(channel),
-        device(deviceSet),
+//        device(deviceSet),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-        //        deviceCreator(std::make_unique<CohG35DeviceCreator>()),
-        deviceMode(proto::receiver::DM_COHERENT)
+        device( DeviceFactory::createCohG35Device(0,
+                buffer,
+                false))
+//                deviceCreator(std::make_unique<CohG35DeviceCreator>()),
+//        deviceMode(proto::receiver::DM_COHERENT)
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
-    std::shared_ptr<IDevice> device;
     ShPtrRingBuffer buffer;
+    std::shared_ptr<IDevice> device;
     //    std::unique_ptr<DeviceCreator>deviceCreator;
-    proto::receiver::DeviceMode deviceMode;
+//    proto::receiver::DeviceMode deviceMode;
     SignalStreamWriter* streamDDC1 = nullptr;
 };
 
@@ -70,7 +76,10 @@ DeviceSetClient::~DeviceSetClient()
 {
     d->device->stopDDC1();
 
-    if(d->streamDDC1)d->streamDDC1->stop();
+    if(d->streamDDC1)
+    {
+        d->streamDDC1->stop();
+    }
     qDebug() << "DESTR DeviceSetCleint";
 }
 
@@ -212,7 +221,10 @@ void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
     {
         readCommandPacket(clientToHost.command());
     }
-    else qDebug() << "ERROR CLIENT_TO_HOST_MES IS EMPTY";
+    else
+    {
+        qDebug() << "ERROR CLIENT_TO_HOST_MES IS EMPTY";
+    }
 }
 
 //********************SWITCH COMMAND*******************
@@ -285,39 +297,41 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command& command)
                      << command.shift_phase_ddc1().phase_shift() << "|| Succesed command" << succesed;
             break;
         case proto::receiver::CommandType::SET_DEVICE_INDEX:
-            if (d->deviceMode == proto::receiver::DM_COHERENT)
-            {
-                d->device = DeviceFactory::createCohG35Device(command.device_set_index(),
-                            d->buffer,
-                            command.demo_mode());
+            /* if (d->deviceMode == proto::receiver::DM_COHERENT)
+             {
+                 d->device = DeviceFactory::createCohG35Device(command.device_set_index(),
+                             d->buffer,
+                             command.demo_mode());
 
-            }
-            else if(d->deviceMode == proto::receiver::DM_SINGLE)
-            {
-                d->device = DeviceFactory::createSingleG35Device(command.device_set_index(),
-                            d->buffer,
-                            command.demo_mode());
-            }
-            if(d->device.get())
-            {
-                succesed = true;
-                sendDeviceSetInfo();
-                qDebug() << "======Comand  SET_DEVICE_INDEX" << d->deviceMode;
-            }
-            else
-            {
-                succesed = false;
-                qDebug() << "======Comand  SET_DEVICE_INDEX FAILED" << d->deviceMode;
-            }
+             }
+             else if(d->deviceMode == proto::receiver::DM_SINGLE)
+             {
+                 d->device = DeviceFactory::createSingleG35Device(command.device_set_index(),
+                             d->buffer,
+                             command.demo_mode());
+             }
+             if(d->device.get())
+             {
+                 succesed = true;
+                 sendDeviceSetInfo();
+                 qDebug() << "======Comand  SET_DEVICE_INDEX" << d->deviceMode;
+             }
+             else
+             {
+                 succesed = false;
+                 qDebug() << "======Comand  SET_DEVICE_INDEX FAILED" << d->deviceMode;
+             }*/
+            qWarning("UNUSED SET_DEVICE_INDEX OPTION");
             break;
         case proto::receiver::SET_DEVICE_MODE:
-            d->deviceMode = command.device_mode();
-            succesed = true;
-            if( d->deviceMode == proto::receiver::DM_UNKNOWN)
-            {
-                qDebug() << "====== SET MODE FAILED";
-                succesed = false;
-            };
+            /* d->deviceMode = command.device_mode();
+             succesed = true;
+             if( d->deviceMode == proto::receiver::DM_UNKNOWN)
+             {
+                 qDebug() << "====== SET MODE FAILED";
+                 succesed = false;
+             };*/
+            qWarning("UNUSED SET_DEVICE_MODE OPTION");
             break;
         case proto::receiver::START_SENDING_DDC1_STREAM:
             qDebug() << "===== START_SENDING_DDC1_STREAM";

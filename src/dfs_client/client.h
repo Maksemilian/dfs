@@ -8,20 +8,32 @@
 
 class QHostAddress;
 
+struct ConnectData
+{
+    QString address;
+    quint16 port;
+    SessionType type;
+};
+
 class Client: public QObject
 {
     Q_OBJECT
   public:
-    Client(QObject* parent = nullptr);
-    void connectToHost(const QString& address, quint16 port, SessionType type = SESSION_UNKNOWN);
-    void disconnectFromHost();
+    Client(const ConnectData& connectData, QObject* parent = nullptr);
+    void start();
+    void stop();
     void sendMessage(const google::protobuf::Message& message);
     virtual void onMessageReceived(const QByteArray& buffer) = 0;
+    inline const ConnectData& connectData()
+    {
+        return _connectData;
+    }
   signals:
-    void connected();
-    void disconnected();
+    void started();
+    void stoped();
   private:
-    std::unique_ptr<net::ChannelClient> channel;
+    ConnectData _connectData;
+    std::unique_ptr<net::ChannelClient> _channel;
 };
 
 #endif // CLIENT_H

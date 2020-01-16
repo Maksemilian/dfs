@@ -10,32 +10,36 @@ const QByteArray serializeMessage(
     return QByteArray(bytesArray.data(), command.ByteSize());
 }
 
-Client::Client(QObject* parent):
+Client::Client(const ConnectData& connectData, QObject* parent):
     QObject (parent),
-    channel(std::make_unique<net::ChannelClient>())
+    _connectData(connectData),
+    _channel(std::make_unique<net::ChannelClient>())
 {
-    connect(channel.get(), &net::ChannelClient::messageReceived,
+    setObjectName(connectData.address);
+    connect(_channel.get(), &net::ChannelClient::messageReceived,
             this, &Client::onMessageReceived);
 
-    connect(channel.get(), &net::ChannelClient::connected,
-            this, &Client::connected);
+    connect(_channel.get(), &net::ChannelClient::connected,
+            this, &Client::started);
 
-    connect(channel.get(), &net::ChannelClient::finished,
-            this, &Client::disconnected);
+    connect(_channel.get(), &net::ChannelClient::finished,
+            this, &Client::stoped);
 }
 
-void Client::connectToHost(const QString& address, quint16 port, SessionType type)
+void Client::start()
 {
-    setObjectName(address);
-    channel->connectToHost(address, port, type);
+    _channel->connectToHost(_connectData.address,
+                            _connectData.port,
+                            _connectData.type);
+
 }
 
-void Client::disconnectFromHost()
+void Client::stop()
 {
-    channel->disconnectFromHost();
+    _channel->disconnectFromHost();
 }
 
 void Client::sendMessage(const google::protobuf::Message& message)
 {
-    channel->writeToConnection(serializeMessage(message));
+    _channel->writeToConnection(serializeMessage(message));
 }

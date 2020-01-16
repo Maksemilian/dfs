@@ -45,6 +45,8 @@ class ReceiverCommand: public AbstractCommand
     IDeviceSettings* subject;
 };
 
+
+
 //************************* ATTENUATOR
 class AttenuatorCommand: public ReceiverCommand
 {

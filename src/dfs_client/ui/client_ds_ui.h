@@ -5,40 +5,28 @@
 
 class QComboBox;
 class QLabel;
-class QLineEdit;
 
-class DeviceSetWidget : public QWidget
+class DeviceWidget : public QWidget
 {
     Q_OBJECT
     static const QString STRING_CONNECT;
     static const QString STRING_DISCONNECT;
-    static const QString TEXT_CONNECT;
-    static const QString TEXT_DISCONNECT;
-    static const int USER_DATA_STATUS = 0;
 
   public:
-    DeviceSetWidget(const QString& address, quint16 port);
-    void setAddress(const QString& address, quint16 port);
-    QString address();
-    quint16 port();
+    DeviceWidget(const QString& name);
+    void setName(const QString& name);
+    QString getName();
 
-  signals:
-    void getDeviceInfoUpdate(quint32 numberDeviceSet);
   public slots:
-    void onDeviceSetReady();
-    void onDeviceSetInfoUpdate(const QStringList& receivers);
-    void onDeviceSetDisconnected();
-    void onDeviceSetCommandFailed(const QString& errorString);
+    void onDeviceOpen(const QStringList& receivers);
+    void onDeviceClose();
+    void onShowDeviceError(const QString& errorString);
   private:
-    void setCursor(const QCursor& cursor);
   private:
-    QLabel* _lbAddresText;
-    QLabel* _lbPort;
-    QLabel* _lbStatus;
-    QLabel* _lbStatusDDC1;
+    QLabel* _lbName;
+    QLabel* _lbDeviceActivatedStatus;
+    QLabel* _lbStreamDDC1StartedStatus;
     QComboBox* _cbReceivers;
-    QLineEdit* _leSetShiftPhaseDDC1;
-    QLabel* _lbDeviceSetIndex;
 };
 
 #endif // DEVICE_SET_WIDGET_H

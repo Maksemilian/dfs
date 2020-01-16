@@ -41,7 +41,7 @@ TreePcWidgetItem::TreePcWidgetItem(const QString& ipAddress, const QString& port
 
 void TreePcWidgetItem::connectToComputer()
 {
-    _desctopClient->connectToHost(getIpAddress(), getPort().toUShort());
+    //_desctopClient->connectToHost(getIpAddress(), getPort().toUShort());
 }
 
 void TreePcWidgetItem::onInfoUpdate(const proto::desctop::DesctopInfo& desctopInfo)

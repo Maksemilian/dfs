@@ -1,7 +1,7 @@
 #include "client_desctop.h"
 #include "desctop.pb.h"
 
-DesctopClient::DesctopClient()
+DesctopClient::DesctopClient(): Client (ConnectData())
 {
 
 }

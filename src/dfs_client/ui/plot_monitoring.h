@@ -7,7 +7,7 @@
 class IDeviceSettings;
 class ChannelPlot;
 class ElipsPlot ;
-class DeviceSetWidget;
+class DeviceWidget;
 class SyncController;
 
 using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;

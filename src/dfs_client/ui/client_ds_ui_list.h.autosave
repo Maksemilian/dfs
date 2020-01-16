@@ -42,8 +42,8 @@ class DeviceSetListWidget :
     void ready(const std::vector<ShPtrPacketBuffer>& buffers);
     void notReady();
   public slots:
-    void connectToSelectedDeviceSet();
-    void disconnectFromSelectedDeviceSet();
+    void startDeviceClients();
+    void stopDeviceClients();
   private slots:
     void onDeviceSelected(QListWidgetItem* item);
     void onAddDevice();

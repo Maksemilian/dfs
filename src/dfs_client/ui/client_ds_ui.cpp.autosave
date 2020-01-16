@@ -12,7 +12,7 @@ const QString DeviceWidget::STRING_DISCONNECT = "disconnect";
 DeviceWidget::DeviceWidget(const QString& name):
     _lbName(new QLabel(name, this)),
     _lbDeviceActivatedStatus(new QLabel(this)),
-    _lbStreamDDC1StartedStatus(new QLabel(TEXT_DISCONNECT, this)),
+    _lbStreamDDC1StartedStatus(new QLabel(STRING_CONNECT, this)),
     _cbReceivers(new QComboBox(this))
 {
     setObjectName(name);

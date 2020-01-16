@@ -25,6 +25,7 @@ class DeviceSetClient: public QObject
 
     ShPtrRingBuffer ddc1Buffer();
     void sendDevieSetStatus();
+    void sendDeviceSetInfo();
   signals:
     void deviceDisconnected();
     void changedDeviceSet(unsigned int indexDeviceSet);
@@ -32,7 +33,6 @@ class DeviceSetClient: public QObject
     void onDisconnected();
     void onMessageReceived(const QByteArray& buffer);
   private:
-    void sendDeviceSetInfo();
     void sendDeviceInfoSingle();
     void setDeviceInfoCoherent();
     void sendCommandAnswer(proto::receiver::Answer* commandAnswer);
