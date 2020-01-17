@@ -66,7 +66,8 @@ HEADERS += \
     ui/tree_devices.h \
     ui/tree_pc_item.h \
     client.h \
-    client_desctop.h
+    client_desctop.h \
+    client_manager.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -87,7 +88,8 @@ SOURCES += \
     ui/tree_devices.cpp \
     ui/tree_pc_item.cpp \
     client.cpp \
-    client_desctop.cpp
+    client_desctop.cpp \
+    client_manager.cpp
 
 FORMS += \
     ui/main_window.ui \

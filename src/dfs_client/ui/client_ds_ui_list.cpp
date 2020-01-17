@@ -3,21 +3,15 @@
 #include "client_ds_ui.h"
 
 #include "tool_switch_button.h"
-#include "i_device_settings.h"
 
 #include <QDebug>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QPushButton>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QApplication>
-#include <QFile>
 #include <QSettings>
-#include <QTimer>
-#include <QTime>
-#include <QMessageBox>
 #include <QLabel>
-#include <QInputDialog>
 
 const QString DeviceListWidget::SETTINGS_FILE = "client_device_set_list.ini";
 //const QString DeviceSetListWidget::SETTINGS_FILE="ds_list.ini";
@@ -46,8 +40,9 @@ class DeviceWidgetCreator: public QDialog
     QLineEdit* _lePort;
 };
 
-DeviceListWidget::DeviceListWidget(QWidget* parent)
-    : QWidget(parent), _listWidget(new QListWidget(this))
+DeviceListWidget::DeviceListWidget(const std::shared_ptr<ClientManager>& clientManager,
+                                   QWidget* parent)
+    : QWidget(parent), _listWidget(new QListWidget(this)), _clientManager(clientManager)
 {
     setLayout(new QVBoxLayout);
     _listWidget->setSelectionMode(QAbstractItemView::MultiSelection);
@@ -61,19 +56,17 @@ DeviceListWidget::DeviceListWidget(QWidget* parent)
     connect(_pbConnectToStation, &SwitchButton::stateChanged,
             [this](bool state)
     {
-        qDebug() << "State:" << state;
         if(state)
         {
-            startDeviceClients();
+            qDebug() << "Start Clients:" ;
+            _clientManager->startClients();
         }
         else
         {
-            stopDeviceClients();
+            qDebug() << "Stop Clients:" ;
+            _clientManager->stopClients();
         }
     });
-
-    connect(this, &DeviceListWidget::allConnectedState,
-            _pbConnectToStation, &SwitchButton::setCurrentState);
 
     QPushButton* pbAddDeviceWidget = new QPushButton("Add");
     QPushButton* pbRemoveDeviceWidget = new QPushButton("Remove");
@@ -87,10 +80,11 @@ DeviceListWidget::DeviceListWidget(QWidget* parent)
     connect(pbRemoveDeviceWidget, &QPushButton::clicked,
             this, &DeviceListWidget::onRemoveDevice);
 
-    connect(_listWidget, &QListWidget::itemSelectionChanged,
-            [this]
+    connect(_listWidget, &QListWidget::itemClicked,
+            [this](QListWidgetItem * item)
     {
         qDebug() << "Station Panel Clicked";
+        onItemCliecked(item);
         if(_listWidget->selectedItems().isEmpty())
         {
             _pbConnectToStation->setEnabled(false);
@@ -108,17 +102,8 @@ DeviceListWidget::~DeviceListWidget()
     saveSettings();
 }
 
-void DeviceListWidget::setCursor(const QCursor& cursor)
-{
-    //TODO НЕПОНЯТНО ПОЧЕМУ ДВА PARENT WIDGET НУЖНО СТАВИТЬ
-    if(parentWidget())
-    {
-        parentWidget()->parentWidget()->setCursor(cursor);
-    }
-}
-
-void DeviceListWidget::addDeviceSetWidget(const ConnectData& connectData,
-        DeviceWidget* deviceSetWidget)
+void DeviceListWidget::addDeviceWidget(const ConnectData& connectData,
+                                       DeviceWidget* deviceSetWidget)
 {
     QListWidgetItem* deviceItem = new QListWidgetItem(_listWidget);
 
@@ -126,54 +111,23 @@ void DeviceListWidget::addDeviceSetWidget(const ConnectData& connectData,
     deviceItem->setSelected(true);
     _listWidget->setItemWidget(deviceItem, deviceSetWidget);
 
-    DeviceSetClient* deviceSetClient = new DeviceSetClient(connectData);
-    connect(deviceSetClient, &DeviceSetClient::commandSuccessed,
-            [this]
-    {
-        if(_commandQueue.isEmpty()) return ;
-        if(--_counter != 0) return ;
-        const proto::receiver::Command& successedCommand = _commandQueue.dequeue();
+    std::shared_ptr<DeviceSetClient> deviceSetClient =
+        std::make_shared<DeviceSetClient>(connectData);
 
-        if(successedCommand.command_type() == proto::receiver::START_DDC1)
-        {
-            std::vector<ShPtrPacketBuffer> buffers;
-            for(auto& device : _deviceses)
-            {
-                buffers.push_back(device.second->getDDC1Buffer());
-            }
-//            emit  ready(_connectedDeviceSetWidgetList);
-            emit ready(buffers);
-        }
-        else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)
-        {
-            emit notReady();
-        }
-
-        if(!_commandQueue.isEmpty() &&
-                _commandQueue.head().command_type() != successedCommand.command_type())
-        {
-            setAllDeviceSet(_commandQueue.head());
-        }
-        else
-        {
-            setCursor(Qt::ArrowCursor);
-        }
-    });
-
-    connect(deviceSetClient, &DeviceSetClient::deviceReady,
+    connect(deviceSetClient.get(), &DeviceSetClient::deviceReady,
             deviceSetWidget, &DeviceWidget::onDeviceOpen);
 
-    connect(deviceSetClient, &DeviceSetClient::stoped,
+    connect(deviceSetClient.get(), &DeviceSetClient::stoped,
             deviceSetWidget, &DeviceWidget::onDeviceClose);
 
-    connect(deviceSetClient, &DeviceSetClient::commandFailed,
+    connect(deviceSetClient.get(), &DeviceSetClient::commandFailed,
             deviceSetWidget, &DeviceWidget::onShowDeviceError);
 
-    _deviceses[deviceItem].reset(deviceSetClient);
-    deviceSetClient->setLiceningStreamPort(PORT + static_cast<quint16>(_deviceses.size()));
+    _deviceses[deviceItem] = deviceSetClient;
+    _clientManager->addClient(deviceSetClient);
 }
 
-void DeviceListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
+void DeviceListWidget::removeDeviceWidget(DeviceWidget* removedWidget)
 {
     for (auto& device : _deviceses)
     {
@@ -183,81 +137,12 @@ void DeviceListWidget::removeDeviceSetWidget(DeviceWidget* removedWidget)
             if(removedWidget == currentWidget)
             {
                 _deviceses.erase(device.first);
-
+                _clientManager->removeClient(device.second);
                 _listWidget->removeItemWidget(device.first);
                 delete _listWidget->takeItem(_listWidget->row(device.first));
                 break;
             }
         }
-    }
-}
-
-void DeviceListWidget::startDeviceClients()
-{
-    QList<QListWidgetItem*> items = _listWidget->selectedItems();
-
-    qDebug() << "ConnectToSelection" << items.size();
-    for(auto& item : items)
-    {
-        if(DeviceWidget* widget =
-                    qobject_cast<DeviceWidget*>(_listWidget->itemWidget(item)))
-        {
-            _deviceses[item]->start();
-        }
-        else
-        {
-            qDebug() << "NULL DEVICE SET WIDGET";
-        }
-    }
-
-//    setCursor(Qt::WaitCursor);
-
-//    checkingConnections(true);
-
-}
-
-void DeviceListWidget::stopDeviceClients()
-{
-    QList<QListWidgetItem*> items = _listWidget->selectedItems();
-
-    qDebug() << "ConnectToSelection" << items.size();
-    for(auto& item : items)
-    {
-        if(DeviceWidget* widget =
-                    qobject_cast<DeviceWidget*>(_listWidget->itemWidget(item)))
-        {
-            _deviceses[item]->stop();
-        }
-        else
-        {
-            qDebug() << "NULL DEVICE SET WIDGET";
-        }
-    }
-
-//    setCursor(Qt::WaitCursor);
-
-}
-
-void DeviceListWidget::setCommand(proto::receiver::Command& command)
-{
-    setCursor(Qt::WaitCursor);
-
-    if(_commandQueue.isEmpty())
-    {
-        setAllDeviceSet(command);
-    }
-
-    _commandQueue.enqueue(command);
-}
-
-void DeviceListWidget::setAllDeviceSet( proto::receiver::Command& command)
-{
-    QList<QListWidgetItem*> items = _listWidget->selectedItems();
-
-    for(auto& item : items)
-    {
-        _deviceses[item]->sendCommand(command);
-        _counter++;
     }
 }
 
@@ -276,7 +161,7 @@ void DeviceListWidget::onAddDevice()
     ConnectData connectData = {address, port, SessionType::SESSION_COMMAND};
     if(ok && port != 0)
     {
-        addDeviceSetWidget(connectData, new DeviceWidget(address + "DS_0"));
+        addDeviceWidget(connectData, new DeviceWidget(address + "DS_0"));
     }
     else   QMessageBox::
         warning(this, "Creation Device Set Client faild", "address:port");
@@ -290,11 +175,22 @@ void DeviceListWidget::onRemoveDevice()
     {
         if(DeviceWidget* widget = qobject_cast<DeviceWidget*>(_listWidget->itemWidget(selectedItem)))
         {
-            removeDeviceSetWidget(widget);
+            removeDeviceWidget(widget);
         }
     }
 }
 
+void DeviceListWidget::onItemCliecked(QListWidgetItem* item)
+{
+    if(!item->isSelected())
+    {
+        _clientManager->removeClient(_deviceses[item]);
+    }
+    else
+    {
+        _clientManager->addClient(_deviceses[item]);
+    }
+}
 //************** LOAD\SAVE SETTINGS
 
 void DeviceListWidget::loadSettings()
@@ -302,25 +198,23 @@ void DeviceListWidget::loadSettings()
     QString settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE;
     //    qDebug()<<"DeviceSetListWidget::loadSettings()"<<settingsFileName;
 
-    if(QFile::exists(settingsFileName))
+    QSettings s(settingsFileName, QSettings::IniFormat);
+
+    QStringList groups = s.childGroups();
+    for(const auto& group : groups)
     {
+        s.beginGroup(group);
+        QString name = s.value("name").toString();
+        QString address = s.value("address").toString();
+        quint16 port = static_cast<quint16>(s.value("port").toUInt());
 
-        QSettings s(settingsFileName, QSettings::IniFormat);
-        QStringList groups = s.childGroups();
-        for(const auto& group : groups)
-        {
-            s.beginGroup(group);
-            QString name = s.value("name").toString();
-            QString address = s.value("address").toString();
-            quint16 port = static_cast<quint16>(s.value("port").toUInt());
+        ConnectData connectData = {address, port, SessionType::SESSION_COMMAND};
 
-            ConnectData connectData = {address, port, SessionType::SESSION_COMMAND};
+        addDeviceWidget(connectData, new DeviceWidget(name));
 
-            addDeviceSetWidget(connectData, new DeviceWidget(name));
-
-            s.endGroup();
-        }
+        s.endGroup();
     }
+
 }
 
 void DeviceListWidget::saveSettings()
@@ -349,6 +243,121 @@ void DeviceListWidget::saveSettings()
     s.sync();
 }
 
+//    connect(deviceSetClient, &DeviceSetClient::commandSuccessed,
+//            [this]
+//    {
+//        if(_commandQueue.isEmpty()) return ;
+//        if(--_counter != 0) return ;
+//        const proto::receiver::Command& successedCommand = _commandQueue.dequeue();
+
+//        if(successedCommand.command_type() == proto::receiver::START_DDC1)
+//        {
+//            std::vector<ShPtrPacketBuffer> buffers;
+//            for(auto& device : _deviceses)
+//            {
+//                buffers.push_back(device.second->getDDC1Buffer());
+//            }
+////            emit  ready(_connectedDeviceSetWidgetList);
+//            emit ready(buffers);
+//        }
+//        else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)
+//        {
+//            emit notReady();
+//        }
+
+//        if(!_commandQueue.isEmpty() &&
+//                _commandQueue.head().command_type() != successedCommand.command_type())
+//        {
+//            setAllDeviceSet(_commandQueue.head());
+//        }
+//        else
+//        {
+//            setCursor(Qt::ArrowCursor);
+//        }
+//    });
+
+//void DeviceListWidget::setCommand(proto::receiver::Command& command)
+//{
+//    setCursor(Qt::WaitCursor);
+
+//    if(_commandQueue.isEmpty())
+//    {
+//        setAllDeviceSet(command);
+//    }
+
+//    _commandQueue.enqueue(command);
+//}
+
+//void DeviceListWidget::setAllDeviceSet( proto::receiver::Command& command)
+//{
+//    QList<QListWidgetItem*> items = _listWidget->selectedItems();
+
+//    for(auto& item : items)
+//    {
+//        _deviceses[item]->sendCommand(command);
+//        _counter++;
+//    }
+//}
+
+
+/*
+void DeviceListWidget::onConnectButton()
+{
+    _clientManager->startClients();
+//    QList<QListWidgetItem*> items = _listWidget->selectedItems();
+
+//    qDebug() << "ConnectToSelection" << items.size();
+//    for(auto& item : items)
+//    {
+//        if(DeviceWidget* widget =
+//                    qobject_cast<DeviceWidget*>(_listWidget->itemWidget(item)))
+//        {
+//            _deviceses[item]->start();
+//        }
+//        else
+//        {
+//            qDebug() << "NULL DEVICE SET WIDGET";
+//        }
+//    }
+
+//    setCursor(Qt::WaitCursor);
+
+//    checkingConnections(true);
+
+}
+
+void DeviceListWidget::stopDeviceClients()
+{
+    _clientManager->stopClients();
+//    QList<QListWidgetItem*> items = _listWidget->selectedItems();
+
+//    qDebug() << "ConnectToSelection" << items.size();
+//    for(auto& item : items)
+//    {
+//        if(DeviceWidget* widget =
+//                    qobject_cast<DeviceWidget*>(_listWidget->itemWidget(item)))
+//        {
+//            _deviceses[item]->stop();
+//        }
+//        else
+//        {
+//            qDebug() << "NULL DEVICE SET WIDGET";
+//        }
+//    }
+
+//    setCursor(Qt::WaitCursor);
+
+}
+*/
+
+//void DeviceListWidget::setCursor(const QCursor& cursor)
+//{
+//    //TODO НЕПОНЯТНО ПОЧЕМУ ДВА PARENT WIDGET НУЖНО СТАВИТЬ
+//    if(parentWidget())
+//    {
+//        parentWidget()->parentWidget()->setCursor(cursor);
+//    }
+//}
 //void DeviceListWidget::onDeviceSelected(QListWidgetItem* item)
 //{
 //    Q_UNUSED(item);

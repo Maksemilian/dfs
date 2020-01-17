@@ -1,10 +1,7 @@
 #ifndef DEVICE_SET_WIDGET_LIST_H
 #define DEVICE_SET_WIDGET_LIST_H
 
-#include "client_ds.h"
-
-#include "receiver.pb.h"
-#include "i_deviceset.h"
+#include "client_manager.h"
 
 #include <memory>
 #include <QListWidget>
@@ -17,9 +14,9 @@ class QPushButton;
 class SwitchButton;
 class IDeviceSettings;
 class QListWidgetItem;
+
 class DeviceListWidget :
-    public QWidget,
-    public IDeviceSet
+    public QWidget
 {
     Q_OBJECT
     static const QString SETTINGS_FILE;
@@ -30,27 +27,18 @@ class DeviceListWidget :
     static const int TIME_WAIT_CONNECTION = 5000;
     static const int TIME_CHECK = 500;
   public:
-    DeviceListWidget(QWidget* parent = nullptr);
+    DeviceListWidget(const std::shared_ptr<ClientManager>& clientManager,
+                     QWidget* parent = nullptr);
     ~DeviceListWidget() override;
-    void addDeviceSetWidget(const ConnectData& connectData, DeviceWidget* deviceSetWidget);
-    void removeDeviceSetWidget(DeviceWidget* deviceSetWidget);
-    void setCommand(proto::receiver::Command& command)override;
-  signals:
-    void commandSucessed()override;
-    void allConnectedState(bool state);
-    void ready(const std::vector<ShPtrPacketBuffer>& buffers);
-    void notReady();
-  public slots:
-    void startDeviceClients();
-    void stopDeviceClients();
+
+    void addDeviceWidget(const ConnectData& connectData, DeviceWidget* deviceSetWidget);
+    void removeDeviceWidget(DeviceWidget* deviceSetWidget);
+
   private slots:
     void onAddDevice();
     void onRemoveDevice();
   private:
-    void setAllDeviceSet(proto::receiver::Command& command);
-
-    void setCursor(const QCursor& cursor);
-
+    void onItemCliecked(QListWidgetItem* item);
     void loadSettings();
     void saveSettings();
   private:
@@ -58,8 +46,7 @@ class DeviceListWidget :
     SwitchButton* _pbConnectToStation;
     std::map<QListWidgetItem*, std::shared_ptr<DeviceSetClient> > _deviceses;
 
-    QQueue<proto::receiver::Command>_commandQueue;
-    int _counter = 0;
+    std::shared_ptr<ClientManager>_clientManager;
 };
 
 #endif // DEVICE_SET_WIDGET_LIST_H

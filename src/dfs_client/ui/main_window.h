@@ -2,7 +2,7 @@
 #define MAIN_WINDOW_H
 
 #include "i_device_settings.h"
-
+#include "client_manager.h"
 #include <QMainWindow>
 #include <QMap>
 
@@ -110,7 +110,9 @@ class MainWindow : public QMainWindow,
 //    ChannelPlot*channelPlot;//central widget
 //    ElipsPlot *elipsPlot;//right dock idget
     QStackedWidget* stackWidget;
-    DeviceListWidget* deviceSetListWidget;
+    DeviceListWidget* deviceListWidget;
+
+    std::shared_ptr<ClientManager>_clientManager;
 };
 
 

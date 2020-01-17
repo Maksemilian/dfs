@@ -4,12 +4,12 @@
 #include "i_deviceset.h"
 
 #include "receiver.pb.h"
-
+#include "client_manager.h"
 AbstractCommand::AbstractCommand() {}
 
 AbstractCommand::~AbstractCommand() = default;
 
-StartSendingStream::StartSendingStream(IDeviceSet* deviceSet)
+StartSendingStream::StartSendingStream(ClientManager* deviceSet)
     : _iDeviceSet(deviceSet)
 {
 
@@ -22,7 +22,7 @@ void StartSendingStream::execute()
     _iDeviceSet->setCommand(command);
 }
 
-StopSendingStream::StopSendingStream(IDeviceSet* deviceSet)
+StopSendingStream::StopSendingStream(ClientManager* deviceSet)
     : _iDeviceSet(deviceSet)
 {
 
@@ -35,7 +35,7 @@ void StopSendingStream::execute()
     _iDeviceSet->setCommand(command);
 }
 
-ReceiverCommand::ReceiverCommand(IDeviceSet* iDeviceSet,
+ReceiverCommand::ReceiverCommand(ClientManager* iDeviceSet,
                                  IDeviceSettings* subject)
     : AbstractCommand(), _iDeviceSet(iDeviceSet), subject(subject)
 {
@@ -43,7 +43,7 @@ ReceiverCommand::ReceiverCommand(IDeviceSet* iDeviceSet,
 
 ReceiverCommand::~ReceiverCommand() = default;
 
-AttenuatorCommand::AttenuatorCommand(IDeviceSet* syncManager,
+AttenuatorCommand::AttenuatorCommand(ClientManager* syncManager,
                                      IDeviceSettings* subject):
     ReceiverCommand(syncManager, subject)
 {
@@ -61,7 +61,7 @@ void AttenuatorCommand::execute()
 
 //************************* PRES
 
-PreselectorCommand::PreselectorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+PreselectorCommand::PreselectorCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)
 {
 //    qDebug()<<subject->getPreselectors();
@@ -83,7 +83,7 @@ void PreselectorCommand::execute()
 
 //************************* PREAM
 
-PreamplifireCommand::PreamplifireCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+PreamplifireCommand::PreamplifireCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PreamplifireCommand::execute()
@@ -98,7 +98,7 @@ void PreamplifireCommand::execute()
 
 //************************* ADC EN
 
-AdcEnabledCommand::AdcEnabledCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+AdcEnabledCommand::AdcEnabledCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void  AdcEnabledCommand::execute()
@@ -111,7 +111,7 @@ void  AdcEnabledCommand::execute()
 
 //************************* ADC THR
 
-AdcThresholdCommand::AdcThresholdCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+AdcThresholdCommand::AdcThresholdCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void AdcThresholdCommand::execute()
@@ -126,7 +126,7 @@ void AdcThresholdCommand::execute()
 
 //************************* POWER ON
 
-PowerCommandOn::PowerCommandOn(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+PowerCommandOn::PowerCommandOn(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PowerCommandOn::execute()
@@ -139,7 +139,7 @@ void PowerCommandOn::execute()
 
 //************************* POWER OFF
 
-PowerCommandOff::PowerCommandOff(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+PowerCommandOff::PowerCommandOff(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void PowerCommandOff::execute()
@@ -151,7 +151,7 @@ void PowerCommandOff::execute()
 
 //************************* SETTINGS
 
-SettingsCommand::SettingsCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+SettingsCommand::SettingsCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)
 {
 }
@@ -184,7 +184,7 @@ void SettingsCommand::execute()
 
 //************************* START DDC
 
-StartDDC1Command::StartDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+StartDDC1Command::StartDDC1Command(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void StartDDC1Command::execute()
@@ -197,7 +197,7 @@ void StartDDC1Command::execute()
 
 //************************* STOP DDC
 
-StopDDC1Command::StopDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+StopDDC1Command::StopDDC1Command(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void StopDDC1Command::execute()
@@ -209,7 +209,7 @@ void StopDDC1Command::execute()
 
 //************************* RESTART
 
-SetDDC1TypeCommand::SetDDC1TypeCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+SetDDC1TypeCommand::SetDDC1TypeCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void SetDDC1TypeCommand::execute()
@@ -222,7 +222,7 @@ void SetDDC1TypeCommand::execute()
 
 //************************* FREQ
 
-FrequencyCommand::FrequencyCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject)
+FrequencyCommand::FrequencyCommand(ClientManager* iDeviceSet, IDeviceSettings* subject)
     : ReceiverCommand(iDeviceSet, subject)    {}
 
 void FrequencyCommand::execute()
@@ -246,7 +246,9 @@ void MacroCommand::execute()
     qDebug() << "====================MackroCommand EXEC";
 
     for(AbstractCommand* rc : _commands)
+    {
         rc->execute();
+    }
 }
 
 void MacroCommand::addCommand(AbstractCommand* command)

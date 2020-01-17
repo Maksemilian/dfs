@@ -1,8 +1,8 @@
 #ifndef FACTORY_COMMAND_H
 #define FACTORY_COMMAND_H
-
+#include "QObject"
 class IDeviceSettings ;
-class IDeviceSet;
+class ClientManager;
 class AbstractCommand;
 
 class WidgetDirector;
@@ -26,7 +26,43 @@ class SyncStopCommand;
 class AddTaskCommand;
 
 class SendStreamDDC1;
+class ClientManager;
+/*
+class AbstractCommand: public QObjectUserData
+{
+  public:
+    AbstractCommand() = default;
+    ~AbstractCommand() = default;
+    virtual void execute() = 0;
+};
 
+template <class Receiver, class Command>
+class SimpleCommand : public AbstractCommand
+{
+  public:
+    typedef void (Receiver::* Action) (Command&);
+    SimpleCommand(Receiver* r, Action a, Command c) :
+        _receiver(r), _action(a), _c(c) { }
+    virtual void execute()
+    {
+        (_receiver->*_action)(_c);
+    }
+  private:
+    Action _action;
+    Receiver* _receiver;
+    Command _c;
+};
+
+class MacroCommand: public AbstractCommand
+{
+  public:
+    void execute()override;
+    void addCommand(AbstractCommand* command);
+    void removeCommand(AbstractCommand* command);
+  private:
+    QList<AbstractCommand*>_commands;
+};
+*/
 class FactoryCommand
 {
     FactoryCommand();
@@ -38,24 +74,44 @@ class FactoryCommand
         return factory;
     }
 
-    static PreselectorCommand* getPreselectorCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static PreamplifireCommand* getPreamplifireCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static AdcEnabledCommand* getAdcEnabledCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static AdcThresholdCommand* getAdcThresholdCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static AttenuatorCommand* getAttenuatorCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
+    static AbstractCommand* getPreselectorCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
 
-    static PowerCommandOn* getPowerComandOn(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static PowerCommandOff* getPowerComandOff(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
+    static AbstractCommand* getPreamplifireCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
 
-    static SettingsCommand* getSettingsCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
+    static AbstractCommand* getAdcEnabledCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
 
-    static StartDDC1Command* getStartDdc1Command(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static StopDDC1Command* getStopDdc1Command(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static SetDDC1TypeCommand* getSetDdc1Command(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
-    static FrequencyCommand* getFrequencyCommand(IDeviceSet* iDeviceSet,  IDeviceSettings* subject);
+    static AbstractCommand* getAdcThresholdCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
 
-    static AbstractCommand* getStartSendingStreamCommand(IDeviceSet* iDeviceSet);
-    static AbstractCommand* getStopSendingStreamCommand(IDeviceSet* iDeviceSet);
+    static AbstractCommand* getAttenuatorCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getPowerComandOn(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getPowerComandOff(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getSettingsCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getStartDdc1Command(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getStopDdc1Command(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getSetDdc1Command(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getFrequencyCommand(ClientManager* clientManager,
+            IDeviceSettings* subject);
+
+    static AbstractCommand* getStartSendingStreamCommand(ClientManager* clientManager);
+    static AbstractCommand* getStopSendingStreamCommand(ClientManager* clientManager);
 
     static MacroCommand* getMacroCommand();
 };

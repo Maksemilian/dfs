@@ -6,7 +6,9 @@
 #include <QDebug>
 
 class IDeviceSettings;
-class IDeviceSet;
+class ClientManager;
+
+#include "receiver.pb.h"
 
 class AbstractCommand: public QObjectUserData
 {
@@ -16,32 +18,49 @@ class AbstractCommand: public QObjectUserData
     virtual void execute() = 0;
 };
 
+template <class Receiver, class Command>
+class SimpleCommand : public AbstractCommand
+{
+  public:
+    typedef void (Receiver::* Action) (Command&);
+    SimpleCommand(Receiver* r, Action a, Command c) :
+        _receiver(r), _action(a), _c(c) { }
+    virtual void execute()
+    {
+        (_receiver->*_action)(_c);
+    }
+  private:
+    Action _action;
+    Receiver* _receiver;
+    Command _c;
+};
+
 class StartSendingStream: public AbstractCommand
 {
   public:
-    StartSendingStream(IDeviceSet* deviceSet);
+    StartSendingStream(ClientManager* deviceSet);
     void execute()override;
   private:
-    IDeviceSet* _iDeviceSet;
+    ClientManager* _iDeviceSet;
 };
 
 class StopSendingStream: public AbstractCommand
 {
   public:
-    StopSendingStream(IDeviceSet* deviceSet);
+    StopSendingStream(ClientManager* deviceSet);
     void execute()override;
   private:
-    IDeviceSet* _iDeviceSet;
+    ClientManager* _iDeviceSet;
 };
 
 
 class ReceiverCommand: public AbstractCommand
 {
   public:
-    ReceiverCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    ReceiverCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     ~ReceiverCommand();
   protected:
-    IDeviceSet* _iDeviceSet;
+    ClientManager* _iDeviceSet;
     IDeviceSettings* subject;
 };
 
@@ -51,7 +70,7 @@ class ReceiverCommand: public AbstractCommand
 class AttenuatorCommand: public ReceiverCommand
 {
   public:
-    AttenuatorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    AttenuatorCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     AttenuatorCommand();
     void execute()override;
 };
@@ -61,7 +80,7 @@ class AttenuatorCommand: public ReceiverCommand
 class PreselectorCommand: public ReceiverCommand
 {
   public:
-    PreselectorCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    PreselectorCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -70,7 +89,7 @@ class PreselectorCommand: public ReceiverCommand
 class PreamplifireCommand: public ReceiverCommand
 {
   public:
-    PreamplifireCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    PreamplifireCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -79,7 +98,7 @@ class PreamplifireCommand: public ReceiverCommand
 class AdcEnabledCommand: public ReceiverCommand
 {
   public:
-    AdcEnabledCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    AdcEnabledCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -88,7 +107,7 @@ class AdcEnabledCommand: public ReceiverCommand
 class AdcThresholdCommand: public ReceiverCommand
 {
   public:
-    AdcThresholdCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    AdcThresholdCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -97,7 +116,7 @@ class AdcThresholdCommand: public ReceiverCommand
 class PowerCommandOn: public ReceiverCommand
 {
   public:
-    PowerCommandOn(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    PowerCommandOn(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -106,7 +125,7 @@ class PowerCommandOn: public ReceiverCommand
 class PowerCommandOff: public ReceiverCommand
 {
   public:
-    PowerCommandOff(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    PowerCommandOff(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -115,7 +134,7 @@ class PowerCommandOff: public ReceiverCommand
 class SettingsCommand: public ReceiverCommand
 {
   public:
-    SettingsCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    SettingsCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute()override;
 };
 
@@ -123,7 +142,7 @@ class SettingsCommand: public ReceiverCommand
 class StartDDC1Command: public ReceiverCommand
 {
   public:
-    StartDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    StartDDC1Command(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
@@ -132,7 +151,7 @@ class StartDDC1Command: public ReceiverCommand
 class StopDDC1Command: public ReceiverCommand
 {
   public:
-    StopDDC1Command(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    StopDDC1Command(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
@@ -141,7 +160,7 @@ class StopDDC1Command: public ReceiverCommand
 class SetDDC1TypeCommand: public ReceiverCommand
 {
   public:
-    SetDDC1TypeCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    SetDDC1TypeCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 
@@ -150,7 +169,7 @@ class SetDDC1TypeCommand: public ReceiverCommand
 class FrequencyCommand: public ReceiverCommand
 {
   public:
-    FrequencyCommand(IDeviceSet* iDeviceSet, IDeviceSettings* subject);
+    FrequencyCommand(ClientManager* iDeviceSet, IDeviceSettings* subject);
     void execute() override;
 };
 

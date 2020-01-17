@@ -28,16 +28,17 @@ const QString MainWindow::SETTINGS_FILE_NAME = "device_set.ini";
 
 MainWindow:: MainWindow(QWidget* parent):
     QMainWindow(parent), ui(new Ui::MainWindow)
+    , _clientManager(std::make_shared<ClientManager>())
 {
     ui->setupUi(this);
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-    deviceSetListWidget = new DeviceListWidget(this);
+    deviceListWidget = new DeviceListWidget(_clientManager, this);
 
     stackWidget = new QStackedWidget(this);
     stackWidget->addWidget(new TreeDevices(this));
-    stackWidget->addWidget(deviceSetListWidget);
+    stackWidget->addWidget(deviceListWidget);
 //    setLeftDockWidget(deviceSetListWidget, "DeviceSetList");
     setLeftDockWidget(stackWidget, "DeviceSetList");
 
@@ -64,10 +65,10 @@ MainWindow:: MainWindow(QWidget* parent):
     //************** ELIPSE PLOT***************************
     plotMonitoring = new PlotMonitoring(this);
     plotMonitoring->ds = this;
-    connect(deviceSetListWidget, &DeviceListWidget::ready,
+    connect(_clientManager.get(), &ClientManager::ready,
             plotMonitoring, &PlotMonitoring::onDeviceSetListReady);
 
-    connect(deviceSetListWidget, &DeviceListWidget::notReady,
+    connect(_clientManager.get(), &ClientManager::notReady,
             plotMonitoring, &PlotMonitoring::onDeviceSetListNotReady);
 
     setCentralWidget(plotMonitoring);
@@ -129,9 +130,9 @@ void MainWindow::setTopToolBar(QToolBar* topToolBar)
     //DDC1 Frequency
     MacroCommand* macroFreq = FactoryCommand::getMacroCommand();
     //    macroFreq->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
-    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(deviceSetListWidget, this));
-    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
+    macroFreq->addCommand(FactoryCommand::getStopDdc1Command(_clientManager.get(), this));
+    macroFreq->addCommand(FactoryCommand::getFrequencyCommand(_clientManager.get(), this));
+    macroFreq->addCommand(FactoryCommand::getStartDdc1Command(_clientManager.get(), this));
 
     leDDC1Frequency = new FrequencyLineEdit(this);
     leDDC1Frequency->setUserData(USER_DATA_ID, macroFreq);
@@ -141,9 +142,9 @@ void MainWindow::setTopToolBar(QToolBar* topToolBar)
     //DDC1 Bandwith
     MacroCommand* macroBandwith = FactoryCommand::getMacroCommand();
     //    macroBandwith->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
-    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(deviceSetListWidget, this));
-    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
+    macroBandwith->addCommand(FactoryCommand::getStopDdc1Command(_clientManager.get(), this));
+    macroBandwith->addCommand(FactoryCommand::getSetDdc1Command(_clientManager.get(), this));
+    macroBandwith->addCommand(FactoryCommand::getStartDdc1Command(_clientManager.get(), this));
     //    macroBandwith->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
 
     cbDDC1Bandwith = new BandwithComboBox(this);
@@ -164,6 +165,7 @@ void MainWindow::setTopToolBar(QToolBar* topToolBar)
     topToolBar->addWidget(cbSamplesPerBuffer);
 
     topToolBar->addSeparator();
+
 }
 
 //****************** SETTING BOTTOM TOOL BAR*************************
@@ -174,14 +176,17 @@ void MainWindow::setBottomToolBar(QToolBar* bottomToolBar)
     {
         return ;
     }
+
+
     //power BUTTON
     pbPower = new SwitchButton("On", "Off", false, this);
     connect(pbPower, &SwitchButton::changed, this, &MainWindow::widgetChanged);
     MacroCommand* macroCommand = FactoryCommand::getMacroCommand();
-    macroCommand->addCommand(FactoryCommand::getPowerComandOn(deviceSetListWidget, this));
-    macroCommand->addCommand(FactoryCommand::getSettingsCommand(deviceSetListWidget, this));
-    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(deviceSetListWidget, this));
-    macroCommand->addCommand(FactoryCommand::getStartSendingStreamCommand(deviceSetListWidget));
+
+    macroCommand->addCommand(FactoryCommand::getPowerComandOn(_clientManager.get(), this));
+    macroCommand->addCommand(FactoryCommand::getSettingsCommand(_clientManager.get(), this));
+    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(_clientManager.get(), this));
+    macroCommand->addCommand(FactoryCommand::getStartSendingStreamCommand(_clientManager.get()));
     //    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
     //    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
 
@@ -189,48 +194,48 @@ void MainWindow::setBottomToolBar(QToolBar* bottomToolBar)
 
     MacroCommand* mc = FactoryCommand::getMacroCommand();
     //    mc->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-    mc->addCommand(FactoryCommand::getStopDdc1Command(deviceSetListWidget, this));
-    mc->addCommand(FactoryCommand::getStopSendingStreamCommand(deviceSetListWidget));
-    mc->addCommand(FactoryCommand::getPowerComandOff(deviceSetListWidget, this));
+    mc->addCommand(FactoryCommand::getStopDdc1Command(_clientManager.get(), this));
+    mc->addCommand(FactoryCommand::getStopSendingStreamCommand(_clientManager.get()));
+    mc->addCommand(FactoryCommand::getPowerComandOff(_clientManager.get(), this));
 
     pbPower->setUserData(USER_DATA_POWER_OFF, mc);
 
     //attenuator BUTTON
     pbAttenuatorEnable = new SwitchButton("Atten Enable", "Atten Disable", false, this);
     pbAttenuatorEnable->setUserData(USER_DATA_ID,
-                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget, this));
+                                    FactoryCommand::getAttenuatorCommand(_clientManager.get(), this));
     connect(pbAttenuatorEnable, &SwitchButton::changed, this, &MainWindow::widgetChanged);
     //attenuator COMBO BOX
     cbAttenuationLevel = new AttenuatorComboBox(this);
     cbAttenuationLevel->setUserData(USER_DATA_ID,
-                                    FactoryCommand::getAttenuatorCommand(deviceSetListWidget, this));
+                                    FactoryCommand::getAttenuatorCommand(_clientManager.get(), this));
     connect(cbAttenuationLevel, &AttenuatorComboBox::changed,
             this, &MainWindow::widgetChanged);
     //preamplifier BUTTON
     pbPreamplifierEnable = new SwitchButton("Pream Enable", "Pream Disable", false, this);
-    pbPreamplifierEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreamplifireCommand(deviceSetListWidget, this));
+    pbPreamplifierEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreamplifireCommand(_clientManager.get(), this));
     connect(pbPreamplifierEnable, &SwitchButton::changed,
             this, &MainWindow::widgetChanged);
 
     //preseector BUTTON
     pbPreselectorEnable = new SwitchButton("Pres Enable", "Pres Disable", false, this);
-    pbPreselectorEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(deviceSetListWidget, this));
+    pbPreselectorEnable->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(_clientManager.get(), this));
     connect(pbPreselectorEnable, &SwitchButton::changed, this, &MainWindow::widgetChanged);
 
     //preseector LOW FREQUENCY COMBO BOX
     preselectorWidget = new PreselectorWidget(this);
-    preselectorWidget->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(deviceSetListWidget, this));
+    preselectorWidget->setUserData(USER_DATA_ID, FactoryCommand::getPreselectorCommand(_clientManager.get(), this));
     connect(preselectorWidget, &PreselectorWidget::changed, this, &MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER BUTTON
     pbAdcNoiceBlanckerEnabled = new SwitchButton("ADC Enable", "ADC Disable", false, this);
-    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID, FactoryCommand::getAdcEnabledCommand(deviceSetListWidget, this));
+    pbAdcNoiceBlanckerEnabled->setUserData(USER_DATA_ID, FactoryCommand::getAdcEnabledCommand(_clientManager.get(), this));
     connect(pbAdcNoiceBlanckerEnabled, &SwitchButton::changed, this, &MainWindow::widgetChanged);
 
     //ADC NOICE BLANKER LENE EDIT
     leAdcNoiceBlanckerThreshold = new ToolBarLineEdit(this);
     leAdcNoiceBlanckerThreshold->setFixedWidth(100);
-    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID, FactoryCommand::getAdcThresholdCommand(deviceSetListWidget, this));
+    leAdcNoiceBlanckerThreshold->setUserData(USER_DATA_ID, FactoryCommand::getAdcThresholdCommand(_clientManager.get(), this));
     connect(leAdcNoiceBlanckerThreshold, &ToolBarLineEdit::changed, this, &MainWindow::widgetChanged);
 
     // End Widgets

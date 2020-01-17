@@ -1,77 +1,232 @@
 #include "command_factory.h"
 #include "command_hierarch.h"
+#include "i_device_settings.h"
+#include "client_manager.h"
 
+/*
+void MacroCommand::execute()
+{
+    qDebug() << "====================MackroCommand EXEC";
+
+    for(AbstractCommand* rc : _commands)
+    {
+        rc->execute();
+    }
+}
+
+void MacroCommand::addCommand(AbstractCommand* command)
+{
+    _commands << command;
+}
+
+void MacroCommand::removeCommand(AbstractCommand* command)
+{
+    _commands.removeOne(command);
+}
+
+*/
 FactoryCommand::FactoryCommand() = default;
 
-AttenuatorCommand* FactoryCommand::getAttenuatorCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getAttenuatorCommand(ClientManager* clientManager,
+        IDeviceSettings* subject)
 {
-    return new AttenuatorCommand(syncManager, subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_ATTENUATOR);
+//    command.set_attenuator(subject->getAttenuator());
+
+////    return   new SimpleCommand<ClientManager,
+////             proto::receiver::Command>(clientManager,
+////                                       &ClientManager::setCommand,
+////                                       command);
+
+    return new AttenuatorCommand(clientManager, subject);
 }
 
-PreselectorCommand* FactoryCommand::getPreselectorCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getPreselectorCommand(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new PreselectorCommand(syncManager, subject);
+//    qDebug() << "Set Pres";
+//    proto::receiver::Command command;
+//    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
+//    proto::receiver::Preselectors* preselectors = new proto::receiver::Preselectors;
+//    preselectors->set_low_frequency(subject->getPreselectors().first);
+//    preselectors->set_high_frequency(subject->getPreselectors().second);
+//    command.set_command_type(proto::receiver::SET_PRESELECTORS);
+//    command.set_allocated_preselectors(preselectors);
+
+//    return   new SimpleCommand<ClientManager,
+//             proto::receiver::Command>(clientManager,
+//                                       &ClientManager::setCommand,
+//                                       command);
+    return new PreselectorCommand(clientManager, subject);
 }
 
 
-PreamplifireCommand* FactoryCommand::getPreamplifireCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getPreamplifireCommand(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new PreamplifireCommand(syncManager, subject);
+//    qDebug() << "Set Pream";
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
+//    command.set_preamplifier_enebled(subject->getPreamplifierEnabled());
+////    return new SimpleCommand<ClientManager,
+////           proto::receiver::Command>(clientManager,
+////                                     &ClientManager::setCommand,
+////                                     command);
+    return new PreamplifireCommand(clientManager, subject);
 }
 
-AdcEnabledCommand* FactoryCommand::getAdcEnabledCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getAdcEnabledCommand(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new AdcEnabledCommand(syncManager, subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
+//    command.set_adc_noice_blanker_enebled(subject->getAdcNoiceBlankerEnabled());
+////    return  new SimpleCommand<ClientManager,
+////            proto::receiver::Command>(clientManager,
+////                                      &ClientManager::setCommand,
+////                                      command);
+    return new AdcEnabledCommand(clientManager, subject);
 }
 
-AdcThresholdCommand* FactoryCommand::getAdcThresholdCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getAdcThresholdCommand(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new AdcThresholdCommand(syncManager, subject);
+//    quint16 thr = subject->getAdcNoiceBlankerThreshold();
+//    proto::receiver::Command command;
+//    void* value = &thr;
+//    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
+//    command.set_adc_noice_blanker_threshold(value, sizeof(thr));
+////    return new SimpleCommand<ClientManager,
+////           proto::receiver::Command>(clientManager,
+////                                     &ClientManager::setCommand,
+////                                     command);
+    return new AdcThresholdCommand(clientManager, subject);
 }
 
-PowerCommandOn* FactoryCommand ::getPowerComandOn(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand ::getPowerComandOn(ClientManager* clientManager,
+        IDeviceSettings* subject)
 {
-    return new PowerCommandOn(syncManager, subject);
+//    Q_UNUSED(subject);
+//    qDebug() << "Set Pream";
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_POWER_ON);
+////    return new SimpleCommand<ClientManager,
+////           proto::receiver::Command>(clientManager,
+////                                     &ClientManager::setCommand,
+////                                     command);
+    return new PowerCommandOn(clientManager, subject);
 }
 
-PowerCommandOff* FactoryCommand ::getPowerComandOff(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand ::getPowerComandOff(ClientManager* clientManager,
+        IDeviceSettings* subject)
 {
-    return new PowerCommandOff(syncManager, subject);
+    /*    Q_UNUSED(subject);
+        proto::receiver::Command command;
+        command.set_command_type(proto::receiver::SET_POWER_OFF);
+    //    return new SimpleCommand<ClientManager,
+    //           proto::receiver::Command>(clientManager,
+    //                                     &ClientManager::setCommand,
+    //                                     command)*/;
+    return new PowerCommandOff(clientManager, subject);
 }
 
-SettingsCommand* FactoryCommand::getSettingsCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getSettingsCommand(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new SettingsCommand(syncManager, subject);
+//    DeviceSettings settings = subject->getSettings();
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
+
+//    command.set_attenuator(settings.attenuator);
+//    //WARNING БЕЗ ДИНАМИЧЕСКОЙ ПАМЯТИ ПРОИСХОДИТ КРАХ ПРОГРАММЫ
+//    proto::receiver::Preselectors* preselectors = new proto::receiver::Preselectors;
+//    preselectors->set_low_frequency(settings.preselectors.first);
+//    preselectors->set_high_frequency(settings.preselectors.second);
+//    command.set_allocated_preselectors(preselectors);
+
+//    command.set_preamplifier_enebled(settings.preamplifier);
+//    command.set_adc_noice_blanker_enebled(settings.adcEnabled);
+
+//    quint16 threshold = settings.threshold;
+//    void* value = &threshold;
+//    command.set_adc_noice_blanker_threshold(value, sizeof(threshold));
+
+//    command.set_ddc1_type(settings.ddcType);
+//    command.set_samples_per_buffer(settings.samplesPerBuffer);
+//    command.set_ddc1_frequency(settings.frequency);
+    return new SettingsCommand(clientManager, subject);
+//    return new SimpleCommand<ClientManager,
+//           proto::receiver::Command>(clientManager,
+//                                     &ClientManager::setCommand,
+//                                     command);
 }
 
-StartDDC1Command* FactoryCommand::getStartDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getStartDdc1Command(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new StartDDC1Command(syncManager, subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::START_DDC1);
+//    command.set_samples_per_buffer(subject->getSamplesPerBuffer());
+//    return new SimpleCommand<ClientManager,
+//           proto::receiver::Command>(clientManager,
+//                                     &ClientManager::setCommand,
+//                                     command);
+    return new StartDDC1Command(clientManager, subject);
 }
 
-StopDDC1Command* FactoryCommand::getStopDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getStopDdc1Command(ClientManager* clientManager, IDeviceSettings* subject)
 {
-    return new StopDDC1Command(syncManager, subject);
+//    Q_UNUSED(subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::STOP_DDC1);
+//    return new SimpleCommand<ClientManager,
+//           proto::receiver::Command>(clientManager,
+//                                     &ClientManager::setCommand,
+//                                     command);
+    return new StopDDC1Command(clientManager, subject);
 }
 
-SetDDC1TypeCommand* FactoryCommand::getSetDdc1Command(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getSetDdc1Command(ClientManager* clientManager,
+        IDeviceSettings* subject)
 {
-    return new SetDDC1TypeCommand(syncManager, subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_DDC1_TYPE);
+//    command.set_ddc1_type(subject->getDDC1Type());
+//    return new SimpleCommand<ClientManager,
+//           proto::receiver::Command>(clientManager,
+//                                     &ClientManager::setCommand,
+//                                     command);
+    return new SetDDC1TypeCommand(clientManager, subject);
 }
 
-FrequencyCommand* FactoryCommand::getFrequencyCommand(IDeviceSet* syncManager, IDeviceSettings* subject)
+AbstractCommand* FactoryCommand::getFrequencyCommand(ClientManager* clientManager,
+        IDeviceSettings* subject)
 {
-    return new FrequencyCommand(syncManager, subject);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
+//    command.set_ddc1_frequency(subject->getDDC1Frequency());
+//    return new SimpleCommand<ClientManager,
+//           proto::receiver::Command>(clientManager,
+//                                     &ClientManager::setCommand,
+//                                     command);
+    return new FrequencyCommand(clientManager, subject);
 }
 
-AbstractCommand* FactoryCommand::getStartSendingStreamCommand(IDeviceSet* iDeviceSet)
+AbstractCommand* FactoryCommand::getStartSendingStreamCommand(ClientManager* clientManager)
 {
-    return new StartSendingStream(iDeviceSet);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
+////    return new SimpleCommand<ClientManager,
+////           proto::receiver::Command>(clientManager,
+////                                     &ClientManager::setCommand,
+////                                     command);
+    return new StartSendingStream(clientManager);
 }
 
-AbstractCommand* FactoryCommand::getStopSendingStreamCommand(IDeviceSet* iDeviceSet)
+AbstractCommand* FactoryCommand::getStopSendingStreamCommand(ClientManager* clientManager)
 {
-    return new StopSendingStream(iDeviceSet);
+//    proto::receiver::Command command;
+//    command.set_command_type(proto::receiver::STOP_SENDING_DDC1_STREAM);
+////    return new SimpleCommand<ClientManager,
+////           proto::receiver::Command>(clientManager,
+////                                     &ClientManager::setCommand,
+////                                     command);
+    return new StopSendingStream(clientManager);
 }
 
 

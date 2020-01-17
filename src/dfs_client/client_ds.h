@@ -48,4 +48,5 @@ class DeviceSetClient: public Client
     std::unique_ptr<Impl> d;
 };
 
+using ShPtrDeviceClient = std::shared_ptr<DeviceSetClient>;
 #endif // RECEIVER_STATION_CLIENT_H
