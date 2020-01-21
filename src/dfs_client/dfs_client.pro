@@ -47,6 +47,7 @@ LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 #Если -lcommonlib$${LIB_SUFFIX} не поставить перед -ldfs_net$${LIB_SUFFIX}
 #or  -ldfs_proto$${LIB_SUFFIX} то куча ошибок undefine reference
+RESOURCES += res.qrc
 
 HEADERS += \
     ui/main_window.h \

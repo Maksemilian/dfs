@@ -108,7 +108,7 @@ void DeviceListWidget::addDeviceWidget(const ConnectData& connectData,
     QListWidgetItem* deviceItem = new QListWidgetItem(_listWidget);
 
     deviceItem->setSizeHint(deviceSetWidget->sizeHint());
-    deviceItem->setSelected(true);
+//    deviceItem->setSelected(true);
     _listWidget->setItemWidget(deviceItem, deviceSetWidget);
 
     std::shared_ptr<DeviceSetClient> deviceSetClient =
@@ -124,7 +124,7 @@ void DeviceListWidget::addDeviceWidget(const ConnectData& connectData,
             deviceSetWidget, &DeviceWidget::onShowDeviceError);
 
     _deviceses[deviceItem] = deviceSetClient;
-    _clientManager->addClient(deviceSetClient);
+//    _clientManager->addClient(deviceSetClient);
 }
 
 void DeviceListWidget::removeDeviceWidget(DeviceWidget* removedWidget)

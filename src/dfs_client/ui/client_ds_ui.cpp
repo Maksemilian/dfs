@@ -6,36 +6,70 @@
 #include <QMessageBox>
 #include <QDebug>
 
-const QString DeviceWidget::STRING_CONNECT = "connected";
-const QString DeviceWidget::STRING_DISCONNECT = "disconnect";
+AspectRatioLabel::AspectRatioLabel(QWidget* parent) :
+    QLabel(parent)
+{
+    this->setMinimumSize(1, 1);
+    setScaledContents(false);
+}
+
+void AspectRatioLabel::setPixmap ( const QPixmap& p)
+{
+    pix = p;
+    QLabel::setPixmap(scaledPixmap());
+}
+
+int AspectRatioLabel::heightForWidth( int width ) const
+{
+    return pix.isNull() ?
+           this->height() :
+           ((qreal)pix.height() * width) / pix.width();
+}
+
+QSize AspectRatioLabel::sizeHint() const
+{
+//    int w = this->width();
+//    return QSize( w, heightForWidth(w) );
+//    return  this->size();
+    //TODO УБРАТЬ ХАРДКОД
+    return  QSize(20, 20);
+}
+
+QPixmap AspectRatioLabel::scaledPixmap() const
+{
+    return pix.scaled(this->size(),
+                      Qt::KeepAspectRatio, Qt::SmoothTransformation);
+}
+
+void AspectRatioLabel::resizeEvent(QResizeEvent* e)
+{
+//    if(!pix.isNull())
+//    {
+//        QLabel::setPixmap(scaledPixmap());
+//    }
+}
+//***************
+const QString DeviceWidget::CONNECT_IMG = ":images/green_circle.png";
+const QString DeviceWidget::DISCONNECT_IMG = ":images/grey_circle.png";
+const QString DeviceWidget::ERROR_IMG = ":images/red_circle.png";
 
 DeviceWidget::DeviceWidget(const QString& name):
     _lbName(new QLabel(name, this)),
-    _lbDeviceActivatedStatus(new QLabel(this)),
-    _lbStreamDDC1StartedStatus(new QLabel(STRING_CONNECT, this)),
+    _status(new AspectRatioLabel(this)),
     _cbReceivers(new QComboBox(this))
 {
     setObjectName(name);
+    _status->setPixmap(QPixmap(DISCONNECT_IMG));
 
     QGridLayout* vbLayout = new QGridLayout;
     setLayout(vbLayout);
+    vbLayout->addWidget(_status, 0, 0);
 
-    vbLayout->addWidget(new QLabel("Address:", this), 0, 0);
-    vbLayout->addWidget(_lbName, 0, 1);
+    vbLayout->addWidget(new QLabel("Name:", this), 0, 1);
+    vbLayout->addWidget(_lbName, 0, 2);
 
-    vbLayout->addWidget(new QLabel("Receivers:"), 2, 0);
-    vbLayout->addWidget(_cbReceivers, 2, 1);
-
-    vbLayout->addWidget(new QLabel("Status:"), 3, 0);
-    vbLayout->addWidget(_lbDeviceActivatedStatus);
-
-    vbLayout->addWidget(new QLabel("DDC1:"), 4, 0);
-    vbLayout->addWidget(_lbStreamDDC1StartedStatus, 4, 1);
-
-    vbLayout->addWidget(new QLabel("DDC1:"), 4, 0);
-    vbLayout->addWidget(_lbStreamDDC1StartedStatus, 4, 1);
-
-    _lbDeviceActivatedStatus->setText(STRING_DISCONNECT);
+    vbLayout->addWidget(new QLabel("Receivers:"), 1, 1);
+    vbLayout->addWidget(_cbReceivers, 1, 2);
 }
 
 void DeviceWidget::setName(const QString& address)
@@ -51,21 +85,21 @@ QString DeviceWidget::getName()
 void DeviceWidget::onDeviceOpen(const QStringList& receivers)
 {
     qDebug() << "DEVICE OPENED";
-    _lbDeviceActivatedStatus->setText(STRING_CONNECT);
+    _status->setPixmap(QPixmap(CONNECT_IMG));
     _cbReceivers->addItems(receivers);
 }
 
 void DeviceWidget::onDeviceClose()
 {
     qDebug() << "DEVICE CLOSED";
-    _lbDeviceActivatedStatus->setText(STRING_DISCONNECT);
-    _lbDeviceActivatedStatus->setUserData(0, nullptr);
+    _status->setPixmap(QPixmap(DISCONNECT_IMG));
     _cbReceivers->clear();
 }
 
 void DeviceWidget::onShowDeviceError(const QString& errorString)
 {
-    _lbDeviceActivatedStatus->setText(errorString);
+    _status->setPixmap(QPixmap(ERROR_IMG));
+
 }
 
 

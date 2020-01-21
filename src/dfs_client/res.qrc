@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/images">
+         <file alias ="green_circle.png">resources/images/green_circle.png</file>
+
+         <file alias ="yellow_circle.png">resources/images/yellow_circle.png</file>
+
+         <file alias ="red_circle.png">resources/images/red_circle.png</file>
+
+         <file alias ="grey_circle.png">resources/images/grey_circle.png</file>
+
+    </qresource>
+
+</RCC>

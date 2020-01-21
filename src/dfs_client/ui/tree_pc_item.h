@@ -24,7 +24,9 @@ class PcWidget: public QWidget
 
 class TreePcWidgetItem : public QTreeWidgetItem
 {
+
   public:
+    enum DeviceType {DT_DESCTOP, DT_DEVICE_SET, DT_RECEIVER};
     TreePcWidgetItem(const QString& ipAddress, const QString& port,
                      QTreeWidget* parent = nullptr);
     QString getIpAddress();

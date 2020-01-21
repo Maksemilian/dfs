@@ -1,17 +1,34 @@
 #ifndef DEVICE_SET_WIDGET_H
 #define DEVICE_SET_WIDGET_H
 
+#include <memory>
+
 #include <QWidget>
+#include <QLabel>
 
 class QComboBox;
-class QLabel;
+
+class AspectRatioLabel : public QLabel
+{
+    Q_OBJECT
+  public:
+    explicit AspectRatioLabel(QWidget* parent = 0);
+    virtual int heightForWidth( int width ) const;
+    virtual QSize sizeHint() const;
+    QPixmap scaledPixmap() const;
+  public slots:
+    void setPixmap ( const QPixmap& );
+    void resizeEvent(QResizeEvent*);
+  private:
+    QPixmap pix;
+};
 
 class DeviceWidget : public QWidget
 {
     Q_OBJECT
-    static const QString STRING_CONNECT;
-    static const QString STRING_DISCONNECT;
-
+    static const QString CONNECT_IMG;
+    static const QString DISCONNECT_IMG;
+    static const QString ERROR_IMG;
   public:
     DeviceWidget(const QString& name);
     void setName(const QString& name);
@@ -24,8 +41,7 @@ class DeviceWidget : public QWidget
   private:
   private:
     QLabel* _lbName;
-    QLabel* _lbDeviceActivatedStatus;
-    QLabel* _lbStreamDDC1StartedStatus;
+    AspectRatioLabel* _status;
     QComboBox* _cbReceivers;
 };
 

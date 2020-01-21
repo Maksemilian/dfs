@@ -82,15 +82,15 @@ TreeDevices::TreeDevices(QWidget* parent):
 
             if(item->isSelected())
             {
-                QRadioButton* radioBuffon = new QRadioButton(this);
-                connect(radioBuffon, &QRadioButton::toggled,
+                QRadioButton* radioButton = new QRadioButton(this);
+                connect(radioButton, &QRadioButton::toggled,
                         [item](bool state)
                 {
                     qDebug() << "toggle" << state;
                     item->setData(0, Qt::UserRole + 1, state);
                 });
-                buttonGroup->addButton(radioBuffon);
-                _twDevices->setItemWidget(item, 1, radioBuffon);
+                buttonGroup->addButton(radioButton);
+                _twDevices->setItemWidget(item, 1, radioButton);
             }
             else
             {
