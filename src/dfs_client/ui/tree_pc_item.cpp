@@ -57,7 +57,7 @@ void TreePcWidgetItem::onInfoUpdate(const proto::desctop::DesctopInfo& desctopIn
     {
         QTreeWidgetItem* dsItem = new QTreeWidgetItem(this, {"DS_" + QString::number(dsCount)});
         dsItem->setData(0, Qt::UserRole, DT_DEVICE_SET);
-        dsItem->setExpanded(true);
+//        dsItem->setExpanded(true);
 
         for(int deviceIndex = 0; deviceIndex < ds.device_info_size(); ++deviceIndex)
         {
@@ -89,7 +89,7 @@ void TreePcWidgetItem::onInfoUpdate(const proto::desctop::DesctopInfo& desctopIn
 QList<proto::receiver::DeviceSetInfo> TreePcWidgetItem::getTestDeviceSetList()
 {
     QList<proto::receiver::DeviceSetInfo>list;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 1; i++)
     {
         proto::receiver::DeviceSetInfo ds;
 

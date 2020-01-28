@@ -73,7 +73,7 @@ void StreamServer::onNewConnection()
 void StreamServer::onChannelDisconnected()
 {
     qDebug() << "onChannelDisconnected";
-    DeviceSetClient* ds = qobject_cast<DeviceSetClient*>(sender());
+    DeviceClient* ds = qobject_cast<DeviceClient*>(sender());
     if(ds)
     {
         _client.removeOne(ds);
@@ -85,8 +85,8 @@ void StreamServer::createSession(net::ChannelHost* channelHost)
 {
     if(channelHost->sessionType() == SessionType::SESSION_COMMAND)
     {
-        DeviceSetClient* deviceSetClient = new DeviceSetClient(channelHost);
-        connect(deviceSetClient, &DeviceSetClient::deviceDisconnected,
+        DeviceClient* deviceSetClient = new DeviceClient(channelHost);
+        connect(deviceSetClient, &DeviceClient::deviceDisconnected,
                 this, &StreamServer::onChannelDisconnected);
         //TODO ОТПРАВИТЬ СООБЩЕНИЕ О ГОТОВНОСТИ
 //        deviceSetClient->sendDevieSetStatus();

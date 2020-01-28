@@ -37,7 +37,7 @@ class DeviceListWidget :
     void saveSettings();
   private:
     QListWidget* _listWidget;
-    std::map<QListWidgetItem*, std::shared_ptr<DeviceSetClient> > _deviceses;
+    std::map<QListWidgetItem*, std::shared_ptr<DeviceClient> > _deviceses;
     std::shared_ptr<ClientManager>_clientManager;
 };
 

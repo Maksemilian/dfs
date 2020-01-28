@@ -69,8 +69,8 @@ ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
 ElipsPlot::ElipsPlot(QWidget* parent)
     : QCustomPlot(parent), curve(new QCPCurve(this->xAxis, this->yAxis))
 {
-    setFixedWidth (400);
-    setFixedHeight(400);
+//    setFixedWidth (200);
+//    setFixedHeight(200);
     curve->setPen(greenColor);
 //    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 

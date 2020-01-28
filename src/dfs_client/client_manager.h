@@ -18,6 +18,7 @@ class ClientManager: public QObject
     void addClient(const ShPtrDeviceClient& client);
     void removeClient(const ShPtrDeviceClient& client);
     void setCommand(proto::receiver::Command& command);
+    void clear();
     inline const std::set<ShPtrDeviceClient>& clients()
     {
         return _clients;

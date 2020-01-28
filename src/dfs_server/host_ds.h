@@ -13,15 +13,15 @@
 
 using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
-class DeviceSetClient: public QObject
+class DeviceClient: public QObject
 {
     Q_OBJECT
 
     static const int SLEEP_TIME = 100;
   public:
-    DeviceSetClient(net::ChannelHost* channelHost);
+    DeviceClient(net::ChannelHost* channelHost);
 
-    ~DeviceSetClient();
+    ~DeviceClient();
 
     ShPtrRingBuffer ddc1Buffer();
     void sendDevieSetStatus();

@@ -14,7 +14,10 @@ void messageLogger(QtMsgType type, const QMessageLogContext& context, const QStr
     static long long uid = 0;
     QRegExp rx("([\\w-]+::[\\w-]+)");
 
-    if(rx.indexIn(context.function) == -1)return;
+    if(rx.indexIn(context.function) == -1)
+    {
+        return;
+    }
     QString function = rx.cap(1);
     QString msgSep = (msg.length() > 0) ? ">> " : "";
 
@@ -56,13 +59,15 @@ int main(int argc, char* argv[])
     QFile file("C:/Qt/log.txt");
     qDebug() << sizeof (size_t) << sizeof (int) << sizeof (unsigned int);
     if(file.exists() && file.size() > 0)
+    {
         file.remove();
+    }
 
     //qInstallMessageHandler(messageLogger);
 
     //***app
     const quint16 INCREASE_MAIN_WINDOW_WIDTH = 600;
-    const quint16 INCREASE_MAIN_WINDOW_HEIGH = 100;
+    const quint16 INCREASE_MAIN_WINDOW_HEIGH = 700;
 
     MainWindow mainWindow;
     QScreen* firstScreen = QGuiApplication::screens().first();

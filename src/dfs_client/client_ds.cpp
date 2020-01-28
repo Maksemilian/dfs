@@ -15,7 +15,7 @@
 
 //**************************************** Receiver Station Client*****************************************
 
-struct DeviceSetClient::Impl
+struct DeviceClient::Impl
 {
     Impl()
     {
@@ -25,28 +25,28 @@ struct DeviceSetClient::Impl
     SignalStreamServer streamServer;
 };
 
-DeviceSetClient::DeviceSetClient(const ConnectData& connectData, QObject* parent)
+DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     :    Client (connectData, parent),
          d(std::make_unique<Impl>())
 {
 }
 
-void DeviceSetClient::setLiceningStreamPort(quint16 port)
+void DeviceClient::setLiceningStreamPort(quint16 port)
 {
     d->streamServer.listen(QHostAddress::Any, port);
 }
 
-quint16 DeviceSetClient::liceningStreamPort()
+quint16 DeviceClient::liceningStreamPort()
 {
     return d->streamServer.serverPort();
 }
 
-const proto::receiver::DeviceSetInfo& DeviceSetClient::getDeviceSetInfo() const
+const proto::receiver::DeviceSetInfo& DeviceClient::getDeviceSetInfo() const
 {
     return d->currentDeviceSetInfo;
 }
 
-QStringList DeviceSetClient::receiverNameList()const
+QStringList DeviceClient::receiverNameList()const
 {
     QStringList receiverNameList;
 
@@ -58,14 +58,14 @@ QStringList DeviceSetClient::receiverNameList()const
     return receiverNameList;
 }
 
-ShPtrPacketBuffer DeviceSetClient::getDDC1Buffer() const
+ShPtrPacketBuffer DeviceClient::getDDC1Buffer() const
 {
     return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
 }
 
-DeviceSetClient::~DeviceSetClient() {}
+DeviceClient::~DeviceClient() {}
 
-QString DeviceSetClient::getCurrentDeviceSetName()const
+QString DeviceClient::getCurrentDeviceSetName()const
 {
     QString deviceSetName = "DS#";
     for (int i = 0; i < d->currentDeviceSetInfo.device_info_size(); i++)
@@ -80,7 +80,7 @@ QString DeviceSetClient::getCurrentDeviceSetName()const
     return deviceSetName;
 }
 
-void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
+void DeviceClient::onMessageReceived(const QByteArray& buffer)
 {
     //qDebug()<<"ReceiverStationClient::onMessageReceived"<<buffer.size();
     proto::receiver::HostToClient hostToClient;
@@ -112,7 +112,7 @@ void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
     }
 }
 
-void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer& answer)
+void DeviceClient::readAnswerPacket(const proto::receiver::Answer& answer)
 {
     if(d->commandQueue.isEmpty())
     {
@@ -203,7 +203,7 @@ void DeviceSetClient::readAnswerPacket(const proto::receiver::Answer& answer)
     //    qDebug()<<"DEQ_E";
 }
 
-void DeviceSetClient::sendCommand(proto::receiver::Command& command)
+void DeviceClient::sendCommand(proto::receiver::Command& command)
 {
     if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
     {
@@ -217,7 +217,7 @@ void DeviceSetClient::sendCommand(proto::receiver::Command& command)
     sendMessage(clientToHost);
 }
 
-QString DeviceSetClient::errorString(proto::receiver::CommandType commandType)
+QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 {
     switch (commandType)
     {

@@ -34,13 +34,9 @@ MainWindow:: MainWindow(QWidget* parent):
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-    deviceListWidget = new DeviceListWidget(_clientManager, this);
+    treeDevices = new DeviceMonitoring(_clientManager, this);
 
-    stackWidget = new QStackedWidget(this);
-    stackWidget->addWidget(new TreeDevices(this));
-    stackWidget->addWidget(deviceListWidget);
-//    setLeftDockWidget(deviceSetListWidget, "DeviceSetList");
-    setLeftDockWidget(stackWidget, "DeviceSetList");
+    setLeftDockWidget(treeDevices, "DeviceSetList");
 
     //************SETTING TOOLBAR***************
     //****TOP
@@ -94,19 +90,6 @@ void MainWindow::setLeftDockWidget(QWidget* widget, const QString& title)
 {
     QDockWidget* leftDockWidget = new QDockWidget(title, this);
     leftDockWidget->setWidget(widget);
-    QPushButton* pbChangeWidget = new QPushButton("change");
-    connect(pbChangeWidget, &QPushButton::clicked, [this]
-    {
-        if(stackWidget->currentIndex() == 0)
-        {
-            stackWidget->setCurrentIndex(1);
-        }
-        else
-        {
-            stackWidget->setCurrentIndex(0);
-        }
-    });
-    leftDockWidget->setTitleBarWidget(pbChangeWidget);
     addDockWidget(Qt::LeftDockWidgetArea, leftDockWidget);
 
 }

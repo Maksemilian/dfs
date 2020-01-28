@@ -5,11 +5,16 @@ ClientManager::ClientManager()
 
 }
 
+void ClientManager::clear()
+{
+    _clients.clear();
+}
+
 void ClientManager::addClient(const ShPtrDeviceClient& client)
 {
     _clients.insert(client);
 
-    connect(client.get(), &DeviceSetClient::commandSuccessed,
+    connect(client.get(), &DeviceClient::commandSuccessed,
             this, &ClientManager::onCommandSuccessed);
     client->setLiceningStreamPort(PORT + static_cast<quint16>(_clients.size()));
 }
@@ -17,7 +22,7 @@ void ClientManager::addClient(const ShPtrDeviceClient& client)
 void ClientManager::removeClient(const ShPtrDeviceClient& client)
 {
     _clients.erase(client);
-    disconnect(client.get(), &DeviceSetClient::commandSuccessed,
+    disconnect(client.get(), &DeviceClient::commandSuccessed,
                this, &ClientManager::onCommandSuccessed);
 }
 

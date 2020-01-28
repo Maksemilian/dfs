@@ -36,7 +36,7 @@ class PlotMonitoring;
 class DeviceListWidget ;
 
 class QStackedWidget;
-
+class DeviceMonitoring;
 class MainWindow : public QMainWindow,
     public IDeviceSettings
 {
@@ -107,11 +107,7 @@ class MainWindow : public QMainWindow,
 
     PlotMonitoring* plotMonitoring;
 
-//    ChannelPlot*channelPlot;//central widget
-//    ElipsPlot *elipsPlot;//right dock idget
-    QStackedWidget* stackWidget;
-    DeviceListWidget* deviceListWidget;
-
+    DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
 };
 

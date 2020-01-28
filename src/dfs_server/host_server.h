@@ -5,7 +5,7 @@
 
 #include <QTcpServer>
 
-class DeviceSetClient;
+class DeviceClient;
 
 class StreamServer: public QTcpServer
 {
@@ -24,7 +24,7 @@ class StreamServer: public QTcpServer
   private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
-    QList<DeviceSetClient*> _client;
+    QList<DeviceClient*> _client;
 };
 
 #endif // STREAM_SERVE_RTEST_H

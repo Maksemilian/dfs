@@ -26,7 +26,7 @@ QByteArray serializeMessage(const google::protobuf::Message& message)
     return baMessage;
 }
 
-struct DeviceSetClient::Impl
+struct DeviceClient::Impl
 {
     enum class StreamType {ST_DDC1};
 
@@ -60,19 +60,19 @@ struct DeviceSetClient::Impl
     SignalStreamWriter* streamDDC1 = nullptr;
 };
 
-DeviceSetClient::DeviceSetClient(net::ChannelHost* channelHost)
+DeviceClient::DeviceClient(net::ChannelHost* channelHost)
     : d(std::make_unique<Impl>(channelHost))
 {
     qDebug() << "Create DeviceSetClient";
 
     connect(d->channel.get(), &net::Channel::finished,
-            this, &DeviceSetClient::onDisconnected);
+            this, &DeviceClient::onDisconnected);
 
     connect(d->channel.get(), &net::Channel::messageReceived,
-            this, &DeviceSetClient::onMessageReceived);
+            this, &DeviceClient::onMessageReceived);
 }
 
-DeviceSetClient::~DeviceSetClient()
+DeviceClient::~DeviceClient()
 {
     d->device->stopDDC1();
 
@@ -83,12 +83,12 @@ DeviceSetClient::~DeviceSetClient()
     qDebug() << "DESTR DeviceSetCleint";
 }
 
-ShPtrRingBuffer DeviceSetClient::ddc1Buffer()
+ShPtrRingBuffer DeviceClient::ddc1Buffer()
 {
     return d->buffer;
 }
 
-DeviceSettings DeviceSetClient::extractSettingsFromCommand(
+DeviceSettings DeviceClient::extractSettingsFromCommand(
     const proto::receiver::Command& command)
 {
     DeviceSettings settings;
@@ -107,13 +107,13 @@ DeviceSettings DeviceSetClient::extractSettingsFromCommand(
     return settings;
 }
 
-void DeviceSetClient::onDisconnected()
+void DeviceClient::onDisconnected()
 {
     d->device->stopDDC1();
     emit deviceDisconnected();
 }
 
-void DeviceSetClient::sendDeviceSetInfo()
+void DeviceClient::sendDeviceSetInfo()
 {
     if(dynamic_cast<CohG35DeviceSet*>(d->device.get()))
     {
@@ -129,7 +129,7 @@ void DeviceSetClient::sendDeviceSetInfo()
     }
 }
 
-void DeviceSetClient::sendDeviceInfoSingle()
+void DeviceClient::sendDeviceInfoSingle()
 {
     G35DDC_DEVICE_INFO deviceInf = dynamic_cast<G35Device*>(d->device.get())->getDeviceInfo();
     proto::receiver::DeviceSetInfo* deviceSetInfo = new proto::receiver::DeviceSetInfo;
@@ -155,7 +155,7 @@ void DeviceSetClient::sendDeviceInfoSingle()
     writeMessage(hostToClient);
 }
 
-void DeviceSetClient::setDeviceInfoCoherent()
+void DeviceClient::setDeviceInfoCoherent()
 {
 
     COH_G35DDC_DEVICE_SET deviceSetInfos = dynamic_cast<CohG35DeviceSet*>(d->device.get())->getDeviceSetInfo();
@@ -185,14 +185,14 @@ void DeviceSetClient::setDeviceInfoCoherent()
     writeMessage(hostToClient);
 }
 
-void DeviceSetClient::sendDevieSetStatus()
+void DeviceClient::sendDevieSetStatus()
 {
     proto::receiver::HostToClient hostToClient;
     hostToClient.set_is_ready(true);
     writeMessage(hostToClient);
 }
 
-void DeviceSetClient::sendCommandAnswer( proto::receiver::Answer* commandAnswer)
+void DeviceClient::sendCommandAnswer( proto::receiver::Answer* commandAnswer)
 {
     proto::receiver::HostToClient hostToClient;
 
@@ -201,13 +201,13 @@ void DeviceSetClient::sendCommandAnswer( proto::receiver::Answer* commandAnswer)
     writeMessage(hostToClient);
 }
 
-void DeviceSetClient::writeMessage(const google::protobuf::Message& message)
+void DeviceClient::writeMessage(const google::protobuf::Message& message)
 {
     qDebug() << "Message MES" << message.ByteSize();
     d->channel->writeToConnection(serializeMessage(message));
 }
 
-void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
+void DeviceClient::onMessageReceived(const QByteArray& buffer)
 {
     qDebug() << "Message Received";
     proto::receiver::ClientToHost clientToHost;
@@ -229,7 +229,7 @@ void DeviceSetClient::onMessageReceived(const QByteArray& buffer)
 
 //********************SWITCH COMMAND*******************
 
-void DeviceSetClient::readCommandPacket(const proto::receiver::Command& command)
+void DeviceClient::readCommandPacket(const proto::receiver::Command& command)
 {
     bool succesed = false;
     switch(command.command_type())
@@ -358,7 +358,7 @@ void DeviceSetClient::readCommandPacket(const proto::receiver::Command& command)
     sendCommandAnswer(answer);
 }
 
-void DeviceSetClient::startSendingDDC1Stream(const QHostAddress& address, quint16 port,
+void DeviceClient::startSendingDDC1Stream(const QHostAddress& address, quint16 port,
         const ShPtrRingBuffer& buffer)
 {
     QThread* thread = new QThread;
