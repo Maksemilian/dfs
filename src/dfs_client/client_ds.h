@@ -12,12 +12,12 @@ using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class QHostAddress;
 
-class DeviceSetClient: public Client
+class DeviceClient: public Client
 {
     Q_OBJECT
   public:
-    DeviceSetClient(const ConnectData& connectData, QObject* parent = nullptr);
-    ~DeviceSetClient();
+    DeviceClient(const ConnectData& connectData, QObject* parent = nullptr);
+    ~DeviceClient();
 
     void sendCommand(proto::receiver::Command& command);
 
@@ -48,5 +48,5 @@ class DeviceSetClient: public Client
     std::unique_ptr<Impl> d;
 };
 
-using ShPtrDeviceClient = std::shared_ptr<DeviceSetClient>;
+using ShPtrDeviceClient = std::shared_ptr<DeviceClient>;
 #endif // RECEIVER_STATION_CLIENT_H

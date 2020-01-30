@@ -76,16 +76,16 @@ void DeviceListWidget::addDeviceWidget(const ConnectData& connectData,
     deviceItem->setSelected(true);
     _listWidget->setItemWidget(deviceItem, deviceSetWidget);
 
-    std::shared_ptr<DeviceSetClient> deviceSetClient =
-        std::make_shared<DeviceSetClient>(connectData);
+    std::shared_ptr<DeviceClient> deviceSetClient =
+        std::make_shared<DeviceClient>(connectData);
 
-    connect(deviceSetClient.get(), &DeviceSetClient::deviceReady,
+    connect(deviceSetClient.get(), &DeviceClient::deviceReady,
             deviceSetWidget, &DeviceWidget::onDeviceOpen);
 
-    connect(deviceSetClient.get(), &DeviceSetClient::stoped,
+    connect(deviceSetClient.get(), &DeviceClient::stoped,
             deviceSetWidget, &DeviceWidget::onDeviceClose);
 
-    connect(deviceSetClient.get(), &DeviceSetClient::commandFailed,
+    connect(deviceSetClient.get(), &DeviceClient::commandFailed,
             deviceSetWidget, &DeviceWidget::onShowDeviceError);
 
     _deviceses[deviceItem] = deviceSetClient;

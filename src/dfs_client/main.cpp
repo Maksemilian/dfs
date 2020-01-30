@@ -48,9 +48,11 @@ void messageLogger(QtMsgType type, const QMessageLogContext& context, const QStr
         file.close();
     }
 }
-
+#include <vector>
+using namespace  std;
 int main(int argc, char* argv[])
 {
+
     QApplication a(argc, argv);
     //***ipp lib
     ippInit(); //Initialize Intel IPP library
