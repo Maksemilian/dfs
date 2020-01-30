@@ -19,8 +19,10 @@ class SyncController
     ShPtrPacketBuffer syncBuffer2();
     ShPtrIpp32fcBuffer sumDivMethodBuffer();
 
-    void start(const ShPtrPacketBufferPair inPacketBuffers,
-               quint32 ddcFrequency, quint32 samplerate, quint32 blockSize);
+    void start(const ShPtrPacketBuffer& mainBuffer,
+               const ShPtrPacketBuffer& buffer,
+               const SyncData& data);
+
     void stop();
   private:
     struct Impl;

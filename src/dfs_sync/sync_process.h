@@ -22,6 +22,13 @@ using BoolPair = QPair<bool, bool>;
 /*!
  * \brief The FindChannelForShift class
  */
+struct SyncData
+{
+    quint32 ddcFrequency;
+    quint32 sampleRate;
+    quint32 blockSize;
+};
+
 class SyncProcess : public QObject
 {
     Q_OBJECT
@@ -42,9 +49,7 @@ class SyncProcess : public QObject
 
     void start(const ShPtrPacketBuffer& mainBuffer,
                const ShPtrPacketBuffer& buffer,
-               quint32 ddcFrequency,
-               quint32 sampleRate,
-               quint32 blockSize);
+               const SyncData& data);
     void stop();
   signals:
     void finished();
@@ -53,6 +58,7 @@ class SyncProcess : public QObject
     bool calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
                             const ShPtrPacketBuffer& buffer,
                             quint32 sampleRate);
+
     static void showPacket(quint32 blockNumber, quint32 sampleRate, quint32 timeOfWeek,
                            double ddcSampleCounter, quint64 adcPeriodCounter);
     double ddcAfterLastPps(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize);

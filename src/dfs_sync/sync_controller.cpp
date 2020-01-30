@@ -49,9 +49,7 @@ SyncController::~SyncController() = default;
  */
 void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
                            const ShPtrPacketBuffer& buffer,
-                           quint32 ddcFrequency,
-                           quint32 sampleRate,
-                           quint32 blockSize)
+                           const SyncData& data)
 {
     qDebug() << "******SyncPairChannel::start();";
 
@@ -63,8 +61,8 @@ void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
                      d->shiftFinder, &SyncProcess::deleteLater);
 
     d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &SyncProcess::start,
-                                      mainBuffer, buffer,
-                                      ddcFrequency, sampleRate, blockSize));
+                                      mainBuffer, buffer, data));
+
 }
 
 /*!

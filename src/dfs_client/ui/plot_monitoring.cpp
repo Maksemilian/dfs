@@ -17,13 +17,13 @@ PlotMonitoring::PlotMonitoring(QWidget* paret)
 {
     QGridLayout* gl = new QGridLayout();
     setLayout(gl);
-//    gl->addWidget(channelPlot, 0, 0, 1, 2);
-//    gl->addWidget(elipsPlot, 1, 0);
+    //    gl->addWidget(channelPlot, 0, 0, 1, 2);
+    //    gl->addWidget(elipsPlot, 1, 0);
     gl->addWidget(elipsPlot, 0, 0, 1, 1);
     gl->addWidget(channelPlot, 0, 1, 1, 2);
 
-//    sync->setSumDivUpdater(elipsPlot);
-//    sync->setSyncSignalUpdater(channelPlot);
+    //    sync->setSumDivUpdater(elipsPlot);
+    //    sync->setSyncSignalUpdater(channelPlot);
 }
 void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers)
 //void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
@@ -32,14 +32,12 @@ void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& 
     qDebug() << "START SYNC" << ds->getDDC1Frequency()
              << ds->getSampleRateForBandwith()
              << ds->getSamplesPerBuffer();
+    SyncData data = {ds->getDDC1Frequency(),
+                     ds->getSampleRateForBandwith(),
+                     ds->getSamplesPerBuffer()
+                    };
 
-    ShPtrPacketBufferPair bufferPair;
-    bufferPair.first = buffers.front();
-    bufferPair.second = buffers.back();
-    sync->start(bufferPair,
-                ds->getDDC1Frequency(),
-                ds->getSampleRateForBandwith(),
-                ds->getSamplesPerBuffer());
+    sync->start(buffers.front(), buffers.back(), data);
 
     QtConcurrent::run([this]()
     {
