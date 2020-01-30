@@ -40,7 +40,8 @@ class SyncProcess : public QObject
 
     ~SyncProcess();
 
-    void start(const ShPtrPacketBufferPair inBuffers,
+    void start(const ShPtrPacketBuffer& mainBuffer,
+               const ShPtrPacketBuffer& buffer,
                quint32 ddcFrequency,
                quint32 sampleRate,
                quint32 blockSize);
@@ -48,9 +49,10 @@ class SyncProcess : public QObject
   signals:
     void finished();
   private:
-    bool calcShiftInChannel(const ShPtrPacketBufferPair receiverStationClientPair,
-                            quint32 sampleRate);
 
+    bool calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
+                            const ShPtrPacketBuffer& buffer,
+                            quint32 sampleRate);
     static void showPacket(quint32 blockNumber, quint32 sampleRate, quint32 timeOfWeek,
                            double ddcSampleCounter, quint64 adcPeriodCounter);
     double ddcAfterLastPps(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize);
