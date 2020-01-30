@@ -16,7 +16,6 @@ void ClientManager::addClient(const ShPtrDeviceClient& client)
 
     connect(client.get(), &DeviceClient::commandSuccessed,
             this, &ClientManager::onCommandSuccessed);
-    client->setLiceningStreamPort(PORT + static_cast<quint16>(_clients.size()));
 }
 
 void ClientManager::removeClient(const ShPtrDeviceClient& client)

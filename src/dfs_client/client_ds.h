@@ -15,14 +15,14 @@ class QHostAddress;
 class DeviceClient: public Client
 {
     Q_OBJECT
+    static quint8 _CLIENT_COUNTER;
+    static const quint16 LISTENING_STREAMING_PORT = 9000;
   public:
     DeviceClient(const ConnectData& connectData, QObject* parent = nullptr);
     ~DeviceClient();
 
     void sendCommand(proto::receiver::Command& command);
 
-    void setLiceningStreamPort(quint16 port);
-    quint16 liceningStreamPort();
     const proto::receiver::DeviceSetInfo& getDeviceSetInfo()const;
     QString getCurrentDeviceSetName()const;
 

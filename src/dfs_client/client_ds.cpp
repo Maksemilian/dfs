@@ -14,11 +14,13 @@
 #include <QHostAddress>
 
 //**************************************** Receiver Station Client*****************************************
+quint8 DeviceClient::_CLIENT_COUNTER = 0;
 
 struct DeviceClient::Impl
 {
     Impl()
     {
+
     }
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
@@ -29,16 +31,9 @@ DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     :    Client (connectData, parent),
          d(std::make_unique<Impl>())
 {
-}
-
-void DeviceClient::setLiceningStreamPort(quint16 port)
-{
-    d->streamServer.listen(QHostAddress::Any, port);
-}
-
-quint16 DeviceClient::liceningStreamPort()
-{
-    return d->streamServer.serverPort();
+    ++_CLIENT_COUNTER;
+    d->streamServer.listen(QHostAddress(connectData.address),
+                           LISTENING_STREAMING_PORT + _CLIENT_COUNTER);
 }
 
 const proto::receiver::DeviceSetInfo& DeviceClient::getDeviceSetInfo() const
@@ -63,7 +58,10 @@ ShPtrPacketBuffer DeviceClient::getDDC1Buffer() const
     return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
 }
 
-DeviceClient::~DeviceClient() {}
+DeviceClient::~DeviceClient()
+{
+    --_CLIENT_COUNTER;
+}
 
 QString DeviceClient::getCurrentDeviceSetName()const
 {

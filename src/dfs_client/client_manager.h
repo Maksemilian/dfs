@@ -10,7 +10,6 @@
 class ClientManager: public QObject
 {
     Q_OBJECT
-    static const quint16 PORT = 9000;
   public:
     ClientManager();
     void startClients();
