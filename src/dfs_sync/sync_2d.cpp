@@ -1,7 +1,7 @@
 #include "sync_2d.h"
 
 #include "sync_block_equalizer.h"
-#include "sync_calc_dalta_pps.h"
+#include "sync_calc_delta_pps.h"
 
 #include "sync_test.h"
 
@@ -63,8 +63,8 @@ void Sync2D::start()
 
     if((deltaPPS = calcShiftAndShiftBuffer(shiftBuffer)) > 0)
     {
-        BlockEqualizer blockEqualizer(shiftBuffer,
-                                      d->_data.blockSize);
+        BlockEqualizer blockEqualizer(shiftBuffer, d->_data,
+                                      static_cast<quint32>(deltaPPS));
         SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
@@ -97,16 +97,8 @@ void Sync2D::start()
                 packet[CHANNEL_FIRST] = syncQueuePair.first.dequeue();
                 packet[CHANNEL_SECOND] = syncQueuePair.second.dequeue();
 
-                Ipp32fc* signal = reinterpret_cast<Ipp32fc*>
-                                  (const_cast<float*>
-                                   (packet[CHANNEL_SECOND].sample().data()));
-
                 //TODO double deltaStart=1
-                blockEqualizer.equate(signal,
-                                      d->_data.blockSize,
-                                      deltaPPS,
-                                      d->_data.ddcFrequency,
-                                      d->_data.sampleRate);
+                blockEqualizer.equateT(packet[CHANNEL_SECOND]);
                 //                                qDebug()<<"BA_2";
                 d->_pair1.second->push(packet[CHANNEL_FIRST]);
                 d->_pair2.second->push(packet[CHANNEL_SECOND]);

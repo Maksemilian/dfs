@@ -11,13 +11,17 @@ using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 
 struct BlockEqualizer::Impl
 {
-    Impl(const std::vector<Ipp32fc>& shiftBuffer, quint32 blockSize):
-        dstFftFwd(VectorIpp32fc(blockSize)),
-        dstMagn(VectorIpp32f(blockSize)),
-        dstPhase(VectorIpp32f(blockSize)),
-        dstCart32(VectorIpp32fc(blockSize)),
-        dstFinalRez(VectorIpp32fc(blockSize)),
-        shiftBufferT(shiftBuffer)
+    Impl(const std::vector<Ipp32fc>& shiftBuffer,
+         const  SyncData data,
+         quint32 shift):
+        dstFftFwd(VectorIpp32fc(data.blockSize)),
+        dstMagn(VectorIpp32f(data.blockSize)),
+        dstPhase(VectorIpp32f(data.blockSize)),
+        dstCart32(VectorIpp32fc(data.blockSize)),
+        dstFinalRez(VectorIpp32fc(data.blockSize)),
+        shiftBufferT(shiftBuffer),
+        data(data),
+        shift(shift)
     {    }
 
     DeleterTypeIpp8u deleterUniquePtrForIpp8u = [](Ipp8u* v)
@@ -36,13 +40,19 @@ struct BlockEqualizer::Impl
     VectorIpp32fc dstFinalRez;
 
     VectorIpp32fc shiftBufferT;
+    SyncData data;
+    quint32 shift;
 };
-
+/*
 BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize):
     d(std::make_unique<Impl>(shiftBuffer, blockSize))
 {
     initFftBuffers(calcFftOrder(blockSize));
 }
+*/
+BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer,
+                               const SyncData& data, quint32 shift):
+    d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
 
 BlockEqualizer::~BlockEqualizer() = default;
 
@@ -79,12 +89,35 @@ void BlockEqualizer::initFftBuffers(int FFTOrder)
     qDebug() << "BlockAlinement::init End";
 }
 
-void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
-                            double shift, quint32 ddcFrequency,
-                            quint32 sampleRate, double deltaStart) const
+void BlockEqualizer::equateT(const proto::receiver::Packet& pct, double deltaStart) const
 {
-    quint32 shiftW = static_cast<quint32>(shift);
-    double shiftF = shift - shiftW;
+    Q_ASSERT_X(pct.block_size() == d->data.blockSize, " BlockEqualizer::equate", "out_of_range");
+
+    Ipp32fc* blockData = reinterpret_cast<Ipp32fc*>
+                         (const_cast<float*>
+                          (pct.sample().data()));
+
+    quint32 shiftW = static_cast<quint32>(d->shift);
+    double shiftF = d->shift - shiftW;
+    //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
+    shiftWhole(blockData, d->data.blockSize, shiftW);
+
+    //    qDebug()<<"SHIFT WHOLE END";
+
+    shiftFruction(blockData, d->data.blockSize, shiftF);
+    //    qDebug()<<"SHIFT FRUCTION END";
+    double teta = (d->data.ddcFrequency / d->data.sampleRate) * 2 * IPP_PI * deltaStart;
+
+    shiftTest(blockData, d->data.blockSize, teta);
+    qDebug() << "*******TETA:" << teta << d->data.ddcFrequency << d->data.sampleRate << deltaStart;
+    //qDebug()<<"SHIFT FRUCTIOM END";
+}
+
+void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
+                            double deltaStart) const
+{
+    quint32 shiftW = static_cast<quint32>(d->shift);
+    double shiftF = d->shift - shiftW;
     //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
     shiftWhole(blockData, blockSize, shiftW);
 
@@ -92,10 +125,10 @@ void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
 
     shiftFruction(blockData, blockSize, shiftF);
     //    qDebug()<<"SHIFT FRUCTION END";
-    double teta = (ddcFrequency / sampleRate) * 2 * IPP_PI * deltaStart;
+    double teta = (d->data.ddcFrequency / d->data.sampleRate) * 2 * IPP_PI * deltaStart;
 
     shiftTest(blockData, blockSize, teta);
-    qDebug() << "*******TETA:" << teta << ddcFrequency << sampleRate << deltaStart;
+    qDebug() << "*******TETA:" << teta << d->data.ddcFrequency << d->data.sampleRate << deltaStart;
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
 

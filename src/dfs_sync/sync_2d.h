@@ -9,12 +9,7 @@
 /*!
  * \brief The FindChannelForShift class
  */
-struct SyncData
-{
-    quint32 ddcFrequency;
-    quint32 sampleRate;
-    quint32 blockSize;
-};
+
 
 class Sync2D : public QObject
 {

@@ -17,7 +17,7 @@ struct SyncController::Impl
     ShPtrIpp32fcBuffer sumDivBuffer;
 
     QFutureWatcher<void> fw;
-    SyncProcess* shiftFinder = nullptr;
+    Sync2D* shiftFinder = nullptr;
 };
 
 SyncController::SyncController():
@@ -53,14 +53,14 @@ void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
 {
     qDebug() << "******SyncPairChannel::start();";
 
-    d->shiftFinder = new SyncProcess(d->syncBuffer1,
-                                     d->syncBuffer2,
-                                     d->sumDivBuffer);
+    d->shiftFinder = new Sync2D(d->syncBuffer1,
+                                d->syncBuffer2,
+                                d->sumDivBuffer);
 
-    QObject::connect(d->shiftFinder, &SyncProcess::finished,
-                     d->shiftFinder, &SyncProcess::deleteLater);
+    QObject::connect(d->shiftFinder, &Sync2D::finished,
+                     d->shiftFinder, &Sync2D::deleteLater);
 
-    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &SyncProcess::start,
+    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &Sync2D::start,
                                       mainBuffer, buffer, data));
 
 }
