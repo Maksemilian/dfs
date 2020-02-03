@@ -53,15 +53,12 @@ void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
 {
     qDebug() << "******SyncPairChannel::start();";
 
-    d->shiftFinder = new Sync2D(d->syncBuffer1,
-                                d->syncBuffer2,
-                                d->sumDivBuffer);
+    d->shiftFinder = new Sync2D(mainBuffer, buffer, data);
 
     QObject::connect(d->shiftFinder, &Sync2D::finished,
                      d->shiftFinder, &Sync2D::deleteLater);
 
-    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &Sync2D::start,
-                                      mainBuffer, buffer, data));
+    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &Sync2D::start));
 
 }
 

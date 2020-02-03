@@ -67,7 +67,7 @@ void Sync2D::start()
                                       static_cast<quint32>(deltaPPS));
         SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
 
-        proto::receiver::Packet packet[CHANNEL_SIZE];
+        proto::receiver::Packet pcts[CHANNEL_SIZE];
         PacketQueuePair syncQueuePair;
 
         bool isFirstStationReadedPacket = false;
@@ -79,34 +79,34 @@ void Sync2D::start()
         d->quit = false;
         while(!d->quit)
         {
-            if(d->_pair1.first->pop(packet[CHANNEL_FIRST]))
+            if(d->_pair1.first->pop(pcts[CHANNEL_FIRST]))
             {
-                syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
+                syncQueuePair.first.enqueue(pcts[CHANNEL_FIRST]);
                 isFirstStationReadedPacket = true;
             }
 
-            if(d->_pair2.first->pop(packet[CHANNEL_SECOND]))
+            if(d->_pair2.first->pop(pcts[CHANNEL_SECOND]))
             {
-                syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
+                syncQueuePair.second.enqueue(pcts[CHANNEL_SECOND]);
                 isSecondStationReadedPacket = true;
             }
 
             if(isFirstStationReadedPacket && isSecondStationReadedPacket)
             {
                 //                qDebug()<<"Is find_B"<<syncQueuePair.first.size()<<syncQueuePair.second.size();
-                packet[CHANNEL_FIRST] = syncQueuePair.first.dequeue();
-                packet[CHANNEL_SECOND] = syncQueuePair.second.dequeue();
+                pcts[CHANNEL_FIRST] = syncQueuePair.first.dequeue();
+                pcts[CHANNEL_SECOND] = syncQueuePair.second.dequeue();
 
                 //TODO double deltaStart=1
-                blockEqualizer.equateT(packet[CHANNEL_SECOND]);
+                blockEqualizer.equateT(pcts[CHANNEL_SECOND]);
                 //                                qDebug()<<"BA_2";
-                d->_pair1.second->push(packet[CHANNEL_FIRST]);
-                d->_pair2.second->push(packet[CHANNEL_SECOND]);
+                d->_pair1.second->push(pcts[CHANNEL_FIRST]);
+                d->_pair2.second->push(pcts[CHANNEL_SECOND]);
                 //
 
                 //******* SUM-SUB METHOD **************
-                sumSubMethod.apply(packet[CHANNEL_FIRST],
-                                   packet[CHANNEL_SECOND],
+                sumSubMethod.apply(pcts[CHANNEL_FIRST],
+                                   pcts[CHANNEL_SECOND],
                                    d->_data.blockSize);
 
                 isFirstStationReadedPacket = false;
