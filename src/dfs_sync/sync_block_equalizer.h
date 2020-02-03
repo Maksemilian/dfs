@@ -1,13 +1,8 @@
 #ifndef SYNC_BLOCK_ALINEMENT_H
 #define SYNC_BLOCK_ALINEMENT_H
 
-#include "ippbase.h"
-
+#include "sync_global.h"
 #include <QObject>
-#include <memory>
-
-using VectorIpp32fc = std::vector<Ipp32fc>;
-using VectorIpp32f = std::vector<Ipp32f>;
 
 /*!
  * \brief The BlockAlinement class

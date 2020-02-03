@@ -2,15 +2,10 @@
 
 #include "sync_block_equalizer.h"
 #include "sync_calc_dalta_pps.h"
+
 #include "sync_test.h"
 
-#include "receiver.pb.h"
-
-
 #include <QDebug>
-
-using PacketQueue = QQueue<proto::receiver::Packet>;
-using PacketQueuePair = QPair<PacketQueue, PacketQueue>;
 
 //******************************* FindChannelForShift ******************************************
 
@@ -20,15 +15,19 @@ struct Sync2D::Impl
     Impl(const ShPtrPacketBuffer& inBuffer1,
          const ShPtrPacketBuffer& inBuffer2,
          const SyncData& data):
-        _inBuffer1(inBuffer1), _inBuffer2(inBuffer2), _data(data)    {   }
+        _data(data)
+    {
+        _pair1.first = inBuffer1;
+        _pair1.second = std::make_shared<RingPacketBuffer>(4);
 
-    ShPtrPacketBuffer _inBuffer1;
-    ShPtrPacketBuffer _inBuffer2;
+        _pair2.first = inBuffer2;
+        _pair2.second = std::make_shared<RingPacketBuffer>(4);
+    }
 
-    ShPtrPacketBuffer _outBuffer1;
-    ShPtrPacketBuffer _outBuffer2;
+    std::pair<ShPtrPacketBuffer, ShPtrPacketBuffer>_pair1;
+    std::pair<ShPtrPacketBuffer, ShPtrPacketBuffer>_pair2;
+
     SyncData _data;
-
     std::atomic_bool quit;
 };
 
@@ -75,18 +74,18 @@ void Sync2D::start()
         bool isSecondStationReadedPacket = false;
 
         qDebug() << "SHIFT_VALUE:" << deltaPPS
-                 << "BUF_USE_COUNT" << d->_inBuffer1.use_count() << d->_inBuffer2.use_count();
+                 << "BUF_USE_COUNT" << d->_pair1.first.use_count() << d->_pair2.first.use_count();
 
         d->quit = false;
         while(!d->quit)
         {
-            if(d->_inBuffer1->pop(packet[CHANNEL_FIRST]))
+            if(d->_pair1.first->pop(packet[CHANNEL_FIRST]))
             {
                 syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
                 isFirstStationReadedPacket = true;
             }
 
-            if(d->_inBuffer2->pop(packet[CHANNEL_SECOND]))
+            if(d->_pair2.first->pop(packet[CHANNEL_SECOND]))
             {
                 syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
                 isSecondStationReadedPacket = true;
@@ -109,8 +108,8 @@ void Sync2D::start()
                                       d->_data.ddcFrequency,
                                       d->_data.sampleRate);
                 //                                qDebug()<<"BA_2";
-                d->_outBuffer1->push(packet[CHANNEL_FIRST]);
-                d->_outBuffer2->push(packet[CHANNEL_SECOND]);
+                d->_pair1.second->push(packet[CHANNEL_FIRST]);
+                d->_pair2.second->push(packet[CHANNEL_SECOND]);
                 //
 
                 //******* SUM-SUB METHOD **************
@@ -138,11 +137,11 @@ void Sync2D::start()
     emit finished();
 }
 
-double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& shiftBuffer)
+double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& outShiftBuffer)
 {
-    qDebug() << "B_USE COUNT_calcShiftInChannel_BEGIN" << d->_inBuffer1.use_count() << d->_inBuffer2.use_count()
+    qDebug() << "B_USE COUNT_calcShiftInChannel_BEGIN" << d->_pair1.first.use_count() << d->_pair2.first.use_count()
              << d->_data.sampleRate;
-    Q_ASSERT_X(shiftBuffer.size() == d->_data.blockSize, "Sync2D::calcShiftAndShiftBufferlTEST", "out_of_range");
+    Q_ASSERT_X(outShiftBuffer.size() == d->_data.blockSize, "Sync2D::calcShiftAndShiftBufferlTEST", "out_of_range");
 
     proto::receiver::Packet pct1;
     proto::receiver::Packet pct2;
@@ -150,9 +149,10 @@ double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& shiftBuffer)
     // while(true){
     //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
     // 1 канал стартовал раньше
-    bool isPacket1Read = readPacketFromBuffer(d->_inBuffer1, pct1, d->_data.sampleRate);
 
-    bool isPacket2Read = readPacketFromBuffer(d->_inBuffer2, pct2, d->_data.sampleRate);
+    bool isPacket1Read = readPacketFromBuffer(d->_pair1.first, pct1, d->_data.sampleRate);
+
+    bool isPacket2Read = readPacketFromBuffer(d->_pair2.first, pct2, d->_data.sampleRate);
 
     if(isPacket1Read && isPacket2Read)
     {
@@ -177,7 +177,7 @@ double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& shiftBuffer)
         }
 
         cout << c << endl;
-        shiftBuffer = c.initShiftBuffer();
+        outShiftBuffer = c.initShiftBuffer();
         return deltaPPS;
         //break;
     }
