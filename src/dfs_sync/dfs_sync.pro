@@ -45,12 +45,14 @@ LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 #LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
 SOURCES += \
-    sync_process.cpp \
     sync_controller.cpp \
-    sync_block_equalizer.cpp
+    sync_block_equalizer.cpp \
+    sync_2d.cpp
 
 HEADERS += \
-    sync_process.h \
     sync_controller.h \
-    sync_block_equalizer.h
+    sync_block_equalizer.h \
+    sync_2d.h \
+    sync_test.h \
+    sync_calc_dalta_pps.h
 

@@ -1,165 +1,72 @@
-#include "sync_process.h"
+#include "sync_2d.h"
+
 #include "sync_block_equalizer.h"
+#include "sync_calc_dalta_pps.h"
+#include "sync_test.h"
 
 #include "receiver.pb.h"
 
-#include <math.h>
 
 #include <QDebug>
-
-#include "ipp.h"
-#include "ippvm.h"
 
 using PacketQueue = QQueue<proto::receiver::Packet>;
 using PacketQueuePair = QPair<PacketQueue, PacketQueue>;
 
-class SumSubMethod
-{
-    //1250 Гц - частота гетеродина создающего sin/cos коэффициенты
-    const double HETERODYNE_FREQUENCY = 1250.0;
-    const double DOUBLE_PI = 2 * IPP_PI;
-    const double DELTA_ANGLE_IN_RADIAN;
-  public:
-    SumSubMethod(quint32 sampleRate, quint32 blockSize):
-        DELTA_ANGLE_IN_RADIAN((360 * (HETERODYNE_FREQUENCY / sampleRate)) * (IPP_PI / 180)),
-        im(VectorIpp32f(blockSize)),
-        re(VectorIpp32f(blockSize)),
-        complexSum(VectorIpp32fc(blockSize)),
-        complexSub(VectorIpp32fc(blockSize)),
-        mulSumOnCoef(VectorIpp32fc(blockSize)),
-        mulSubOnCoef(VectorIpp32fc(blockSize)),
-        dstSumDiv(VectorIpp32fc(blockSize)),
-        currentAngleRad(0.0)
-    {
-
-    }
-
-    const VectorIpp32fc& calc(const Ipp32fc* dst1, const Ipp32fc* dst2, quint32 blockSize)
-    {
-        //1 ***** Создаем коэффициенты
-        for(quint32 i = 0; i < blockSize; i++, currentAngleRad += DELTA_ANGLE_IN_RADIAN)
-        {
-            re[i] = static_cast<Ipp32f>(cos(currentAngleRad));
-            im[i] = static_cast<Ipp32f>(sin(currentAngleRad));
-            if(currentAngleRad >= DOUBLE_PI)
-            {
-                re[i] = 1;
-                im[i] = 0;
-                currentAngleRad = 0.0;
-            }
-        }
-
-        ippsRealToCplx_32f(re.data(), im.data(), dstSumDiv.data(),
-                           static_cast<int>(blockSize));
-
-        // qDebug()<<"******************Src Coef:";
-
-        //2 ***** Фильтруем 2 канала
-        //WARNING ФИЛЬТРАЦИЯ НЕ ИСПОЛЬЗУЕТСЯ
-
-        //2 ***** Комплексная сумма двух сигналов
-        ippsAdd_32fc(dst1, dst2, complexSum.data(), static_cast<int>(blockSize));
-        //qDebug()<<"******************DATA AFTER SUM:";
-
-        //3 ***** Комплексная разность двух сигналов
-        ippsSub_32fc(dst1, dst2, complexSub.data(), static_cast<int>(blockSize));
-        //qDebug()<<"******************DATA AFTER SUB:";
-
-        //4 ***** Умножить массив коэффициентов на сумму
-        ippsMul_32fc(dstSumDiv.data(), complexSum.data(), mulSumOnCoef.data(),
-                     static_cast<int>(blockSize));
-        //qDebug()<<"******************DATA AFTER MUL SUM:";
-
-        //5 ***** Умножить массив коэффициентов на разность
-        ippsMul_32fc(dstSumDiv.data(), complexSub.data(), mulSubOnCoef.data(),
-                     static_cast<int>(blockSize));
-        //qDebug()<<"******************DATA AFTER MUL SUB:";
-
-        //        for(quint32 i=0;i<blockSize;i++){
-        //            dstSumDiv[i].re=mulSumOnCoef[i].re;
-        //            dstSumDiv[i].im=mulSubOnCoef[i].im;
-        //        }
-        memcpy(dstSumDiv.data(), mulSubOnCoef.data(), sizeof (Ipp32fc)*blockSize);
-        return  dstSumDiv;
-    }
-
-  private:
-    VectorIpp32f im;
-    VectorIpp32f re;
-    VectorIpp32fc complexSum;
-    VectorIpp32fc complexSub;
-    VectorIpp32fc mulSumOnCoef;
-    VectorIpp32fc mulSubOnCoef;
-
-    VectorIpp32fc dstSumDiv;
-    double currentAngleRad;
-};
-
 //******************************* FindChannelForShift ******************************************
 
-struct SyncProcess::Impl
+struct Sync2D::Impl
 {
-    Impl() {}
-    Impl(ShPtrPacketBuffer syncBuffer1,
-         ShPtrPacketBuffer syncBuffer2,
-         ShPtrIpp32fcBuffer sumDivBuffer):
-        syncBuffer1(syncBuffer1), syncBuffer2(syncBuffer2), sumDivBuffer(sumDivBuffer)
-    {
+    //Impl() {}
+    Impl(const ShPtrPacketBuffer& inBuffer1,
+         const ShPtrPacketBuffer& inBuffer2,
+         const SyncData& data):
+        _inBuffer1(inBuffer1), _inBuffer2(inBuffer2), _data(data)    {   }
 
-    }
-    Impl(quint32 sampleRate, quint32 blockSize):
-        sampleRate(sampleRate)
-    {
-        shiftData.channelIndex = -1;
-        shiftData.ddcDifference = 0.0;
+    ShPtrPacketBuffer _inBuffer1;
+    ShPtrPacketBuffer _inBuffer2;
 
-        shiftData.shiftBuffer.resize(blockSize);
-    }
-
-    quint32 sampleRate;
-
-    struct
-    {
-        VectorIpp32fc shiftBuffer;
-        int channelIndex;
-        double ddcDifference;
-        double deltaStart;
-    } shiftData;
-
-    ShPtrPacketBuffer syncBuffer1;
-    ShPtrPacketBuffer syncBuffer2;
-    ShPtrIpp32fcBuffer sumDivBuffer;
+    ShPtrPacketBuffer _outBuffer1;
+    ShPtrPacketBuffer _outBuffer2;
+    SyncData _data;
 
     std::atomic_bool quit;
 };
 
-SyncProcess::SyncProcess(const ShPtrPacketBuffer& syncBuffer1,
-                         const ShPtrPacketBuffer& syncBuffer2,
-                         const ShPtrIpp32fcBuffer& sumDivBuffer)
-    : d(std::make_unique<Impl>(syncBuffer1, syncBuffer2, sumDivBuffer)) {}
+Sync2D::Sync2D(const ShPtrPacketBuffer& inBuffer1,
+               const ShPtrPacketBuffer& inBuffer2,
+               const SyncData& data):
+    d(std::make_unique<Impl>(inBuffer1, inBuffer2, data)) {}
 
-SyncProcess::~SyncProcess()
+Sync2D::~Sync2D()
 {
     qDebug() << "SYNC_PROCESS_DESTR";
 };
 
+bool Sync2D::readPacketFromBuffer(const ShPtrPacketBuffer& buffer,
+                                  proto::receiver::Packet& packet,
+                                  quint32 sampleRate)
+{
+    if(buffer->pop(packet) )
+    {
+        if(packet.sample_rate() == sampleRate)
+        {
+            return  true;
+        }
+    }
+    return false;
+}
 
-
-
-void SyncProcess::start(const ShPtrPacketBuffer& mainBuffer,
-                        const ShPtrPacketBuffer& buffer,
-                        const SyncData& data)
+void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
-    d->quit = false;
-    d->shiftData.channelIndex = -1;
-    d->shiftData.ddcDifference = 0.0;
-    d->shiftData.shiftBuffer.resize(data.blockSize);
+    double deltaPPS = 0.0;
+    VectorIpp32fc shiftBuffer(d->_data.blockSize);
 
-    if(calcShiftInChannel(mainBuffer, buffer, data.sampleRate))
+    if((deltaPPS = calcShiftAndShiftBuffer(shiftBuffer)) > 0)
     {
-        BlockEqualizer blockEqualizer(d->shiftData.shiftBuffer, data.blockSize);
-        SumSubMethod sumSubMethod(data.sampleRate, data.blockSize);
+        BlockEqualizer blockEqualizer(shiftBuffer,
+                                      d->_data.blockSize);
+        SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
 
         proto::receiver::Packet packet[CHANNEL_SIZE];
         PacketQueuePair syncQueuePair;
@@ -167,20 +74,19 @@ void SyncProcess::start(const ShPtrPacketBuffer& mainBuffer,
         bool isFirstStationReadedPacket = false;
         bool isSecondStationReadedPacket = false;
 
-        qDebug() << "CHANNEL_SHIFT:" << d->shiftData.channelIndex
-                 << "SHIFT_VALUE:" << d->shiftData.ddcDifference
-                 << "BUF_USE_COUNT" << mainBuffer.use_count()
-                 << buffer.use_count();
+        qDebug() << "SHIFT_VALUE:" << deltaPPS
+                 << "BUF_USE_COUNT" << d->_inBuffer1.use_count() << d->_inBuffer2.use_count();
 
+        d->quit = false;
         while(!d->quit)
         {
-            if(mainBuffer->pop(packet[CHANNEL_FIRST]))
+            if(d->_inBuffer1->pop(packet[CHANNEL_FIRST]))
             {
                 syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
                 isFirstStationReadedPacket = true;
             }
 
-            if(buffer->pop(packet[CHANNEL_SECOND]))
+            if(d->_inBuffer2->pop(packet[CHANNEL_SECOND]))
             {
                 syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
                 isSecondStationReadedPacket = true;
@@ -194,13 +100,17 @@ void SyncProcess::start(const ShPtrPacketBuffer& mainBuffer,
 
                 Ipp32fc* signal = reinterpret_cast<Ipp32fc*>
                                   (const_cast<float*>
-                                   (packet[d->shiftData.channelIndex].sample().data()));
+                                   (packet[CHANNEL_SECOND].sample().data()));
 
-                blockEqualizer.equate(signal, data.blockSize, d->shiftData.ddcDifference,
-                                      data.ddcFrequency, data.sampleRate, d->shiftData.deltaStart);
+                //TODO double deltaStart=1
+                blockEqualizer.equate(signal,
+                                      d->_data.blockSize,
+                                      deltaPPS,
+                                      d->_data.ddcFrequency,
+                                      d->_data.sampleRate);
                 //                                qDebug()<<"BA_2";
-                d->syncBuffer1->push(packet[CHANNEL_FIRST]);
-                d->syncBuffer2->push(packet[CHANNEL_SECOND]);
+                d->_outBuffer1->push(packet[CHANNEL_FIRST]);
+                d->_outBuffer2->push(packet[CHANNEL_SECOND]);
                 //
 
                 //******* SUM-SUB METHOD **************
@@ -210,8 +120,9 @@ void SyncProcess::start(const ShPtrPacketBuffer& mainBuffer,
                 const Ipp32fc* dst2 = reinterpret_cast<const Ipp32fc*>
                                       (packet[CHANNEL_SECOND].sample().data());
 
-                d->sumDivBuffer->push(sumSubMethod.
-                                      calc(dst1, dst2, data.blockSize));
+                sumSubMethod.buffer()->push(sumSubMethod.
+                                            calc(dst1, dst2,
+                                                 d->_data.blockSize));
 
                 isFirstStationReadedPacket = false;
                 isSecondStationReadedPacket = false;
@@ -227,21 +138,184 @@ void SyncProcess::start(const ShPtrPacketBuffer& mainBuffer,
     emit finished();
 }
 
-void SyncProcess::stop()
+double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& shiftBuffer)
+{
+    qDebug() << "B_USE COUNT_calcShiftInChannel_BEGIN" << d->_inBuffer1.use_count() << d->_inBuffer2.use_count()
+             << d->_data.sampleRate;
+    Q_ASSERT_X(shiftBuffer.size() == d->_data.blockSize, "Sync2D::calcShiftAndShiftBufferlTEST", "out_of_range");
+
+    proto::receiver::Packet pct1;
+    proto::receiver::Packet pct2;
+    double deltaPPS = -1;
+    // while(true){
+    //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
+    // 1 канал стартовал раньше
+    bool isPacket1Read = readPacketFromBuffer(d->_inBuffer1, pct1, d->_data.sampleRate);
+
+    bool isPacket2Read = readPacketFromBuffer(d->_inBuffer2, pct2, d->_data.sampleRate);
+
+    if(isPacket1Read && isPacket2Read)
+    {
+        if(pct1.time_of_week() !=  pct2.time_of_week())
+        {
+            qDebug() << "TOW NOT EQU:" << pct1.time_of_week() << pct2.time_of_week();
+
+            isPacket1Read = false;
+            isPacket2Read = false;
+            //continue;//WARNING
+        }
+
+        CalcDeltaPPS c(pct1, pct2, d->_data.sampleRate,  d->_data.blockSize);
+
+        if(pct1.time_of_week() == pct2.time_of_week())// 1 НОМЕРА СЕКУНД ОДИНАКОВЫЕ
+        {
+            deltaPPS = c.ddcAfterPPS1() - c.ddcAfterPPS2();
+        }
+        else // 2 НОМЕРА СЕКУНД РАЗНЫЕ
+        {
+            deltaPPS = c.deltaPPS();
+        }
+
+        cout << c << endl;
+        shiftBuffer = c.initShiftBuffer();
+        return deltaPPS;
+        //break;
+    }
+//}
+    return deltaPPS;
+}
+
+
+
+void Sync2D::stop()
 {
     d->quit = true;
 }
 
+//**************** PREVIOUS VARIANT **********************
+/*
+void Sync2D::initShiftBuffer(const float* signalData,
+                             quint32 blockSize,
+                             quint32 shift)
+{
+    qDebug() << "B_INIT_SHIFT_TEST" << shift << d->shiftData.shiftBuffer.size();
+    for(quint32 i = 0; i < shift; i++)
+    {
+        d->shiftData.shiftBuffer[i].re = signalData[blockSize - (shift) + i * 2];
+        d->shiftData.shiftBuffer[i].im = signalData[(blockSize - (shift) + i * 2) + 1];
+    }
+}
+void Sync2D::showPacket(quint32 blockNumber,
+                        quint32 sampleRate,
+                        quint32 timeOfWeek,
+                        double ddcSampleCounter,
+                        quint64 adcPeriodCounter)
+{
+    qDebug() << "Packet" << blockNumber << sampleRate <<
+             timeOfWeek << ddcSampleCounter << adcPeriodCounter;
+}
 
-bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
-                                     const ShPtrPacketBuffer& buffer,
-                                     quint32 sampleRate)
+
+double Sync2D::ddcAfterPPS(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize)
+{
+    return (blockNumber * blockSize) - ddcSampleCounter;
+}
+
+void Sync2D::start()
+{
+    qDebug() << "THREAD_SYNC_BEGIN";
+    d->quit = false;
+    d->shiftData.channelIndex = -1;
+    d->shiftData.deltaPPS = 0.0;
+    d->shiftData.shiftBuffer.resize(d->_data.blockSize);
+
+    if(calcShiftInChannel(d->_inBuffer1, d->_inBuffer2, d->_data.sampleRate))
+    {
+        BlockEqualizer blockEqualizer(d->shiftData.shiftBuffer,
+                                      d->_data.blockSize);
+        SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
+
+        proto::receiver::Packet packet[CHANNEL_SIZE];
+        PacketQueuePair syncQueuePair;
+
+        bool isFirstStationReadedPacket = false;
+        bool isSecondStationReadedPacket = false;
+
+        qDebug() << "CHANNEL_SHIFT:" << d->shiftData.channelIndex
+                 << "SHIFT_VALUE:" << d->shiftData.deltaPPS
+                 << "BUF_USE_COUNT" << d->_inBuffer1.use_count()
+                 << d->_inBuffer2.use_count();
+
+        while(!d->quit)
+        {
+            if(d->_inBuffer1->pop(packet[CHANNEL_FIRST]))
+            {
+                syncQueuePair.first.enqueue(packet[CHANNEL_FIRST]);
+                isFirstStationReadedPacket = true;
+            }
+
+            if(d->_inBuffer2->pop(packet[CHANNEL_SECOND]))
+            {
+                syncQueuePair.second.enqueue(packet[CHANNEL_SECOND]);
+                isSecondStationReadedPacket = true;
+            }
+
+            if(isFirstStationReadedPacket && isSecondStationReadedPacket)
+            {
+                //                qDebug()<<"Is find_B"<<syncQueuePair.first.size()<<syncQueuePair.second.size();
+                packet[CHANNEL_FIRST] = syncQueuePair.first.dequeue();
+                packet[CHANNEL_SECOND] = syncQueuePair.second.dequeue();
+
+                Ipp32fc* signal = reinterpret_cast<Ipp32fc*>
+                                  (const_cast<float*>
+                                   (packet[d->shiftData.channelIndex].sample().data()));
+
+                blockEqualizer.equate(signal,
+                                      d->_data.blockSize,
+                                      d->shiftData.deltaPPS,
+                                      d->_data.ddcFrequency,
+                                      d->_data.sampleRate, d->shiftData.deltaStart);
+                //                                qDebug()<<"BA_2";
+                d->_outBuffer1->push(packet[CHANNEL_FIRST]);
+                d->_outBuffer2->push(packet[CHANNEL_SECOND]);
+                //
+
+
+                const Ipp32fc* dst1 = reinterpret_cast<const Ipp32fc*>
+                                      (packet[CHANNEL_FIRST].sample().data());
+
+                const Ipp32fc* dst2 = reinterpret_cast<const Ipp32fc*>
+                                      (packet[CHANNEL_SECOND].sample().data());
+
+                sumSubMethod.buffer()->push(sumSubMethod.
+                                            calc(dst1, dst2,
+                                                 d->_data.blockSize));
+
+                isFirstStationReadedPacket = false;
+                isSecondStationReadedPacket = false;
+            }
+        }
+    }
+    else
+    {
+        qDebug("SYNC_ERROR");
+    }
+
+    qDebug() << "THREAD_SYNC_END";
+    emit finished();
+}
+
+
+bool Sync2D::calcShiftInChannel(const ShPtrPacketBuffer& _inBuffer1,
+                                const ShPtrPacketBuffer& inBuffer2,
+                                quint32 sampleRate)
 {
     qDebug() << "B_USE COUNT_calcShiftInChannel_BEGIN"
-             << mainBuffer.use_count()
-             << buffer.use_count()
+             << _inBuffer1.use_count()
+             << inBuffer2.use_count()
              << sampleRate
-             << d->shiftData.shiftBuffer.size();
+             //<< d->shiftData.shiftBuffer.size()
+                ;
 
     BoolPair isReadedPacketPair;
 
@@ -255,7 +329,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
     while(!shiftFound)
     {
         //                qDebug()<<"read_1";
-        if(mainBuffer->pop(packet))
+        if(_inBuffer1->pop(packet))
         {
             if(packet.sample_rate() == sampleRate)
             {
@@ -265,7 +339,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
             }
         }
         //                qDebug()<<"read_2";
-        if(buffer->pop(packet))
+        if(inBuffer2->pop(packet))
         {
             if(packet.sample_rate() == sampleRate)
             {
@@ -293,41 +367,41 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
                        packetPair[CHANNEL_SECOND].time_of_week(),
                        "SyncPairChannel::calcDdcDifferenceBetweenCannel", "time of week not equ");
 
-            double ddcDelayAfterLastPpsFirst = ddcAfterLastPps(packetPair[CHANNEL_FIRST].ddc_sample_counter(),
+            double ddcDelayAfterLastPpsFirst = ddcAfterPPS(packetPair[CHANNEL_FIRST].ddc_sample_counter(),
                                                packetPair[CHANNEL_FIRST].block_number(),
                                                packetPair[CHANNEL_FIRST].block_size());
 
-            double ddcDelayAfterLastPpsSecond = ddcAfterLastPps(packetPair[CHANNEL_SECOND].ddc_sample_counter(),
+            double ddcDelayAfterLastPpsSecond = ddcAfterPPS(packetPair[CHANNEL_SECOND].ddc_sample_counter(),
                                                 packetPair[CHANNEL_SECOND].block_number(),
                                                 packetPair[CHANNEL_SECOND].block_size());
-// 100 200
-            d->shiftData.ddcDifference =  ddcDelayAfterLastPpsFirst - ddcDelayAfterLastPpsSecond;
+            // 100 200
+            d->shiftData.deltaPPS =  ddcDelayAfterLastPpsFirst - ddcDelayAfterLastPpsSecond;
 
-            d->shiftData.channelIndex = d->shiftData.ddcDifference < 0 ?
+            d->shiftData.channelIndex = d->shiftData.deltaPPS < 0 ?
                                         CHANNEL_SECOND   :  CHANNEL_FIRST;
-            d->shiftData.ddcDifference = abs(d->shiftData.ddcDifference);
+            d->shiftData.deltaPPS = abs(d->shiftData.deltaPPS);
 
             //TODO поместить в один метод
             //BN1*BS1+SHIFT-BN2*BS2
             d->shiftData.deltaStart = d->shiftData.channelIndex == CHANNEL_FIRST ?
                                       ((packetPair[CHANNEL_FIRST].block_number() *
-                                        packetPair[CHANNEL_FIRST].block_size()) + d->shiftData.ddcDifference)
+                                        packetPair[CHANNEL_FIRST].block_size()) + d->shiftData.deltaPPS)
                                       - packetPair[CHANNEL_SECOND].block_number() * packetPair[CHANNEL_SECOND].block_size()
                                       :
                                       ((packetPair[CHANNEL_SECOND].block_number() *
-                                        packetPair[CHANNEL_SECOND].block_size()) + d->shiftData.ddcDifference)
+                                        packetPair[CHANNEL_SECOND].block_size()) + d->shiftData.deltaPPS)
                                       - packetPair[CHANNEL_FIRST].block_number() * packetPair[CHANNEL_FIRST].block_size()
                                       ;
             d->shiftData.deltaStart = abs(d->shiftData.deltaStart);
 
-            Q_ASSERT_X( d->shiftData.ddcDifference >= 0 &&  d->shiftData.ddcDifference < packet.block_size(),
+            Q_ASSERT_X( d->shiftData.deltaPPS >= 0 &&  d->shiftData.deltaPPS < packet.block_size(),
                         "SignalSync::sync", "error shift");
 
-            if(static_cast<quint32>(d->shiftData.ddcDifference) >
+            if(static_cast<quint32>(d->shiftData.deltaPPS) >
                     packetPair[d->shiftData.channelIndex].block_size())
             {
                 qDebug() << "******************BAD SHIFT SIZE"
-                         << d->shiftData.ddcDifference
+                         << d->shiftData.deltaPPS
                          << d->shiftData.deltaStart;
                 isReadedPacketPair.first = false;
                 isReadedPacketPair.second = false;
@@ -336,7 +410,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
 
             initShiftBuffer(packetPair[d->shiftData.channelIndex].sample().data(),
                             packetPair[d->shiftData.channelIndex].block_size(),
-                            static_cast<quint32>(d->shiftData.ddcDifference));
+                            static_cast<quint32>(d->shiftData.deltaPPS));
 
             //            initShiftBuffer(packetPair[d->channelIndex].sample().data(),
             //                    static_cast<quint32>(packetPair[d->channelIndex].sample().size()),
@@ -351,7 +425,7 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
                        packetPair[CHANNEL_SECOND].adc_period_counter());
 
             qDebug() << "*********SHIFT_FOUND" << d->shiftData.channelIndex
-                     << d->shiftData.ddcDifference
+                     << d->shiftData.deltaPPS
                      << d->shiftData.deltaStart;
             shiftFound = true;
         }
@@ -359,43 +433,8 @@ bool SyncProcess::calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
 
     return shiftFound;
 }
-void SyncProcess::initShiftBuffer(const float* signalData, quint32 blockSize,
-                                  quint32 shift)
-{
-    qDebug() << "B_INIT_SHIFT_TEST" << shift << d->shiftData.shiftBuffer.size();
-    for(quint32 i = 0; i < shift; i++)
-    {
-        d->shiftData.shiftBuffer[i].re = signalData[blockSize - (shift) + i * 2];
-        d->shiftData.shiftBuffer[i].im = signalData[(blockSize - (shift) + i * 2) + 1];
-    }
-}
-
-/*!
- * \brief SyncPairChannel::ddcAfterLastPps
- * \param ddcSampleCounter
- * \param blockNumber
- * \param blockSize
- * \return колиество ddc сэмплов после прихода последнего импульса pps
- * Количество отсчетов после приема импульса PPS в каждом канале
- */
-double SyncProcess::ddcAfterLastPps(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize)
-{
-    return (blockNumber * blockSize) - ddcSampleCounter;
-}
-
-
-
-void SyncProcess::showPacket(quint32 blockNumber,
-                             quint32 sampleRate,
-                             quint32 timeOfWeek,
-                             double ddcSampleCounter,
-                             quint64 adcPeriodCounter)
-{
-    qDebug() << "Packet" << blockNumber << sampleRate <<
-             timeOfWeek << ddcSampleCounter << adcPeriodCounter;
-}
-
-
+*/
+//************************** DEL ***************
 /*
 void SyncProcess::start(const ShPtrPacketBufferPair buffers,
                         quint32 ddcFrequency,

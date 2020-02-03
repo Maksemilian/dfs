@@ -1,7 +1,7 @@
 #ifndef SYNC_PAIR_CHANNEL_H
 #define SYNC_PAIR_CHANNEL_H
 
-#include "sync_process.h"
+#include "sync_2d.h"
 
 /*!
  * \brief The SyncPairChannel class

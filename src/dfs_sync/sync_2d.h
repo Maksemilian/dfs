@@ -5,6 +5,7 @@
 #include "receiver.pb.h"
 
 #include "ippbase.h"
+
 #include <memory>
 #include <QPair>
 #include <QQueue>
@@ -29,7 +30,7 @@ struct SyncData
     quint32 blockSize;
 };
 
-class SyncProcess : public QObject
+class Sync2D : public QObject
 {
     Q_OBJECT
 
@@ -41,29 +42,35 @@ class SyncProcess : public QObject
     };
     static const unsigned int COUNT_SIGNAL_COMPONENT = 2;
   public:
-    SyncProcess(const ShPtrPacketBuffer& outBuffer1,
-                const ShPtrPacketBuffer& outBuffer2,
-                const ShPtrIpp32fcBuffer& outSumDivBuffer);
+    Sync2D(const ShPtrPacketBuffer& inBuffer1,
+           const ShPtrPacketBuffer& inBuffer2,
+           const SyncData& data);
 
-    ~SyncProcess();
-
-    void start(const ShPtrPacketBuffer& mainBuffer,
-               const ShPtrPacketBuffer& buffer,
-               const SyncData& data);
+    ~Sync2D();
+    void startTEST();
+    void start();
     void stop();
   signals:
     void finished();
   private:
 
+    bool calcShiftInChannelTEST();
+
+    //***
+    bool readPacketFromBuffer(const ShPtrPacketBuffer& buffer,
+                              proto::receiver::Packet& packet,
+                              quint32 sampleRate);
+
+    //******* PREVEIOUS *********
     bool calcShiftInChannel(const ShPtrPacketBuffer& mainBuffer,
                             const ShPtrPacketBuffer& buffer,
                             quint32 sampleRate);
-
     static void showPacket(quint32 blockNumber, quint32 sampleRate, quint32 timeOfWeek,
                            double ddcSampleCounter, quint64 adcPeriodCounter);
-    double ddcAfterLastPps(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize);
-    void initShiftBuffer(const float* signalData, quint32 size, quint32 ddcDifference);
-    double calcDeltaStart();
+    double ddcAfterPPS(double ddcSampleCounter, quint32 blockNumber, quint32 blockSize);
+    void initShiftBuffer(const float* signalData,
+                         quint32 size,
+                         quint32 ddcDifference);
   private:
 
     struct Impl;

@@ -19,12 +19,12 @@ class BlockEqualizer
     //равными размеру shiftBuffer
     BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize);
     ~BlockEqualizer();
-
+    //TODO double deltaStart=1
     void equate(Ipp32fc* signal, quint32 size,
                 double shift,
                 quint32 ddcFrequency,
                 quint32 sampleRate,
-                double deltaStart)const;
+                double deltaStart = 1)const;
   private:
     void initFftBuffers(int FFTOrder);
     int  calcFftOrder(quint32 number);
