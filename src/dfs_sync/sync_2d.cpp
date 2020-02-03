@@ -113,15 +113,9 @@ void Sync2D::start()
                 //
 
                 //******* SUM-SUB METHOD **************
-                const Ipp32fc* dst1 = reinterpret_cast<const Ipp32fc*>
-                                      (packet[CHANNEL_FIRST].sample().data());
-
-                const Ipp32fc* dst2 = reinterpret_cast<const Ipp32fc*>
-                                      (packet[CHANNEL_SECOND].sample().data());
-
-                sumSubMethod.buffer()->push(sumSubMethod.
-                                            calc(dst1, dst2,
-                                                 d->_data.blockSize));
+                sumSubMethod.apply(packet[CHANNEL_FIRST],
+                                   packet[CHANNEL_SECOND],
+                                   d->_data.blockSize);
 
                 isFirstStationReadedPacket = false;
                 isSecondStationReadedPacket = false;

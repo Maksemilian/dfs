@@ -54,6 +54,6 @@ HEADERS += \
     sync_block_equalizer.h \
     sync_2d.h \
     sync_test.h \
-    sync_calc_dalta_pps.h \
-    sync_global.h
+    sync_global.h \
+    sync_calc_delta_pps.h
 
