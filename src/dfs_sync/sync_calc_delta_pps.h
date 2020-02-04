@@ -21,8 +21,8 @@ using namespace  std;
 class CalcDeltaPPS
 {
   public:
-    CalcDeltaPPS(proto::receiver::Packet& packet1,
-                 proto::receiver::Packet& packet2,
+    CalcDeltaPPS(const proto::receiver::Packet& packet1,
+                 const proto::receiver::Packet& packet2,
                  unsigned int sampleRate,
                  unsigned int blockSize = 8192):
         _pct1(packet1),
@@ -82,8 +82,8 @@ class CalcDeltaPPS
 
     friend ostream& operator<<(ostream& out, const CalcDeltaPPS& c);
   private:
-    proto::receiver::Packet& _pct1;
-    proto::receiver::Packet& _pct2;
+    proto::receiver::Packet _pct1;
+    proto::receiver::Packet _pct2;
     unsigned int _sampleRate = 0;
     unsigned int _blockSize = 0;
 

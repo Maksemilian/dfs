@@ -56,6 +56,7 @@ BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer,
 
 BlockEqualizer::~BlockEqualizer() = default;
 
+
 void BlockEqualizer::initFftBuffers(int FFTOrder)
 {
     qDebug() << "BlockAlinement::init FFTOrder" << FFTOrder;

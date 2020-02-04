@@ -5,7 +5,7 @@
 #include "receiver.pb.h"
 
 #include "ippbase.h"
-
+#include <QQueue>
 #include <memory>
 struct SyncData
 {

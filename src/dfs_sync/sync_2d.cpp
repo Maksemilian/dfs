@@ -4,6 +4,7 @@
 #include "sync_calc_delta_pps.h"
 
 #include "sync_test.h"
+#include "sync_radio_channel.h"
 
 #include <QDebug>
 
@@ -11,21 +12,14 @@
 
 struct Sync2D::Impl
 {
-    //Impl() {}
     Impl(const ShPtrPacketBuffer& inBuffer1,
          const ShPtrPacketBuffer& inBuffer2,
          const SyncData& data):
-        _data(data)
-    {
-        _pair1.first = inBuffer1;
-        _pair1.second = std::make_shared<RingPacketBuffer>(4);
-
-        _pair2.first = inBuffer2;
-        _pair2.second = std::make_shared<RingPacketBuffer>(4);
-    }
-
-    std::pair<ShPtrPacketBuffer, ShPtrPacketBuffer>_pair1;
-    std::pair<ShPtrPacketBuffer, ShPtrPacketBuffer>_pair2;
+        _channel1(std::make_unique<RadioChannel>(inBuffer1, _data)),
+        _channel2(std::make_unique<RadioChannel>(inBuffer2, _data)),
+        _data(data)    {    }
+    std::unique_ptr<RadioChannel>_channel1;
+    std::unique_ptr<RadioChannel>_channel2;
 
     SyncData _data;
     std::atomic_bool quit;
@@ -41,76 +35,42 @@ Sync2D::~Sync2D()
     qDebug() << "SYNC_PROCESS_DESTR";
 };
 
-bool Sync2D::readPacketFromBuffer(const ShPtrPacketBuffer& buffer,
-                                  proto::receiver::Packet& packet,
-                                  quint32 sampleRate)
-{
-    if(buffer->pop(packet) )
-    {
-        if(packet.sample_rate() == sampleRate)
-        {
-            return  true;
-        }
-    }
-    return false;
-}
-
 void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
-    double deltaPPS = 0.0;
-    VectorIpp32fc shiftBuffer(d->_data.blockSize);
 
-    if((deltaPPS = calcShiftAndShiftBuffer(shiftBuffer)) > 0)
+    if(calcShift())
     {
-        BlockEqualizer blockEqualizer(shiftBuffer, d->_data,
-                                      static_cast<quint32>(deltaPPS));
         SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
 
-        proto::receiver::Packet pcts[CHANNEL_SIZE];
-        PacketQueuePair syncQueuePair;
-
-        bool isFirstStationReadedPacket = false;
-        bool isSecondStationReadedPacket = false;
-
-        qDebug() << "SHIFT_VALUE:" << deltaPPS
-                 << "BUF_USE_COUNT" << d->_pair1.first.use_count() << d->_pair2.first.use_count();
+        bool isRead1 = false;
+        bool isRead2 = false;
 
         d->quit = false;
         while(!d->quit)
         {
-            if(d->_pair1.first->pop(pcts[CHANNEL_FIRST]))
+            if(d->_channel1->read())
             {
-                syncQueuePair.first.enqueue(pcts[CHANNEL_FIRST]);
-                isFirstStationReadedPacket = true;
+                isRead1 = true;
             }
 
-            if(d->_pair2.first->pop(pcts[CHANNEL_SECOND]))
+            if(d->_channel2->read())
             {
-                syncQueuePair.second.enqueue(pcts[CHANNEL_SECOND]);
-                isSecondStationReadedPacket = true;
+                isRead2 = true;
             }
 
-            if(isFirstStationReadedPacket && isSecondStationReadedPacket)
+            if(isRead1 && isRead2)
             {
-                //                qDebug()<<"Is find_B"<<syncQueuePair.first.size()<<syncQueuePair.second.size();
-                pcts[CHANNEL_FIRST] = syncQueuePair.first.dequeue();
-                pcts[CHANNEL_SECOND] = syncQueuePair.second.dequeue();
-
-                //TODO double deltaStart=1
-                blockEqualizer.equateT(pcts[CHANNEL_SECOND]);
-                //                                qDebug()<<"BA_2";
-                d->_pair1.second->push(pcts[CHANNEL_FIRST]);
-                d->_pair2.second->push(pcts[CHANNEL_SECOND]);
-                //
+                d->_channel1->apply();
+                d->_channel2->apply();
 
                 //******* SUM-SUB METHOD **************
-                sumSubMethod.apply(pcts[CHANNEL_FIRST],
-                                   pcts[CHANNEL_SECOND],
+                sumSubMethod.apply(d->_channel1->lastPacket(),
+                                   d->_channel2->lastPacket(),
                                    d->_data.blockSize);
 
-                isFirstStationReadedPacket = false;
-                isSecondStationReadedPacket = false;
+                isRead1 = false;
+                isRead2 = false;
             }
         }
     }
@@ -123,26 +83,25 @@ void Sync2D::start()
     emit finished();
 }
 
-double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& outShiftBuffer)
+bool Sync2D::calcShift()
 {
-    qDebug() << "B_USE COUNT_calcShiftInChannel_BEGIN" << d->_pair1.first.use_count() << d->_pair2.first.use_count()
-             << d->_data.sampleRate;
-    Q_ASSERT_X(outShiftBuffer.size() == d->_data.blockSize, "Sync2D::calcShiftAndShiftBufferlTEST", "out_of_range");
+    VectorIpp32fc outShiftBuffer(d->_data.blockSize);
 
-    proto::receiver::Packet pct1;
-    proto::receiver::Packet pct2;
     double deltaPPS = -1;
     // while(true){
     //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
     // 1 канал стартовал раньше
 
-    bool isPacket1Read = readPacketFromBuffer(d->_pair1.first, pct1, d->_data.sampleRate);
+    bool isPacket1Read = d->_channel1->read();
 
-    bool isPacket2Read = readPacketFromBuffer(d->_pair2.first, pct2, d->_data.sampleRate);
+    bool isPacket2Read = d->_channel2->read();
 
     if(isPacket1Read && isPacket2Read)
     {
-        if(pct1.time_of_week() !=  pct2.time_of_week())
+        const proto::receiver::Packet& pct1 = d->_channel1->lastPacket();
+        const proto::receiver::Packet& pct2 = d->_channel2->lastPacket();
+        if(pct1.time_of_week() !=
+                pct2.time_of_week())
         {
             qDebug() << "TOW NOT EQU:" << pct1.time_of_week() << pct2.time_of_week();
 
@@ -164,14 +123,17 @@ double Sync2D::calcShiftAndShiftBuffer(VectorIpp32fc& outShiftBuffer)
 
         cout << c << endl;
         outShiftBuffer = c.initShiftBuffer();
-        return deltaPPS;
+
+        d->_channel2->setBlockEqulizer(new BlockEqualizer(outShiftBuffer,
+                                       d->_data,
+                                       static_cast<quint32>(deltaPPS)));
+        qDebug() << "SHIFT_VALUE:" << deltaPPS;
+        return true;
         //break;
     }
 //}
-    return deltaPPS;
+    return false;
 }
-
-
 
 void Sync2D::stop()
 {
@@ -180,6 +142,20 @@ void Sync2D::stop()
 
 //**************** PREVIOUS VARIANT **********************
 /*
+ bool Sync2D::readPacketFromBuffer(const ShPtrPacketBuffer& buffer,
+                                  proto::receiver::Packet& packet,
+                                  quint32 sampleRate)
+{
+    if(buffer->pop(packet) )
+    {
+        if(packet.sample_rate() == sampleRate)
+        {
+            return  true;
+        }
+    }
+    return false;
+}
+
 void Sync2D::initShiftBuffer(const float* signalData,
                              quint32 blockSize,
                              quint32 shift)
