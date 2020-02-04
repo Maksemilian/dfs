@@ -2,6 +2,7 @@
 #define SYNC_SHIFT_FINDER_H
 
 #include "sync_global.h"
+#include "sync_radio_channel.h"
 
 #include <QQueue>
 #include <QObject>
@@ -23,6 +24,8 @@ class Sync2D : public QObject
     ~Sync2D();
     void start();
     void stop();
+    std::shared_ptr<RadioChannel> channel1();
+    std::shared_ptr<RadioChannel> channel2();
   signals:
     void finished();
   private:

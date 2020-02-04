@@ -1,6 +1,7 @@
 #ifndef ELIPS_PLOT_H
 #define ELIPS_PLOT_H
 
+#include "sync_test.h"
 #include "qcustomplot.h"
 #include <QMutex>
 
@@ -25,14 +26,20 @@ class ElipsPlot: public QCustomPlot
     static const QColor greenColor;
     static const QColor blueColor;
   public:
-    ElipsPlot(QWidget* parent = nullptr);
+    ElipsPlot( QWidget* parent = nullptr);
+    void setSyncData(const SyncData& data);
+    void apply(const proto::receiver::Packet& pctChannel1,
+               const proto::receiver::Packet& pctChannel2);
     void update(int index, const float* sumDivData, quint32 dataSize);
+    void update(int index, const  VectorIpp32fc& v);
   private:
     void customEvent(QEvent* event)override;
   private:
     QCPCurve* curve;
     QList<ElipseLine*>lines;
     QMutex mutex;
+    SyncData data;
+    std::unique_ptr<SumSubMethod> sumSubMethod;
 };
 
 #endif // ELIPS_PLOT_H

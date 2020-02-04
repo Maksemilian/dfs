@@ -11,37 +11,27 @@ struct SyncController::Impl
         syncBuffer1(std::make_shared<RingPacketBuffer>(16)),
         syncBuffer2(std::make_shared<RingPacketBuffer>(16)),
         sumDivBuffer(std::make_shared<RingIpp32fcBuffer>(16))
-    {}
+
+    { }
     ShPtrPacketBuffer syncBuffer1;
     ShPtrPacketBuffer syncBuffer2;
     ShPtrIpp32fcBuffer sumDivBuffer;
 
     QFutureWatcher<void> fw;
-    Sync2D* shiftFinder = nullptr;
+    std::shared_ptr<Sync2D> _sync = nullptr;
 };
+
 
 SyncController::SyncController():
     d(std::make_unique<Impl>())
 {}
 
-ShPtrPacketBuffer SyncController::syncBuffer1()
-{
-    return d->syncBuffer1;
-}
-
-ShPtrPacketBuffer SyncController::syncBuffer2()
-{
-    return d->syncBuffer2;
-}
-
-ShPtrIpp32fcBuffer SyncController::sumDivMethodBuffer()
-{
-    return d->sumDivBuffer;
-}
-
 SyncController::~SyncController() = default;
 
-
+std::shared_ptr<Sync2D>SyncController::getSync2D()
+{
+    return d->_sync;
+}
 //************* START / STOP SYNC *************************************
 
 /*!
@@ -53,13 +43,12 @@ void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
 {
     qDebug() << "******SyncPairChannel::start();";
 
-    d->shiftFinder = new Sync2D(mainBuffer, buffer, data);
+    d->_sync = std::make_shared<Sync2D>(mainBuffer, buffer, data);
 
-    QObject::connect(d->shiftFinder, &Sync2D::finished,
-                     d->shiftFinder, &Sync2D::deleteLater);
+    QObject::connect(d->_sync.get(), &Sync2D::finished,
+                     d->_sync.get(), &Sync2D::deleteLater);
 
-    d->fw.setFuture(QtConcurrent::run(d->shiftFinder, &Sync2D::start));
-
+    d->fw.setFuture(QtConcurrent::run(d->_sync.get(), &Sync2D::start));
 }
 
 /*!
@@ -67,7 +56,7 @@ void SyncController::start(const ShPtrPacketBuffer& mainBuffer,
  */
 void SyncController::stop()
 {
-    d->shiftFinder->stop();
+    d->_sync->stop();
     qDebug() << "SyncPairChannel::stop();";
 }
 

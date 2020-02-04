@@ -1,6 +1,7 @@
 #ifndef CHANNEL_PLOT_H
 #define CHANNEL_PLOT_H
 
+#include "sync_global.h"
 #include "qcustomplot.h"
 
 #include <QColor>
@@ -17,6 +18,8 @@ class ChannelData: public QCPLayoutGrid
     };
   public:
     ChannelData(QCustomPlot* plot, QCPLayer* layer);
+    void apply(const proto::receiver::Packet& pct1,
+               const proto::receiver::Packet& pct2);
     void setName(const QString& name);
     void setData(quint32 blockNumber, double ddcSampleCounter, quint64 adcPeriodCounter);
   private:
@@ -59,7 +62,8 @@ class ChannelPlot : public QCustomPlot
         CT_I_Q
     };
     ChannelPlot(int channelCount, quint32 blockSize, QWidget* parent = nullptr);
-
+    void apply(const proto::receiver::Packet& pct1,
+               const proto::receiver::Packet& pct2);
     void updateSignalData(int index,
                           const ChannelDataT& channelData1,
                           const ChannelDataT& channelData2);

@@ -46,6 +46,36 @@ ChannelData::ChannelData(QCustomPlot* plot, QCPLayer* layer)
     }
 }
 
+void ChannelPlot::apply(const proto::receiver::Packet& pct1,
+                        const proto::receiver::Packet& pct2)
+{
+    SyncData data = {0, 0, 8192};
+    int INDEX = 0;
+    quint32 COUNT_SIGNAL_COMPONENT = 2;
+    std::unique_ptr<float[]>dataPairSingal(new float[data.blockSize*
+                                           COUNT_SIGNAL_COMPONENT]);
+
+    ChannelDataT channelData1(pct1.block_number(),
+                              pct1.ddc_sample_counter(),
+                              pct1.adc_period_counter());
+
+    ChannelDataT channelData2(pct2.block_number(),
+                              pct2.ddc_sample_counter(),
+                              pct2.adc_period_counter());
+    // qDebug()<<"BA_3";
+    const float* data1 = pct1.sample().data();
+    const float* data2 = pct2.sample().data();
+    //В dataPairSingal заносятся I компоненты с канала 1 и 2
+    for(quint32 i = 0; i < data.blockSize; i++)
+    {
+        dataPairSingal[i * 2] = data1[i * 2];
+        dataPairSingal[i * 2 + 1] = data2[i * 2];
+    }
+
+    updateSignalData(INDEX, channelData1, channelData2);
+    updateSignalComponent(INDEX, dataPairSingal.get(), data.blockSize);
+}
+
 void ChannelData::setName(const QString& name)
 {
     textValuetElevents[ET_NAME]->setText(name);

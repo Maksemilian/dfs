@@ -15,17 +15,11 @@ using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 class PlotMonitoring : public QWidget
 {
     Q_OBJECT
-    enum Channel
-    {
-        CHANNEL_FIRST = 0,
-        CHANNEL_SECOND = 1,
-        CHANNEL_SIZE = 2
-    };
+
   public:
     PlotMonitoring(QWidget* parent = nullptr);
     IDeviceSettings* ds = nullptr;
   public:
-//    void onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList);
     void onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers);
     void onDeviceSetListNotReady();
   private:

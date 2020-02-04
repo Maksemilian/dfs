@@ -4,6 +4,7 @@
 
 #include "plot_elipse.h"
 #include "plot_channel.h"
+#include "sync_test.h"
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -38,69 +39,39 @@ void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& 
                     };
 
     sync->start(buffers.front(), buffers.back(), data);
+    elipsPlot->setSyncData(data);
 
     QtConcurrent::run([this]()
     {
-        qDebug() << "START UPDATE";
-        quint32 blockSize = 8192;
-        quint32 COUNT_SIGNAL_COMPONENT = 2;
-        std::unique_ptr<float[]>dataPairSingal(new float[blockSize * COUNT_SIGNAL_COMPONENT]);
-        std::unique_ptr<float[]>sumSubData(new float[blockSize * COUNT_SIGNAL_COMPONENT]);
-        proto::receiver::Packet packet[CHANNEL_SIZE];
-        std::vector<Ipp32fc>v;
-        bool isFirstStationReadedPacket = false;
-        bool isSecondStationReadedPacket = false;
-        bool isElips = false;
-        int INDEX = 0;
+        qDebug() << "PLOT MONITORING RUN";
+        bool isRead1 = false;
+        bool isRead2 = false;
+
+        std::shared_ptr<Sync2D>sync2d = sync->getSync2D();
+        std::shared_ptr<RadioChannel>channel1 = sync2d->channel1();
+        std::shared_ptr<RadioChannel>channel2 = sync2d->channel1();
+
+        proto::receiver::Packet pct1;
+        proto::receiver::Packet pct2;
         while (!quit)
         {
-            if(sync->syncBuffer1()->pop(packet[CHANNEL_FIRST]))
+            if(channel1->outBuffer()->pop(pct1))
             {
-                isFirstStationReadedPacket = true;
+                isRead1 = true;
             }
 
-            if(sync->syncBuffer2()->pop(packet[CHANNEL_SECOND]))
+            if(channel2->outBuffer()->pop(pct2))
             {
-                isSecondStationReadedPacket = true;
+                isRead2 = true;
             }
 
-            if(sync->sumDivMethodBuffer()->pop(v))
+            if(isRead1 && isRead2)
             {
-                isElips = true;
-            }
+                channelPlot->apply(pct1, pct2);
+                elipsPlot->apply(pct1, pct2);
 
-            if(isFirstStationReadedPacket && isSecondStationReadedPacket && isElips)
-            {
-
-                ChannelDataT channelData1(packet[CHANNEL_FIRST].block_number(),
-                                          packet[CHANNEL_FIRST].ddc_sample_counter(),
-                                          packet[CHANNEL_FIRST].adc_period_counter());
-
-                ChannelDataT channelData2(packet[CHANNEL_SECOND].block_number(),
-                                          packet[CHANNEL_SECOND].ddc_sample_counter(),
-                                          packet[CHANNEL_SECOND].adc_period_counter());
-                // qDebug()<<"BA_3";
-                const float* data1 = packet[CHANNEL_FIRST].sample().data();
-                const float* data2 = packet[CHANNEL_SECOND].sample().data();
-                //В dataPairSingal заносятся I компоненты с канала 1 и 2
-                for(quint32 i = 0; i < blockSize; i++)
-                {
-                    dataPairSingal[i * 2] = data1[i * 2];
-                    dataPairSingal[i * 2 + 1] = data2[i * 2];
-                }
-
-                channelPlot->updateSignalData(INDEX, channelData1, channelData2);
-                channelPlot->updateSignalComponent(INDEX, dataPairSingal.get(), blockSize);
-
-                memcpy(sumSubData.get(), reinterpret_cast<float*>(v.data()),
-                       sizeof (float)*blockSize * COUNT_SIGNAL_COMPONENT);
-
-                // qDebug()<<"BA_5";
-                elipsPlot->update(INDEX, sumSubData.get(), blockSize);
-
-                isFirstStationReadedPacket = false;
-                isSecondStationReadedPacket = false;
-                isElips = false;
+                isRead1 = false;
+                isRead2 = false;
             }
         }
     });
@@ -111,3 +82,95 @@ void PlotMonitoring::onDeviceSetListNotReady()
     quit = true;
     sync->stop();
 }
+
+/*
+void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers)
+//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
+{
+    quit = false;
+    qDebug() << "START SYNC" << ds->getDDC1Frequency()
+             << ds->getSampleRateForBandwith()
+             << ds->getSamplesPerBuffer();
+    SyncData data = {ds->getDDC1Frequency(),
+                     ds->getSampleRateForBandwith(),
+                     ds->getSamplesPerBuffer()
+                    };
+
+    sync->start(buffers.front(), buffers.back(), data);
+
+    QtConcurrent::run([this, data]()
+    {
+        qDebug() << "START UPDATE";
+//        quint32 blockSize = 8192;
+        quint32 COUNT_SIGNAL_COMPONENT = 2;
+        std::unique_ptr<float[]>dataPairSingal(new float[data.blockSize *
+                COUNT_SIGNAL_COMPONENT]);
+        std::unique_ptr<float[]>sumSubData(new float[data.blockSize *
+                COUNT_SIGNAL_COMPONENT]);
+//        std::vector<Ipp32fc>v;
+        bool isRead1 = false;
+        bool isRead2 = false;
+        bool isElips = false;
+        int INDEX = 0;
+
+        std::shared_ptr<Sync2D>sync2d = sync->getSync2D();
+        std::shared_ptr<RadioChannel>channel1 = sync2d->channel1();
+        std::shared_ptr<RadioChannel>channel2 = sync2d->channel1();
+        SumSubMethod sumSubMethod(data.sampleRate, data.blockSize);
+
+        proto::receiver::Packet pct1;
+        proto::receiver::Packet pct2;
+
+        while (!quit)
+        {
+            if(channel1->outBuffer()->pop(pct1))
+            {
+                isRead1 = true;
+            }
+
+            if(channel2->outBuffer()->pop(pct2))
+            {
+                isRead2 = true;
+            }
+
+            if(isRead1 && isRead2 && isElips)
+            {
+               VectorIpp32fc v= sumSubMethod.applyT(pct1, pct2, data.blockSize);
+
+                ChannelDataT channelData1(pct1.block_number(),
+                                          pct1.ddc_sample_counter(),
+                                          pct1.adc_period_counter());
+
+                ChannelDataT channelData2(pct2.block_number(),
+                                          pct2.ddc_sample_counter(),
+                                          pct2.adc_period_counter());
+                // qDebug()<<"BA_3";
+                const float* data1 = pct1.sample().data();
+                const float* data2 = pct2.sample().data();
+                //В dataPairSingal заносятся I компоненты с канала 1 и 2
+                for(quint32 i = 0; i < data.blockSize; i++)
+                {
+                    dataPairSingal[i * 2] = data1[i * 2];
+                    dataPairSingal[i * 2 + 1] = data2[i * 2];
+                }
+
+                channelPlot->updateSignalData(INDEX,
+                                              channelData1, channelData2);
+                channelPlot->updateSignalComponent(INDEX,
+                                                   dataPairSingal.get(),
+                                                   data.blockSize);
+
+//                memcpy(sumSubData.get(), reinterpret_cast<float*>(v.data()),
+//                       sizeof (float)*data.blockSize *
+//                       COUNT_SIGNAL_COMPONENT);
+
+                // qDebug()<<"BA_5";
+                elipsPlot->update(INDEX, v);
+
+                isRead1 = false;
+                isRead2 = false;
+                isElips = false;
+            }
+        }
+    });
+}*/

@@ -15,15 +15,12 @@ class SyncController
     SyncController();
     ~SyncController();
 
-    ShPtrPacketBuffer syncBuffer1();
-    ShPtrPacketBuffer syncBuffer2();
-    ShPtrIpp32fcBuffer sumDivMethodBuffer();
-
     void start(const ShPtrPacketBuffer& mainBuffer,
                const ShPtrPacketBuffer& buffer,
                const SyncData& data);
 
     void stop();
+    std::shared_ptr<Sync2D> getSync2D();
   private:
     struct Impl;
     std::unique_ptr<Impl> d;

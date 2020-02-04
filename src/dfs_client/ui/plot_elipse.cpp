@@ -66,8 +66,11 @@ ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
 
 }
 
-ElipsPlot::ElipsPlot(QWidget* parent)
-    : QCustomPlot(parent), curve(new QCPCurve(this->xAxis, this->yAxis))
+ElipsPlot::ElipsPlot( QWidget* parent)
+    : QCustomPlot(parent),
+      curve(new QCPCurve(this->xAxis, this->yAxis))
+      // data(data),
+//      sumSubMethod(data.sampleRate, data.blockSize)
 {
 //    setFixedWidth (200);
 //    setFixedHeight(200);
@@ -109,6 +112,46 @@ ElipsPlot::ElipsPlot(QWidget* parent)
     lines << new ElipseLine(posBegin3, posEnd3, "235", "45", this);
     lines << new ElipseLine(posBegin4, posEnd4, "135", "315", this);
 }
+
+void ElipsPlot::apply(const proto::receiver::Packet& pctChannel1,
+                      const proto::receiver::Packet& pctChannel2)
+{
+    Q_ASSERT_X(sumSubMethod.get(), "ElipsPlot::apply", "null");
+
+    update(0, sumSubMethod->applyT(pctChannel1, pctChannel2, data.blockSize));
+}
+
+void ElipsPlot::setSyncData(const SyncData& data)
+{
+    this->data = data;
+    sumSubMethod.reset(new SumSubMethod(data.sampleRate, data.blockSize));
+}
+
+void ElipsPlot::update(int index, const VectorIpp32fc& v)
+{
+    Q_UNUSED(index);
+    QVector<double>componentsI(static_cast<int>(v.size()));//re cos
+    QVector<double>componentsQ(static_cast<int>(v.size()));//im sin
+
+    int i = 0;
+    for(const auto& it : v )
+    {
+        componentsI[i] = static_cast<double>(it.im); //cos
+        componentsQ[i] = static_cast<double>(it.re); //sin
+        ++i;
+    }
+
+    //    qDebug()<<"ElipsPlot::setDDC1StreamE"<<"Cos:"<<componentsI[size/2]<<"Sin:"<<componentsQ[size/2];
+
+    mutex.lock();
+    //    curve->setData(componentsI,componentsQ);
+    curve->setData(componentsQ, componentsI);
+
+    mutex.unlock();
+
+    QApplication::postEvent(this, new QEvent(QEvent::User));
+}
+
 
 void ElipsPlot::update(int index, const float* sumDivData, quint32 dataSize)
 {

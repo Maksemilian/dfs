@@ -20,6 +20,10 @@ class RadioChannel
     {
         _blockEqualizer = be;
     }
+    const ShPtrPacketBuffer& outBuffer()
+    {
+        return _outBuffer;
+    }
   private:
     ShPtrPacketBuffer _inBuffer;
     ShPtrPacketBuffer _outBuffer;

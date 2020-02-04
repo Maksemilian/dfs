@@ -15,11 +15,11 @@ struct Sync2D::Impl
     Impl(const ShPtrPacketBuffer& inBuffer1,
          const ShPtrPacketBuffer& inBuffer2,
          const SyncData& data):
-        _channel1(std::make_unique<RadioChannel>(inBuffer1, _data)),
-        _channel2(std::make_unique<RadioChannel>(inBuffer2, _data)),
+        _channel1(std::make_shared<RadioChannel>(inBuffer1, _data)),
+        _channel2(std::make_shared<RadioChannel>(inBuffer2, _data)),
         _data(data)    {    }
-    std::unique_ptr<RadioChannel>_channel1;
-    std::unique_ptr<RadioChannel>_channel2;
+    std::shared_ptr<RadioChannel>_channel1;
+    std::shared_ptr<RadioChannel>_channel2;
 
     SyncData _data;
     std::atomic_bool quit;
@@ -34,6 +34,16 @@ Sync2D::~Sync2D()
 {
     qDebug() << "SYNC_PROCESS_DESTR";
 };
+
+std::shared_ptr<RadioChannel> Sync2D::channel1()
+{
+    return d->_channel1;
+}
+
+std::shared_ptr<RadioChannel> Sync2D::channel2()
+{
+    return d->_channel2;
+}
 
 void Sync2D::start()
 {
