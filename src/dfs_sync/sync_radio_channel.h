@@ -11,7 +11,7 @@ class RadioChannel
     bool read();
     void apply();
 
-    inline const proto::receiver::Packet& lastPacket()
+    inline  proto::receiver::Packet& lastPacket()
     {
         return _lastPacket;
     }

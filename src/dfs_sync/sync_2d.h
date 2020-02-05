@@ -29,8 +29,6 @@ class Sync2D : public QObject
   signals:
     void finished();
   private:
-    bool calcShift();
-  private:
     struct Impl;
     std::unique_ptr<Impl>d;
 };

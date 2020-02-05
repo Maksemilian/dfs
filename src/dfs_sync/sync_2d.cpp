@@ -48,11 +48,9 @@ std::shared_ptr<RadioChannel> Sync2D::channel2()
 void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
-
-    if(calcShift())
+    CalcDeltaPPS c(d->_channel1, d->_channel2, d->_data);
+    if(c.calcShift())
     {
-        SumSubMethod sumSubMethod(d->_data.sampleRate, d->_data.blockSize);
-
         bool isRead1 = false;
         bool isRead2 = false;
 
@@ -74,11 +72,6 @@ void Sync2D::start()
                 d->_channel1->apply();
                 d->_channel2->apply();
 
-                //******* SUM-SUB METHOD **************
-                sumSubMethod.apply(d->_channel1->lastPacket(),
-                                   d->_channel2->lastPacket(),
-                                   d->_data.blockSize);
-
                 isRead1 = false;
                 isRead2 = false;
             }
@@ -93,6 +86,13 @@ void Sync2D::start()
     emit finished();
 }
 
+void Sync2D::stop()
+{
+    d->quit = true;
+}
+
+//**************** PREVIOUS VARIANT **********************
+/*
 bool Sync2D::calcShift()
 {
     VectorIpp32fc outShiftBuffer(d->_data.blockSize);
@@ -128,7 +128,7 @@ bool Sync2D::calcShift()
         }
         else // 2 НОМЕРА СЕКУНД РАЗНЫЕ
         {
-            deltaPPS = c.deltaPPS();
+            deltaPPS = c.calcDeltaPPS();
         }
 
         cout << c << endl;
@@ -144,13 +144,7 @@ bool Sync2D::calcShift()
 //}
     return false;
 }
-
-void Sync2D::stop()
-{
-    d->quit = true;
-}
-
-//**************** PREVIOUS VARIANT **********************
+*/
 /*
  bool Sync2D::readPacketFromBuffer(const ShPtrPacketBuffer& buffer,
                                   proto::receiver::Packet& packet,

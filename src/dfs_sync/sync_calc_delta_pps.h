@@ -2,17 +2,19 @@
 #define SYNC_CALC_DALTA_PPS_H
 
 #include "sync_global.h"
+#include "sync_radio_channel.h"
 
 #include <iostream>
 #include <qglobal.h>
+
 using namespace  std;
-
-
+using namespace proto::receiver;
+using ShPtrRadioChannel = std::shared_ptr<RadioChannel>;
 /*!
  * \brief SyncProcess::calcShiftInChannelTEST
- * \param buffer1 - буфер опорного канала
- * \param buffer2 - буфер канала синхронизации
- * \param sampleRate
+ * \param channel1 - опорный канала
+ * \param channel2 -  синхронизуемый канал
+ * \param data - SyncData
  * \return
  */
 /*!
@@ -21,60 +23,89 @@ using namespace  std;
 class CalcDeltaPPS
 {
   public:
-    CalcDeltaPPS(const proto::receiver::Packet& packet1,
-                 const proto::receiver::Packet& packet2,
-                 unsigned int sampleRate,
-                 unsigned int blockSize = 8192):
-        _pct1(packet1),
-        _pct2(packet2),
-        _sampleRate(sampleRate),
-        _blockSize(blockSize)
-    {
-        Q_ASSERT_X(_pct1.sample_rate() == _sampleRate &&
-                   _pct2.sample_rate() == _sampleRate &&
-                   _pct1.block_size() == _blockSize &&
-                   _pct2.block_size() == _blockSize,
-                   "CalcDeltaPPS::Constructor",
-                   "bad input data");
+    CalcDeltaPPS(const ShPtrRadioChannel& channel1,
+                 const ShPtrRadioChannel& channel2,
+                 const SyncData& data)
+        : _channel1(channel1), _channel2(channel2), _data(data)    {   }
 
+    bool calcShift()
+    {
+        VectorIpp32fc outShiftBuffer(_data.blockSize);
+
+        double deltaPPS = -1;
+        // while(true){
+        //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
+        // 1 канал стартовал раньше
+
+        bool isPacket1Read = _channel1->read();
+
+        bool isPacket2Read = _channel2->read();
+
+        if(isPacket1Read && isPacket2Read)
+        {
+            Packet& pct1 = _channel1->lastPacket();
+            Packet& pct2 = _channel2->lastPacket();
+            if(pct1.time_of_week() !=
+                    pct2.time_of_week())
+            {
+                cout << "TOW NOT EQU:" <<
+                     pct1.time_of_week() << " " << pct2.time_of_week() << endl;
+
+                isPacket1Read = false;
+                isPacket2Read = false;
+                //continue;//WARNING
+            }
+
+            if(pct1.time_of_week() == pct2.time_of_week())// 1 НОМЕРА СЕКУНД ОДИНАКОВЫЕ
+            {
+                deltaPPS = ddcAfterPPS(pct1) - ddcAfterPPS(pct2);
+            }
+            else // 2 НОМЕРА СЕКУНД РАЗНЫЕ
+            {
+                deltaPPS = calcDeltaPPS(pct1, pct2);
+            }
+
+            cout << (*this) << endl;
+            outShiftBuffer = initShiftBuffer(pct2, static_cast<quint32>(deltaPPS));
+
+            _channel2->setBlockEqulizer(new BlockEqualizer(outShiftBuffer,
+                                        _data,
+                                        static_cast<quint32>(deltaPPS)));
+            cout << "SHIFT_VALUE:" << deltaPPS << endl;
+            return true;
+        }
+        //}
+        return false;
+    }
+  private:
+    double calcDeltaPPS(const Packet _pct1, const Packet _pct2) const
+    {
+        return (_pct1.time_of_week() - _pct2.time_of_week()) * _data.sampleRate
+               + ddcAfterPPS(_pct1) - ddcAfterPPS(_pct2);
+    }
+    double ddcAfterPPS(const Packet& pct) const
+    {
+        return (pct.block_number() * _data.blockSize)
+               - pct.ddc_sample_counter();
     }
 
-    double deltaPPS() const
+    double deltaStart(const Packet _pct1, const Packet _pct2) const
     {
-        return (_pct1.time_of_week() - _pct2.time_of_week()) * _sampleRate
-               + ddcAfterPPS1() - ddcAfterPPS2();
-    }
-
-    double deltaStart() const
-    {
-        return deltaPPS() -
+        return calcDeltaPPS(_pct1, _pct2) -
                (_pct1.block_number() - _pct2.block_number()) *
-               _blockSize;
-    }
-    //double
-    double ddcAfterPPS1() const
-    {
-        return (_pct1.block_number() * _blockSize)
-               - _pct1.ddc_sample_counter();
+               _data.blockSize;
     }
 
-    double ddcAfterPPS2() const
-    {
-        return (_pct2.block_number() * _blockSize)
-               - _pct2.ddc_sample_counter();
-    }
-
-    VectorIpp32fc initShiftBuffer()
+    VectorIpp32fc initShiftBuffer(Packet& _pct2, quint32 shift)
     {
         const float* signalData = _pct2.mutable_sample()->data();
-        quint32 shift = static_cast<quint32>(deltaPPS());
-        VectorIpp32fc _shiftBuffer(_blockSize);
-        if(shift < _blockSize)
+        VectorIpp32fc _shiftBuffer(_data.blockSize);
+        if(shift < _data.blockSize)
         {
             for(quint32 i = 0; i < shift; ++i)
             {
-                _shiftBuffer[i].re = signalData[_blockSize - (shift) + i * 2];
-                _shiftBuffer[i].im = signalData[(_blockSize - (shift) + i * 2) + 1];
+                _shiftBuffer[i].re = signalData[_data.blockSize - (shift) + i * 2];
+                _shiftBuffer[i].im = signalData[(_data.blockSize - (shift) + i * 2) + 1];
             }
         }
         return _shiftBuffer;
@@ -82,18 +113,16 @@ class CalcDeltaPPS
 
     friend ostream& operator<<(ostream& out, const CalcDeltaPPS& c);
   private:
-    proto::receiver::Packet _pct1;
-    proto::receiver::Packet _pct2;
-    unsigned int _sampleRate = 0;
-    unsigned int _blockSize = 0;
-
+    ShPtrRadioChannel _channel1;
+    ShPtrRadioChannel _channel2;
+    SyncData _data;
 };
 
 ostream& operator<<(ostream& out, const CalcDeltaPPS& c)
 {
-    const proto::receiver::Packet& pct1 = c._pct1;
-    const proto::receiver::Packet& pct2 = c._pct2;
-    out << "BS:" << c._blockSize << " SR:" << c._sampleRate << endl;
+    proto::receiver::Packet& pct1 = c._channel1->lastPacket();
+    proto::receiver::Packet& pct2 = c._channel2->lastPacket();
+    out << "BS:" << c._data.blockSize << " SR:" << c._data.sampleRate << endl;
     out << "pct_1:" << pct1.block_number()
         << " TOW:" <<  pct1.time_of_week()
         << " DDC_C:" << pct1.ddc_sample_counter()
