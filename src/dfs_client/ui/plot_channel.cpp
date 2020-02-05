@@ -1,5 +1,5 @@
 #include "plot_channel.h"
-
+#include "radio_channel.h"
 const int ChannelPlot::GRAPH_COLORS_COUNT = 4;
 
 const QColor ChannelPlot::graphColors[ChannelPlot::GRAPH_COLORS_COUNT] =
@@ -10,7 +10,7 @@ const QColor ChannelPlot::graphColors[ChannelPlot::GRAPH_COLORS_COUNT] =
     QColor(0, 255, 255)
 };
 
-ChannelData::ChannelData(QCustomPlot* plot, QCPLayer* layer)
+ChannelDataWidget::ChannelDataWidget(QCustomPlot* plot, QCPLayer* layer)
     : QCPLayoutGrid()
 {
     for(int i = 0, p = 0; i < ET_SIZE; i++)
@@ -49,7 +49,7 @@ ChannelData::ChannelData(QCustomPlot* plot, QCPLayer* layer)
 void ChannelPlot::apply(const proto::receiver::Packet& pct1,
                         const proto::receiver::Packet& pct2)
 {
-    SyncData data = {0, 0, 8192};
+    ChannelData data = {0, 0, 8192};
     int INDEX = 0;
     quint32 COUNT_SIGNAL_COMPONENT = 2;
     std::unique_ptr<float[]>dataPairSingal(new float[data.blockSize*
@@ -76,13 +76,13 @@ void ChannelPlot::apply(const proto::receiver::Packet& pct1,
     updateSignalComponent(INDEX, dataPairSingal.get(), data.blockSize);
 }
 
-void ChannelData::setName(const QString& name)
+void ChannelDataWidget::setName(const QString& name)
 {
     textValuetElevents[ET_NAME]->setText(name);
 }
 
-void ChannelData::setData(quint32 blockNumber, double ddcSampleCounter,
-                          quint64 adcPeriodCounter)
+void ChannelDataWidget::setData(quint32 blockNumber, double ddcSampleCounter,
+                                quint64 adcPeriodCounter)
 {
     textValuetElevents[ET_BLOCK_NUMBER]->setText(QString::number(blockNumber));
     textValuetElevents[ET_DDC_SAMPLE_COUNTER]->setText(QString::number(ddcSampleCounter));
@@ -100,7 +100,7 @@ ChannelPlot::ChannelPlot(int channelCount, quint32 blockSize, QWidget* parent)
         graph->setName("I_" + QString::number(i + 1));
         graph->setScatterStyle(QCPScatterStyle::ssCross);
         graph->setPen(graphColors[i]);
-        ChannelData* channelData = new ChannelData(this, legend->layer());
+        ChannelDataWidget* channelData = new ChannelDataWidget(this, legend->layer());
         legend->addElement(i, 1, channelData);
         channelDataList << channelData;
     }

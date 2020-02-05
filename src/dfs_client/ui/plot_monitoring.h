@@ -20,7 +20,8 @@ class PlotMonitoring : public QWidget
     PlotMonitoring(QWidget* parent = nullptr);
     IDeviceSettings* ds = nullptr;
   public:
-    void onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers);
+    void onDeviceSetListReady(
+        const std::vector<ShPtrRadioChannel>& channels);
     void onDeviceSetListNotReady();
   private:
     ChannelPlot* channelPlot; //central widget

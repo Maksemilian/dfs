@@ -1,4 +1,4 @@
-#include "sync_block_equalizer.h"
+#include "sync_channel_equalizer.h"
 
 #include "ipp.h"
 #include "ippvm.h"
@@ -12,7 +12,7 @@ using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 struct ChannelEqualizer::Impl
 {
     Impl(const std::vector<Ipp32fc>& shiftBuffer,
-         const  SyncData data,
+         const  ChannelData data,
          quint32 shift):
         dstFftFwd(VectorIpp32fc(data.blockSize)),
         dstMagn(VectorIpp32f(data.blockSize)),
@@ -25,7 +25,7 @@ struct ChannelEqualizer::Impl
     {    }
     Impl(const ShPtrRadioChannel& channel,
          const std::vector<Ipp32fc>& shiftBuffer,
-         const  SyncData data,
+         const  ChannelData data,
          quint32 shift):
         Impl(shiftBuffer, data, shift)
         // _channel(channel)
@@ -49,7 +49,7 @@ struct ChannelEqualizer::Impl
     VectorIpp32fc dstFinalRez;
     ShPtrRadioChannel _channel;
     VectorIpp32fc shiftBufferT;
-    SyncData data;
+    ChannelData data;
     quint32 shift;
 };
 /*
@@ -65,7 +65,7 @@ BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSi
 //    d(std::make_unique<Impl>(channel, shiftBuffer, data, shift)) {}
 
 ChannelEqualizer::ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
-                                   const SyncData& data, quint32 shift):
+                                   const ChannelData& data, quint32 shift):
     d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
 
 ChannelEqualizer::~ChannelEqualizer() = default;

@@ -1,14 +1,11 @@
 #ifndef RECEIVER_STATION_CLIENT_H
 #define RECEIVER_STATION_CLIENT_H
 
-#include "receiver.pb.h"
-#include "ring_buffer.h"
+#include "radio_channel.h"
 
 #include "client.h"
 
 #include <QObject>
-
-using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class QHostAddress;
 
@@ -27,7 +24,7 @@ class DeviceClient: public Client
     QString getCurrentDeviceSetName()const;
 
     QStringList receiverNameList()const;
-    ShPtrPacketBuffer getDDC1Buffer()const;
+    ShPtrRadioChannel getDDC1Channel()const;
   signals:
     void commandSuccessed();
     void commandFailed(const QString& errorString);

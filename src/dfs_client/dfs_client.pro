@@ -40,6 +40,7 @@ INCLUDEPATH += $${LIBS_PATH}/google/include
 LIBS += -L$${LIBS_PATH}/dfs_net/lib -ldfs_net$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/dfs_sync/lib  -ldfs_sync$${LIB_SUFFIX}
+LIBS += -L$${LIBS_PATH}/dfs_base/lib  -ldfs_base$${LIB_SUFFIX}
 
 LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 LIBS += -L$${LIBS_PATH}/plot/lib -lqcustomplot$${LIB_SUFFIX}2

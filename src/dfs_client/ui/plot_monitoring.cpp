@@ -26,30 +26,35 @@ PlotMonitoring::PlotMonitoring(QWidget* paret)
     //    sync->setSumDivUpdater(elipsPlot);
     //    sync->setSyncSignalUpdater(channelPlot);
 }
-void PlotMonitoring::onDeviceSetListReady(const std::vector<ShPtrPacketBuffer>& buffers)
+void PlotMonitoring::onDeviceSetListReady(
+    const std::vector<ShPtrRadioChannel>& channels)
 //void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
 {
+
+    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
+               "sync available only for 2 channel");
     quit = false;
     qDebug() << "START SYNC" << ds->getDDC1Frequency()
              << ds->getSampleRateForBandwith()
              << ds->getSamplesPerBuffer();
-    SyncData data = {ds->getDDC1Frequency(),
-                     ds->getSampleRateForBandwith(),
-                     ds->getSamplesPerBuffer()
-                    };
+    ChannelData data = {ds->getDDC1Frequency(),
+                        ds->getSampleRateForBandwith(),
+                        ds->getSamplesPerBuffer()
+                       };
+    channels.front()->setChannelData(data);
+    channels.back()->setChannelData(data);
 
-    sync->start(buffers.front(), buffers.back(), data);
+    sync->start(channels.front(), channels.back(), data);
     elipsPlot->setSyncData(data);
 
-    QtConcurrent::run([this]()
+    QtConcurrent::run([this, channels]()
     {
         qDebug() << "PLOT MONITORING RUN";
         bool isRead1 = false;
         bool isRead2 = false;
 
-        std::shared_ptr<Sync2D>sync2d = sync->getSync2D();
-        std::shared_ptr<RadioChannel>channel1 = sync2d->channel1();
-        std::shared_ptr<RadioChannel>channel2 = sync2d->channel1();
+        std::shared_ptr<RadioChannel>channel1 = channels.front();
+        std::shared_ptr<RadioChannel>channel2 = channels.back();
 
         proto::receiver::Packet pct1;
         proto::receiver::Packet pct2;

@@ -121,7 +121,7 @@ void ElipsPlot::apply(const proto::receiver::Packet& pctChannel1,
     update(0, sumSubMethod->applyT(pctChannel1, pctChannel2, data.blockSize));
 }
 
-void ElipsPlot::setSyncData(const SyncData& data)
+void ElipsPlot::setSyncData(const ChannelData& data)
 {
     this->data = data;
     sumSubMethod.reset(new SumSubMethod(data.sampleRate, data.blockSize));

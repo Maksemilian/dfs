@@ -41,6 +41,7 @@ INCLUDEPATH += $${LIBS_PATH}/ipp/include
 INCLUDEPATH += $${LIBS_PATH}/google/include
 
 LIBS += -L$${LIBS_PATH}/dfs_proto/lib  -ldfs_proto$${LIB_SUFFIX}
+#LIBS += -L$${LIBS_PATH}/dfs_base/lib  -ldfs_base$${LIB_SUFFIX}
 LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 #LIBS += -L$${LIBS_PATH}/google/lib -lprotobuf$${LIB_SUFFIX}
 
@@ -48,7 +49,7 @@ SOURCES += \
     sync_controller.cpp \
     sync_2d.cpp \
     sync_channel_equalizer.cpp \
-    sync_channel.cpp
+#    sync_channel.cpp
 
 HEADERS += \
     sync_controller.h \
@@ -57,5 +58,5 @@ HEADERS += \
     sync_global.h \
     sync_calc_delta_pps.h \
     sync_channel_equalizer.h \
-    sync_channel.h
+#    sync_channel.h
 

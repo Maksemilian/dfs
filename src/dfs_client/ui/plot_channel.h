@@ -3,10 +3,11 @@
 
 #include "sync_global.h"
 #include "qcustomplot.h"
+#include "receiver.pb.h"
 
 #include <QColor>
 
-class ChannelData: public QCPLayoutGrid
+class ChannelDataWidget: public QCPLayoutGrid
 {
     enum ElementType
     {
@@ -17,7 +18,7 @@ class ChannelData: public QCPLayoutGrid
         ET_SIZE = 4
     };
   public:
-    ChannelData(QCustomPlot* plot, QCPLayer* layer);
+    ChannelDataWidget(QCustomPlot* plot, QCPLayer* layer);
     void apply(const proto::receiver::Packet& pct1,
                const proto::receiver::Packet& pct2);
     void setName(const QString& name);
@@ -75,7 +76,7 @@ class ChannelPlot : public QCustomPlot
   private:
     void customEvent(QEvent* event)override;
   private:
-    QList<ChannelData*>channelDataList;
+    QList<ChannelDataWidget*>channelDataList;
     QVector<double>key;
     ComponentType componentType;
     QMutex mutex;

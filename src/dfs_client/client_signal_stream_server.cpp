@@ -8,14 +8,16 @@
 
 SignalStreamServer::SignalStreamServer(quint8 bufferSize)
 {
+    Q_UNUSED(bufferSize);
     qDebug() << "Stream Server Init";
     connect(this, &SignalStreamServer::newChannelReady,
             this, &SignalStreamServer::onNewConnection);
 
-    buffers[StreamType::ST_DDC1] = std::make_shared<RingBuffer<proto::receiver::Packet>>(bufferSize);
+    buffers[StreamType::ST_DDC1] =
+        std::make_shared<RadioChannel>();
 }
 
-ShPtrPacketBuffer SignalStreamServer::getBuffer(StreamType type)
+ShPtrRadioChannel SignalStreamServer::getChannel(StreamType type)
 {
     if(type == StreamType::ST_DDC1)
     {
@@ -23,6 +25,7 @@ ShPtrPacketBuffer SignalStreamServer::getBuffer(StreamType type)
     }
     return nullptr;
 }
+
 void SignalStreamServer::incomingConnection(qintptr handle)
 {
     qDebug() << "=============== Stream_Serever_incomingConnection handle" << handle;
@@ -89,14 +92,19 @@ void SignalStreamServer::createSession(net::ChannelHost* channelHost)
         qDebug() << "STREAM SESSION";
         createThread(channelHost);
     }
-    else qDebug() << "ERROR SESSION TYPE";
+    else
+    {
+        qDebug() << "ERROR SESSION TYPE";
+    }
 }
 
 void SignalStreamServer::createThread(net::ChannelHost* channelHost)
 {
     QThread* thread = new QThread;
 
-    SignalStreamReader*   streamDDC1 = new SignalStreamReader(channelHost, buffers[StreamType::ST_DDC1]);
+    SignalStreamReader*   streamDDC1 =
+        new SignalStreamReader(channelHost,
+                               buffers[StreamType::ST_DDC1]->inBuffer());
     streamDDC1->moveToThread(thread);
     channelHost->moveToThread(thread);
 

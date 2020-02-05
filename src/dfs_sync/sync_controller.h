@@ -15,12 +15,16 @@ class SyncController
     SyncController();
     ~SyncController();
 
-    void start(const ShPtrPacketBuffer& mainBuffer,
-               const ShPtrPacketBuffer& buffer,
-               const SyncData& data);
+    void start(const ShPtrRadioChannel& channel1,
+               const ShPtrRadioChannel& channel2,
+               const ChannelData& data);
+
+//    void start(const ShPtrPacketBuffer& mainBuffer,
+//               const ShPtrPacketBuffer& buffer,
+//               const ChannelData& data);
 
     void stop();
-    std::shared_ptr<Sync2D> getSync2D();
+//    std::shared_ptr<Sync2D> getSync2D();
   private:
     struct Impl;
     std::unique_ptr<Impl> d;

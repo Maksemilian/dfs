@@ -2,7 +2,7 @@
 #define SYNC_BLOCK_ALINEMENT_H
 
 #include "sync_global.h"
-#include "sync_radio_channel.h"
+#include "radio_channel.h"
 
 #include <QObject>
 /*!
@@ -20,7 +20,7 @@ class ChannelEqualizer
 //                   quint32 shift);
 
     ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
-                     const SyncData& data, quint32 shift);
+                     const ChannelData& data, quint32 shift);
     ~ChannelEqualizer() ;
     //TODO double deltaStart=1
     void shiftChannel(ShPtrRadioChannel& channel);

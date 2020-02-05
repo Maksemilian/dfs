@@ -35,6 +35,20 @@ DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     d->streamServer.listen(QHostAddress(connectData.address),
                            LISTENING_STREAMING_PORT + _CLIENT_COUNTER);
 }
+void DeviceClient::sendCommand(proto::receiver::Command& command)
+{
+    if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
+    {
+        command.set_stream_port(d->streamServer.serverPort());
+    }
+
+    d->commandQueue.enqueue(command.command_type());
+    proto::receiver::ClientToHost clientToHost;
+    //TODO ПОНЯТЬ КАК РАБОТАЕТ
+    clientToHost.mutable_command()->CopyFrom(command);
+    // d->channel->writeToConnection(serializeMessage(clientToHost));
+    sendMessage(clientToHost);
+}
 
 const proto::receiver::DeviceSetInfo& DeviceClient::getDeviceSetInfo() const
 {
@@ -53,9 +67,9 @@ QStringList DeviceClient::receiverNameList()const
     return receiverNameList;
 }
 
-ShPtrPacketBuffer DeviceClient::getDDC1Buffer() const
+ShPtrRadioChannel DeviceClient::getDDC1Channel() const
 {
-    return  d->streamServer.getBuffer(SignalStreamServer::StreamType::ST_DDC1);
+    return  d->streamServer.getChannel(SignalStreamServer::StreamType::ST_DDC1);
 }
 
 DeviceClient::~DeviceClient()
@@ -201,19 +215,6 @@ void DeviceClient::readAnswerPacket(const proto::receiver::Answer& answer)
     //    qDebug()<<"DEQ_E";
 }
 
-void DeviceClient::sendCommand(proto::receiver::Command& command)
-{
-    if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
-    {
-        command.set_stream_port(d->streamServer.serverPort());
-    }
-    d->commandQueue.enqueue(command.command_type());
-    proto::receiver::ClientToHost clientToHost;
-    //TODO ПОНЯТЬ КАК РАБОТАЕТ
-    clientToHost.mutable_command()->CopyFrom(command);
-    // d->channel->writeToConnection(serializeMessage(clientToHost));
-    sendMessage(clientToHost);
-}
 
 QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 {

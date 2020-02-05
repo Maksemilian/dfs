@@ -2,15 +2,14 @@
 #define SYNC_CALC_DALTA_PPS_H
 
 #include "sync_global.h"
-#include "sync_radio_channel.h"
-#include "sync_block_equalizer.h"
+#include "radio_channel.h"
+#include "sync_channel_equalizer.h"
 
 #include <iostream>
 #include <qglobal.h>
 
 using namespace  std;
 using namespace proto::receiver;
-using ShPtrRadioChannel = std::shared_ptr<RadioChannel>;
 /*!
  * \brief SyncProcess::calcShiftInChannelTEST
  * \param channel1 - опорный канала
@@ -35,7 +34,7 @@ class CalcDeltaPPS
   public:
     CalcDeltaPPS(const ShPtrRadioChannel& channel1,
                  const ShPtrRadioChannel& channel2,
-                 const SyncData& data)
+                 const ChannelData& data)
         : _channel1(channel1), _channel2(channel2), _data(data)    {   }
 
     std::unique_ptr<ChannelEqualizer> getBlockEqualizer()
@@ -132,7 +131,7 @@ class CalcDeltaPPS
   private:
     ShPtrRadioChannel _channel1;
     ShPtrRadioChannel _channel2;
-    SyncData _data;
+    ChannelData _data;
 };
 
 

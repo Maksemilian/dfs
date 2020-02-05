@@ -74,12 +74,12 @@ void ClientManager::onCommandSuccessed()
 
     if(successedCommand.command_type() == proto::receiver::START_DDC1)
     {
-        std::vector<ShPtrPacketBuffer> buffers;
+        std::vector<ShPtrRadioChannel> channels;
         for(auto& client : _clients)
         {
-            buffers.push_back(client->getDDC1Buffer());
+            channels.push_back(client->getDDC1Channel());
         }
-        emit ready(buffers);
+        emit ready(channels);
     }
     else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)
     {

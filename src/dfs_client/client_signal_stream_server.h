@@ -2,13 +2,10 @@
 #define STREAM_SERVER_H
 
 #include "channel_host.h"
-#include "ring_buffer.h"
-#include "receiver.pb.h"
+#include "radio_channel.h"
 
 #include <QTcpServer>
 #include <QList>
-
-using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
 class SignalStreamServer: public QTcpServer
 {
@@ -16,7 +13,7 @@ class SignalStreamServer: public QTcpServer
   public:
     enum class StreamType {ST_DDC1};
     SignalStreamServer(quint8 bufferSize = 16);
-    ShPtrPacketBuffer getBuffer(StreamType type);
+    ShPtrRadioChannel getChannel(StreamType type);
   signals:
     void newChannelReady();
   private:
@@ -28,7 +25,7 @@ class SignalStreamServer: public QTcpServer
   private:
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
-    std::map<StreamType, ShPtrPacketBuffer> buffers;
+    std::map<StreamType, ShPtrRadioChannel> buffers;
 };
 
 class SignalStreamReader: public QObject

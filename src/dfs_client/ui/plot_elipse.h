@@ -27,7 +27,7 @@ class ElipsPlot: public QCustomPlot
     static const QColor blueColor;
   public:
     ElipsPlot( QWidget* parent = nullptr);
-    void setSyncData(const SyncData& data);
+    void setSyncData(const ChannelData& data);
     void apply(const proto::receiver::Packet& pctChannel1,
                const proto::receiver::Packet& pctChannel2);
     void update(int index, const float* sumDivData, quint32 dataSize);
@@ -38,7 +38,7 @@ class ElipsPlot: public QCustomPlot
     QCPCurve* curve;
     QList<ElipseLine*>lines;
     QMutex mutex;
-    SyncData data;
+    ChannelData data;
     std::unique_ptr<SumSubMethod> sumSubMethod;
 };
 

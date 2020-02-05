@@ -2,10 +2,6 @@
 
 #include "sync_channel_equalizer.h"
 #include "sync_calc_delta_pps.h"
-
-#include "sync_test.h"
-#include "sync_channel.h"
-
 #include <QDebug>
 
 //******************************* FindChannelForShift ******************************************
@@ -14,36 +10,33 @@ struct Sync2D::Impl
 {
     Impl(const ShPtrPacketBuffer& inBuffer1,
          const ShPtrPacketBuffer& inBuffer2,
-         const SyncData& data):
+         const ChannelData& data):
         _channel1(std::make_shared<RadioChannel>(inBuffer1, _data)),
         _channel2(std::make_shared<RadioChannel>(inBuffer2, _data)),
         _data(data)    {    }
+    Impl(const ShPtrRadioChannel& channel1,
+         const ShPtrRadioChannel& channel2,
+         const ChannelData& data):
+        _channel1(channel1),
+        _channel2(channel2),
+        _data(data)    {    }
+
     std::shared_ptr<RadioChannel>_channel1;
     std::shared_ptr<RadioChannel>_channel2;
 
-    SyncData _data;
+    ChannelData _data;
     std::atomic_bool quit;
 };
 
-Sync2D::Sync2D(const ShPtrPacketBuffer& inBuffer1,
-               const ShPtrPacketBuffer& inBuffer2,
-               const SyncData& data):
-    d(std::make_unique<Impl>(inBuffer1, inBuffer2, data)) {}
+Sync2D::Sync2D(const ShPtrRadioChannel& channel1,
+               const ShPtrRadioChannel& channel2,
+               const ChannelData& data):
+    d(std::make_unique<Impl>(channel1, channel2, data)) {}
 
 Sync2D::~Sync2D()
 {
     qDebug() << "SYNC_PROCESS_DESTR";
 };
-
-std::shared_ptr<RadioChannel> Sync2D::channel1()
-{
-    return d->_channel1;
-}
-
-std::shared_ptr<RadioChannel> Sync2D::channel2()
-{
-    return d->_channel2;
-}
 
 void Sync2D::start()
 {
@@ -95,6 +88,17 @@ void Sync2D::stop()
 }
 
 //**************** PREVIOUS VARIANT **********************
+/*
+std::shared_ptr<RadioChannel> Sync2D::channel1()
+{
+    return d->_channel1;
+}
+
+std::shared_ptr<RadioChannel> Sync2D::channel2()
+{
+    return d->_channel2;
+}
+*/
 /*
 bool Sync2D::calcShift()
 {

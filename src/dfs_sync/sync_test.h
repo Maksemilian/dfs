@@ -2,17 +2,19 @@
 #define SUMSUBMETHOD_H
 
 #include "sync_global.h"
-
+#include "radio_channel.h"
 #include <math.h>
 
 #include <QQueue>
 #include <QVector>
-
+#include <memory>
 #include "ipp.h"
 #include "ippvm.h"
 
 using namespace std;
+using RingIpp32fcBuffer = RingBuffer<std::vector<Ipp32fc>>;
 
+using ShPtrIpp32fcBuffer = std::shared_ptr<RingIpp32fcBuffer>;
 
 class SumSubMethod
 {
