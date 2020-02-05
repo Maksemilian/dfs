@@ -49,7 +49,8 @@ void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
     CalcDeltaPPS c(d->_channel1, d->_channel2, d->_data);
-    if(c.calcShift())
+    std::unique_ptr<BlockEqualizer>blockEqualizer = c.getBlockEqualizer();
+    if(blockEqualizer.get())
     {
         bool isRead1 = false;
         bool isRead2 = false;
@@ -57,20 +58,22 @@ void Sync2D::start()
         d->quit = false;
         while(!d->quit)
         {
-            if(d->_channel1->read())
+            if(d->_channel1->readIn())
             {
                 isRead1 = true;
             }
 
-            if(d->_channel2->read())
+            if(d->_channel2->readIn())
             {
                 isRead2 = true;
             }
 
             if(isRead1 && isRead2)
             {
-                d->_channel1->apply();
-                d->_channel2->apply();
+//                d->_channel1->apply();
+//                d->_channel2->apply();
+                d->_channel1->skip();
+                blockEqualizer->shiftChannel(d->_channel2);
 
                 isRead1 = false;
                 isRead2 = false;

@@ -6,19 +6,28 @@ RadioChannel::RadioChannel(const ShPtrPacketBuffer& buffer, const SyncData& data
 
 }
 
-bool RadioChannel::read()
+void RadioChannel::skip()
 {
-    if(_inBuffer->pop(_lastPacket))
+    if(!_queue.isEmpty())
     {
-        if(_lastPacket.sample_rate() == _data.sampleRate)
+        _outBuffer->push( _queue.dequeue());
+    }
+}
+
+bool RadioChannel::readIn()
+{
+    proto::receiver::Packet lastPacket;
+    if(_inBuffer->pop(lastPacket))
+    {
+        if(lastPacket.sample_rate() == _data.sampleRate)
         {
-            _queue.enqueue(_lastPacket);
+            _queue.enqueue(lastPacket);
             return true;
         }
     }
     return false;
 }
-
+/*
 void RadioChannel::apply()
 {
     if(!_queue.isEmpty())
@@ -32,3 +41,4 @@ void RadioChannel::apply()
         _outBuffer->push(_lastPacket);
     }
 }
+*/

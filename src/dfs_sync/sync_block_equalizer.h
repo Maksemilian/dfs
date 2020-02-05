@@ -2,8 +2,9 @@
 #define SYNC_BLOCK_ALINEMENT_H
 
 #include "sync_global.h"
-#include <QObject>
+#include "sync_radio_channel.h"
 
+#include <QObject>
 /*!
  * \brief The BlockAlinement class
  */
@@ -13,13 +14,19 @@ class BlockEqualizer
     //TODO blockSize лишний тк внутринние буфера должны быть
     //равными размеру shiftBuffer
     //BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize);
+//    BlockEqualizer(const ShPtrRadioChannel& channel,
+//                   const VectorIpp32fc& shiftBuffer,
+//                   const SyncData& data,
+//                   quint32 shift);
+
     BlockEqualizer(const VectorIpp32fc& shiftBuffer,
                    const SyncData& data, quint32 shift);
     ~BlockEqualizer();
     //TODO double deltaStart=1
-    void equate(Ipp32fc* signal, quint32 size, double deltaStart = 1)const;
+    void shiftChannel(ShPtrRadioChannel& channel);
     void equateT(const proto::receiver::Packet& pct1, double deltaStart = 1)const;
   private:
+    void equate(Ipp32fc* signal, quint32 size, double deltaStart = 1)const;
     void initFftBuffers(int FFTOrder);
     int  calcFftOrder(quint32 number);
 

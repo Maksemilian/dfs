@@ -2,24 +2,25 @@
 #define RADIO_CHANNEL_H
 
 #include "sync_global.h"
-#include "sync_block_equalizer.h"
 
 class RadioChannel
 {
   public:
     RadioChannel(const ShPtrPacketBuffer& _inBuffer, const SyncData& data);
-    bool read();
-    void apply();
+    bool readIn();
 
-    inline  proto::receiver::Packet& lastPacket()
+    void skip();
+
+    inline bool getLastPacket(proto::receiver::Packet& pct)
     {
-        return _lastPacket;
+        if(!_queue.isEmpty())
+        {
+            pct = _queue.dequeue();
+            return true;
+        }
+        return false;
     }
 
-    inline void setBlockEqulizer(BlockEqualizer* be)
-    {
-        _blockEqualizer = be;
-    }
     const ShPtrPacketBuffer& outBuffer()
     {
         return _outBuffer;
@@ -28,9 +29,7 @@ class RadioChannel
     ShPtrPacketBuffer _inBuffer;
     ShPtrPacketBuffer _outBuffer;
     PacketQueue _queue;
-    proto::receiver::Packet _lastPacket;
     SyncData _data;
-    BlockEqualizer* _blockEqualizer;
 };
-
+using ShPtrRadioChannel = std::shared_ptr<RadioChannel>;
 #endif // RADIO_CHANNEL_H

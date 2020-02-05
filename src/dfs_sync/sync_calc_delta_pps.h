@@ -20,6 +20,15 @@ using ShPtrRadioChannel = std::shared_ptr<RadioChannel>;
 /*!
  * \brief The CalcDeltaPPS class
  */
+ostream& operator<<(ostream& out, const Packet& pct)
+{
+    out << "pct_1:" << pct.block_number()
+        << " TOW:" <<  pct.time_of_week()
+        << " DDC_C:" << pct.ddc_sample_counter()
+        << " ACP_C:" << pct.adc_period_counter() << endl;
+    return out;
+}
+
 class CalcDeltaPPS
 {
   public:
@@ -28,23 +37,27 @@ class CalcDeltaPPS
                  const SyncData& data)
         : _channel1(channel1), _channel2(channel2), _data(data)    {   }
 
-    bool calcShift()
+    std::unique_ptr<BlockEqualizer> getBlockEqualizer()
     {
         VectorIpp32fc outShiftBuffer(_data.blockSize);
-
+        Packet pct1 ;
+        Packet pct2 ;
         double deltaPPS = -1;
         // while(true){
         //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
         // 1 канал стартовал раньше
 
-        bool isPacket1Read = _channel1->read();
+        bool isPacket1Read = _channel1->readIn();
 
-        bool isPacket2Read = _channel2->read();
+        bool isPacket2Read = _channel2->readIn();
 
         if(isPacket1Read && isPacket2Read)
         {
-            Packet& pct1 = _channel1->lastPacket();
-            Packet& pct2 = _channel2->lastPacket();
+            //Packet& pct1 = _channel1->lastPacket();
+            //Packet& pct2 = _channel2->lastPacket();
+            _channel1->getLastPacket(pct1);
+            _channel2->getLastPacket(pct2);
+
             if(pct1.time_of_week() !=
                     pct2.time_of_week())
             {
@@ -64,18 +77,21 @@ class CalcDeltaPPS
             {
                 deltaPPS = calcDeltaPPS(pct1, pct2);
             }
-
-            cout << (*this) << endl;
+            cout << "BS:" << _data.blockSize << " SR:" << _data.sampleRate << endl;
+            cout << pct1 << pct2 << endl;
             outShiftBuffer = initShiftBuffer(pct2, static_cast<quint32>(deltaPPS));
-
-            _channel2->setBlockEqulizer(new BlockEqualizer(outShiftBuffer,
-                                        _data,
-                                        static_cast<quint32>(deltaPPS)));
+//            _channel2->setBlockEqulizer(new BlockEqualizer(outShiftBuffer,
+//                                        _data,
+//                                        static_cast<quint32>(deltaPPS)));
             cout << "SHIFT_VALUE:" << deltaPPS << endl;
-            return true;
+            //return true;
+            return std::make_unique<BlockEqualizer>(outShiftBuffer,
+                                                    _data,
+                                                    static_cast<quint32>(deltaPPS));
         }
         //}
-        return false;
+        // return false;
+        return nullptr;
     }
   private:
     double calcDeltaPPS(const Packet _pct1, const Packet _pct2) const
@@ -111,29 +127,12 @@ class CalcDeltaPPS
         return _shiftBuffer;
     }
 
-    friend ostream& operator<<(ostream& out, const CalcDeltaPPS& c);
+    //friend ostream& operator<<(ostream& out, const Packet& c);
   private:
     ShPtrRadioChannel _channel1;
     ShPtrRadioChannel _channel2;
     SyncData _data;
 };
 
-ostream& operator<<(ostream& out, const CalcDeltaPPS& c)
-{
-    proto::receiver::Packet& pct1 = c._channel1->lastPacket();
-    proto::receiver::Packet& pct2 = c._channel2->lastPacket();
-    out << "BS:" << c._data.blockSize << " SR:" << c._data.sampleRate << endl;
-    out << "pct_1:" << pct1.block_number()
-        << " TOW:" <<  pct1.time_of_week()
-        << " DDC_C:" << pct1.ddc_sample_counter()
-        << " ACP_C:" << pct1.adc_period_counter() << endl;
-
-    out << "pct_2:" << pct2.block_number()
-        << " TOW:" <<  pct2.time_of_week()
-        << " DDC_C:" << pct2.ddc_sample_counter()
-        << " ACP_C:" << pct2.adc_period_counter() ;
-
-    return out;
-}
 
 #endif // SYNC_CALC_DALTA_PPS_H

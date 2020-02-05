@@ -23,6 +23,15 @@ struct BlockEqualizer::Impl
         data(data),
         shift(shift)
     {    }
+    Impl(const ShPtrRadioChannel& channel,
+         const std::vector<Ipp32fc>& shiftBuffer,
+         const  SyncData data,
+         quint32 shift):
+        Impl(shiftBuffer, data, shift)
+        // _channel(channel)
+    {
+        _channel = channel;
+    }
 
     DeleterTypeIpp8u deleterUniquePtrForIpp8u = [](Ipp8u* v)
     {
@@ -38,7 +47,7 @@ struct BlockEqualizer::Impl
     VectorIpp32f dstPhase;
     VectorIpp32fc dstCart32;
     VectorIpp32fc dstFinalRez;
-
+    ShPtrRadioChannel _channel;
     VectorIpp32fc shiftBufferT;
     SyncData data;
     quint32 shift;
@@ -50,6 +59,11 @@ BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSi
     initFftBuffers(calcFftOrder(blockSize));
 }
 */
+//BlockEqualizer::BlockEqualizer(const ShPtrRadioChannel& channel,
+//                               const VectorIpp32fc& shiftBuffer,
+//                               const SyncData& data, quint32 shift):
+//    d(std::make_unique<Impl>(channel, shiftBuffer, data, shift)) {}
+
 BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer,
                                const SyncData& data, quint32 shift):
     d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
@@ -90,6 +104,19 @@ void BlockEqualizer::initFftBuffers(int FFTOrder)
     qDebug() << "BlockAlinement::init End";
 }
 
+void BlockEqualizer::shiftChannel(ShPtrRadioChannel& channel)
+{
+    proto::receiver::Packet pct;
+    if(channel->getLastPacket(pct))
+    {
+        equateT(pct);
+    }
+    else
+    {
+        qDebug() << "BlockEqualizer::applyShift failed";
+    }
+}
+
 void BlockEqualizer::equateT(const proto::receiver::Packet& pct, double deltaStart) const
 {
     Q_ASSERT_X(pct.block_size() == d->data.blockSize, " BlockEqualizer::equate", "out_of_range");
@@ -113,6 +140,7 @@ void BlockEqualizer::equateT(const proto::receiver::Packet& pct, double deltaSta
     qDebug() << "*******TETA:" << teta << d->data.ddcFrequency << d->data.sampleRate << deltaStart;
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
+
 
 void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
                             double deltaStart) const
