@@ -2,7 +2,7 @@
 #define SYNC_SHIFT_FINDER_H
 
 #include "sync_global.h"
-#include "sync_radio_channel.h"
+#include "sync_channel.h"
 
 #include <QQueue>
 #include <QObject>

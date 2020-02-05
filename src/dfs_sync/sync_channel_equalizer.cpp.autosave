@@ -1,4 +1,4 @@
-#include "sync_block_equalizer.h"
+#include "sync_channel_equalizer.h"
 
 #include "ipp.h"
 #include "ippvm.h"
@@ -9,7 +9,7 @@
 //NOTE - НАХОДИТЬСЯ В utility
 using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 
-struct BlockEqualizer::Impl
+struct ChannelEqualizer::Impl
 {
     Impl(const std::vector<Ipp32fc>& shiftBuffer,
          const  SyncData data,
@@ -64,14 +64,14 @@ BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSi
 //                               const SyncData& data, quint32 shift):
 //    d(std::make_unique<Impl>(channel, shiftBuffer, data, shift)) {}
 
-BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer,
-                               const SyncData& data, quint32 shift):
+ChannelEqualizer::ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
+                                   const SyncData& data, quint32 shift):
     d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
 
-BlockEqualizer::~BlockEqualizer() = default;
+ChannelEqualizer::~ChannelEqualizer() = default;
 
 
-void BlockEqualizer::initFftBuffers(int FFTOrder)
+void ChannelEqualizer::initFftBuffers(int FFTOrder)
 {
     qDebug() << "BlockAlinement::init FFTOrder" << FFTOrder;
     Q_ASSERT_X(FFTOrder > 0, "BlockAlinement::initFftBuffers", "fft order below 0");
@@ -104,7 +104,7 @@ void BlockEqualizer::initFftBuffers(int FFTOrder)
     qDebug() << "BlockAlinement::init End";
 }
 
-void BlockEqualizer::shiftChannel(ShPtrRadioChannel& channel)
+void ChannelEqualizer::shiftChannel(ShPtrRadioChannel& channel)
 {
     proto::receiver::Packet pct;
     if(channel->getLastPacket(pct))
@@ -117,7 +117,7 @@ void BlockEqualizer::shiftChannel(ShPtrRadioChannel& channel)
     }
 }
 
-void BlockEqualizer::equateT(const proto::receiver::Packet& pct, double deltaStart) const
+void ChannelEqualizer::equateT(const proto::receiver::Packet& pct, double deltaStart) const
 {
     Q_ASSERT_X(pct.block_size() == d->data.blockSize, " BlockEqualizer::equate", "out_of_range");
 
@@ -142,8 +142,8 @@ void BlockEqualizer::equateT(const proto::receiver::Packet& pct, double deltaSta
 }
 
 
-void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
-                            double deltaStart) const
+void ChannelEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
+                              double deltaStart) const
 {
     quint32 shiftW = static_cast<quint32>(d->shift);
     double shiftF = d->shift - shiftW;
@@ -161,7 +161,7 @@ void BlockEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
 
-void BlockEqualizer::shiftWhole(Ipp32fc* blockData, quint32 blockSize, quint32 shift) const
+void ChannelEqualizer::shiftWhole(Ipp32fc* blockData, quint32 blockSize, quint32 shift) const
 {
     Q_ASSERT_X(shift < blockSize, "SignalSync::shift64", "shift > blockSize");
 
@@ -184,7 +184,7 @@ void BlockEqualizer::shiftWhole(Ipp32fc* blockData, quint32 blockSize, quint32 s
     }
 }
 
-void BlockEqualizer::shiftFruction(Ipp32fc* blockData, quint32 dataSize, double phaseAngle) const
+void ChannelEqualizer::shiftFruction(Ipp32fc* blockData, quint32 dataSize, double phaseAngle) const
 {
     IppsFFTSpec_C_32fc* pSpec = reinterpret_cast<IppsFFTSpec_C_32fc*>(d->pMemSpec.get());
     //1---FFT FWD
@@ -203,7 +203,7 @@ void BlockEqualizer::shiftFruction(Ipp32fc* blockData, quint32 dataSize, double 
     ippsFFTInv_CToC_32fc(d->dstCart32.data(), blockData, pSpec, d->pMemBuffer.get());
 }
 
-void BlockEqualizer::shiftTest(Ipp32fc* blockData, quint32 blockSize, double teta) const
+void ChannelEqualizer::shiftTest(Ipp32fc* blockData, quint32 blockSize, double teta) const
 {
     Ipp32fc val;
     //    val.re=static_cast<float>(cos(teta));
@@ -216,7 +216,7 @@ void BlockEqualizer::shiftTest(Ipp32fc* blockData, quint32 blockSize, double tet
     //    blockData=d->dstFinalRez.get();
 }
 
-int  BlockEqualizer::calcFftOrder(quint32 number)
+int  ChannelEqualizer::calcFftOrder(quint32 number)
 {
     int count = 2; //2 в 0 , 2 в 1
     quint32 bufValue = 2;
@@ -246,7 +246,7 @@ int  BlockEqualizer::calcFftOrder(quint32 number)
  * \param phaseValues массив фаз сигнала
  * \param size
  */
-void BlockEqualizer::swapHalfPhaseValues(Ipp32f* phaseValues, quint32 size)const
+void ChannelEqualizer::swapHalfPhaseValues(Ipp32f* phaseValues, quint32 size)const
 {
     for(quint32 i = 0; i < size / 2; i++)
     {
@@ -263,7 +263,7 @@ void BlockEqualizer::swapHalfPhaseValues(Ipp32f* phaseValues, quint32 size)const
  * \param size
  * \param phaseAngle
  */
-void BlockEqualizer::incrementPhaseValuesOnAngle(Ipp32f* phaseData, quint32 size, float phaseAngle)const
+void ChannelEqualizer::incrementPhaseValuesOnAngle(Ipp32f* phaseData, quint32 size, float phaseAngle)const
 {
     for(quint32 i = 0; i < size; i++)
     {

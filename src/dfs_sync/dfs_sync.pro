@@ -46,16 +46,16 @@ LIBS += -L$${LIBS_PATH}/ipp/lib -lippi -lipps -lippcore -lippvm
 
 SOURCES += \
     sync_controller.cpp \
-    sync_block_equalizer.cpp \
     sync_2d.cpp \
-    sync_radio_channel.cpp
+    sync_channel_equalizer.cpp \
+    sync_channel.cpp
 
 HEADERS += \
     sync_controller.h \
-    sync_block_equalizer.h \
     sync_2d.h \
     sync_test.h \
     sync_global.h \
     sync_calc_delta_pps.h \
-    sync_radio_channel.h
+    sync_channel_equalizer.h \
+    sync_channel.h
 

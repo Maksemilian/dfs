@@ -1,4 +1,4 @@
-#include "sync_radio_channel.h"
+#include "sync_channel.h"
 
 RadioChannel::RadioChannel(const ShPtrPacketBuffer& buffer, const SyncData& data)
     : _inBuffer(buffer), _data(data)

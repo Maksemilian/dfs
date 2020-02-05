@@ -1,10 +1,10 @@
 #include "sync_2d.h"
 
-#include "sync_block_equalizer.h"
+#include "sync_channel_equalizer.h"
 #include "sync_calc_delta_pps.h"
 
 #include "sync_test.h"
-#include "sync_radio_channel.h"
+#include "sync_channel.h"
 
 #include <QDebug>
 
@@ -49,7 +49,7 @@ void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
     CalcDeltaPPS c(d->_channel1, d->_channel2, d->_data);
-    std::unique_ptr<BlockEqualizer>blockEqualizer = c.getBlockEqualizer();
+    std::unique_ptr<ChannelEqualizer>blockEqualizer = c.getBlockEqualizer();
     if(blockEqualizer.get())
     {
         bool isRead1 = false;

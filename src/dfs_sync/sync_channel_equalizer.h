@@ -8,7 +8,7 @@
 /*!
  * \brief The BlockAlinement class
  */
-class BlockEqualizer
+class ChannelEqualizer
 {
   public:
     //TODO blockSize лишний тк внутринние буфера должны быть
@@ -19,9 +19,9 @@ class BlockEqualizer
 //                   const SyncData& data,
 //                   quint32 shift);
 
-    BlockEqualizer(const VectorIpp32fc& shiftBuffer,
-                   const SyncData& data, quint32 shift);
-    ~BlockEqualizer();
+    ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
+                     const SyncData& data, quint32 shift);
+    ~ChannelEqualizer() ;
     //TODO double deltaStart=1
     void shiftChannel(ShPtrRadioChannel& channel);
     void equateT(const proto::receiver::Packet& pct1, double deltaStart = 1)const;

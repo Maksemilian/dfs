@@ -3,7 +3,7 @@
 
 #include "sync_global.h"
 #include "sync_radio_channel.h"
-#include "sync_block_equalizer.h"
+#include "sync_channel_equalizer.h"
 
 #include <iostream>
 #include <qglobal.h>
