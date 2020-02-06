@@ -8,12 +8,6 @@
 
 struct Sync2D::Impl
 {
-    Impl(const ShPtrPacketBuffer& inBuffer1,
-         const ShPtrPacketBuffer& inBuffer2,
-         const ChannelData& data):
-        _channel1(std::make_shared<RadioChannel>(inBuffer1, _data)),
-        _channel2(std::make_shared<RadioChannel>(inBuffer2, _data)),
-        _data(data)    {    }
     Impl(const ShPtrRadioChannel& channel1,
          const ShPtrRadioChannel& channel2,
          const ChannelData& data):
@@ -21,8 +15,8 @@ struct Sync2D::Impl
         _channel2(channel2),
         _data(data)    {    }
 
-    std::shared_ptr<RadioChannel>_channel1;
-    std::shared_ptr<RadioChannel>_channel2;
+    ShPtrRadioChannel _channel1;
+    ShPtrRadioChannel _channel2;
 
     ChannelData _data;
     std::atomic_bool quit;
@@ -41,42 +35,65 @@ Sync2D::~Sync2D()
 void Sync2D::start()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
+    d->quit = false;
+    //FIND DELTA PPS
+//    Q_ASSERT_X(d->_channel1 != d->_channel2,
+//               "Sync2D::start", "channels must not equal");
     CalcDeltaPPS c(d->_channel1, d->_channel2, d->_data);
-    std::unique_ptr<ChannelEqualizer>blockEqualizer = c.getBlockEqualizer();
-    if(blockEqualizer.get())
+    double deltaPPS = c.findDeltaPPS();
+
+    std::unique_ptr<ChannelEqualizer>blockEqualizer =
+        std::make_unique<ChannelEqualizer>(d->_channel2, deltaPPS);
+
+    bool isRead1 = false;
+    bool isRead2 = false;
+    //FIND SHIFT BUFFER
+    while (true && !d->quit)
     {
-        bool isRead1 = false;
-        bool isRead2 = false;
-
-        d->quit = false;
-        while(!d->quit)
+        if(d->_channel1->readIn())
         {
-            if(d->_channel1->readIn())
-            {
-                isRead1 = true;
-            }
+            isRead1 = true;
+        }
 
-            if(d->_channel2->readIn())
-            {
-                isRead2 = true;
-            }
+        if(d->_channel2->readIn())
+        {
+            isRead2 = true;
+        }
 
-            if(isRead1 && isRead2)
-            {
-//                d->_channel1->apply();
-//                d->_channel2->apply();
-                d->_channel1->skip();
-                blockEqualizer->shiftChannel(d->_channel2);
-
-                isRead1 = false;
-                isRead2 = false;
-            }
+        if(isRead1 && isRead2)
+        {
+            blockEqualizer->initShiftBuffer();
+            qDebug() << "ShiftBuffer init";
+            break;
         }
     }
-    else
+    isRead1 = false;
+    isRead2 = false;
+    //READ CHANNEL1 AND SHIFT CHANNEL2
+    while(!d->quit)
     {
-        qDebug("SYNC_ERROR");
+        if(d->_channel1->readIn())
+        {
+            isRead1 = true;
+        }
+
+        if(d->_channel2->readIn())
+        {
+            isRead2 = true;
+        }
+
+        if(isRead1 && isRead2)
+        {
+//                d->_channel1->apply();
+//                d->_channel2->apply();
+            d->_channel1->skip();
+            blockEqualizer->shiftChannel();
+
+            isRead1 = false;
+            isRead2 = false;
+        }
     }
+
 
     qDebug() << "THREAD_SYNC_END";
     emit finished();

@@ -38,7 +38,9 @@ HEADERS += \
     device_settings.h \
     i_device_settings.h \
 #    sync_global.h
-    radio_channel.h
+    radio_channel.h \
+    custom_thread.h
 
 SOURCES += \
-    radio_channel.cpp
+    radio_channel.cpp \
+    custom_thread.cpp

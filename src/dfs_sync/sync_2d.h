@@ -3,7 +3,7 @@
 
 #include "radio_channel.h"
 #include <QObject>
-
+#include "custom_thread.h"
 /*!
  * \brief The FindChannelForShift class
  */

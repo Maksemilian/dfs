@@ -31,8 +31,8 @@ void PlotMonitoring::onDeviceSetListReady(
 //void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
 {
 
-    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
-               "sync available only for 2 channel");
+//    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
+//               "sync available only for 2 channel");
     quit = false;
     qDebug() << "START SYNC" << ds->getDDC1Frequency()
              << ds->getSampleRateForBandwith()
@@ -46,10 +46,13 @@ void PlotMonitoring::onDeviceSetListReady(
 
     sync->start(channels.front(), channels.back(), data);
     elipsPlot->setSyncData(data);
-
+    qDebug() << "****PLOT MONITORIN"
+             << channels.back().use_count()
+             << channels.back().use_count()
+             << channels.back()->outBuffer().use_count()
+             << channels.back()->outBuffer().use_count();
     QtConcurrent::run([this, channels]()
     {
-        qDebug() << "PLOT MONITORING RUN";
         bool isRead1 = false;
         bool isRead2 = false;
 
@@ -58,6 +61,7 @@ void PlotMonitoring::onDeviceSetListReady(
 
         proto::receiver::Packet pct1;
         proto::receiver::Packet pct2;
+        qDebug() << "PLOT MONITORING RUN";
         while (!quit)
         {
             if(channel1->outBuffer()->pop(pct1))
@@ -79,6 +83,7 @@ void PlotMonitoring::onDeviceSetListReady(
                 isRead2 = false;
             }
         }
+        qDebug() << "PLOT MONITORING STOP";
     });
 }
 

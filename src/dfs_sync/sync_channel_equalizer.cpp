@@ -11,6 +11,7 @@ using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 
 struct ChannelEqualizer::Impl
 {
+    /*
     Impl(const std::vector<Ipp32fc>& shiftBuffer,
          const  ChannelData data,
          quint32 shift):
@@ -19,19 +20,23 @@ struct ChannelEqualizer::Impl
         dstPhase(VectorIpp32f(data.blockSize)),
         dstCart32(VectorIpp32fc(data.blockSize)),
         dstFinalRez(VectorIpp32fc(data.blockSize)),
-        shiftBufferT(shiftBuffer),
-        data(data),
-        shift(shift)
-    {    }
+        _shiftBuffer(shiftBuffer),
+        data(data)
+    //        shift(shift)
+    {    }*/
     Impl(const ShPtrRadioChannel& channel,
-         const std::vector<Ipp32fc>& shiftBuffer,
-         const  ChannelData data,
-         quint32 shift):
-        Impl(shiftBuffer, data, shift)
-        // _channel(channel)
+         double deltaPPS)
     {
+        _data = channel->getChannelData();
+        dstFftFwd = (VectorIpp32fc(_data.blockSize));
+        dstMagn = (VectorIpp32f(_data.blockSize));
+        dstPhase = (VectorIpp32f(_data.blockSize));
+        dstCart32 = (VectorIpp32fc(_data.blockSize));
+        dstFinalRez = (VectorIpp32fc(_data.blockSize));
         _channel = channel;
+        _deltaPPS = deltaPPS;
     }
+
 
     DeleterTypeIpp8u deleterUniquePtrForIpp8u = [](Ipp8u* v)
     {
@@ -47,10 +52,12 @@ struct ChannelEqualizer::Impl
     VectorIpp32f dstPhase;
     VectorIpp32fc dstCart32;
     VectorIpp32fc dstFinalRez;
+
     ShPtrRadioChannel _channel;
-    VectorIpp32fc shiftBufferT;
-    ChannelData data;
-    quint32 shift;
+    double _deltaPPS;
+    VectorIpp32fc _shiftBuffer;
+    ChannelData _data;
+//    quint32 shift;
 };
 /*
 BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize):
@@ -63,13 +70,38 @@ BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSi
 //                               const VectorIpp32fc& shiftBuffer,
 //                               const SyncData& data, quint32 shift):
 //    d(std::make_unique<Impl>(channel, shiftBuffer, data, shift)) {}
+ChannelEqualizer::ChannelEqualizer(const ShPtrRadioChannel& channel,
+                                   double deltaPPS)
+    : d(std::make_unique<Impl>(channel, deltaPPS))
+{
 
+}
+/*
 ChannelEqualizer::ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
                                    const ChannelData& data, quint32 shift):
     d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
-
+*/
 ChannelEqualizer::~ChannelEqualizer() = default;
 
+void ChannelEqualizer::initShiftBuffer()
+{
+    quint32 shift = static_cast<quint32>(d->_deltaPPS);
+    proto::receiver::Packet _pct2;
+    if(d->_channel->getLastPacket(_pct2))
+    {
+
+        const float* signalData = _pct2.mutable_sample()->data();
+        VectorIpp32fc _shiftBuffer(d->_data.blockSize);
+        if(shift < d->_data.blockSize)
+        {
+            for(quint32 i = 0; i < shift; ++i)
+            {
+                _shiftBuffer[i].re = signalData[d->_data.blockSize - (shift) + i * 2];
+                _shiftBuffer[i].im = signalData[(d->_data.blockSize - (shift) + i * 2) + 1];
+            }
+        }
+    }
+}
 
 void ChannelEqualizer::initFftBuffers(int FFTOrder)
 {
@@ -104,12 +136,36 @@ void ChannelEqualizer::initFftBuffers(int FFTOrder)
     qDebug() << "BlockAlinement::init End";
 }
 
-void ChannelEqualizer::shiftChannel(ShPtrRadioChannel& channel)
+void ChannelEqualizer::shiftChannel()
 {
+    double deltaStart = -1;
     proto::receiver::Packet pct;
-    if(channel->getLastPacket(pct))
+    quint32 shift = static_cast<quint32>(d->_deltaPPS);
+    if(d->_channel->getLastPacket(pct))
     {
-        equateT(pct);
+        //        equatePacket(pct);
+        Q_ASSERT_X(pct.block_size() == d->_data.blockSize,
+                   " BlockEqualizer::equate", "out_of_range");
+
+        Ipp32fc* blockData = reinterpret_cast<Ipp32fc*>
+                             (const_cast<float*>
+                              (pct.sample().data()));
+
+        quint32 shiftW = static_cast<quint32>(shift);
+        double shiftF = shift - shiftW;
+        //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
+        shiftWhole(blockData, d->_data.blockSize, shiftW);
+
+        //    qDebug()<<"SHIFT WHOLE END";
+
+        shiftFruction(blockData, d->_data.blockSize, shiftF);
+        //    qDebug()<<"SHIFT FRUCTION END";
+        double teta = (d->_data.ddcFrequency / d->_data.sampleRate) * 2 * IPP_PI * deltaStart;
+
+        shiftTest(blockData, d->_data.blockSize, teta);
+        qDebug() << "*******TETA:" << teta << d->_data.ddcFrequency << d->_data.sampleRate << deltaStart;
+        //qDebug()<<"SHIFT FRUCTIOM END";
+        d->_channel->outBuffer()->push(pct);
     }
     else
     {
@@ -117,27 +173,28 @@ void ChannelEqualizer::shiftChannel(ShPtrRadioChannel& channel)
     }
 }
 
-void ChannelEqualizer::equateT(const proto::receiver::Packet& pct, double deltaStart) const
+void ChannelEqualizer::equatePacket(const proto::receiver::Packet& pct, double deltaStart) const
 {
-    Q_ASSERT_X(pct.block_size() == d->data.blockSize, " BlockEqualizer::equate", "out_of_range");
-
+    Q_ASSERT_X(pct.block_size() == d->_data.blockSize,
+               " BlockEqualizer::equate", "out_of_range");
+    quint32 shift = static_cast<quint32>(d->_deltaPPS);
     Ipp32fc* blockData = reinterpret_cast<Ipp32fc*>
                          (const_cast<float*>
                           (pct.sample().data()));
 
-    quint32 shiftW = static_cast<quint32>(d->shift);
-    double shiftF = d->shift - shiftW;
+    quint32 shiftW = static_cast<quint32>(shift);
+    double shiftF = shift - shiftW;
     //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
-    shiftWhole(blockData, d->data.blockSize, shiftW);
+    shiftWhole(blockData, d->_data.blockSize, shiftW);
 
     //    qDebug()<<"SHIFT WHOLE END";
 
-    shiftFruction(blockData, d->data.blockSize, shiftF);
+    shiftFruction(blockData, d->_data.blockSize, shiftF);
     //    qDebug()<<"SHIFT FRUCTION END";
-    double teta = (d->data.ddcFrequency / d->data.sampleRate) * 2 * IPP_PI * deltaStart;
+    double teta = (d->_data.ddcFrequency / d->_data.sampleRate) * 2 * IPP_PI * deltaStart;
 
-    shiftTest(blockData, d->data.blockSize, teta);
-    qDebug() << "*******TETA:" << teta << d->data.ddcFrequency << d->data.sampleRate << deltaStart;
+    shiftTest(blockData, d->_data.blockSize, teta);
+    qDebug() << "*******TETA:" << teta << d->_data.ddcFrequency << d->_data.sampleRate << deltaStart;
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
 
@@ -145,8 +202,9 @@ void ChannelEqualizer::equateT(const proto::receiver::Packet& pct, double deltaS
 void ChannelEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
                               double deltaStart) const
 {
-    quint32 shiftW = static_cast<quint32>(d->shift);
-    double shiftF = d->shift - shiftW;
+    quint32 shift = static_cast<quint32>(d->_deltaPPS);
+    quint32 shiftW = static_cast<quint32>(shift);
+    double shiftF = shift - shiftW;
     //    qDebug()<<"SHIFT"<<shift<<"W:"<<shiftW<<"F:"<<shiftF<<blockSize<<blockSize/2;
     shiftWhole(blockData, blockSize, shiftW);
 
@@ -154,10 +212,10 @@ void ChannelEqualizer::equate(Ipp32fc* blockData, quint32 blockSize,
 
     shiftFruction(blockData, blockSize, shiftF);
     //    qDebug()<<"SHIFT FRUCTION END";
-    double teta = (d->data.ddcFrequency / d->data.sampleRate) * 2 * IPP_PI * deltaStart;
+    double teta = (d->_data.ddcFrequency / d->_data.sampleRate) * 2 * IPP_PI * deltaStart;
 
     shiftTest(blockData, blockSize, teta);
-    qDebug() << "*******TETA:" << teta << d->data.ddcFrequency << d->data.sampleRate << deltaStart;
+    qDebug() << "*******TETA:" << teta << d->_data.ddcFrequency << d->_data.sampleRate << deltaStart;
     //qDebug()<<"SHIFT FRUCTIOM END";
 }
 
@@ -169,8 +227,8 @@ void ChannelEqualizer::shiftWhole(Ipp32fc* blockData, quint32 blockSize, quint32
 
     for(quint32 i = 0; i < shift; i++)
     {
-        bufArray[i] = d->shiftBufferT[i];
-        d->shiftBufferT[i] = blockData[blockSize - shift + i];
+        bufArray[i] = d->_shiftBuffer[i];
+        d->_shiftBuffer[i] = blockData[blockSize - shift + i];
     }
 
     for(quint32 i = 0; i < (blockSize - shift); i++)

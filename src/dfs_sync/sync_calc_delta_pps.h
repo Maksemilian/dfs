@@ -1,9 +1,8 @@
 #ifndef SYNC_CALC_DALTA_PPS_H
 #define SYNC_CALC_DALTA_PPS_H
 
-#include "sync_global.h"
+//#include "sync_global.h"
 #include "radio_channel.h"
-#include "sync_channel_equalizer.h"
 
 #include <iostream>
 #include <qglobal.h>
@@ -37,13 +36,14 @@ class CalcDeltaPPS
                  const ChannelData& data)
         : _channel1(channel1), _channel2(channel2), _data(data)    {   }
 
-    std::unique_ptr<ChannelEqualizer> getBlockEqualizer()
+    //std::unique_ptr<ChannelEqualizer>
+    double findDeltaPPS()
     {
-        VectorIpp32fc outShiftBuffer(_data.blockSize);
+//        VectorIpp32fc outShiftBuffer(_data.blockSize);
         Packet pct1 ;
         Packet pct2 ;
         double deltaPPS = -1;
-        // while(true){
+        // while(deltaPPS<0){
         //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
         // 1 канал стартовал раньше
 
@@ -77,21 +77,23 @@ class CalcDeltaPPS
             {
                 deltaPPS = calcDeltaPPS(pct1, pct2);
             }
+            cout << "SHIFT_VALUE:" << deltaPPS << endl;
             cout << "BS:" << _data.blockSize << " SR:" << _data.sampleRate << endl;
             cout << pct1 << pct2 << endl;
-            outShiftBuffer = initShiftBuffer(pct2, static_cast<quint32>(deltaPPS));
+//            outShiftBuffer = initShiftBuffer(pct2,
+//                                             static_cast<quint32>(deltaPPS));
 //            _channel2->setBlockEqulizer(new BlockEqualizer(outShiftBuffer,
 //                                        _data,
 //                                        static_cast<quint32>(deltaPPS)));
-            cout << "SHIFT_VALUE:" << deltaPPS << endl;
             //return true;
-            return std::make_unique<ChannelEqualizer>(outShiftBuffer,
-                    _data,
-                    static_cast<quint32>(deltaPPS));
+//            return std::make_unique<ChannelEqualizer>(outShiftBuffer,
+//                    _data,
+//                    static_cast<quint32>(deltaPPS));
         }
+        return deltaPPS;
         //}
         // return false;
-        return nullptr;
+//        return nullptr;
     }
   private:
     double calcDeltaPPS(const Packet _pct1, const Packet _pct2) const
@@ -111,22 +113,22 @@ class CalcDeltaPPS
                (_pct1.block_number() - _pct2.block_number()) *
                _data.blockSize;
     }
-
-    VectorIpp32fc initShiftBuffer(Packet& _pct2, quint32 shift)
-    {
-        const float* signalData = _pct2.mutable_sample()->data();
-        VectorIpp32fc _shiftBuffer(_data.blockSize);
-        if(shift < _data.blockSize)
+    /*
+        VectorIpp32fc initShiftBuffer(Packet& _pct2, quint32 shift)
         {
-            for(quint32 i = 0; i < shift; ++i)
+            const float* signalData = _pct2.mutable_sample()->data();
+            VectorIpp32fc _shiftBuffer(_data.blockSize);
+            if(shift < _data.blockSize)
             {
-                _shiftBuffer[i].re = signalData[_data.blockSize - (shift) + i * 2];
-                _shiftBuffer[i].im = signalData[(_data.blockSize - (shift) + i * 2) + 1];
+                for(quint32 i = 0; i < shift; ++i)
+                {
+                    _shiftBuffer[i].re = signalData[_data.blockSize - (shift) + i * 2];
+                    _shiftBuffer[i].im = signalData[(_data.blockSize - (shift) + i * 2) + 1];
+                }
             }
+            return _shiftBuffer;
         }
-        return _shiftBuffer;
-    }
-
+    */
     //friend ostream& operator<<(ostream& out, const Packet& c);
   private:
     ShPtrRadioChannel _channel1;

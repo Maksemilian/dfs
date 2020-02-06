@@ -63,6 +63,8 @@ class MacroCommand: public AbstractCommand
     QList<AbstractCommand*>_commands;
 };
 */
+
+
 class FactoryCommand
 {
     FactoryCommand();

@@ -35,6 +35,7 @@ DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     d->streamServer.listen(QHostAddress(connectData.address),
                            LISTENING_STREAMING_PORT + _CLIENT_COUNTER);
 }
+
 void DeviceClient::sendCommand(proto::receiver::Command& command)
 {
     if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)

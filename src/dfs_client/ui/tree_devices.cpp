@@ -20,8 +20,9 @@
 const QString DeviceMonitoring::SETTINGS_TREE_FILE_NAME = "tree_devices.ini";
 const QString DeviceMonitoring::SETTINGS_LIST_FILE_NAME = "client_device_set_list.ini";
 
-DeviceMonitoring::DeviceMonitoring(const ShPtrClientManager& clientManager,
-                                   QWidget* parent):
+DeviceMonitoring::DeviceMonitoring(
+    const ShPtrClientManager& clientManager,
+    QWidget* parent):
     QSplitter (Qt::Horizontal, parent),
 //    _clientManager(clientManager),
     _twDevices(new QTreeWidget(this)),
