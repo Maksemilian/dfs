@@ -1,26 +1,27 @@
 #ifndef SYNC_BLOCK_ALINEMENT_H
 #define SYNC_BLOCK_ALINEMENT_H
 
-#include "sync_global.h"
 #include "radio_channel.h"
-
 #include <QObject>
+#include "ippbase.h"
+
+/*! \addtogroup sync Sync
+ */
+///@{
+
 /*!
- * \brief The BlockAlinement class
+ * \brief Класс сдвигает данные канала на количество равное
+ * целой части deltaPPS
+ *
+ * Для того чтобы сдвигать сдвигать данные канала необходимо
+ * единожды проинициализировать буфер сдвига и только после
+ * этого сдвигать канал
  */
 class ChannelEqualizer
 {
   public:
-    //TODO blockSize лишний тк внутринние буфера должны быть
-    //равными размеру shiftBuffer
-    //BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize);
-//    BlockEqualizer(const ShPtrRadioChannel& channel,
-//                   const VectorIpp32fc& shiftBuffer,
-//                   const SyncData& data,
-//                   quint32 shift);
     ChannelEqualizer(const ShPtrRadioChannel& channel, double deltaPPS);
-    ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
-                     const ChannelData& data, quint32 shift);
+
     ~ChannelEqualizer() ;
     //TODO double deltaStart=1
     void shiftChannel();
@@ -41,5 +42,5 @@ class ChannelEqualizer
     struct Impl;
     std::unique_ptr<Impl>d;
 };
-
+///@}
 #endif // SYNC_BLOCK_ALINEMENT_H

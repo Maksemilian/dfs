@@ -7,23 +7,14 @@
 #include <QDebug>
 
 //NOTE - НАХОДИТЬСЯ В utility
+#include <vector>
+
+using VectorIpp32fc = std::vector<Ipp32fc>;
+using VectorIpp32f = std::vector<Ipp32f>;
 using DeleterTypeIpp8u = std::function<void(Ipp8u*)>;
 
 struct ChannelEqualizer::Impl
 {
-    /*
-    Impl(const std::vector<Ipp32fc>& shiftBuffer,
-         const  ChannelData data,
-         quint32 shift):
-        dstFftFwd(VectorIpp32fc(data.blockSize)),
-        dstMagn(VectorIpp32f(data.blockSize)),
-        dstPhase(VectorIpp32f(data.blockSize)),
-        dstCart32(VectorIpp32fc(data.blockSize)),
-        dstFinalRez(VectorIpp32fc(data.blockSize)),
-        _shiftBuffer(shiftBuffer),
-        data(data)
-    //        shift(shift)
-    {    }*/
     Impl(const ShPtrRadioChannel& channel,
          double deltaPPS)
     {
@@ -59,17 +50,10 @@ struct ChannelEqualizer::Impl
     ChannelData _data;
 //    quint32 shift;
 };
-/*
-BlockEqualizer::BlockEqualizer(const VectorIpp32fc& shiftBuffer, quint32 blockSize):
-    d(std::make_unique<Impl>(shiftBuffer, blockSize))
-{
-    initFftBuffers(calcFftOrder(blockSize));
-}
-*/
-//BlockEqualizer::BlockEqualizer(const ShPtrRadioChannel& channel,
-//                               const VectorIpp32fc& shiftBuffer,
-//                               const SyncData& data, quint32 shift):
-//    d(std::make_unique<Impl>(channel, shiftBuffer, data, shift)) {}
+
+/*! \addtogroup sync Sync
+ */
+///@{
 ChannelEqualizer::ChannelEqualizer(const ShPtrRadioChannel& channel,
                                    double deltaPPS)
     : d(std::make_unique<Impl>(channel, deltaPPS))
@@ -328,3 +312,5 @@ void ChannelEqualizer::incrementPhaseValuesOnAngle(Ipp32f* phaseData, quint32 si
         phaseData[i] += phaseAngle;
     }
 }
+
+///@}

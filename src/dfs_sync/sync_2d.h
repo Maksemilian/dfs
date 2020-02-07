@@ -1,11 +1,23 @@
 #ifndef SYNC_SHIFT_FINDER_H
 #define SYNC_SHIFT_FINDER_H
 
-#include "radio_channel.h"
+
 #include <QObject>
+#include "radio_channel.h"
 #include "custom_thread.h"
-/*!
- * \brief The FindChannelForShift class
+
+/*! \defgroup sync Sync
+ * \brief Модуль синхронизации каналов
+ *
+ * На данный момент модуль поддерживает синхронизацию двух каналов
+*/
+
+///@{
+
+/*! \brief Класс синхронизации двух каналов
+ *
+ * Данный класс синхронизует канал channel2
+ * с главным каналом channel1
  */
 class Sync2D : public QObject
 {
@@ -20,7 +32,11 @@ class Sync2D : public QObject
   signals:
     void finished();
   private:
+    void process();
+  private:
     struct Impl;
     std::unique_ptr<Impl>d;
 };
+/// @}
+
 #endif // SYNC_SHIFT_FINDER_H

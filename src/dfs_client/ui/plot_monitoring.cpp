@@ -44,7 +44,7 @@ void PlotMonitoring::onDeviceSetListReady(
     channels.front()->setChannelData(data);
     channels.back()->setChannelData(data);
 
-    sync->start(channels.front(), channels.back(), data);
+    sync.reset(new Sync2D(channels.front(), channels.back(), data));
     elipsPlot->setSyncData(data);
     qDebug() << "****PLOT MONITORIN"
              << channels.back().use_count()

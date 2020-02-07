@@ -26,7 +26,7 @@ class PlotMonitoring : public QWidget
   private:
     ChannelPlot* channelPlot; //central widget
     ElipsPlot* elipsPlot;//right dock idget
-    std::unique_ptr<SyncController> sync;
+    std::unique_ptr<Sync2D> sync;
     std::atomic_bool quit;
 };
 

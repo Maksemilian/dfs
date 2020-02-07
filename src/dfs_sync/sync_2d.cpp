@@ -2,6 +2,7 @@
 
 #include "sync_channel_equalizer.h"
 #include "sync_calc_delta_pps.h"
+
 #include <QDebug>
 
 //******************************* FindChannelForShift ******************************************
@@ -17,11 +18,15 @@ struct Sync2D::Impl
 
     ShPtrRadioChannel _channel1;
     ShPtrRadioChannel _channel2;
-
     ChannelData _data;
+
+    QFutureWatcher<void> fw;
     std::atomic_bool quit;
 };
 
+/*! \addtogroup sync Sync
+ */
+///@{
 Sync2D::Sync2D(const ShPtrRadioChannel& channel1,
                const ShPtrRadioChannel& channel2,
                const ChannelData& data):
@@ -31,8 +36,24 @@ Sync2D::~Sync2D()
 {
     qDebug() << "SYNC_PROCESS_DESTR";
 };
-
+/*!
+ * \brief Sync2D::start
+ * \code
+  *\endcode
+ */
 void Sync2D::start()
+{
+    d->quit = false;
+    d->fw.setFuture(QtConcurrent::run(this, &Sync2D::process));
+}
+
+void Sync2D::stop()
+{
+    d->quit = true;
+    d->fw.waitForFinished();
+}
+
+void Sync2D::process()
 {
     qDebug() << "THREAD_SYNC_BEGIN";
     d->quit = false;
@@ -94,16 +115,9 @@ void Sync2D::start()
         }
     }
 
-
     qDebug() << "THREAD_SYNC_END";
-    emit finished();
 }
-
-void Sync2D::stop()
-{
-    d->quit = true;
-}
-
+///@}
 //**************** PREVIOUS VARIANT **********************
 /*
 std::shared_ptr<RadioChannel> Sync2D::channel1()
