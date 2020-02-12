@@ -6,7 +6,19 @@
 #include <QTcpServer>
 
 class DeviceClient;
-
+/*! \defgroup server Server
+ * \brief Консольное приложение обработки команд управления
+ *  радиоприемными устройствами от удаленных клиентов
+ */
+///@{
+/*!
+ * \brief Класс для прослушивания входящих соединений
+ * для удаленного упраления приемными устройствами
+ *
+ * Как только соединение установлено создается клиент DeviceClient
+ * который принимает и выполняет команды по управлению приемным устройством
+ * от удаленных клиентов
+ */
 class StreamServer: public QTcpServer
 {
     Q_OBJECT
@@ -26,5 +38,5 @@ class StreamServer: public QTcpServer
     QList<net::ChannelHost*>_readyChannelsList;
     QList<DeviceClient*> _client;
 };
-
+///@}
 #endif // STREAM_SERVE_RTEST_H

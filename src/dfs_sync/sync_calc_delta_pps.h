@@ -15,10 +15,11 @@ using namespace proto::receiver;
 ///@{
 
 /*!
- * \brief Класс определения отсавания канала channel2
+ * \brief Класс определения отставания канала channel2
  *  от опорного канала channel1
  *
  * Класс определяет разницу канала с помощью deltaPPS
+ * \todo Убрать ChannelData
  */
 class CalcDeltaPPS
 {
@@ -27,13 +28,26 @@ class CalcDeltaPPS
                  const ShPtrRadioChannel& channel2,
                  const ChannelData& data)
         : _channel1(channel1), _channel2(channel2), _data(data)    {   }
-
+    /*!
+     * \brief Метод нахождения разности между двумя каналами
+     *
+     * Из обоих каналов последовательно считываются данные до тех пор пока
+     * не будут полученны данные в обоих каналах.
+     * Если блоки считанных данных принадлежат к одной секунде происходит
+     * расчет количества ddc отсчетов после последнего импульса PPS для
+     * каждого канала. Затем определяется разность полученных значений ,
+     * которая является задержкой канала channel2 от канала channel1.
+     *
+     * \return deltaPPS отставание канала channel2 от channel1 ,
+     * выраженная разницой между ddc отсчетами двух каналов полученыыми
+     * после последнего импульса PPS.
+     */
     double findDeltaPPS();
   private:
     double calcDeltaPPS(const Packet _pct1, const Packet _pct2) const;
+
     double ddcAfterPPS(const Packet& pct) const;
     double deltaStart(const Packet _pct1, const Packet _pct2) ;
-
   private:
     ShPtrRadioChannel _channel1;
     ShPtrRadioChannel _channel2;

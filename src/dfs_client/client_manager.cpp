@@ -5,8 +5,7 @@ ClientManager::ClientManager()
 
 }
 
-void ClientManager::clear()
-{
+void ClientManager::clear(){
     _clients.clear();
 }
 

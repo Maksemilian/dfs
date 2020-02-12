@@ -6,12 +6,19 @@
 #include <QTimer>
 #include <QDebug>
 
+/*! \addtogroup receiver
+ */
+///@{
+
 CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet* deviceSet):
     _deviceSet(deviceSet) {}
 
 void CohG35DeviceSet::setCallback(std::unique_ptr<CohG35Callback> callback)
 {
-    if(!callback.get())return;
+    if(!callback.get())
+    {
+        return;
+    }
 
     uPtrCallback = std::move(callback);
 
@@ -40,7 +47,9 @@ QString CohG35DeviceSet::getDeviceSetName()
 void CohG35DeviceSet::freeResource()
 {
     if(_deviceSet != nullptr)
+    {
         _deviceSet->Release();
+    }
 }
 
 CohG35DeviceSet::~CohG35DeviceSet()
@@ -163,3 +172,4 @@ bool CohG35DeviceSet::setShiftPhaseDDC1(unsigned int deviceIndex, double phaseSh
     return _deviceSet->SetDDC1PhaseShift(deviceIndex,phaseShift);
 }
 */
+///@}

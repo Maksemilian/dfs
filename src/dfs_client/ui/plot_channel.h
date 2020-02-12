@@ -1,7 +1,6 @@
 #ifndef CHANNEL_PLOT_H
 #define CHANNEL_PLOT_H
 
-#include "sync_global.h"
 #include "qcustomplot.h"
 #include "receiver.pb.h"
 

@@ -1,5 +1,7 @@
+
 #include "plot_channel.h"
 #include "radio_channel.h"
+
 const int ChannelPlot::GRAPH_COLORS_COUNT = 4;
 
 const QColor ChannelPlot::graphColors[ChannelPlot::GRAPH_COLORS_COUNT] =

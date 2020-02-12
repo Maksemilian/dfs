@@ -12,6 +12,7 @@ ostream& operator<<(ostream& out, const Packet& pct)
 /*! \addtogroup sync Sync
  */
 ///@{
+
 double CalcDeltaPPS::findDeltaPPS()
 {
 //        VectorIpp32fc outShiftBuffer(_data.blockSize);

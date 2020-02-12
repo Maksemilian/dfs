@@ -1,5 +1,6 @@
 #include "wrd_callback_g35.h"
 
+
 G35Callback::G35Callback(const ShPtrRingPacketBuffer& buffer, const TimeReader& timeReader)
     : buffer(buffer), timeReader(timeReader)
 {
@@ -69,3 +70,4 @@ BOOL __stdcall G35Callback::G35DDC_AudioPlaybackStreamCallback(IG35DDCDevice* De
     Q_UNUSED(Channel);
     return true;
 }
+

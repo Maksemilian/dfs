@@ -37,7 +37,6 @@ HEADERS += \
     ring_buffer.h \
     device_settings.h \
     i_device_settings.h \
-#    sync_global.h
     radio_channel.h \
     custom_thread.h
 

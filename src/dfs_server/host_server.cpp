@@ -2,7 +2,10 @@
 #include "host_ds.h"
 
 //************************** SERVER *************************
-
+/*!
+ * \addtogroup server
+ */
+///@{
 StreamServer::StreamServer()
 {
     qDebug() << "Stream Server Init";
@@ -98,4 +101,4 @@ void StreamServer::createSession(net::ChannelHost* channelHost)
         qDebug() << "ERROR SESSION TYPE";
     }
 }
-
+///@}

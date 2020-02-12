@@ -1,14 +1,13 @@
 #ifndef WRD_INTERFACE_H
 #define WRD_INTERFACE_H
 
-
-#include <memory>
-#include "receiver.pb.h"
-#include "ring_buffer.h"
-
 class DeviceSettings;
-class Callback;
-
+/*! \addtogroup receiver
+ */
+///@{
+/*!
+ * \brief интерфейс устройств
+ */
 class IDevice
 {
   public :
@@ -26,6 +25,6 @@ class IDevice
     virtual  bool startDDC1(unsigned int sampesPerBuffer) = 0;
     virtual  bool stopDDC1() = 0;
 };
-
+///@}
 
 #endif // WRD_INTERFACE_H

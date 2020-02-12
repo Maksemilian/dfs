@@ -80,7 +80,8 @@ class SumSubMethod
         return calc(dst1, dst2, blockSize);
     }
   private:
-    const VectorIpp32fc& calc(const Ipp32fc* dst1, const Ipp32fc* dst2, quint32 blockSize)
+    const VectorIpp32fc& calc(const Ipp32fc* dst1,
+                              const Ipp32fc* dst2, quint32 blockSize)
     {
         //1 ***** Создаем коэффициенты
         for(quint32 i = 0; i < blockSize; i++, currentAngleRad += DELTA_ANGLE_IN_RADIAN)

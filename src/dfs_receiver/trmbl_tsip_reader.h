@@ -5,8 +5,15 @@
 #include <QFutureWatcher>
 #include <QReadWriteLock>
 
-//#include "wrd_callback.h"
+/*! \addtogroup receiver
+ */
 
+///@{
+/*!
+ * \brief читает временные данные полученные от спутника
+ *
+ * \attention данный класс реализует паттерн Singlton
+ */
 class TimeReader : public QObject
 {
     Q_OBJECT
@@ -17,9 +24,24 @@ class TimeReader : public QObject
     {
         return startedAtomWatch;
     }
+    /*!
+     * \brief запускает получение временных данных
+     * в отдельном потоке
+     */
     void start();
+    /*!
+     * \brief останавливает поток получения временных данных
+     */
     void stop();
+    //TODO сделать возвращаемые значения
+    // и убрать соответсвующие данные из полей класса
+    /*!
+     * \brief получает секунду в неделе
+     */
     void getTimeOfWeek(quint32& timeOfWeek);
+    /*!
+     * \brief получает номер недели
+     */
     void getWeekNumber(quint16& weekNumber);
 
     void getTime(quint16& weekNumber, quint32& timeOfWeek);
@@ -40,4 +62,5 @@ class TimeReader : public QObject
     quint16 weekNumber;
     quint32 timeOfWeek;
 };
+///@}
 #endif // TIME_READER_H

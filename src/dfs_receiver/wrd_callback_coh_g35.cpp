@@ -7,7 +7,9 @@
 
 
 //*********************** ICohG35DDCDeviceSetCallback ************************
-
+/*! \addtogroup receiver
+ */
+///@{
 CohG35Callback::CohG35Callback(const ShPtrRingPacketBuffer& buffer, TimeReader& timeReader):
     buffer(buffer),
     timeReader(timeReader),
@@ -207,4 +209,4 @@ void CohG35Callback::CohG35DDC_DDC2StreamCallback(ICohG35DDCDeviceSet* DeviceSet
     DeviceSet->GetPower(&power);
     qDebug() << DeviceIndex << Buffer[0] << NumberOfSamples;
 }
-
+///@}

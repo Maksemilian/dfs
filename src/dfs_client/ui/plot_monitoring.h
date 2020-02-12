@@ -2,13 +2,11 @@
 #define PLOT_MONITORING_H
 
 #include <QWidget>
-//#include <memory>
-#include "sync_controller.h"
+#include "sync_2d.h"
+
 class IDeviceSettings;
 class ChannelPlot;
 class ElipsPlot ;
-class DeviceWidget;
-class SyncController;
 
 using ShPtrPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 

@@ -10,9 +10,16 @@
 using ShPtrDevice = std::shared_ptr<IDevice>;
 using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
+/*! \addtogroup receiver
+ */
+///@{
+/*!
+ * \brief создает устройство по индексу
+ */
 class DeviceFactory
 {
   public:
+    ///TODO сделать возврат unique_ptr
     static ShPtrDevice createCohG35Device(unsigned int deviceIndex,
                                           const ShPtrRingBuffer& buffer,
                                           bool demo_mode = false);
@@ -21,5 +28,5 @@ class DeviceFactory
             const ShPtrRingBuffer& buffer,
             bool demo_mode = false);
 };
-
+///@}
 #endif // WRD_DEVICE_SELECTOR_H

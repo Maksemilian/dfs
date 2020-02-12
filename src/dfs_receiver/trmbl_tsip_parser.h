@@ -22,6 +22,15 @@ union AliasCast
     quint8 byteArray[SIZE];
 };
 
+/*! \defgroup receiver Receiver
+ * \brief Модуль статической библиотеки работы
+ *  с приемниками Winradio WRG35DDC и Trimble Thunderbolt
+ */
+
+///@{
+/*!
+ * \brief принимает пакеты со спутника
+ */
 class TsipParser: public QObject
 {
     Q_OBJECT
@@ -88,4 +97,5 @@ class TsipParser: public QObject
     PacketAC packetAC;
 };
 
+///@}
 #endif // TSIPPARSER_H

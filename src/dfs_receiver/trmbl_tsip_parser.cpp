@@ -3,7 +3,9 @@
 #include <QDebug>
 #include <QSerialPort>
 
-
+/*! \addtogroup receiver
+ */
+///@{
 TsipParser::TsipParser(QObject* parent ): QObject(parent), nPktLen(0), nParseState(MSG_IN_COMPLETE) {}
 
 quint32 TsipParser::getULong (quint8* pucBuf)
@@ -66,7 +68,7 @@ float TsipParser::getSingle (quint8* pucBuf)
     return castFloat.value;
 }
 
-///-------------------RECEIVE PACKET-------------------------
+//-------------------RECEIVE PACKET-------------------------
 
 void TsipParser::receivePacket(QSerialPort* port)
 {
@@ -76,7 +78,7 @@ void TsipParser::receivePacket(QSerialPort* port)
         if(port->bytesAvailable() || port->waitForReadyRead())
         {
             data = port->read(1);
-            ///parser.receivePacket(data);
+            //parser.receivePacket(data);
             bool ok = 0;
             quint8 ucByte = static_cast<quint8>(data.toHex().toUShort(&ok, 16));
             switch (nParseState)
@@ -191,7 +193,6 @@ void TsipParser::parse0x8FAC (quint8 ucData[], int nLen)
     }
     packetAC.number++;
     packetAC.fltPPSQuality = getSingle(&ucData[16]);
-    ///qDebug()<<"++++++++++Parse0x8FAC"<<fltPPSQuality;
+    //qDebug()<<"++++++++++Parse0x8FAC"<<fltPPSQuality;
 }
-
-///********************DEL**********************
+///@}

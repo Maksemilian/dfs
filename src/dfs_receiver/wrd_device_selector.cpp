@@ -6,7 +6,9 @@
 #include <QDebug>
 
 extern G3XDDCAPI_CREATE_INSTANCE createInstance;
-
+/*! \addtogroup receiver
+ */
+///@{
 ShPtrDevice DeviceFactory::createCohG35Device(unsigned int deviceSetIndex,
         const ShPtrRingBuffer& buffer,
         bool demoMode)
@@ -130,6 +132,8 @@ ShPtrDevice DeviceFactory::createSingleG35Device(unsigned int deviceIndex,
     }
     return nullptr;
 }
+
+///@}
 //unsigned int DeviceSelector::numberAvailableDeviceSet(){
 //    ICohG35DDCDeviceSetEnumerator *enumerator;
 //    if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET_ENUMERATOR,

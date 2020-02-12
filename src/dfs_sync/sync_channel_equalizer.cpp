@@ -60,11 +60,7 @@ ChannelEqualizer::ChannelEqualizer(const ShPtrRadioChannel& channel,
 {
 
 }
-/*
-ChannelEqualizer::ChannelEqualizer(const VectorIpp32fc& shiftBuffer,
-                                   const ChannelData& data, quint32 shift):
-    d(std::make_unique<Impl>(shiftBuffer, data, shift)) {}
-*/
+
 ChannelEqualizer::~ChannelEqualizer() = default;
 
 void ChannelEqualizer::initShiftBuffer()

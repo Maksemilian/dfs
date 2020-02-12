@@ -12,7 +12,17 @@
 #include <QHostAddress>
 
 using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
-
+/*!
+ * \addtogroup server
+ */
+///@{
+/*!
+ * \brief Клиент для упраления приемными устройствами по сети
+ *
+ * DeviceClient по сети принимает и
+ * выполняет команды над платой синхронизации
+ * \attention допускается работа только с одной платой синхронизации
+ */
 class DeviceClient: public QObject
 {
     Q_OBJECT
@@ -23,8 +33,10 @@ class DeviceClient: public QObject
 
     ~DeviceClient();
 
-    ShPtrRingBuffer ddc1Buffer();
     void sendDevieSetStatus();
+    /*!
+     * \brief отправляет информацию о наборе устройств
+     */
     void sendDeviceSetInfo();
   signals:
     void deviceDisconnected();
@@ -47,6 +59,9 @@ class DeviceClient: public QObject
     std::unique_ptr<Impl> d;
 };
 
+/*!
+ * \brief отправляет данные потока ddc
+ */
 class SignalStreamWriter: public QObject
 {
     Q_OBJECT
@@ -58,7 +73,14 @@ class SignalStreamWriter: public QObject
     {
         qDebug() << "DESTR_DDC1";
     }
+    /*!
+     * \brief запускает поток отправки данных ddc1 по сети
+     * удаленному клиенту в отдельном потоке
+     */
     void start();
+    /*!
+     * \brief останавливает поток отправки данных ddc1
+     */
     void stop();
   signals:
     void finished();
@@ -71,4 +93,5 @@ class SignalStreamWriter: public QObject
     ShPtrRingBuffer _buffer;
     std::atomic<bool>_quit;
 };
+///@}
 #endif // RECEIVER_STATION_CLIENT_H

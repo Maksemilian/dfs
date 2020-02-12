@@ -60,6 +60,10 @@ struct DeviceClient::Impl
     SignalStreamWriter* streamDDC1 = nullptr;
 };
 
+/*!
+ * \addtogroup server
+ */
+///@{
 DeviceClient::DeviceClient(net::ChannelHost* channelHost)
     : d(std::make_unique<Impl>(channelHost))
 {
@@ -81,11 +85,6 @@ DeviceClient::~DeviceClient()
         d->streamDDC1->stop();
     }
     qDebug() << "DESTR DeviceSetCleint";
-}
-
-ShPtrRingBuffer DeviceClient::ddc1Buffer()
-{
-    return d->buffer;
 }
 
 DeviceSettings DeviceClient::extractSettingsFromCommand(
@@ -476,3 +475,5 @@ void SignalStreamWriter::stop()
     _quit = true;
     qDebug("STOP STREAM WRITER");
 }
+
+///@}

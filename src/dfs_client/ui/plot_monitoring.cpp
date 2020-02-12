@@ -4,7 +4,6 @@
 
 #include "plot_elipse.h"
 #include "plot_channel.h"
-#include "sync_test.h"
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -13,7 +12,6 @@ PlotMonitoring::PlotMonitoring(QWidget* paret)
     : QWidget (paret),
       channelPlot(new ChannelPlot(2, 8192)),
       elipsPlot(new ElipsPlot(this)),
-      sync(std::make_unique<SyncController>()),
       quit(true)
 {
     QGridLayout* gl = new QGridLayout();

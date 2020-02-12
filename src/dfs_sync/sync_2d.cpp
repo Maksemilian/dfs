@@ -36,11 +36,7 @@ Sync2D::~Sync2D()
 {
     qDebug() << "SYNC_PROCESS_DESTR";
 };
-/*!
- * \brief Sync2D::start
- * \code
-  *\endcode
- */
+
 void Sync2D::start()
 {
     d->quit = false;
@@ -52,7 +48,13 @@ void Sync2D::stop()
     d->quit = true;
     d->fw.waitForFinished();
 }
-
+/*!
+ * \brief Метод синхронизации двух каналов
+ *
+ * Из каналов последовательно считываются блоки ...
+ * \code
+ * \endcode
+ */
 void Sync2D::process()
 {
     qDebug() << "THREAD_SYNC_BEGIN";

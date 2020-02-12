@@ -8,7 +8,9 @@
 #include <QSerialPortInfo>
 
 using namespace std;
-
+/*! \addtogroup receiver
+ */
+///@{
 TimeReader& TimeReader::instance()
 {
     static TimeReader timeReader;
@@ -101,3 +103,4 @@ void TimeReader::process()
     }
     comPort.close();
 }
+///@}
