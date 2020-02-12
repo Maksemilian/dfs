@@ -1,6 +1,6 @@
 #include "wrd_device_selector.h"
 #include "wrd_coh_g35_ds.h"
-#include "wrd_d_g35.h"
+//#include "wrd_d_g35.h"
 
 #include "G35DDCAPI.h"
 #include <QDebug>
@@ -70,7 +70,7 @@ ShPtrDevice DeviceFactory::createCohG35Device(unsigned int deviceSetIndex,
     deviceSet->Release();
     return nullptr;
 }
-
+/*
 ShPtrDevice DeviceFactory::createSingleG35Device(unsigned int deviceIndex,
         const ShPtrRingBuffer& buffer,
         bool demoMode)
@@ -132,7 +132,7 @@ ShPtrDevice DeviceFactory::createSingleG35Device(unsigned int deviceIndex,
     }
     return nullptr;
 }
-
+*/
 ///@}
 //unsigned int DeviceSelector::numberAvailableDeviceSet(){
 //    ICohG35DDCDeviceSetEnumerator *enumerator;

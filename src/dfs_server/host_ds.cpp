@@ -2,7 +2,7 @@
 
 #include "channel_host.h"
 #include "wrd_coh_g35_ds.h"
-#include "wrd_d_g35.h"
+//#include "wrd_d_g35.h"
 
 #include "wrd_device_selector.h"
 
@@ -118,10 +118,10 @@ void DeviceClient::sendDeviceSetInfo()
     {
         setDeviceInfoCoherent();
     }
-    else if(dynamic_cast<G35Device*>(d->device.get()))
+    /*else if(dynamic_cast<G35Device*>(d->device.get()))
     {
         sendDeviceInfoSingle();
-    }
+    }*/
     else
     {
         qDebug() << "BAD CAST";

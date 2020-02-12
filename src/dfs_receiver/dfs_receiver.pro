@@ -44,9 +44,9 @@ HEADERS += \
     wrd_device_selector.h \
     wrd_callback.h \
     wrd_device_interface.h \
-    wrd_callback_g35.h \
-    wrd_callback_coh_g35.h \
-    wrd_d_g35.h
+    wrd_callback_coh_g35.h
+#    wrd_callback_g35.h \
+#    wrd_d_g35.h
 
 SOURCES += \
     trmbl_tsip_parser.cpp \
@@ -54,6 +54,6 @@ SOURCES += \
     wrd_device_selector.cpp \
     wrd_callback.cpp \
     wrd_callback_coh_g35.cpp \
-    wrd_callback_g35.cpp \
-    wrd_d_g35.cpp \
     wrd_coh_g35.cpp
+#    wrd_callback_g35.cpp \
+#    wrd_d_g35.cpp \
