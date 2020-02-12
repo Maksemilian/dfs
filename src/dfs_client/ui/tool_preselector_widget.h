@@ -7,6 +7,7 @@ class QComboBox;
 
 using  UInt32LowFreq = quint32 ;
 using  UInt32HeighFreq = quint32 ;
+
 class PreselectorWidget: public QWidget /*,public IToolBarWidget*/
 {
     Q_OBJECT

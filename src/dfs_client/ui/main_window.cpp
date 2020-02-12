@@ -437,9 +437,12 @@ bool  MainWindow::getPreamplifierEnabled()
     return pbPreamplifierEnable->currentState();
 }
 
-QPair<quint32, quint32>  MainWindow::getPreselectors()
+Preselectors  MainWindow::getPreselectors()
 {
-    return preselectorWidget->getPreselectors();
+    Preselectors p;
+    p.first = preselectorWidget->getPreselectors().first;
+    p.second = preselectorWidget->getPreselectors().second;
+    return p;
 }
 
 bool  MainWindow::getAdcNoiceBlankerEnabled()

@@ -62,7 +62,7 @@ class MainWindow : public QMainWindow,
     quint32 getAttenuator()override;
     bool getPreamplifierEnabled()override;
 
-    QPair<quint32, quint32> getPreselectors()override;
+    Preselectors getPreselectors()override;
 
     bool getAdcNoiceBlankerEnabled()override;
     quint16 getAdcNoiceBlankerThreshold()override;

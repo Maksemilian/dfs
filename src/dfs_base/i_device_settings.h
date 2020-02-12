@@ -3,7 +3,7 @@
 
 
 #include "device_settings.h"
-
+/*
 class IDeviceSettings
 {
   public :
@@ -22,5 +22,5 @@ class IDeviceSettings
     virtual bool getAdcNoiceBlankerEnabled() = 0;
     virtual quint16 getAdcNoiceBlankerThreshold() = 0;
 
-};
+};*/
 #endif // IGETSETTINGS_H

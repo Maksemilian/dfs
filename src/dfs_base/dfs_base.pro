@@ -36,8 +36,8 @@ LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 HEADERS += \
     ring_buffer.h \
     device_settings.h \
-    i_device_settings.h \
     radio_channel.h
+#    i_device_settings.h \
 #    custom_thread.h
 
 SOURCES += \

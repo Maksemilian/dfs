@@ -1,7 +1,6 @@
 #include "command_hierarch.h"
 
 #include "i_device_settings.h"
-#include "i_deviceset.h"
 
 #include "receiver.pb.h"
 #include "client_manager.h"
