@@ -59,8 +59,11 @@ ShPtrDevice DeviceFactory::createCohG35Device(unsigned int deviceSetIndex,
         }
         enumerator->Release();
 
-        std::shared_ptr<CohG35DeviceSet> shPtr = std::make_shared<CohG35DeviceSet>(deviceSet);
-        shPtr->setCallback(CallbackFactory::cohG35CallbackInstance(buffer));
+        std::shared_ptr<CohG35DeviceSet> shPtr =
+            std::make_shared<CohG35DeviceSet>(deviceSet);
+
+        shPtr->setCallback(std::make_unique<CohG35Callback>(buffer,
+                           TimeReader::instance()));
         return static_cast<std::shared_ptr<IDevice>>(shPtr);
     }
     qDebug() << "Device is not open";

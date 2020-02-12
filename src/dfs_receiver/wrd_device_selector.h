@@ -13,6 +13,7 @@ using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 /*! \addtogroup receiver
  */
 ///@{
+
 /*!
  * \brief создает устройство по индексу
  */
