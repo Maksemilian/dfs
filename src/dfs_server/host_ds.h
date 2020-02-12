@@ -45,7 +45,7 @@ class DeviceClient: public QObject
     void onDisconnected();
     void onMessageReceived(const QByteArray& buffer);
   private:
-    void sendDeviceInfoSingle();
+//    void sendDeviceInfoSingle();
     void setDeviceInfoCoherent();
     void sendCommandAnswer(proto::receiver::Answer* commandAnswer);
     void readCommandPacket(const proto::receiver::Command& command);
@@ -60,7 +60,7 @@ class DeviceClient: public QObject
 };
 
 /*!
- * \brief отправляет данные потока ddc
+ * \brief Класс для отправки данных потока ddc1
  */
 class SignalStreamWriter: public QObject
 {

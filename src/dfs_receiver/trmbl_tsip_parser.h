@@ -29,7 +29,8 @@ union AliasCast
 
 ///@{
 /*!
- * \brief принимает пакеты со спутника
+ * \brief Класс для приниема пакетов спутниковых данных через com порт
+ * по протоколу TSIP
  */
 class TsipParser: public QObject
 {

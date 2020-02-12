@@ -15,12 +15,19 @@ using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 ///@{
 
 /*!
- * \brief создает устройство по индексу
+ * \brief Фабричный класс для создания различных классов устройств
+ * реализующих интерфейс IDevice
  */
 class DeviceFactory
 {
   public:
     ///TODO сделать возврат unique_ptr
+    /*!
+     * \brief createCohG35Device создает устройство платы синхронизации
+     * \param deviceIndex индекс платы синхронизации
+     * \param buffer кольцевой буфер для хранения данных ddc1 потока
+     * \return устройство
+     */
     static ShPtrDevice createCohG35Device(unsigned int deviceIndex,
                                           const ShPtrRingBuffer& buffer,
                                           bool demo_mode = false);

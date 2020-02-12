@@ -37,9 +37,9 @@ HEADERS += \
     ring_buffer.h \
     device_settings.h \
     i_device_settings.h \
-    radio_channel.h \
-    custom_thread.h
+    radio_channel.h
+#    custom_thread.h
 
 SOURCES += \
-    radio_channel.cpp \
-    custom_thread.cpp
+    radio_channel.cpp
+#    custom_thread.cpp

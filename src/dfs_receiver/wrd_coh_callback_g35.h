@@ -15,7 +15,9 @@ using ShPtrRingPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet
 ///@{
 
 /*!
- * \brief класс для получения потока DDC от приемного устройства
+ * \brief Класс для получения потока DDC от приемного устройства
+ *
+ * Реализует интерфейс API Winrafio ICohG35DDCDeviceSetCallback
  */
 class CohG35Callback: public ICohG35DDCDeviceSetCallback
 {
