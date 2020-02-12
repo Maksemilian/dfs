@@ -3,11 +3,9 @@
 
 #include "device_settings.h"
 
-#include "wrd_callback_coh_g35.h"
+#include "wrd_coh_callback_g35.h"
 #include "wrd_device_interface.h"
-#include "wrd_callback.h"
 
-#include <QPair>
 #include <memory>
 /*! \addtogroup receiver
  */
@@ -52,7 +50,7 @@ class CohG35DeviceSet: public IDevice
      */
     bool stopDDC1()override;
 
-    void setCallback(std::unique_ptr<CohG35Callback> callback);
+    void setCallback(std::unique_ptr<ICohG35DDCDeviceSetCallback> callback);
 
     COH_G35DDC_DEVICE_SET getDeviceSetInfo();
     QString getDeviceSetName();
@@ -60,7 +58,7 @@ class CohG35DeviceSet: public IDevice
     void freeResource();
   private:
     ICohG35DDCDeviceSet* _deviceSet = nullptr;
-    std::unique_ptr<CohG35Callback>uPtrCallback;
+    std::unique_ptr<ICohG35DDCDeviceSetCallback>uPtrCallback;
 };
 ///@}
 #endif // COH_G35_DEVICE_SET_H

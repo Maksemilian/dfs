@@ -1,6 +1,5 @@
 #include "wrd_device_selector.h"
 #include "wrd_coh_g35_ds.h"
-//#include "wrd_d_g35.h"
 
 #include "G35DDCAPI.h"
 #include <QDebug>

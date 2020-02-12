@@ -24,10 +24,6 @@ class DeviceFactory
     static ShPtrDevice createCohG35Device(unsigned int deviceIndex,
                                           const ShPtrRingBuffer& buffer,
                                           bool demo_mode = false);
-
-//    static ShPtrDevice createSingleG35Device(unsigned int deviceIndex,
-//            const ShPtrRingBuffer& buffer,
-//            bool demo_mode = false);
 };
 ///@}
 #endif // WRD_DEVICE_SELECTOR_H

@@ -7,7 +7,6 @@
 #include "receiver.pb.h"
 
 #include "trmbl_tsip_reader.h"
-#include "wrd_callback.h"
 
 using ShPtrRingPacketBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 
@@ -30,6 +29,7 @@ class CohG35Callback: public ICohG35DDCDeviceSetCallback
     };
   public:
     CohG35Callback(const ShPtrRingPacketBuffer& buffer, TimeReader& timeReader);
+    virtual ~CohG35Callback() = default;
     void __stdcall CohG35DDC_IFCallback(ICohG35DDCDeviceSet* DeviceSet, unsigned int DeviceIndex, const short* Buffer, unsigned int NumberOfSamples,
                                         WORD MaxADCAmplitude, unsigned int ADCSamplingRate);
     /*!

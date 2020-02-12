@@ -1,5 +1,5 @@
 #include "wrd_coh_g35_ds.h"
-#include "wrd_callback_coh_g35.h"
+#include "wrd_coh_callback_g35.h"
 
 #include "trmbl_tsip_reader.h"
 
@@ -13,7 +13,7 @@
 CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet* deviceSet):
     _deviceSet(deviceSet) {}
 
-void CohG35DeviceSet::setCallback(std::unique_ptr<CohG35Callback> callback)
+void CohG35DeviceSet::setCallback(std::unique_ptr<ICohG35DDCDeviceSetCallback> callback)
 {
     if(!callback.get())
     {
@@ -145,7 +145,7 @@ bool CohG35DeviceSet::startDDC1(unsigned int samplesPerBuffer)
 //    if(!timeReader.isStarted())return false;
     if(_deviceSet && uPtrCallback.get())
     {
-        uPtrCallback->resetData();
+        dynamic_cast<CohG35Callback*>(uPtrCallback.get())->resetData();
         success = _deviceSet->StartDDC1(samplesPerBuffer);
 //        resetData();
 //        uPtrCallback->resetData();
