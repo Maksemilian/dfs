@@ -127,7 +127,7 @@ void DeviceClient::sendDeviceSetInfo()
         qDebug() << "BAD CAST";
     }
 }
-
+/*
 void DeviceClient::sendDeviceInfoSingle()
 {
     G35DDC_DEVICE_INFO deviceInf = dynamic_cast<G35Device*>(d->device.get())->getDeviceInfo();
@@ -153,7 +153,7 @@ void DeviceClient::sendDeviceInfoSingle()
              << hostToClient.device_set_info().device_info(0).serial_number().data();
     writeMessage(hostToClient);
 }
-
+*/
 void DeviceClient::setDeviceInfoCoherent()
 {
 

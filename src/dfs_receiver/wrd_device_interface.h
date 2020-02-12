@@ -6,7 +6,7 @@ class DeviceSettings;
  */
 ///@{
 /*!
- * \brief интерфейс устройств
+ * \brief Интерфейс устройств
  */
 class IDevice
 {

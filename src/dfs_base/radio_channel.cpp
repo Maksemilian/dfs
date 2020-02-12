@@ -1,5 +1,10 @@
 #include "radio_channel.h"
 
+/*!
+ * \addtogroup base
+ */
+///@{
+
 RadioChannel::RadioChannel(const ShPtrPacketBuffer& buffer,
                            const ChannelData& data)
     : _inBuffer(buffer),
@@ -44,6 +49,7 @@ bool RadioChannel::readIn()
     }
     return false;
 }
+///@}
 /*
 void RadioChannel::apply()
 {

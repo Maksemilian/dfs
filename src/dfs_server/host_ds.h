@@ -45,7 +45,6 @@ class DeviceClient: public QObject
     void onDisconnected();
     void onMessageReceived(const QByteArray& buffer);
   private:
-//    void sendDeviceInfoSingle();
     void setDeviceInfoCoherent();
     void sendCommandAnswer(proto::receiver::Answer* commandAnswer);
     void readCommandPacket(const proto::receiver::Command& command);

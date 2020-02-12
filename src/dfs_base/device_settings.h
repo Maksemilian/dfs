@@ -2,8 +2,11 @@
 #define COH_G35_DS_SETTINGS_H
 
 #include <QPair>
-using Preselectors = QPair<quint32, quint32>;
+using Preselectors = std::pair<quint32, quint32>;
 
+/*!
+ * \brief Настройки устройства
+ */
 struct DeviceSettings
 {
     unsigned int attenuator;
