@@ -47,6 +47,7 @@ class DeviceClient: public Client
   private:
     void readAnswerPacket(const proto::receiver::Answer& answer);
     QString errorString(proto::receiver::CommandType commandType);
+    void showCommandAnswer(proto::receiver::CommandType commandType);
   private slots:
     void onMessageReceived(const QByteArray& buffer);
   private:

@@ -144,69 +144,7 @@ void DeviceClient::readAnswerPacket(const proto::receiver::Answer& answer)
 
     if(answer.succesed())
     {
-        switch (answer.type())
-        {
-            case proto::receiver::CommandType::SET_POWER_OFF:
-                qDebug() << "SETED_POWER_OFF";
-                //            emit deviceSetPowerSetted(false);
-                break;
-            case proto::receiver::CommandType::SET_POWER_ON:
-                qDebug() << "SETED_POWER_ON";
-                //            emit deviceSetPowerSetted(true);
-                break;
-            case proto::receiver::CommandType::SET_SETTINGS:
-                qDebug() << "SETED_SETTINGS:";
-                //            emit deviceSetSettingsSetted();
-                break;
-            case proto::receiver::CommandType::SET_ATTENUATOR:
-                qDebug() << "SETED_ATTENUATOR" << objectName();
-                break;
-            case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
-                qDebug() << "SETED_PREAMPLIFIER_ENABLED";
-                break;
-            case proto::receiver::CommandType::SET_PRESELECTORS:
-                qDebug() << "SETED_PRESELECTORS";
-                break;
-            case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
-                qDebug() << "SETED_NOICE_BLANKER_ENABLED";
-                break;
-            case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
-                qDebug() << "SETED_ADC_NOICE_BLANKER_THRESHOLD";
-                break;
-            case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
-                qDebug() << "SETED_FREQUENCY";
-                break;
-            case proto::receiver::CommandType::SET_DDC1_TYPE:
-                qDebug() << "SETED_DDC1_TYPE";
-                //            emit deviceSetChangeBandwith();
-                break;
-            case proto::receiver::CommandType::START_DDC1:
-                qDebug() << "STARTED_DDC1:";
-                emit ddc1StreamStarted();
-                break;
-            case proto::receiver::CommandType::STOP_DDC1:
-                qDebug() << "STOPED_DDC1:";
-                emit ddc1StreamStoped();
-                break;
-            case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
-                qDebug() << "SETTED_SHIFT_PHASE_DDC1";
-                break;
-            case proto::receiver::SET_DEVICE_INDEX:
-                qDebug() << "SETTED_DEVICE_SET_INDEX";
-                break;
-            case proto::receiver::START_SENDING_DDC1_STREAM:
-                qDebug() << "START_SENDING_DDC1_STREAM";
-                break;
-            case proto::receiver::STOP_SENDING_DDC1_STREAM:
-                qDebug() << "STOP_SENDING_DDC1_STREAM";
-                break;
-            case proto::receiver::SET_DEVICE_MODE:
-            case proto::receiver::UNKNOWN_COMMAND:
-            case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
-            case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
-                qDebug() << "WARNING:" << "UNUSED ENUMERATION VALUE";
-                break;
-        }
+        showCommandAnswer(answer.type());
         emit commandSuccessed();
     }
     else
@@ -219,6 +157,73 @@ void DeviceClient::readAnswerPacket(const proto::receiver::Answer& answer)
     //    qDebug()<<"DEQ_E";
 }
 
+//*************** MSG ***************
+void DeviceClient::showCommandAnswer(proto::receiver::CommandType commandType)
+{
+    switch (commandType)
+    {
+        case proto::receiver::CommandType::SET_POWER_OFF:
+            qDebug() << "SETED_POWER_OFF";
+            //            emit deviceSetPowerSetted(false);
+            break;
+        case proto::receiver::CommandType::SET_POWER_ON:
+            qDebug() << "SETED_POWER_ON";
+            //            emit deviceSetPowerSetted(true);
+            break;
+        case proto::receiver::CommandType::SET_SETTINGS:
+            qDebug() << "SETED_SETTINGS:";
+            //            emit deviceSetSettingsSetted();
+            break;
+        case proto::receiver::CommandType::SET_ATTENUATOR:
+            qDebug() << "SETED_ATTENUATOR" << objectName();
+            break;
+        case proto::receiver::CommandType::SET_PREAMPLIFIER_ENABLED:
+            qDebug() << "SETED_PREAMPLIFIER_ENABLED";
+            break;
+        case proto::receiver::CommandType::SET_PRESELECTORS:
+            qDebug() << "SETED_PRESELECTORS";
+            break;
+        case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_ENABLED:
+            qDebug() << "SETED_NOICE_BLANKER_ENABLED";
+            break;
+        case proto::receiver::CommandType::SET_ADC_NOICE_BLANKER_THRESHOLD:
+            qDebug() << "SETED_ADC_NOICE_BLANKER_THRESHOLD";
+            break;
+        case proto::receiver::CommandType::SET_DDC1_FREQUENCY:
+            qDebug() << "SETED_FREQUENCY";
+            break;
+        case proto::receiver::CommandType::SET_DDC1_TYPE:
+            qDebug() << "SETED_DDC1_TYPE";
+            //            emit deviceSetChangeBandwith();
+            break;
+        case proto::receiver::CommandType::START_DDC1:
+            qDebug() << "STARTED_DDC1:";
+//                emit ddc1StreamStarted();
+            break;
+        case proto::receiver::CommandType::STOP_DDC1:
+            qDebug() << "STOPED_DDC1:";
+//                emit ddc1StreamStoped();
+            break;
+        case proto::receiver::CommandType::SET_SHIFT_PHASE_DDC:
+            qDebug() << "SETTED_SHIFT_PHASE_DDC1";
+            break;
+        case proto::receiver::SET_DEVICE_INDEX:
+            qDebug() << "SETTED_DEVICE_SET_INDEX";
+            break;
+        case proto::receiver::START_SENDING_DDC1_STREAM:
+            qDebug() << "START_SENDING_DDC1_STREAM";
+            break;
+        case proto::receiver::STOP_SENDING_DDC1_STREAM:
+            qDebug() << "STOP_SENDING_DDC1_STREAM";
+            break;
+        case proto::receiver::SET_DEVICE_MODE:
+        case proto::receiver::UNKNOWN_COMMAND:
+        case proto::receiver::CommandType_INT_MIN_SENTINEL_DO_NOT_USE_:
+        case proto::receiver::CommandType_INT_MAX_SENTINEL_DO_NOT_USE_:
+            qDebug() << "WARNING:" << "UNUSED ENUMERATION VALUE";
+            break;
+    }
+}
 //TODO сервер должен отсылать сообщение с ошибкой
 QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 {

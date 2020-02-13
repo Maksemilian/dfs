@@ -10,7 +10,6 @@
  */
 ///@{
 SignalStreamServer::SignalStreamServer(quint8 bufferSize)
-
 {
     Q_UNUSED(bufferSize);
 
