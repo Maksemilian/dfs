@@ -22,7 +22,6 @@ class Server: public QTcpServer
     void incomingConnection(qintptr handle) override;
     void onChannelReady();
     void onNewConnection();
-//    void onChannelDisconnected();
     virtual void createSession(net::ChannelHost* channelHost) = 0;
   private:
     QList<net::ChannelHost*>_pendingChannelsList;

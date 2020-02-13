@@ -12,6 +12,27 @@ Server::Server()
             this, &Server::onNewConnection);
 }
 
+void Server::onNewConnection()
+{
+    qDebug() << "Server::onNewConnection";
+
+    while (!_readyChannelsList.isEmpty())
+    {
+        net::ChannelHost* networkChannel = _readyChannelsList.front();
+        qDebug() << "Session Type" << networkChannel->sessionType();
+        if(networkChannel)
+        {
+            qDebug() << "Create Session";
+            createSession(networkChannel);
+            _readyChannelsList.pop_front();
+        }
+        else
+        {
+            qDebug() << "BAD SESSION TYPE:" << networkChannel->sessionType();
+        }
+    }
+}
+
 void Server::incomingConnection(qintptr handle)
 {
     qDebug() << "===============incomingConnection handle" << handle;
@@ -50,27 +71,27 @@ void Server::onChannelReady()
     }
 }
 
-void Server::onNewConnection()
-{
-    qDebug() << "Server::onNewConnection";
+//void Server::onNewConnection()
+//{
+//    qDebug() << "Server::onNewConnection";
 
-    while (!_readyChannelsList.isEmpty())
-    {
-        net::ChannelHost* networkChannel = _readyChannelsList.front();
-        qDebug() << "Session Type" << networkChannel->sessionType();
-        if(networkChannel && networkChannel->sessionType() ==
-                SessionType::SESSION_COMMAND)
-        {
-            qDebug() << "Create Session";
-            createSession(networkChannel);
-            _readyChannelsList.pop_front();
-        }
-        else
-        {
-            qDebug() << "BAD SESSION TYPE:" << networkChannel->sessionType();
-        }
-    }
-}
+//    while (!_readyChannelsList.isEmpty())
+//    {
+//        net::ChannelHost* networkChannel = _readyChannelsList.front();
+//        qDebug() << "Session Type" << networkChannel->sessionType();
+//        if(networkChannel && networkChannel->sessionType() ==
+//                SessionType::SESSION_COMMAND)
+//        {
+//            qDebug() << "Create Session";
+//            createSession(networkChannel);
+//            _readyChannelsList.pop_front();
+//        }
+//        else
+//        {
+//            qDebug() << "BAD SESSION TYPE:" << networkChannel->sessionType();
+//        }
+//    }
+//}
 ///@}
 //void Server::onChannelDisconnected()
 //{
