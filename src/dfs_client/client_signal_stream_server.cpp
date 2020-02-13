@@ -10,11 +10,9 @@
  */
 ///@{
 SignalStreamServer::SignalStreamServer(quint8 bufferSize)
+
 {
     Q_UNUSED(bufferSize);
-    qDebug() << "Stream Server Init";
-    connect(this, &SignalStreamServer::newChannelReady,
-            this, &SignalStreamServer::onNewConnection);
 
     buffers[StreamType::ST_DDC1] =
         std::make_shared<RadioChannel>();
@@ -27,65 +25,6 @@ ShPtrRadioChannel SignalStreamServer::getChannel(StreamType type)
         return buffers[StreamType::ST_DDC1];
     }
     return nullptr;
-}
-
-void SignalStreamServer::incomingConnection(qintptr handle)
-{
-    qDebug() << "=============== Stream_Serever_incomingConnection handle" << handle;
-    net::ChannelHost* channelHost = new net::ChannelHost(handle);
-
-    connect(channelHost, &net::ChannelHost::keyExchangedFinished,
-            this, &SignalStreamServer::onChannelReady);
-
-    _pendingChannelsList.append(channelHost);
-}
-
-void SignalStreamServer::onChannelReady()
-{
-    qDebug() << "Server::onChannelReady";
-
-    auto it = _pendingChannelsList.begin();
-    while (it != _pendingChannelsList.end())
-    {
-        net::ChannelHost* networkChannel = *it;
-
-        if(!networkChannel)
-        {
-            it = _pendingChannelsList.erase(it);
-        }
-        else if(networkChannel->state() == net::ChannelHost::ESTABLISHED)
-        {
-            it = _pendingChannelsList.erase(it);
-            //            qDebug()<<networkChannel<<*it;
-            _readyChannelsList.append(networkChannel);
-            emit newChannelReady();
-        }
-        else
-        {
-            it++;
-        }
-    }
-}
-
-void SignalStreamServer::onNewConnection()
-{
-    qDebug() << "Server::onNewConnection";
-
-    while (!_readyChannelsList.isEmpty())
-    {
-        net::ChannelHost* networkChannel = _readyChannelsList.front();
-        qDebug() << networkChannel->sessionType();
-        if(networkChannel)
-        {
-            qDebug() << "Create Session";
-            createSession(networkChannel);
-            _readyChannelsList.pop_front();
-        }
-        else
-        {
-            qDebug() << "NULLPTR SESSION TYPE";
-        }
-    }
 }
 
 void SignalStreamServer::createSession(net::ChannelHost* channelHost)

@@ -1,7 +1,7 @@
 #ifndef STREAM_SERVE_RTEST_H
 #define STREAM_SERVE_RTEST_H
 
-#include "server
+#include "server.h"
 
 class DeviceClient;
 /*! \defgroup server Server
@@ -17,23 +17,17 @@ class DeviceClient;
  * который принимает и выполняет команды по управлению приемным устройством
  * от удаленных клиентов
  */
-class StreamServer: public QTcpServer
+class HostServer: public Server
 {
     Q_OBJECT
 
   public:
-    StreamServer();
-  signals:
-    void newChannelReady();
+    HostServer();
   private:
-    void incomingConnection(qintptr handle) override;
-    void onChannelReady();
-    void onNewConnection();
+    void createSession(net::ChannelHost* channelHost)override;
+  private slots:
     void onChannelDisconnected();
-    void createSession(net::ChannelHost* channelHost);
   private:
-    QList<net::ChannelHost*>_pendingChannelsList;
-    QList<net::ChannelHost*>_readyChannelsList;
     QList<DeviceClient*> _client;
 };
 ///@}

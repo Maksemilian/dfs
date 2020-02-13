@@ -1,6 +1,10 @@
 #include "server.h"
 #include "channel_host.h"
 
+/*! \addtogroup net
+ */
+
+///@{
 Server::Server()
 {
     qDebug() << "Stream Server Init";
@@ -67,7 +71,7 @@ void Server::onNewConnection()
         }
     }
 }
-
+///@}
 //void Server::onChannelDisconnected()
 //{
 //    qDebug() << "onChannelDisconnected";

@@ -1,10 +1,10 @@
 #ifndef STREAM_SERVER_H
 #define STREAM_SERVER_H
 
-#include "channel_host.h"
+#include "server.h"
+
 #include "radio_channel.h"
 
-#include <QTcpServer>
 #include <QList>
 
 /*! \addtogroup client
@@ -17,24 +17,17 @@
  * \brief Класс принимает входящие соединения для
  * передающие поток ddc1
  */
-class SignalStreamServer: public QTcpServer
+class SignalStreamServer: public Server
 {
     Q_OBJECT
   public:
     enum class StreamType {ST_DDC1};
     SignalStreamServer(quint8 bufferSize = 16);
     ShPtrRadioChannel getChannel(StreamType type);
-  signals:
-    void newChannelReady();
   private:
-    void incomingConnection(qintptr handle) override;
-    void onChannelReady();
-    void onNewConnection();
-    void createSession(net::ChannelHost* channelHost);
+    void createSession(net::ChannelHost* channelHost)override;
     void createThread(net::ChannelHost* channelHost);
   private:
-    QList<net::ChannelHost*>_pendingChannelsList;
-    QList<net::ChannelHost*>_readyChannelsList;
     std::map<StreamType, ShPtrRadioChannel> buffers;
 };
 

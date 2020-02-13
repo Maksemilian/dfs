@@ -4,6 +4,12 @@
 #include <QTcpServer>
 #include "channel_host.h"
 
+/*! \addtogroup net
+ */
+///@{
+/*!
+ * \brief Абстрактный базовый класс сервера
+ */
 class Server: public QTcpServer
 {
     Q_OBJECT
@@ -22,5 +28,5 @@ class Server: public QTcpServer
     QList<net::ChannelHost*>_pendingChannelsList;
     QList<net::ChannelHost*>_readyChannelsList;
 };
-
+///@}
 #endif // SERVER_H
