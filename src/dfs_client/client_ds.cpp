@@ -27,6 +27,9 @@ struct DeviceClient::Impl
     SignalStreamServer streamServer;
 };
 
+/*! \addtogroup client
+ */
+///@{
 DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     :    Client (connectData, parent),
          d(std::make_unique<Impl>())
@@ -216,7 +219,7 @@ void DeviceClient::readAnswerPacket(const proto::receiver::Answer& answer)
     //    qDebug()<<"DEQ_E";
 }
 
-
+//TODO сервер должен отсылать сообщение с ошибкой
 QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 {
     switch (commandType)
@@ -253,6 +256,7 @@ QString DeviceClient::errorString(proto::receiver::CommandType commandType)
             return "UNKNOWN KOMMAND";
     }
 }
+///@}
 
 /*
 

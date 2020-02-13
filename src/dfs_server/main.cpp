@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     }
 
     TimeReader::instance().start();
-    StreamServer* streamServer = new StreamServer();
+    HostServer* streamServer = new HostServer();
     streamServer->listen(QHostAddress::Any, listenPort);
     qDebug() << "Listen" << listenPort;
     return app.exec();

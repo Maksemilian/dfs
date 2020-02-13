@@ -1,9 +1,7 @@
 #ifndef STREAM_SERVE_RTEST_H
 #define STREAM_SERVE_RTEST_H
 
-#include "channel_host.h"
-
-#include <QTcpServer>
+#include "server
 
 class DeviceClient;
 /*! \defgroup server Server

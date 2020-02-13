@@ -2,6 +2,11 @@
 
 #include <QDataStream>
 #include <QHostAddress>
+
+/*! \addtogroup net
+ *
+ */
+///@{
 namespace net
 {
 
@@ -90,7 +95,9 @@ namespace net
             qint64 written = _socket->write(outgoingBuffer.constData(),
                                             qMin<qint64>(bytes - totalWritten, outgoingBuffer.size()));
             if (written <= 0)
+            {
                 return totalWritten ? totalWritten : written;
+            }
 
             totalWritten += written;
             outgoingBuffer.remove(0, static_cast<int>(written));
@@ -108,7 +115,9 @@ namespace net
         {
             qint64 bytesRead = _socket->read(buffer, qMin<qint64>(sizeof(buffer), bytes - totalRead));
             if (bytesRead <= 0)
+            {
                 break;
+            }
             qint64 oldSize = read_.buffer.size();
             read_.buffer.resize(static_cast<int>(oldSize + bytesRead));
             memcpy(read_.buffer.data() + oldSize, buffer, static_cast<size_t>(bytesRead));
@@ -199,7 +208,9 @@ namespace net
 
 
                         if(read_.buffer.capacity() < read_.buffer_size)
+                        {
                             read_.buffer.reserve(read_.buffer_size);
+                        }
 
                         read_.buffer.resize(read_.buffer_size);
                         read_.buffer_size = 0;
@@ -225,7 +236,9 @@ namespace net
             }
 
             if (current <= 0)
+            {
                 return;
+            }
 
             read_.bytes_transferred += current;
         }
@@ -238,3 +251,5 @@ namespace net
     }
 
 }
+
+///@}

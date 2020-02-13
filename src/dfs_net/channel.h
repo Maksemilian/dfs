@@ -4,8 +4,20 @@
 #include <QTcpSocket>
 #include <memory>
 
+/*!
+ * \defgroup net Net
+ * Модуль статической библиотеки реализующий канал
+ * для передачи данных по протоколу TCP между клиентским
+ * приложением и серверным приложением.
+ */
+
+///@{
 namespace net
 {
+    /*!
+         * \brief Абстрактный базовый класс предоставляющий
+         * основные методы для отправки и приема данных
+         */
     class Channel: public QObject
     {
         Q_OBJECT
@@ -31,6 +43,11 @@ namespace net
         void messageReceived(const QByteArray& buffer);
         void finished();
       protected:
+        /*!
+         * \brief Чисто виртуальный метод , который должен быть переопределен
+         * в производных классах для того чтобы читать входящие данные
+         * \param buffer Массив байт принятых из сети
+         */
         virtual void internalMessageReceive(const QByteArray& buffer) = 0;
         ///**************WRITE/READ****************
       public:
@@ -77,5 +94,6 @@ namespace net
     };
 
 }
+///@}
 
 #endif // CHANNEL_H

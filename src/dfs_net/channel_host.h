@@ -4,8 +4,17 @@
 #include "channel.h"
 #include "key_exchange.pb.h"
 
+/*! \addtogroup net
+ *
+ */
 namespace net
 {
+    /*!
+     * \brief Класс сетевого соединения на стороне хоста
+     *
+     * Ведет сетевой обмен сообщениями с ChannelClient
+     * до тех пор пока не будет установлено соединение
+     */
     class ChannelHost: public Channel
     {
         Q_OBJECT

@@ -23,6 +23,10 @@
 #include <QSettings>
 #include <QStackedWidget>
 
+/*! \addtogroup client
+  */
+
+///@{
 //**************CONSTANTS*******************
 const QString MainWindow::SETTINGS_FILE_NAME = "device_set.ini";
 
@@ -556,6 +560,7 @@ void MainWindow::saveSetting()
         qDebug() << "FILE " << settingsFileName << "isn't exist";
     }
 }
+///@}
 /*
 void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
 {

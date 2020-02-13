@@ -6,6 +6,11 @@
 #include <QByteArray>
 #include <QHostAddress>
 
+/*! \addtogroup net
+ *
+ */
+///@{
+
 namespace net
 {
 
@@ -134,3 +139,4 @@ namespace net
     }
 
 }
+///@}

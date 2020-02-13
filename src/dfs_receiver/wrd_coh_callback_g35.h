@@ -60,6 +60,7 @@ class CohG35Callback: public ICohG35DDCDeviceSetCallback
     void showPacket(proto::receiver::Packet& packet);
   private:
     ShPtrRingPacketBuffer buffer;
+    //TODO можно использовать паттер наблюдатель за временем
     TimeReader& timeReader;
 
     bool isFirstBlock;

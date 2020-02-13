@@ -4,8 +4,18 @@
 #include "channel.h"
 #include "key_exchange.pb.h"
 
+/*! \addtogroup net
+ *
+ */
+///@{
 namespace net
 {
+    /*!
+     * \brief Реализует клиентское соединение к хосту
+     *
+     * Ведет сетевой обмен сообщениями с ChannelHost
+     * до тех пор пока не будет установлено соединение
+     */
     class ChannelClient: public Channel
     {
         Q_OBJECT
@@ -13,6 +23,12 @@ namespace net
         ChannelClient(QObject* parent = nullptr);
         //ChannelClient(qintptr handle,QObject *parent=nullptr);
         ~ChannelClient()override;
+        /*!
+         * \brief подключение к удалленому хосту
+         * \param address IP аддрес хоста
+         * \param port порт хоста
+         * \param sesionType тип соединения
+         */
         void connectToHost(const QString& address, quint16 port, SessionType sesionType);
         void disconnectFromHost();
         void waitForConnected(int time = 30000);
@@ -32,4 +48,5 @@ namespace net
         SessionType _sessionType = SessionType::SESSION_UNKNOWN;
     };
 }
+///@}
 #endif // CHANNEL_CLIENT_H

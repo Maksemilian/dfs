@@ -8,6 +8,14 @@
 
 class QHostAddress;
 
+/*! \addtogroup client
+ *
+ */
+
+///@{
+/*!
+ * \brief Данные сетевого соединения
+ */
 struct ConnectData
 {
     QString address;
@@ -15,13 +23,26 @@ struct ConnectData
     SessionType type;
 };
 
+/*!
+ * \brief Абстрактный базовый класс клиента
+ */
 class Client: public QObject
 {
     Q_OBJECT
   public:
     Client(const ConnectData& connectData, QObject* parent = nullptr);
+    /*!
+     * \brief запускает работу клиента
+     */
     void start();
+    /*!
+     * \brief останавливает работу клиента
+     */
     void stop();
+    /*!
+     * \brief посылает сообщение по сети
+     * \param message сообщение для отправки
+     */
     void sendMessage(const google::protobuf::Message& message);
     virtual void onMessageReceived(const QByteArray& buffer) = 0;
     inline const ConnectData& connectData()
@@ -36,4 +57,5 @@ class Client: public QObject
     std::unique_ptr<net::ChannelClient> _channel;
 };
 
+///@}
 #endif // CLIENT_H

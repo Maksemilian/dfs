@@ -39,11 +39,13 @@ LIBS += $${LIBS_PATH}/dfs_proto/lib -ldfs_proto
 HEADERS += \
     channel.h \
     channel_client.h \
-    channel_host.h
+    channel_host.h \
+    server.h
 
 SOURCES += \
     channel.cpp \
     channel_client.cpp \
-    channel_host.cpp
+    channel_host.cpp \
+    server.cpp
 
 DEFINES += QT_DEPRECATED_WARNINGS

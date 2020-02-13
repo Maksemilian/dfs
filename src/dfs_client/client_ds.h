@@ -9,6 +9,15 @@
 
 class QHostAddress;
 
+/*! \addtogroup client
+ */
+
+///@{
+
+/*!
+ * \brief Класс реализует отпраук команд для управления
+ * устройством
+ */
 class DeviceClient: public Client
 {
     Q_OBJECT
@@ -44,6 +53,7 @@ class DeviceClient: public Client
     struct Impl;
     std::unique_ptr<Impl> d;
 };
+///@}
 
 using ShPtrDeviceClient = std::shared_ptr<DeviceClient>;
 #endif // RECEIVER_STATION_CLIENT_H

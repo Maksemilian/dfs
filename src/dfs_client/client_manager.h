@@ -6,7 +6,13 @@
 #include <QQueue>
 #include <QObject>
 
+/*! \addtogroup client
+*/
+///@{
 
+/*!
+ * \brief Класс для управления клиентами устройств
+ */
 class ClientManager: public QObject
 {
     Q_OBJECT
@@ -38,6 +44,7 @@ class ClientManager: public QObject
     QQueue<proto::receiver::Command>_commandQueue;
     int _counter = 0;
 };
+///@}
 using ShPtrClientManager = std::shared_ptr<ClientManager>;
 
 #endif // CLIENT_MANAGER_H

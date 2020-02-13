@@ -6,6 +6,9 @@
 
 #include <QThread>
 
+/*! \addtogroup client
+ */
+///@{
 SignalStreamServer::SignalStreamServer(quint8 bufferSize)
 {
     Q_UNUSED(bufferSize);
@@ -186,3 +189,4 @@ void SignalStreamReader::onMessageReceive(const QByteArray& buffer)
                 << "ADC_C" << clientToHost.packet().adc_period_counter();
     }
 }
+///@}

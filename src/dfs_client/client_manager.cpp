@@ -1,11 +1,17 @@
 #include "client_manager.h"
 
+/*! \addtogroup client
+ */
+
+///@{
+
 ClientManager::ClientManager()
 {
 
 }
 
-void ClientManager::clear(){
+void ClientManager::clear()
+{
     _clients.clear();
 }
 
@@ -86,12 +92,13 @@ void ClientManager::onCommandSuccessed()
     }
 
     if(!_commandQueue.isEmpty() &&
-            _commandQueue.head().command_type() != successedCommand.command_type())
+            _commandQueue.head().command_type()
+            != successedCommand.command_type())
     {
         sendCommandForAll(_commandQueue.head());
     }
 }
-
+///@}
 //void DeviceSetListWidget::checkingConnections(bool checkingState)
 //{
 //    std::shared_ptr<QTimer> shpTimer = std::make_shared<QTimer>();

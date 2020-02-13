@@ -10,6 +10,10 @@
 #include <QDataStream>
 #include <QDebug>
 
+/*! \addtogroup net
+ *
+ */
+///@{
 namespace net
 {
 
@@ -152,3 +156,4 @@ namespace net
     }
 
 }
+///@}

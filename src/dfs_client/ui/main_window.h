@@ -6,6 +6,11 @@
 #include <QMainWindow>
 #include <QMap>
 
+/*!  \defgroup client Client
+ *
+ */
+
+///@{
 namespace Ui
 {
     class MainWindow;
@@ -110,6 +115,6 @@ class MainWindow : public QMainWindow,
     DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
 };
-
+///@}
 
 #endif // MAIN_WINDOW_H
