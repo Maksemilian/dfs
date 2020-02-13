@@ -3,6 +3,9 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <iostream>
+/*! \addtogroup client
+ */
+///@{
 using namespace std;
 
 const FrequencyLineEdit::Freq FrequencyLineEdit::Units[4] =
@@ -94,7 +97,9 @@ quint32 FrequencyLineEdit::getFrequencyValueInHz()
     double value = text().left(text().length() - Units[unit].Text.length()).toDouble();
     value *= Units[unit].Mul;
     if(value <= MIN_VALUE_IN_HZ || value >= MAX_VALUE_IN_HZ)
+    {
         value = Units[FrequencyEditUnits_kHz].Mul;
+    }
     //TODO РАЗОБРАТЬСЯ КАК ПРОИСХОДИТ ПОЛУЧЕНИЕ ПОСЛЕ ЗАПЯТОЙ 9999
     return static_cast<quint32>(value + 0.5);
 }
@@ -104,7 +109,9 @@ void FrequencyLineEdit::onChangedPositionCursor(int oldV, int newV)
     Q_UNUSED(oldV);
 
     if(text().length() - postfixLength < newV)
+    {
         setCursorPosition(text().length() - Units[unit].Text.length());
+    }
 }
 
 void FrequencyLineEdit::onReturnPresed()
@@ -113,7 +120,9 @@ void FrequencyLineEdit::onReturnPresed()
     for(int i = 0; i < FrequencyUnitEnd; i++)
     {
         if(Units[i].Code == unit)
+        {
             index = unit;
+        }
     }
     QString strNumber = text().left(text().length() - Units[index].Text.length());
 
@@ -143,7 +152,10 @@ void FrequencyLineEdit::onReturnPresed()
     setText(strNumber + Units[index].Text);
     setCursorPosition(text().length() - Units[index].Text.length());
 
-    if(static_cast<quint32>(val) > 0)changed();
+    if(static_cast<quint32>(val) > 0)
+    {
+        changed();
+    }
 }
 
 void FrequencyLineEdit::keyPressEvent(QKeyEvent* event)
@@ -204,7 +216,9 @@ void FrequencyLineEdit::keyPressEvent(QKeyEvent* event)
                 break;
             case Qt::Key_Right:
                 if(currentText.at(pos).isDigit())
+                {
                     setCursorPosition(pos + 1);
+                }
                 break;
             case Qt::Key_Return:
                 //qDebug("enter");
@@ -241,4 +255,4 @@ void FrequencyLineEdit::keyPressEvent(QKeyEvent* event)
         }
     }
 }
-
+///@}

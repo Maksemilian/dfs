@@ -4,7 +4,9 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLineEdit>
-
+/*! \addtogroup client
+ */
+///@{
 using UInt32Bandwth = quint32;
 using Uint32SampleRate = quint32;
 
@@ -61,6 +63,6 @@ class AttenuatorComboBox: public ToolBarComboBox
     AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
     quint32 getAttenuationLevel();
 };
-
+///@}
 
 #endif // WIDGETS_H

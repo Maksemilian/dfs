@@ -6,7 +6,9 @@
 
 #include "receiver.pb.h"
 #include "client_desctop.h"
-
+/*! \addtogroup client
+ */
+///@{
 class QTextEdit;
 class TreePcWidgetItem;
 
@@ -40,5 +42,5 @@ class TreePcWidgetItem : public QTreeWidgetItem
     std::unique_ptr<DesctopClient> _desctopClient;
 
 };
-
+///@}
 #endif // TREE_PC_ITEM_H

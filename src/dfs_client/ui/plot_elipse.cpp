@@ -1,12 +1,15 @@
 #include "plot_elipse.h"
 #include <QPointF>
 
+
 const QColor ElipsPlot::greenColor = QColor(0, 255, 0);
 const QColor ElipsPlot::blueColor = QColor(0, 0, 255);
 
 const QColor ElipseLine::blueColor = QColor(0, 0, 255);
 const QString ElipseLine::DEGREE_UNICODE_SYMBOL = "\u00B0";
-
+/*! \addtogroup client
+ */
+///@{
 //СЛЕВА НА ПРАВО И СВЕРХУ ВНИЗ
 ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
                        const QString& leftText, const QString& rightText, QCustomPlot* parent)
@@ -184,3 +187,4 @@ void ElipsPlot::customEvent(QEvent* event)
     replot();
     mutex.unlock();
 }
+///@}

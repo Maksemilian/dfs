@@ -10,6 +10,8 @@
 #include "tool_widgets.h"
 
 #include "plot_monitoring.h"
+#include "plot_channel.h"
+#include "plot_elipse.h"
 
 #include "client_ds_ui.h"
 #include "client_ds_ui_list.h"
@@ -63,15 +65,24 @@ MainWindow:: MainWindow(QWidget* parent):
     loadSettings();
 
     //************** ELIPSE PLOT***************************
-    plotMonitoring = new PlotMonitoring(this);
-    plotMonitoring->ds = this;
+    //    plotMonitoring = new PlotMonitoring(this);
+    //    plotMonitoring->ds = this;
+    QWidget* centralWidget = new QWidget (this);
+    QGridLayout* gl = new QGridLayout();
+    centralWidget->       setLayout(gl);
+    setCentralWidget(centralWidget);
+    channelPlot = new ChannelPlot(2, getSamplesPerBuffer());
+    elipsPlot = new ElipsPlot(this);
+    gl->addWidget(elipsPlot, 0, 0, 1, 1);
+    gl->addWidget(channelPlot, 0, 1, 1, 2);
+
     connect(_clientManager.get(), &ClientManager::ready,
-            plotMonitoring, &PlotMonitoring::onDeviceSetListReady);
+            this, &MainWindow::onDeviceSetListReady);
 
     connect(_clientManager.get(), &ClientManager::notReady,
-            plotMonitoring, &PlotMonitoring::onDeviceSetListNotReady);
+            this, &MainWindow::onDeviceSetListNotReady);
 
-    setCentralWidget(plotMonitoring);
+    //    setCentralWidget(plotMonitoring);
 
     showReceiverSettingsTool();
 
@@ -83,6 +94,74 @@ MainWindow::~MainWindow()
 {
     saveSetting();
     delete ui;
+}
+
+void MainWindow::onDeviceSetListReady(
+    const std::vector<ShPtrRadioChannel>& channels)
+//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
+{
+
+    //    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
+    //               "sync available only for 2 channel");
+    quit = false;
+    qDebug() << "START SYNC" << getDDC1Frequency()
+             << getSampleRateForBandwith()
+             << getSamplesPerBuffer();
+
+    ChannelData data = {getDDC1Frequency(),
+                        getSampleRateForBandwith(),
+                        getSamplesPerBuffer()
+                       };
+    channels.front()->setChannelData(data);
+    channels.back()->setChannelData(data);
+
+    sync.reset(new Sync2D(channels.front(), channels.back(), data));
+    elipsPlot->setSyncData(data);
+    qDebug() << "****PLOT MONITORIN"
+             << channels.back().use_count()
+             << channels.back().use_count()
+             << channels.back()->outBuffer().use_count()
+             << channels.back()->outBuffer().use_count();
+    QtConcurrent::run([this, channels]()
+    {
+        bool isRead1 = false;
+        bool isRead2 = false;
+
+        std::shared_ptr<RadioChannel>channel1 = channels.front();
+        std::shared_ptr<RadioChannel>channel2 = channels.back();
+
+        proto::receiver::Packet pct1;
+        proto::receiver::Packet pct2;
+        qDebug() << "PLOT MONITORING RUN";
+        while (!quit)
+        {
+            if(channel1->outBuffer()->pop(pct1))
+            {
+                isRead1 = true;
+            }
+
+            if(channel2->outBuffer()->pop(pct2))
+            {
+                isRead2 = true;
+            }
+
+            if(isRead1 && isRead2)
+            {
+                channelPlot->apply(pct1, pct2);
+                elipsPlot->apply(pct1, pct2);
+
+                isRead1 = false;
+                isRead2 = false;
+            }
+        }
+        qDebug() << "PLOT MONITORING STOP";
+    });
+}
+
+void MainWindow::onDeviceSetListNotReady()
+{
+    quit = true;
+    sync->stop();
 }
 
 void MainWindow::setCentralWidget(QWidget* widget)
@@ -474,8 +553,8 @@ quint16  MainWindow::getAdcNoiceBlankerThreshold()
 void MainWindow::loadSettings()
 {
     QString  settingsFileName = QApplication::applicationDirPath() + "/" + SETTINGS_FILE_NAME;
-//    if(QFile::exists(settingsFileName))
-//    {
+    //    if(QFile::exists(settingsFileName))
+    //    {
     QSettings s(settingsFileName, QSettings::IniFormat);
     s.beginGroup("attenuator");
 
@@ -515,11 +594,11 @@ void MainWindow::loadSettings()
     cbDDC1Bandwith->setCurrentIndex(static_cast<int>(s.value("type_index").toUInt()));
     cbSamplesPerBuffer->setCurrentText(QString::number(s.value("samples_per_buffer").toUInt()));
     s.endGroup();
-//    }
-//    else
-//    {
-//        qDebug() << "FILE " << settingsFileName << "isn't exist";
-//    }
+    //    }
+    //    else
+    //    {
+    //        qDebug() << "FILE " << settingsFileName << "isn't exist";
+    //    }
 }
 
 void MainWindow::saveSetting()

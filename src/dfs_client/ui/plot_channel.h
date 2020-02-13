@@ -6,6 +6,11 @@
 
 #include <QColor>
 
+/*! \addtogroup client
+ */
+///@{
+///
+
 class ChannelDataWidget: public QCPLayoutGrid
 {
     enum ElementType
@@ -40,9 +45,12 @@ struct ChannelDataT
     unsigned long long adcCounter;
 };
 
+/*!
+ * \brief Класс построения графика сигнала ddc1 двух каналов
+ * \attention На данный момент на график выводятся два графика
+ * I компонент сигнала
+ */
 class ChannelPlot : public QCustomPlot
-//        public SyncSignalPairChannelEventListener
-
 {
     int RANGE_SIGNAL_LOWER_BORDER_X_AXIS = 0;
     int RANGE_SIGNAL_UPPER_BORDER_X_AXIS = 350;
@@ -62,8 +70,15 @@ class ChannelPlot : public QCustomPlot
         CT_I_Q
     };
     ChannelPlot(int channelCount, quint32 blockSize, QWidget* parent = nullptr);
+    /*!
+     * \brief строит графики сигналов ddc1 для двух сигналов для I компоненты
+     * \param pct1 данные первого канала
+     * \param pct2 данные второго канала
+     */
+    //TODO возможно сюда передавть каналы а не пакеты
     void apply(const proto::receiver::Packet& pct1,
                const proto::receiver::Packet& pct2);
+  private:
     void updateSignalData(int index,
                           const ChannelDataT& channelData1,
                           const ChannelDataT& channelData2);
@@ -72,7 +87,7 @@ class ChannelPlot : public QCustomPlot
                                quint32 dataSize) ;
 
     void setGraphName(int id, const QString& name);
-  private:
+
     void customEvent(QEvent* event)override;
   private:
     QList<ChannelDataWidget*>channelDataList;
@@ -81,5 +96,6 @@ class ChannelPlot : public QCustomPlot
     QMutex mutex;
     QButtonGroup* buttonGroup;
 };
+///@}
 
 #endif // CHANNEL_PLOT_H

@@ -17,7 +17,7 @@
 
 using namespace std;
 
-/*! \addtogroup sync Sync
+/*! \addtogroup client
  */
 ///@{
 using RingIpp32fcBuffer = RingBuffer<std::vector<Ipp32fc>>;
@@ -26,6 +26,10 @@ using ShPtrIpp32fcBuffer = std::shared_ptr<RingIpp32fcBuffer>;
 using VectorIpp32fc = std::vector<Ipp32fc>;
 using VectorIpp32f = std::vector<Ipp32f>;
 
+/*!
+ * \brief Класс вычисляет данные для посторение элипса
+ * сумма-разностным методом
+ */
 class SumSubMethod
 {
     //1250 Гц - частота гетеродина создающего sin/cos коэффициенты
@@ -152,6 +156,10 @@ class ElipseLine : public QCPItemLine
                const QString& leftText, const QString& rightText, QCustomPlot* parent);
 };
 
+/*!
+ * \brief Класс посторения элипса по точкам полученным
+ * классом SumSubMethod
+ */
 class ElipsPlot: public QCustomPlot
 {
     int LOWER_BORDER_X_AXIS = -750000;
@@ -167,9 +175,10 @@ class ElipsPlot: public QCustomPlot
     void setSyncData(const ChannelData& data);
     void apply(const proto::receiver::Packet& pctChannel1,
                const proto::receiver::Packet& pctChannel2);
+  private:
     void update(int index, const float* sumDivData, quint32 dataSize);
     void update(int index, const  VectorIpp32fc& v);
-  private:
+
     void customEvent(QEvent* event)override;
   private:
     QCPCurve* curve;
@@ -178,5 +187,5 @@ class ElipsPlot: public QCustomPlot
     ChannelData data;
     std::unique_ptr<SumSubMethod> sumSubMethod;
 };
-
+///@}
 #endif // ELIPS_PLOT_H

@@ -4,7 +4,9 @@
 
 #include <QWidget>
 class QComboBox;
-
+/*! \addtogroup client
+ */
+///@{
 using  UInt32LowFreq = quint32 ;
 using  UInt32HeighFreq = quint32 ;
 
@@ -29,5 +31,5 @@ class PreselectorWidget: public QWidget /*,public IToolBarWidget*/
     QComboBox* cbLowFrequency;
     QComboBox* cbHighFrequency;
 };
-
+///@}
 #endif // PRESELECTOR_WIDGET_H

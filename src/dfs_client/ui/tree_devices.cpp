@@ -17,6 +17,9 @@
 #include <QKeyEvent>
 #include <QHeaderView>
 
+/*! \addtogroup client
+ */
+///@{
 const QString DeviceMonitoring::SETTINGS_TREE_FILE_NAME = "tree_devices.ini";
 const QString DeviceMonitoring::SETTINGS_LIST_FILE_NAME = "client_device_set_list.ini";
 
@@ -220,6 +223,7 @@ void DeviceMonitoring::loadTreeSettings()
         s.endGroup();
     }
 }
+///@}
 /*
 void DeviceMonitoring::loadListSettings()
 {

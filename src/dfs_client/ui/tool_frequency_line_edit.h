@@ -3,7 +3,9 @@
 
 
 #include <QLineEdit>
-
+/*! \addtogroup client
+ */
+///@{
 class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
 {
     Q_OBJECT
@@ -49,5 +51,5 @@ class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
     int postfixLength = 0;
     int unit;
 };
-
+///@}
 #endif // FREQUENCY_LINE_EDIT_H

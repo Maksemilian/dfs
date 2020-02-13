@@ -3,7 +3,9 @@
 
 #include <QHBoxLayout>
 #include <QComboBox>
-
+/*! \addtogroup client
+ */
+///@{
 const int PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE = 5;
 
 const quint32 PreselectorWidget::preselectorLowFrequency[PreselectorWidget::PRESELECTOR_FREQUENCY_SIZE] =
@@ -66,5 +68,8 @@ QPair<UInt32LowFreq, UInt32HeighFreq> PreselectorWidget::getPreselectors()
 void PreselectorWidget::onPreselectorFrequencyChanged(const QString& strFrequency)
 {
     if(!strFrequency.isEmpty())
+    {
         changed();
+    }
 }
+///@}

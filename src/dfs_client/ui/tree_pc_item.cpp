@@ -5,7 +5,9 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QCheckBox>
-
+/*! \addtogroup client
+ */
+///@{
 PcWidget::PcWidget(const QString& ipAddress, const QString& port)
     : _teIp(new QTextEdit(ipAddress)),
       _tePort(new QTextEdit(port))
@@ -113,3 +115,4 @@ QString TreePcWidgetItem::getPort()
 {
     return _pcWidget->_tePort->toPlainText();
 }
+///@}

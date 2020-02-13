@@ -3,7 +3,9 @@
 #include "radio_channel.h"
 
 const int ChannelPlot::GRAPH_COLORS_COUNT = 4;
-
+/*! \addtogroup client
+ */
+///@{
 const QColor ChannelPlot::graphColors[ChannelPlot::GRAPH_COLORS_COUNT] =
 {
     QColor(255, 0, 0),
@@ -187,3 +189,4 @@ void ChannelPlot::customEvent(QEvent* event)
     replot();
     mutex.unlock();
 }
+///@}

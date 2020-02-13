@@ -1,6 +1,8 @@
 #include "tool_widgets.h"
 #include "tool_frequency_line_edit.h"
-
+/*! \addtogroup client
+ */
+///@{
 const int BandwithComboBox::BANDWITH_SIZE = 12; //MAX BANDWITH SIZE = 33 IT DO NOT USE;
 
 const quint32 BandwithComboBox::bandwithArray[BandwithComboBox::BANDWITH_SIZE] =
@@ -86,7 +88,9 @@ ToolBarComboBox::ToolBarComboBox(QWidget* parent)
             [this](const QString & text)
     {
         if(!text.isEmpty())
+        {
             emit changed();
+        }
     });
 }
 
@@ -95,7 +99,9 @@ BandwithComboBox::BandwithComboBox(/*MainWindow*mainWindow,*/QWidget* parent)
     : ToolBarComboBox(/*mainWindow,*/parent)
 {
     for(int i = 0; i < BANDWITH_SIZE; i++)
+    {
         addItem(FrequencyLineEdit::formatingFrequencyToString(bandwithArray[i]));
+    }
 
     int maxVisibleItems = BANDWITH_SIZE * 80 / 100;
     setMaxVisibleItems(maxVisibleItems);
@@ -119,7 +125,9 @@ SampleRateComboBox::SampleRateComboBox(/*MainWindow*mainWindow,*/QWidget* parent
     : ToolBarComboBox (/*mainWindow,*/parent)
 {
     for(int i = 0; i < SAMPLES_PER_BUFFER_SIZE; i++)
+    {
         addItem(QString::number(samplesPerBufferArray[i]));
+    }
 
     setCurrentIndex(SAMPLES_PER_BUFFER_SIZE - 1);
 //    QObject::connect(this,
@@ -140,7 +148,9 @@ AttenuatorComboBox::AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget* parent
     : ToolBarComboBox (/*mainWindow,*/parent)
 {
     for(int i = 0; i < ATTENUATOR_SIZE; i++)
+    {
         addItem(QString::number(attenuatorArray[i]) + " Db");
+    }
 }
 
 quint32 AttenuatorComboBox::getAttenuationLevel()
@@ -149,3 +159,4 @@ quint32 AttenuatorComboBox::getAttenuationLevel()
 
     return  attetuatorText.left(attetuatorText.indexOf(' ')).toUInt();
 }
+///@}

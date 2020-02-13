@@ -7,7 +7,9 @@
 class QStateMachine;
 class QState;
 class MainWindow;
-
+/*! \addtogroup client
+ */
+///@{
 class SwitchButton : public QPushButton/*,public IToolBarWidget*/
 {
     Q_OBJECT
@@ -38,6 +40,6 @@ class SwitchButton : public QPushButton/*,public IToolBarWidget*/
     QState* stateFirst;
     QState* stateSecond;
 };
-
+///@}
 
 #endif // SWITCH_BUTTON_H

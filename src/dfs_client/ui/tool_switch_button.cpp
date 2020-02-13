@@ -3,7 +3,9 @@
 #include <QStateMachine>
 #include <QDebug>
 #include <QMouseEvent>
-
+/*! \addtogroup client
+ */
+///@{
 const char* SwitchButton::STATE_BUTTON = "state_button";
 
 
@@ -95,5 +97,8 @@ void SwitchButton::mousePressEvent(QMouseEvent* e)
 {
     Q_UNUSED(e);
     if(cursor().shape() != Qt::WaitCursor)
+    {
         click();
+    }
 }
+///@}

@@ -60,7 +60,6 @@ HEADERS += \
     ui/tool_preselector_widget.h \
     ui/client_ds_ui.h \
     ui/client_ds_ui_list.h \
-    ui/plot_monitoring.h \
     ui/command_hierarch.h \
     ui/command_factory.h \
     ui/tree_devices.h \
@@ -82,7 +81,6 @@ SOURCES += \
     ui/tool_frequency_line_edit.cpp \
     ui/client_ds_ui.cpp \
     ui/client_ds_ui_list.cpp \
-    ui/plot_monitoring.cpp \
     ui/command_hierarch.cpp \
     ui/command_factory.cpp \
     client_ds.cpp \

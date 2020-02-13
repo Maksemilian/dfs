@@ -8,7 +8,9 @@
 #include <QStackedWidget>
 #include <QButtonGroup>
 #include <QSplitter>
-
+/*! \addtogroup client
+ */
+///@{
 class QTreeWidget;
 class QPushButton;
 class QTreeWidgetItem;
@@ -60,5 +62,5 @@ class DeviceMonitoring :
             */
 
 };
-
+///@}
 #endif // TREE_DEVICES_H

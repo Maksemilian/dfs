@@ -3,11 +3,16 @@
 
 #include "i_device_settings.h"
 #include "client_manager.h"
+#include "sync_2d.h"
 #include <QMainWindow>
 #include <QMap>
 
 /*!  \defgroup client Client
- *
+ *   \brief Модуль Графического приложения
+ *    позволяющий принимать и отображать в виде графиков
+ *    данные потоков ddc1 с удаленных приемных устройств,
+ *    а также синхронизовать ппринимаемые данные в реальном
+ *    времени
  */
 
 ///@{
@@ -42,6 +47,11 @@ class DeviceListWidget ;
 
 class QStackedWidget;
 class DeviceMonitoring;
+
+/*!
+ * \brief Класс главного окна приложения
+ */
+
 class MainWindow : public QMainWindow,
     public IDeviceSettings
 {
@@ -56,7 +66,7 @@ class MainWindow : public QMainWindow,
   public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow()override;
-
+  private:
     bool getPower()override;
     DeviceSettings getSettings()override;
     quint32 getDDC1Frequency()override;
@@ -75,7 +85,7 @@ class MainWindow : public QMainWindow,
     void setCentralWidget(QWidget* widget);
     void setLeftDockWidget(QWidget* widget, const QString& title = QString());
     void setRightDockWidget(QWidget* widget, const QString& title = QString());
-  private:
+
     //**** SET TOOL BAR
     void setTopToolBar(QToolBar* topToolBar);
     void setBottomToolBar(QToolBar* bottomToolBar);
@@ -87,6 +97,9 @@ class MainWindow : public QMainWindow,
     void widgetChanged();
     void hideReceiverSettingsTool();
     void showReceiverSettingsTool();
+    void onDeviceSetListReady(
+        const std::vector<ShPtrRadioChannel>& channels);
+    void onDeviceSetListNotReady();
   private:
     Ui::MainWindow* ui;
 
@@ -110,10 +123,17 @@ class MainWindow : public QMainWindow,
 
     QMap<Qt::ToolBarArea, QToolBar*>toolBarMap;
 
-    PlotMonitoring* plotMonitoring;
+//    PlotMonitoring* plotMonitoring;
 
     DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
+
+    ChannelPlot* channelPlot; //central widget
+    ElipsPlot* elipsPlot;//right dock idget
+    std::unique_ptr<Sync2D> sync;
+    //TODO проверку остановки потока сделать
+    //по состоянию кнопки power
+    std::atomic_bool quit;
 };
 ///@}
 
