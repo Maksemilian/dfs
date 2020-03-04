@@ -15,7 +15,7 @@ ostream& operator<<(ostream& out, const Packet& pct)
 
 double CalcDeltaPPS::findDeltaPPS()
 {
-//        VectorIpp32fc outShiftBuffer(_data.blockSize);
+    //        VectorIpp32fc outShiftBuffer(_data.blockSize);
     Packet pct1 ;
     Packet pct2 ;
     double deltaPPS = -1;
@@ -49,9 +49,14 @@ double CalcDeltaPPS::findDeltaPPS()
         {
             deltaPPS = ddcAfterPPS(pct1) - ddcAfterPPS(pct2);
         }
-        else // 2 НОМЕРА СЕКУНД РАЗНЫЕ
+        else if(pct1.time_of_week() > pct2.time_of_week())// 2 НОМЕРА СЕКУНД РАЗНЫЕ
         {
             deltaPPS = calcDeltaPPS(pct1, pct2);
+        }
+        else
+        {
+//            isPacket1Read = false;
+//            continue;
         }
         cout << "SHIFT_VALUE:" << deltaPPS << endl;
         cout << "BS:" << _data.blockSize << " SR:" << _data.sampleRate << endl;
@@ -61,7 +66,7 @@ double CalcDeltaPPS::findDeltaPPS()
     return deltaPPS;
     //}
     // return false;
-//        return nullptr;
+    //        return nullptr;
 }
 
 double CalcDeltaPPS::calcDeltaPPS(const Packet _pct1, const Packet _pct2) const

@@ -9,14 +9,11 @@
 #include "tool_switch_button.h"
 #include "tool_widgets.h"
 
-#include "plot_monitoring.h"
 #include "plot_channel.h"
 #include "plot_elipse.h"
 
 #include "client_ds_ui.h"
 #include "client_ds_ui_list.h"
-
-#include "tree_devices.h"
 
 #include <QDockWidget>
 #include <QCheckBox>
@@ -40,9 +37,9 @@ MainWindow:: MainWindow(QWidget* parent):
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-    treeDevices = new DeviceMonitoring(_clientManager, this);
-
-    setLeftDockWidget(treeDevices, "DeviceSetList");
+//    treeDevices = new DeviceMonitoring(_clientManager, this);
+    deviceListWidget = new DeviceListWidget(_clientManager, this);
+    setLeftDockWidget(deviceListWidget, "DeviceSetList");
 
     //************SETTING TOOLBAR***************
     //****TOP

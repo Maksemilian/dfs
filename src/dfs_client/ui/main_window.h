@@ -46,7 +46,6 @@ class PlotMonitoring;
 class DeviceListWidget ;
 
 class QStackedWidget;
-class DeviceMonitoring;
 
 /*!
  * \brief Класс главного окна приложения
@@ -124,8 +123,8 @@ class MainWindow : public QMainWindow,
     QMap<Qt::ToolBarArea, QToolBar*>toolBarMap;
 
 //    PlotMonitoring* plotMonitoring;
-
-    DeviceMonitoring* treeDevices;
+    DeviceListWidget* deviceListWidget;
+//    DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
 
     ChannelPlot* channelPlot; //central widget

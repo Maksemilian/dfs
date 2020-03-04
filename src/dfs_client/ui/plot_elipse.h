@@ -56,6 +56,7 @@ class SumSubMethod
     {
         return sumDivBuffer;
     }
+
     void apply(const proto::receiver::Packet& pct1,
                const proto::receiver::Packet& pct2,
                quint32 blockSize)

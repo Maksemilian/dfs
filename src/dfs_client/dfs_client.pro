@@ -62,8 +62,6 @@ HEADERS += \
     ui/client_ds_ui_list.h \
     ui/command_hierarch.h \
     ui/command_factory.h \
-    ui/tree_devices.h \
-    ui/tree_pc_item.h \
     ui/i_device_settings.h \
     client_ds.h \
     client_signal_stream_server.h \
@@ -85,8 +83,6 @@ SOURCES += \
     ui/command_factory.cpp \
     client_ds.cpp \
     client_signal_stream_server.cpp \
-    ui/tree_devices.cpp \
-    ui/tree_pc_item.cpp \
     client.cpp \
     client_desctop.cpp \
     client_manager.cpp \
