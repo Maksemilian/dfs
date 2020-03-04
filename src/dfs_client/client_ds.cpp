@@ -1,7 +1,5 @@
 #include "client_ds.h"
 
-#include "client_signal_stream_server.h"
-
 #include "receiver.pb.h"
 
 #include <QByteArray>
@@ -263,280 +261,132 @@ QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 }
 ///@}
 
-/*
+//********************* STREAM SERVER *****************
 
-void DeviceSetClient::setSettings(const DeviceSetSettings &settings)
+#include "ring_buffer.h"
+#include "receiver.pb.h"
+
+#include <QThread>
+
+/*! \addtogroup client
+ */
+///@{
+SignalStreamServer::SignalStreamServer(quint8 bufferSize)
 {
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::CommandType::SET_SETTINGS);
+    Q_UNUSED(bufferSize);
 
-    command.set_attenuator(settings.attenuator);
-    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
-    preselectors->set_low_frequency(settings.preselectors.first);
-    preselectors->set_high_frequency(settings.preselectors.second);
-    command.set_allocated_preselectors(preselectors);
-
-    command.set_preamplifier_enebled(settings.preamplifier);
-    command.set_adc_noice_blanker_enebled(settings.adcEnabled);
-
-    quint16 threshold=settings.threshold;
-    void *value=&threshold;
-    command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
-
-    command.set_ddc1_type(settings.ddcType);
-    command.set_samples_per_buffer(settings.samplesPerBuffer);
-    command.set_ddc1_frequency(settings.frequency);
-
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
+    buffers[StreamType::ST_DDC1] =
+        std::make_shared<RadioChannel>();
 }
 
-void DeviceSetClient::setPower(bool state)
+ShPtrRadioChannel SignalStreamServer::getChannel(StreamType type)
 {
-    proto::receiver::Command command;
-    state ? command.set_command_type(proto::receiver::SET_POWER_ON):
-            command.set_command_type(proto::receiver::SET_POWER_OFF);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setAttenuator(quint32 attenuator)
-{
-    qDebug()<<"Set Attenuator";
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_ATTENUATOR);
-    command.set_attenuator(attenuator);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::startDDC1Stream(quint32 samplesPerBuffer)
-{
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::START_DDC1);
-    command.set_samples_per_buffer(samplesPerBuffer);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::stopDDC1Stream()
-{
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::STOP_DDC1);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setPreselectors(quint32 lowFrequency,quint32 highFrequency)
-{
-    qDebug()<<"Set Pres";
-    proto::receiver::Command command;
-    proto::receiver::Preselectors *preselectors=new proto::receiver::Preselectors;
-    preselectors->set_low_frequency(lowFrequency);
-    preselectors->set_high_frequency(highFrequency);
-    command.set_command_type(proto::receiver::SET_PRESELECTORS);
-    command.set_allocated_preselectors(preselectors);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setAdcNoiceBlankerEnabled(bool state)
-{
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_ENABLED);
-    command.set_adc_noice_blanker_enebled(state);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setAdcNoiceBlankerThreshold(quint16 threshold)
-{
-    proto::receiver::Command command;
-    void *value=&threshold;
-    command.set_command_type(proto::receiver::SET_ADC_NOICE_BLANKER_THRESHOLD);
-    command.set_adc_noice_blanker_threshold(value,sizeof(threshold));
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setPreamplifierEnabled(bool state)
-{
-    qDebug()<<"Set Pream";
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_PREAMPLIFIER_ENABLED);
-    command.set_preamplifier_enebled(state);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setDDC1Frequency(quint32 ddc1Frequency)
-{
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_DDC1_FREQUENCY);
-    command.set_ddc1_frequency(ddc1Frequency);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-
-void DeviceSetClient::setDDC1Type(quint32 typeIndex)
-{
-    proto::receiver::Command command;
-    command.set_command_type(proto::receiver::SET_DDC1_TYPE);
-    command.set_ddc1_type(typeIndex);
-//    d->commandQueue.enqueue(command.command_type());
-    sendCommand(command);
-}
-*/
-
-//************************** DEL *************************
-
-//void ReceiverStationClient::setCurrentCommandType(quint32 type)
-//{
-//    for(auto it=d->map.begin();it!=d->map.end();it++)
-//        it.value()=false;
-
-//    d->map[type]=true;
-//}
-//bool ReceiverStationClient::checkStateCommand(quint32 type)
-//{
-//    qDebug()<<"EQU CHECK COMMAND"<<type<<d->map[type];
-//    if(d->map.contains(type)){
-//        return d->map[type];
-//    }
-//    return false;
-//}
-
-//void ReceiverStationClient::startLoadingFiles(const QStringList &fileNames)
-//{
-//    if(!d->fileLoaders.isEmpty())return;
-
-//    qDebug()<<"START LOADING FILES";
-//    d->fileLoaders<<new FileLoader(d->channel->peerAddress(),8000,fileNames);
-//    connect(d->fileLoaders.first(),&FileLoader::fullSizeFile,
-//            this,&ReceiverStationClient::receivedFileSize);
-
-//    connect(d->fileLoaders.first(),&FileLoader::bytesProgressFile,
-//            this,&ReceiverStationClient::bytesProgressFile);
-
-//    connect(d->fileLoaders.first(),&FileLoader::finished,
-//            this,&ReceiverStationClient::stopLoadingFiles);
-
-//    d->fileLoaders.first()->start();
-//}
-
-//void ReceiverStationClient::stopLoadingFiles()
-//{
-//    d->fileLoaders.first()->stop();
-//    d->fileLoaders.removeFirst();
-//    qDebug()<<"STOP LOADING FILES";
-//}
-/*
-void ReceiverStationClient::onReadyReadInfo()
-{
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;
-    if(d->answerSize==0){
-        if(d->channel->socketBytesAvailable()>=sizeof(int)){
-            d->channel->readFromSocket(sizeof(int));
-            char buf[sizeof(int)];
-            d->channel->readDataFromBuffer(buf,sizeof(int));
-            bool ok;
-            d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-            //qDebug()<<"Size"<<size;
-        }
-    }else{
-        if(d->channel->socketBytesAvailable()>0){
-            qint64 bytes=d->channel->readFromSocket(d->answerSize);
-            if(bytes==d->answerSize){
-                qDebug()<<"onReadyReadInfo"<<d->answerSize;
-                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-                //                char data[d->answerSize];
-                d->channel->readDataFromBuffer(data.data(),d->answerSize);
-                d->info.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
-
-                d->answerSize=0;
-                isTakeAnswer=true;
-
-                disconnect(d->channel.get(),&PeerWireClient::readyRead,this,&ReceiverStationClient::onReadyReadInfo);
-
-                emit deviceSetReadyForUse();
-                //emit stationDataReady(socket->peerAddress(),socket->peerPort(),info);
-                //qDebug()<<"Answer"<<answer.type();
-            }
-        }
+    if(type == StreamType::ST_DDC1)
+    {
+        return buffers[StreamType::ST_DDC1];
     }
-    if(!isTakeAnswer)onReadyReadInfo();
+    return nullptr;
 }
-*/
-/*
- *
-void ReceiverStationClient::transfer()
-{
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;
-    if(d->answerSize==0&&
-            d->channel->socketBytesAvailable()>=sizeof(int)){
 
-        d->channel->readFromSocket(sizeof(int));
-        char buf[sizeof(int)];
-        d->channel->readDataFromBuffer(buf,sizeof(int));
-        bool ok;
-        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-        //qDebug()<<"Size"<<size;
-    }else if(d->channel->socketBytesAvailable()>0){
-        qint64 bytes=d->channel->readFromSocket(d->answerSize);
-        if(bytes==d->answerSize){
-            //qDebug("Rec");
-            try{
-                qDebug()<<"AS:"<<d->answerSize;
-                Answer answer;
-                std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-                d->channel->readDataFromBuffer(data.data(),d->answerSize);
-                answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
-                d->answerSize=0;
-                isTakeAnswer=true;
-                //qDebug()<<"Answer"<<answer.type();
-                readAnswerPacket(answer);
-            } catch (const std::bad_alloc& err) {
-                qDebug()<<"EXCEPTION"<<err.what()<<"AS:"<<d->answerSize;
-            }
-        }
+void SignalStreamServer::createSession(net::ChannelHost* channelHost)
+{
+    if(channelHost->sessionType() == SessionType::SESSION_SIGNAL_STREAM)
+    {
+        qDebug() << "STREAM SESSION";
+        createThread(channelHost);
+    }
+    else
+    {
+        qDebug() << "ERROR SESSION TYPE";
+    }
+}
+
+void SignalStreamServer::createThread(net::ChannelHost* channelHost)
+{
+    QThread* thread = new QThread;
+
+    SignalStreamReader*   streamDDC1 =
+        new SignalStreamReader(channelHost,
+                               buffers[StreamType::ST_DDC1]->inBuffer());
+    streamDDC1->moveToThread(thread);
+    channelHost->moveToThread(thread);
+
+    connect(thread, &QThread::started,
+            streamDDC1, &SignalStreamReader::process);
+
+    connect(streamDDC1, &SignalStreamReader::finished,
+            thread, &QThread::quit);
+
+    connect(thread, &QThread::finished,
+            streamDDC1, &SignalStreamReader::deleteLater);
+
+    connect(thread, &QThread::destroyed,
+            thread, &QThread::deleteLater);
+
+    thread->start();
+}
+
+//************************** SIGNAL STREM READER **************************
+
+struct SignalStreamReader::Impl
+{
+    Impl(net::ChannelHost* channelHost,
+         std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddcBuffer):
+        stream(channelHost),
+        streamBuffer(ddcBuffer),
+        quit(true)
+    {
     }
 
-    if(!isTakeAnswer) sheduleTransfer();
+    std::unique_ptr<net::ChannelHost> stream;
+    std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer;
+    std::atomic<bool> quit;
+    qint32 key;
+};
+
+SignalStreamReader::SignalStreamReader(net::ChannelHost* channelHost,
+                                       const ShPtrPacketBuffer streamBuffer)
+    : d(std::make_unique<Impl>(channelHost, streamBuffer))
+{
+
+}
+
+SignalStreamReader::~SignalStreamReader()
+{
+    qDebug() << "STOP Stream Reader DDC1";
+    qDebug() << "DESTR::StreamReader";
 }
 
 
-void ReceiverStationClient::onReadyReadAnswer()
+void SignalStreamReader::process()
 {
-    bool isTakeAnswer=false;
-    //static qint64 answerSize=0;
-    if(d->answerSize==0&&
-            d->channel->socketBytesAvailable()>=sizeof(int)){
+    qDebug() << "START Stream Reader DDC1";
+    connect(d->stream.get(), &net::ChannelHost::messageReceived,
+            this, &SignalStreamReader::onMessageReceive);
 
-        d->channel->readFromSocket(sizeof(int));
-        char buf[sizeof(int)];
-        d->channel->readDataFromBuffer(buf,sizeof(int));
-        bool ok;
-        d->answerSize= QByteArray(buf,sizeof(int)).toHex().toInt(&ok,16);
-        //qDebug()<<"Size"<<size;
-    }else if(d->channel->socketBytesAvailable()>0){
-        qint64 bytes=d->channel->readFromSocket(d->answerSize);
-        if(bytes==d->answerSize){
-            //qDebug("Rec");
-            qDebug()<<"onReadyReadAnswer"<<d->answerSize;
-            Answer answer;
-            std::vector<char>data(static_cast<unsigned int>(d->answerSize));
-            d->channel->readDataFromBuffer(data.data(),d->answerSize);
-            answer.ParseFromArray(data.data(),static_cast<int>(d->answerSize));
-            d->answerSize=0;
-            isTakeAnswer=true;
-            //qDebug()<<"Answer"<<answer.type();
-        }
+    connect(d->stream.get(), &net::ChannelHost::finished,
+            this, &SignalStreamReader::finished);
+}
+
+void SignalStreamReader::onMessageReceive(const QByteArray& buffer)
+{
+    proto::receiver::ClientToHost clientToHost;
+
+    if(!clientToHost.ParseFromArray(buffer.constData(), buffer.size()))
+    {
+        qDebug() << "ERROR PARSE STREAM_READER HOST TO CLIENT";
+        return;
     }
 
-    if(!isTakeAnswer)onReadyReadAnswer();
+    if(clientToHost.has_packet())
+    {
+        d->streamBuffer->push(const_cast<proto::receiver::Packet&>(clientToHost.packet()));
+        qDebug()
+                << "BN:" << clientToHost.packet().block_number()
+                << "SR:" << clientToHost.packet().sample_rate()
+                << "TOW:" << clientToHost.packet().time_of_week()
+                << "DDC_C:" << clientToHost.packet().ddc_sample_counter()
+                << "ADC_C" << clientToHost.packet().adc_period_counter();
+    }
 }
-
-*/
-
+///@}
