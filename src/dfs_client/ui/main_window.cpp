@@ -9,6 +9,7 @@
 #include "tool_switch_button.h"
 #include "tool_widgets.h"
 
+#include "plot.h"
 #include "plot_channel.h"
 #include "plot_elipse.h"
 
@@ -64,14 +65,18 @@ MainWindow:: MainWindow(QWidget* parent):
     //************** ELIPSE PLOT***************************
     //    plotMonitoring = new PlotMonitoring(this);
     //    plotMonitoring->ds = this;
-    QWidget* centralWidget = new QWidget (this);
-    QGridLayout* gl = new QGridLayout();
-    centralWidget->       setLayout(gl);
-    setCentralWidget(centralWidget);
-    channelPlot = new ChannelPlot(2, getSamplesPerBuffer());
-    elipsPlot = new ElipsPlot(this);
-    gl->addWidget(elipsPlot, 0, 0, 1, 1);
-    gl->addWidget(channelPlot, 0, 1, 1, 2);
+    /*   QWidget* centralWidget = new QWidget (this);
+       QGridLayout* gl = new QGridLayout();
+       centralWidget->       setLayout(gl);
+       setCentralWidget(centralWidget);
+       channelPlot = new ChannelPlot(2, getSamplesPerBuffer());
+       elipsPlot = new ElipsPlot(this);
+       gl->addWidget(elipsPlot, 0, 0, 1, 1);
+       gl->addWidget(channelPlot, 0, 1, 1, 2);
+    */
+    plot = new Plot();
+
+    setCentralWidget(plot);
 
     connect(_clientManager.get(), &ClientManager::ready,
             this, &MainWindow::onDeviceSetListReady);
@@ -95,12 +100,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onDeviceSetListReady(
     const std::vector<ShPtrRadioChannel>& channels)
-//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
 {
-
-    //    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
-    //               "sync available only for 2 channel");
-    quit = false;
     qDebug() << "START SYNC" << getDDC1Frequency()
              << getSampleRateForBandwith()
              << getSamplesPerBuffer();
@@ -113,53 +113,20 @@ void MainWindow::onDeviceSetListReady(
     channels.back()->setChannelData(data);
 
     sync.reset(new Sync2D(channels.front(), channels.back(), data));
-    elipsPlot->setSyncData(data);
-    qDebug() << "****PLOT MONITORIN"
-             << channels.back().use_count()
-             << channels.back().use_count()
-             << channels.back()->outBuffer().use_count()
-             << channels.back()->outBuffer().use_count();
-    QtConcurrent::run([this, channels]()
-    {
-        bool isRead1 = false;
-        bool isRead2 = false;
+    sync->subscribe(plot);
 
-        std::shared_ptr<RadioChannel>channel1 = channels.front();
-        std::shared_ptr<RadioChannel>channel2 = channels.back();
-
-        proto::receiver::Packet pct1;
-        proto::receiver::Packet pct2;
-        qDebug() << "PLOT MONITORING RUN";
-        while (!quit)
-        {
-            if(channel1->outBuffer()->pop(pct1))
-            {
-                isRead1 = true;
-            }
-
-            if(channel2->outBuffer()->pop(pct2))
-            {
-                isRead2 = true;
-            }
-
-            if(isRead1 && isRead2)
-            {
-                channelPlot->apply(pct1, pct2);
-                elipsPlot->apply(pct1, pct2);
-
-                isRead1 = false;
-                isRead2 = false;
-            }
-        }
-        qDebug() << "PLOT MONITORING STOP";
-    });
+    sync->start();
+    plot->start(data);
 }
 
 void MainWindow::onDeviceSetListNotReady()
 {
     quit = true;
     sync->stop();
+    plot->stop();
 }
+
+
 
 void MainWindow::setCentralWidget(QWidget* widget)
 {
@@ -535,16 +502,6 @@ quint16  MainWindow::getAdcNoiceBlankerThreshold()
     return leAdcNoiceBlanckerThreshold->text().toUShort();
 }
 
-//void MainWindow::setWaitCursor()
-//{
-//    setCursor(Qt::WaitCursor);
-//}
-
-//void MainWindow::setArrowCursor()
-//{
-//    setCursor(Qt::ArrowCursor);
-//}
-
 //****************************LOAD / SAVE SETTINGS***********************
 
 void MainWindow::loadSettings()
@@ -637,7 +594,83 @@ void MainWindow::saveSetting()
     }
 }
 ///@}
+
+
+
+
 /*
+void MainWindow::onDeviceSetListReady(
+    const std::vector<ShPtrRadioChannel>& channels)
+//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
+{
+
+    //    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
+    //               "sync available only for 2 channel");
+    quit = false;
+    qDebug() << "START SYNC" << getDDC1Frequency()
+             << getSampleRateForBandwith()
+             << getSamplesPerBuffer();
+
+    ChannelData data = {getDDC1Frequency(),
+                        getSampleRateForBandwith(),
+                        getSamplesPerBuffer()
+                       };
+    channels.front()->setChannelData(data);
+    channels.back()->setChannelData(data);
+
+    sync.reset(new Sync2D(channels.front(), channels.back(), data));
+
+    elipsPlot->setSyncData(data);
+    qDebug() << "****PLOT MONITORIN"
+             << channels.back().use_count()
+             << channels.back().use_count()
+             << channels.back()->outBuffer().use_count()
+             << channels.back()->outBuffer().use_count();
+    QtConcurrent::run([this, channels]()
+    {
+        bool isRead1 = false;
+        bool isRead2 = false;
+
+        std::shared_ptr<RadioChannel>channel1 = channels.front();
+        std::shared_ptr<RadioChannel>channel2 = channels.back();
+
+        proto::receiver::Packet pct1;
+        proto::receiver::Packet pct2;
+        qDebug() << "PLOT MONITORING RUN";
+        while (!quit)
+        {
+            if(channel1->outBuffer()->pop(pct1))
+            {
+                isRead1 = true;
+            }
+
+            if(channel2->outBuffer()->pop(pct2))
+            {
+                isRead2 = true;
+            }
+
+            if(isRead1 && isRead2)
+            {
+                channelPlot->apply(pct1, pct2);
+                elipsPlot->apply(pct1, pct2);
+
+                isRead1 = false;
+                isRead2 = false;
+            }
+        }
+        qDebug() << "PLOT MONITORING STOP";
+    });
+}
+
+void MainWindow::onDeviceSetListNotReady()
+{
+    quit = true;
+    sync->stop();
+}
+*/
+
+/*
+
 void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
 {
     QWidget*widget= dynamic_cast<QWidget*>(toolBarWidget);

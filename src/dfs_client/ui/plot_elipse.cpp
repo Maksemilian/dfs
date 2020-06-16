@@ -5,14 +5,15 @@
 const QColor ElipsPlot::greenColor = QColor(0, 255, 0);
 const QColor ElipsPlot::blueColor = QColor(0, 0, 255);
 
-const QColor ElipseLine::blueColor = QColor(0, 0, 255);
-const QString ElipseLine::DEGREE_UNICODE_SYMBOL = "\u00B0";
+//const QColor ElipseLine::blueColor = QColor(0, 0, 255);
+//const QString ElipseLine::DEGREE_UNICODE_SYMBOL = "\u00B0";
 /*! \addtogroup client
  */
 ///@{
 //СЛЕВА НА ПРАВО И СВЕРХУ ВНИЗ
-ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
-                       const QString& leftText, const QString& rightText, QCustomPlot* parent)
+/*ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
+                       const QString& leftText, const QString& rightText,
+                       QCustomPlot* parent)
     : QCPItemLine(parent)
 {
     setPen(blueColor);
@@ -67,7 +68,7 @@ ElipseLine::ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
     endItemText->position->setCoords(textPosEnd.x(), textPosEnd.y());
     endItemText->setFont(QFont("Helvetica", 10));
 
-}
+}*/
 
 ElipsPlot::ElipsPlot( QWidget* parent)
     : QCustomPlot(parent),
@@ -110,10 +111,10 @@ ElipsPlot::ElipsPlot( QWidget* parent)
     QPointF posBegin4(LOWER_BORDER_X_AXIS, UPPER_BORDER_Y_AXIS);
     QPointF posEnd4(UPPER_BORDER_X_AXIS, LOWER_BORDER_X_AXIS);
 
-    lines << new ElipseLine(posBegin1, posEnd1, "180", "0", this);
-    lines << new ElipseLine(posBegin2, posEnd2, "90", "270", this);
-    lines << new ElipseLine(posBegin3, posEnd3, "235", "45", this);
-    lines << new ElipseLine(posBegin4, posEnd4, "135", "315", this);
+//    lines << new ElipseLine(posBegin1, posEnd1, "180", "0", this);
+//    lines << new ElipseLine(posBegin2, posEnd2, "90", "270", this);
+//    lines << new ElipseLine(posBegin3, posEnd3, "235", "45", this);
+//    lines << new ElipseLine(posBegin4, posEnd4, "135", "315", this);
 }
 
 void ElipsPlot::apply(const proto::receiver::Packet& pctChannel1,

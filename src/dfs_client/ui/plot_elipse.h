@@ -38,7 +38,8 @@ class SumSubMethod
     const double DELTA_ANGLE_IN_RADIAN;
   public:
     SumSubMethod(quint32 sampleRate, quint32 blockSize):
-        DELTA_ANGLE_IN_RADIAN((360 * (HETERODYNE_FREQUENCY / sampleRate)) * (IPP_PI / 180)),
+        DELTA_ANGLE_IN_RADIAN((360 * (HETERODYNE_FREQUENCY / sampleRate))
+                              * (IPP_PI / 180)),
         im(VectorIpp32f(blockSize)),
         re(VectorIpp32f(blockSize)),
         complexSum(VectorIpp32fc(blockSize)),
@@ -89,7 +90,8 @@ class SumSubMethod
                               const Ipp32fc* dst2, quint32 blockSize)
     {
         //1 ***** Создаем коэффициенты
-        for(quint32 i = 0; i < blockSize; i++, currentAngleRad += DELTA_ANGLE_IN_RADIAN)
+        for(quint32 i = 0; i < blockSize; i++,
+                currentAngleRad += DELTA_ANGLE_IN_RADIAN)
         {
             re[i] = static_cast<Ipp32f>(cos(currentAngleRad));
             im[i] = static_cast<Ipp32f>(sin(currentAngleRad));
@@ -146,7 +148,7 @@ class SumSubMethod
     double currentAngleRad;
     ShPtrIpp32fcBuffer sumDivBuffer;
 };
-
+/*
 class ElipseLine : public QCPItemLine
 {
     static const QColor blueColor;
@@ -154,8 +156,9 @@ class ElipseLine : public QCPItemLine
 
   public:
     ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
-               const QString& leftText, const QString& rightText, QCustomPlot* parent);
-};
+               const QString& leftText, const QString& rightText,
+               QCustomPlot* parent);
+};*/
 
 /*!
  * \brief Класс посторения элипса по точкам полученным
@@ -183,7 +186,7 @@ class ElipsPlot: public QCustomPlot
     void customEvent(QEvent* event)override;
   private:
     QCPCurve* curve;
-    QList<ElipseLine*>lines;
+//    QList<ElipseLine*>lines;
     QMutex mutex;
     ChannelData data;
     std::unique_ptr<SumSubMethod> sumSubMethod;

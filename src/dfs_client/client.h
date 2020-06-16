@@ -26,7 +26,8 @@ struct ConnectData
 /*!
  * \brief Абстрактный базовый класс клиента
  */
-class Client: public QObject
+class Client:
+    public QObject
 {
     Q_OBJECT
   public:

@@ -3,7 +3,7 @@
 
 #include "radio_channel.h"
 #include "custom_thread.h"
-
+#include "observer_packet.h"
 /*! \defgroup sync Sync
  * \brief Модуль статической бибилотеки синхронизации каналов
  */
@@ -13,7 +13,7 @@
 /*! \brief Класс синхронизации двух каналов
  * Данный класс синхронизует канал channel2 с главным каналом channel1.
  */
-class Sync2D
+class Sync2D: public Subject
 {
   public:
     Sync2D(const ShPtrRadioChannel& channel1,

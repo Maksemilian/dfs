@@ -41,7 +41,7 @@ class SyncManager;
 
 class ChannelPlot;
 class ElipsPlot ;
-class PlotMonitoring;
+class Plot;
 
 class DeviceListWidget ;
 
@@ -126,7 +126,7 @@ class MainWindow : public QMainWindow,
     DeviceListWidget* deviceListWidget;
 //    DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
-
+    Plot* plot;
     ChannelPlot* channelPlot; //central widget
     ElipsPlot* elipsPlot;//right dock idget
     std::unique_ptr<Sync2D> sync;

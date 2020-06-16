@@ -65,8 +65,8 @@ HEADERS += \
     ui/i_device_settings.h \
     client_ds.h \
     client.h \
-    client_desctop.h \
-    client_manager.h
+    client_manager.h \
+    ui/plot.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -82,9 +82,9 @@ SOURCES += \
     ui/command_factory.cpp \
     client_ds.cpp \
     client.cpp \
-    client_desctop.cpp \
     client_manager.cpp \
-    main.cpp
+    main.cpp \
+    ui/plot.cpp
 
 FORMS += \
     ui/main_window.ui \
