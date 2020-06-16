@@ -11,6 +11,7 @@ using PacketQueue = QQueue<proto::receiver::Packet>;
 using PacketQueuePair = std::pair<PacketQueue, PacketQueue>;
 
 /*! \defgroup base Base
+ * \image html class_base.jpg "Диаграмма классов модуля base"
  * \brief Модуль статической бибилотеки вспомогательных классов
  */
 

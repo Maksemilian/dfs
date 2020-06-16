@@ -7,14 +7,14 @@
 /*! \addtogroup net
  *
  */
-///@{
 namespace net
 {
+///@{
     /*!
      * \brief Реализует клиентское соединение к хосту
      *
      * Ведет сетевой обмен сообщениями с ChannelHost
-     * до тех пор пока не будет установлено соединение
+     * до тех пор пока не будет установлено соединение.
      */
     class ChannelClient: public Channel
     {
@@ -47,6 +47,6 @@ namespace net
         quint32 _userKey;
         SessionType _sessionType = SessionType::SESSION_UNKNOWN;
     };
-}
 ///@}
+}
 #endif // CHANNEL_CLIENT_H

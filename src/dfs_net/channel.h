@@ -6,23 +6,26 @@
 
 /*!
  * \defgroup net Net
- * Модуль статической библиотеки реализующий канал
+ * \image html class_net.jpg "Диаграмма классов модуля net"
+ * \brief Модуль статической библиотеки содержащий классы для
  * для передачи данных по протоколу TCP между клиентским
  * приложением и серверным приложением.
  */
-
-///@{
 namespace net
 {
+///@{
     /*!
-         * \brief Абстрактный базовый класс предоставляющий
-         * основные методы для отправки и приема данных
-         */
+                 * \brief Абстрактный базовый класс предоставляющий
+                 * основные методы для отправки и приема данных по сети.
+                 * Каждый наследник класса Channel должен реализовывать метод
+                 * internalMessageReceive для обработки принятых сообщений
+                 */
     class Channel: public QObject
     {
         Q_OBJECT
-      public:
+      protected:
         enum  KeyExchangeState {HELLO = 0, KEY_EXCHANGE = 1, SESSION = 2, DONE = 3};
+      public:
         enum  ChannelState { NOT_CONNECTED, CONNECTED, ESTABLISHED};
         Channel(QObject* parent = nullptr);
         Channel(qintptr handle, QObject* parent = nullptr);
@@ -44,10 +47,10 @@ namespace net
         void finished();
       protected:
         /*!
-         * \brief Чисто виртуальный метод , который должен быть переопределен
-         * в производных классах для того чтобы читать входящие данные
-         * \param buffer Массив байт принятых из сети
-         */
+             * \brief Чисто виртуальный метод , который должен быть переопределен
+             * в производных классах для того чтобы читать входящие данные
+             * \param buffer Массив байт принятых из сети
+             */
         virtual void internalMessageReceive(const QByteArray& buffer) = 0;
         ///**************WRITE/READ****************
       public:
@@ -65,7 +68,7 @@ namespace net
 
       protected:
         std::unique_ptr<QTcpSocket> _socket;
-//    QTcpSocket *_socket;
+        //    QTcpSocket *_socket;
         KeyExchangeState keyExchangeState = KeyExchangeState::HELLO;
         ChannelState _channelState = ChannelState::NOT_CONNECTED;
       private:
@@ -75,7 +78,7 @@ namespace net
             bool paused = false;
 
             // To this buffer reads data from the network.
-//        QByteArray buffer;
+            //        QByteArray buffer;
 
             // If the flag is set to true, then the buffer size is read from the network, if false,
             // then no.
@@ -92,8 +95,7 @@ namespace net
         QByteArray outgoingBuffer;
         qint64 answerSize = 0;
     };
-
-}
 ///@}
+}
 
 #endif // CHANNEL_H

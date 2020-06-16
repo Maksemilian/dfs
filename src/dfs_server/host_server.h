@@ -5,6 +5,7 @@
 
 class DeviceClient;
 /*! \defgroup server Server
+ * \image html class_server.jpg "Диаграмма классов модуля server"
  * \brief Консольное приложение обработки команд управления
  *  радиоприемными устройствами от удаленных клиентов
  */
@@ -17,7 +18,7 @@ class DeviceClient;
  * который принимает и выполняет команды по управлению приемным устройством
  * от удаленных клиентов
  */
-class HostServer: public Server
+class HostServer: public net::Server
 {
     Q_OBJECT
 

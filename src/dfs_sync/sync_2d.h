@@ -4,7 +4,9 @@
 #include "radio_channel.h"
 #include "custom_thread.h"
 #include "observer_packet.h"
+
 /*! \defgroup sync Sync
+ * \image html class_sync.jpg "Диаграмма классов модуля sync"
  * \brief Модуль статической бибилотеки синхронизации каналов
  */
 

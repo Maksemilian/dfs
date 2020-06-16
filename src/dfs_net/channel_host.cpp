@@ -9,11 +9,11 @@
 /*! \addtogroup net
  *
  */
-///@{
 
 namespace net
 {
 
+///@{
     namespace
     {
 

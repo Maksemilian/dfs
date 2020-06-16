@@ -6,10 +6,9 @@
 /*! \addtogroup net
  *
  */
-///@{
 namespace net
 {
-
+///@{
     Channel::Channel(QObject* parent)
         : QObject(parent),
           _socket(std::make_unique<QTcpSocket>())
@@ -85,7 +84,8 @@ namespace net
 
         _socket->flush();
     }
-///**************WRITE/READ****************
+
+//**************WRITE/READ****************
 
     qint64 Channel::writeToSocket(qint64 bytes)
     {
@@ -249,7 +249,6 @@ namespace net
         _socket->deleteLater();
         deleteLater();
     }
-
+///@}
 }
 
-///@}

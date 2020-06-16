@@ -9,6 +9,7 @@
  */
 namespace net
 {
+///@{
     /*!
      * \brief Класс сетевого соединения на стороне хоста
      *
@@ -37,6 +38,6 @@ namespace net
         quint32 _userKey;
         SessionType _sessionType = SessionType::SESSION_UNKNOWN;
     };
-
+///@}
 }
 #endif // CHANNEL_HOST_H

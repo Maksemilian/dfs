@@ -62,7 +62,7 @@ class DeviceClient: public Client
     * \brief Класс принимает входящие соединения для
     * передающие поток ddc1
     */
-class SignalStreamServer: public Server
+class SignalStreamServer: public net::Server
 {
     Q_OBJECT
   public:

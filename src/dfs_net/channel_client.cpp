@@ -13,10 +13,10 @@
 /*! \addtogroup net
  *
  */
-///@{
 namespace net
 {
 
+///@{
     namespace
     {
 
@@ -34,17 +34,10 @@ namespace net
         : Channel (parent)
     {
         connect(_socket.get(), &QTcpSocket::connected,
-//    connect(_socket,&QTcpSocket::connected,
                 this, &ChannelClient::onConnected);
-
-//    connect(_socket.get(),&Channel::finished,
-//            this,&ChannelClient::disconnected);
     }
 
-//ChannelClient::ChannelClient(qintptr handle,QObject *parent):Channel (handle,parent)
-//{
 
-//}
     bool ChannelClient::isConnected()
     {
         if(_channelState == ChannelClient::ESTABLISHED)
@@ -154,6 +147,6 @@ namespace net
     {
         qDebug() << "ChannelClient::destroyed";
     }
+///@}
 
 }
-///@}

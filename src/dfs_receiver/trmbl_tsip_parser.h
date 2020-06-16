@@ -23,6 +23,7 @@ union AliasCast
 };
 
 /*! \defgroup receiver Receiver
+ * \image html class_receiver.jpg "Диаграмма классов модуля receiver"
  * \brief Модуль статической библиотеки работы
  *  с приемниками Winradio WRG35DDC и Trimble Thunderbolt
  */
