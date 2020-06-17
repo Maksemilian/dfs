@@ -15,13 +15,22 @@ using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
 /*!
  * \addtogroup server
  */
+
 ///@{
+
 /*!
  * \brief Клиент для упраления приемными устройствами по сети
+ * Принимает и выполняет команды над устройством ,
+ * переданные по сети от удаленного клиента. Данный класс способен
+ * отсылать данные потока DDC1 по запросу от подключившегося
+ * клиента в реальном времени
  *
- * DeviceClient по сети принимает и
- * выполняет команды над платой синхронизации
- * \attention допускается работа только с одной платой синхронизации
+ * \attention допускается работа только с одним устройством.
+ * По умолчанию данный класс работает только с перым
+ * набором приемников WRG35DDC1 в когерентом режиме.
+ *
+ * \todo 1)выбор устройства по индексу
+ *       2)переключение режима работы с когерентного на одиночный
  */
 class DeviceClient: public QObject
 {
@@ -59,26 +68,28 @@ class DeviceClient: public QObject
 };
 
 /*!
- * \brief Класс для отправки данных потока ddc1
+ * \brief Класс для отправки данных потока.
+ * Данныеберутся из кольцевого буфера и отправляются по сети.
  */
 class SignalStreamWriter: public QObject
 {
     Q_OBJECT
   public:
     SignalStreamWriter(const QHostAddress& address, quint16 port,
-                       const ShPtrRingBuffer& _buffer);
+                       const ShPtrRingBuffer& buffer);
 
     ~SignalStreamWriter()
     {
         qDebug() << "DESTR_DDC1";
     }
+
     /*!
-     * \brief запускает поток отправки данных ddc1 по сети
-     * удаленному клиенту в отдельном потоке
+     * \brief запускает поток отправки данных по сети
+     * удаленному клиенту в отдельном потоке.
      */
     void start();
     /*!
-     * \brief останавливает поток отправки данных ddc1
+     * \brief останавливает поток отправки данных.
      */
     void stop();
   signals:

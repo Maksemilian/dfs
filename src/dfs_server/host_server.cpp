@@ -23,14 +23,9 @@ void HostServer::createSession(net::ChannelHost* channelHost)
 {
     if(channelHost->sessionType() == SessionType::SESSION_COMMAND)
     {
-        //TODO создавать приемники и передавть их DeviceClient
-        //если свободного приемника нет клиент должен послать сответсвующие
-        //сообщение
         DeviceClient* deviceSetClient = new DeviceClient(channelHost);
         connect(deviceSetClient, &DeviceClient::deviceDisconnected,
                 this, &HostServer::onChannelDisconnected);
-        //TODO ОТПРАВИТЬ СООБЩЕНИЕ О ГОТОВНОСТИ
-//        deviceSetClient->sendDevieSetStatus();
         deviceSetClient->sendDeviceSetInfo();
         _client.append(deviceSetClient);
     }

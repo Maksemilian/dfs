@@ -17,9 +17,12 @@ G3XDDCAPI_CREATE_INSTANCE createInstance;
 int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
+
     TimeReader& inst = TimeReader::instance();
+
     QObject::connect(&app, &QCoreApplication::aboutToQuit,
                      &inst, &TimeReader::stop);
+
     QCommandLineOption portOption("p", "port", "value", "value");
     QCommandLineParser parser;
 

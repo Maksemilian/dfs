@@ -6,7 +6,6 @@
 #include <QDataStream>
 #include <QThread>
 #include <QHostAddress>
-//******************ReceiverStationClient***********************
 
 
 QByteArray serializeMessage(const google::protobuf::Message& message)
@@ -371,8 +370,6 @@ SignalStreamWriter::SignalStreamWriter(const QHostAddress& address, quint16 port
 
 void SignalStreamWriter::process()
 {
-    //    qDebug()<<"********PROCESS:"<<QHostAddress(_address.toIPv4Address()).toString()
-    //           <<_port;
     _streamSocket.reset(new net::ChannelClient);
 
     connect(_streamSocket.get(), &net::ChannelClient::connected,

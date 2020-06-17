@@ -47,5 +47,5 @@ HEADERS += \
 SOURCES += \
     trmbl_tsip_parser.cpp \
     trmbl_tsip_reader.cpp \
-    wrd_coh_g35.cpp \
-    wrd_coh_callback_g35.cpp
+    wrd_coh_callback_g35.cpp \
+    wrd_coh_g35_ds.cpp
