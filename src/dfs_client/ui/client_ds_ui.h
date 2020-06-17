@@ -8,6 +8,7 @@
 
 class QComboBox;
 
+//TODO rem
 class AspectRatioLabel : public QLabel
 {
     Q_OBJECT

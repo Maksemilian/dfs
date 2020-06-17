@@ -41,19 +41,11 @@ HEADERS += \
     wrd_coh_g35_ds.h \
     trmbl_tsip_parser.h \
     trmbl_tsip_reader.h \
-    wrd_device_selector.h \
     wrd_device_interface.h \
     wrd_coh_callback_g35.h
-#    wrd_callback.h \
-#    wrd_callback_g35.h \
-#    wrd_d_g35.h
 
 SOURCES += \
     trmbl_tsip_parser.cpp \
     trmbl_tsip_reader.cpp \
-    wrd_device_selector.cpp \
     wrd_coh_g35.cpp \
     wrd_coh_callback_g35.cpp
-#    wrd_callback.cpp \
-#    wrd_callback_g35.cpp \
-#    wrd_d_g35.cpp \

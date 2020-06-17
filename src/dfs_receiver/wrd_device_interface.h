@@ -1,12 +1,15 @@
 #ifndef WRD_INTERFACE_H
 #define WRD_INTERFACE_H
 
-class DeviceSettings;
+#include "device_settings.h"
 /*! \addtogroup receiver
  */
+
 ///@{
 /*!
- * \brief Интерфейс устройств
+ * \brief Интерфейс устройства. Данный интерфейс задает общий набор операций
+ * приемников WRGXXDDC(XX - намер модели приемных устройств)
+ * для одиночного реджима(без платы минхронизации) и когерентоно.
  */
 class IDevice
 {
@@ -21,7 +24,6 @@ class IDevice
     virtual  bool setDDC1Type(unsigned int type) = 0;
 
     virtual  bool setSettings(const DeviceSettings& settings) = 0;
-    //*****Stram DDC1
     virtual  bool startDDC1(unsigned int sampesPerBuffer) = 0;
     virtual  bool stopDDC1() = 0;
 };

@@ -10,6 +10,90 @@
  */
 ///@{
 
+extern G3XDDCAPI_CREATE_INSTANCE createInstance;
+/*! \addtogroup receiver
+ */
+///@{
+
+unsigned int numberAvailableDeviceSet()
+{
+    ICohG35DDCDeviceSetEnumerator* enumerator;
+    if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET_ENUMERATOR,
+                       reinterpret_cast<void**>(&enumerator)))
+    {
+        qDebug() << "Enumerator error";
+        return 0;
+    }
+    unsigned int number = enumerator->GetDeviceSetCount();
+    enumerator->Release();
+    return number;
+}
+
+ShPtrDevice createCohG35Device(unsigned int deviceSetIndex,
+                               const ShPtrRingBuffer& buffer,
+                               bool demoMode)
+{
+    qDebug() << "CohG35DeviceCreator::createDevice";
+    ICohG35DDCDeviceSetEnumerator* enumerator;
+    ICohG35DDCDeviceSet* deviceSet;
+
+    if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET_ENUMERATOR,
+                       reinterpret_cast<void**>(&enumerator)))
+    {
+        qDebug() << "Enumerator error";
+        return nullptr;
+    }
+
+    if(!createInstance(G35DDC_CLASS_ID_COH_DEVICE_SET,
+                       reinterpret_cast<void**>(&deviceSet)))
+    {
+        qDebug() << "DeviceSet error";
+        return nullptr;
+    }
+
+    quint32 countDeviceInSet = 0;
+    G35DDC_DEVICE_INFO* deviceInfoMas = nullptr;
+    if(!demoMode)
+    {
+        enumerator->GetDeviceSetInfo(deviceSetIndex, nullptr, &countDeviceInSet);
+        deviceInfoMas = new G35DDC_DEVICE_INFO[countDeviceInSet];
+        enumerator->GetDeviceSetInfo(deviceSetIndex, deviceInfoMas, &countDeviceInSet);
+    }
+    else
+    {
+        qDebug() << "DEMO_MODE_SELECTED";
+        countDeviceInSet = 1;
+        deviceInfoMas = dynamic_cast<G35DDC_DEVICE_INFO*>(G35DDC_OPEN_DEMO_SET);
+    }
+    if(deviceSet->Open(deviceInfoMas, countDeviceInSet))
+    {
+        qDebug() << "Device Set" << deviceSetIndex << "- count device:" << countDeviceInSet;
+        if(!demoMode)
+        {
+            for(quint32 deviceIndex = 0; deviceIndex < countDeviceInSet; deviceIndex++)
+            {
+                qDebug() << "|_____SerialNumber:" << deviceInfoMas[deviceIndex].SerialNumber;
+            }
+
+            delete []deviceInfoMas;
+        }
+        enumerator->Release();
+
+        std::shared_ptr<CohG35DeviceSet> shPtr =
+            std::make_shared<CohG35DeviceSet>(deviceSet);
+
+        shPtr->setCallback(std::make_unique<CohG35Callback>(buffer,
+                           TimeReader::instance()));
+        return static_cast<std::shared_ptr<IDevice>>(shPtr);
+    }
+    qDebug() << "Device is not open";
+    delete [] deviceInfoMas;
+
+    enumerator->Release();
+    deviceSet->Release();
+    return nullptr;
+}
+
 CohG35DeviceSet::CohG35DeviceSet(ICohG35DDCDeviceSet* deviceSet):
     _deviceSet(deviceSet) {}
 

@@ -25,13 +25,15 @@ union AliasCast
 /*! \defgroup receiver Receiver
  * \image html class_receiver.jpg "Диаграмма классов модуля receiver"
  * \brief Модуль статической библиотеки работы
- *  с приемниками Winradio WRG35DDC и Trimble Thunderbolt
+ *  с приемниками Winradio WRG35DDC (для когерентного режима) и Trimble Thunderbolt
  */
 
 ///@{
 /*!
- * \brief Класс для приниема пакетов спутниковых данных через com порт
- * по протоколу TSIP
+ * \brief Класс для приема данных от спутникового приемника TRIMBLE
+ * через com порт по протоколу TSIP. Читает данные из COM порта
+ * по 1 байту и формирует из них пакет данных. Работает только с пакетами
+ * 8FAB и 8FAС.
  */
 class TsipParser: public QObject
 {
@@ -59,7 +61,11 @@ class TsipParser: public QObject
 
     explicit TsipParser(QObject* parent = nullptr);
 
-    void parsePkt   (quint8 ucPkt[], int nPktLen);
+    /*!
+     * \brief читает данные в цикле по 1 байту пока
+     * не принят весь пакет.
+     * \param port - открытый COM порт для работы с приемником RTIMBLE.
+     */
     void receivePacket(QSerialPort* port);
 
     PacketName getCurrentPacket()
@@ -75,6 +81,7 @@ class TsipParser: public QObject
         return packetAC;
     }
   private:
+    void parsePkt   (quint8 ucPkt[], int nPktLen);
     void parse0x8F (quint8 ucData[], int nLen);
     void parse0x8FAB (quint8 ucData[], int nLen);
     void parse0x8FAC (quint8 ucData[], int nLen);
@@ -93,9 +100,7 @@ class TsipParser: public QObject
     int nParseState;
 
     PacketName currentPacket;
-    //Packet 8FAB
     PacketAB packetAB;
-    //Packet 8FAC
     PacketAC packetAC;
 };
 

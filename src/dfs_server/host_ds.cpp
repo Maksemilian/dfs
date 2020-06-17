@@ -2,12 +2,6 @@
 
 #include "channel_host.h"
 #include "wrd_coh_g35_ds.h"
-//#include "wrd_d_g35.h"
-
-#include "wrd_device_selector.h"
-
-#include "receiver.pb.h"
-#include "ring_buffer.h"
 
 #include <QDataStream>
 #include <QThread>
@@ -33,30 +27,19 @@ struct DeviceClient::Impl
     Impl(net::ChannelHost* channel):
         channel(channel),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-//                deviceCreator(std::make_unique<CohG35DeviceCreator>()),
-        device( DeviceFactory::createCohG35Device(0,
-                buffer,
-                false))
-//        deviceMode(proto::receiver::DM_COHERENT)
+        device(createCohG35Device(0, buffer, false))
     {}
 
     Impl(net::ChannelHost* channel,
          const std::shared_ptr<IDevice>& deviceSet):
         channel(channel),
-//        device(deviceSet),
         buffer(std::make_shared<RingBuffer<proto::receiver::Packet>>(16)),
-        device( DeviceFactory::createCohG35Device(0,
-                buffer,
-                false))
-//                deviceCreator(std::make_unique<CohG35DeviceCreator>()),
-//        deviceMode(proto::receiver::DM_COHERENT)
+        device(deviceSet)
     {}
 
     std::unique_ptr<net::ChannelHost> channel;
     ShPtrRingBuffer buffer;
     std::shared_ptr<IDevice> device;
-    //    std::unique_ptr<DeviceCreator>deviceCreator;
-//    proto::receiver::DeviceMode deviceMode;
     SignalStreamWriter* streamDDC1 = nullptr;
 };
 
