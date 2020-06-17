@@ -29,11 +29,6 @@ void RadioChannel::skip()
     {
         _outBuffer->push( pct);
     }
-    /*
-    if(!_queue.isEmpty())
-    {
-        _outBuffer->push( _queue.dequeue());
-    }*/
 }
 
 bool RadioChannel::readIn()
@@ -50,18 +45,3 @@ bool RadioChannel::readIn()
     return false;
 }
 ///@}
-/*
-void RadioChannel::apply()
-{
-    if(!_queue.isEmpty())
-    {
-        _lastPacket = _queue.dequeue();
-
-        if(_blockEqualizer)
-        {
-            _blockEqualizer->equateT(_lastPacket);
-        }
-        _outBuffer->push(_lastPacket);
-    }
-}
-*/

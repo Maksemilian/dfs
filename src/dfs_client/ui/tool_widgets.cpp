@@ -19,9 +19,10 @@ const quint32 BandwithComboBox::bandwithArray[BandwithComboBox::BANDWITH_SIZE] =
     160'000,
     200'000,
     250'000
+    ///\todo Добавить работу с остальными полосами частот
     // 320000,400000,500000,640000,800000,
-    //    1000000,1250000,1600000,2000000,2500000,3200000,4000000,5000000,6400000,8000000,
-    //    10000000,12500000,16000000,20000000,25000000,32000000
+    // 1000000,1250000,1600000,2000000,2500000,3200000,4000000,5000000,6400000,8000000,
+    // 10000000,12500000,16000000,20000000,25000000,32000000
 };
 
 QMap<UInt32Bandwth, Uint32SampleRate> BandwithComboBox::bandwithAndSampleRateMap()
@@ -43,9 +44,9 @@ QMap<UInt32Bandwth, Uint32SampleRate> BandwithComboBox::bandwithAndSampleRateMap
     return map;
 }
 
-const int SampleRateComboBox::SAMPLES_PER_BUFFER_SIZE = 4;
+const int SamplePerBufferComboBox::SAMPLES_PER_BUFFER_SIZE = 4;
 
-const quint16 SampleRateComboBox::samplesPerBufferArray[SampleRateComboBox::SAMPLES_PER_BUFFER_SIZE] =
+const quint16 SamplePerBufferComboBox::samplesPerBufferArray[SamplePerBufferComboBox::SAMPLES_PER_BUFFER_SIZE] =
 {
     1024,
     2048,
@@ -95,8 +96,8 @@ ToolBarComboBox::ToolBarComboBox(QWidget* parent)
 }
 
 
-BandwithComboBox::BandwithComboBox(/*MainWindow*mainWindow,*/QWidget* parent)
-    : ToolBarComboBox(/*mainWindow,*/parent)
+BandwithComboBox::BandwithComboBox(QWidget* parent)
+    : ToolBarComboBox(parent)
 {
     for(int i = 0; i < BANDWITH_SIZE; i++)
     {
@@ -107,13 +108,6 @@ BandwithComboBox::BandwithComboBox(/*MainWindow*mainWindow,*/QWidget* parent)
     setMaxVisibleItems(maxVisibleItems);
     setCurrentIndex(0);
 
-//    QObject::connect(this,
-//                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
-//                     [this](const QString &text){
-//        if(!text.isEmpty()){
-//            this->changed();
-//        }
-//    });
 }
 
 quint32 BandwithComboBox::currentTypeIndex()
@@ -121,8 +115,8 @@ quint32 BandwithComboBox::currentTypeIndex()
     return static_cast<quint32>(currentIndex());
 }
 
-SampleRateComboBox::SampleRateComboBox(/*MainWindow*mainWindow,*/QWidget* parent)
-    : ToolBarComboBox (/*mainWindow,*/parent)
+SamplePerBufferComboBox::SamplePerBufferComboBox(QWidget* parent)
+    : ToolBarComboBox (parent)
 {
     for(int i = 0; i < SAMPLES_PER_BUFFER_SIZE; i++)
     {
@@ -130,22 +124,16 @@ SampleRateComboBox::SampleRateComboBox(/*MainWindow*mainWindow,*/QWidget* parent
     }
 
     setCurrentIndex(SAMPLES_PER_BUFFER_SIZE - 1);
-//    QObject::connect(this,
-//                     static_cast<void(QComboBox::*)(const QString &text)>(&QComboBox::activated),
-//                     [this](const QString &text){
-//        if(!text.isEmpty()){
-//            this->changed();
-//        }
-//    });
+
 }
 
-quint32 SampleRateComboBox::samplesPerBuffer()
+quint32 SamplePerBufferComboBox::samplesPerBuffer()
 {
     return currentText().toUInt();
 }
 
-AttenuatorComboBox::AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget* parent)
-    : ToolBarComboBox (/*mainWindow,*/parent)
+AttenuatorComboBox::AttenuatorComboBox(QWidget* parent)
+    : ToolBarComboBox (parent)
 {
     for(int i = 0; i < ATTENUATOR_SIZE; i++)
     {

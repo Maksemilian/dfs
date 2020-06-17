@@ -32,8 +32,7 @@ class ToolBarLineEdit;
 
 class BandwithComboBox;
 class AttenuatorComboBox;
-class SampleRateComboBox;
-class ToolBarComboBox;
+class SamplePerBufferComboBox;
 
 class SwitchButton;
 class PreselectorWidget;
@@ -49,7 +48,9 @@ class DeviceListWidget ;
 class QStackedWidget;
 
 /*!
- * \brief Класс главного окна приложения
+ * \brief Класс главного окна приложения,
+ * представляющего графический интерфейс для
+ * подключения и управления удаленными приемниками.
  */
 
 class MainWindow : public QMainWindow,
@@ -108,7 +109,7 @@ class MainWindow : public QMainWindow,
     ToolBarLineEdit* leAdcNoiceBlanckerThreshold;
 
     BandwithComboBox* cbDDC1Bandwith;
-    SampleRateComboBox* cbSamplesPerBuffer;
+    SamplePerBufferComboBox* cbSamplesPerBuffer;
     AttenuatorComboBox* cbAttenuationLevel;
 
     //Bottom Widgets

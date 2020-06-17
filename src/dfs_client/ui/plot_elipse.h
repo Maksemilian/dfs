@@ -129,10 +129,6 @@ class SumSubMethod
                      static_cast<int>(blockSize));
         //qDebug()<<"******************DATA AFTER MUL SUB:";
 
-        //        for(quint32 i=0;i<blockSize;i++){
-        //            dstSumDiv[i].re=mulSumOnCoef[i].re;
-        //            dstSumDiv[i].im=mulSubOnCoef[i].im;
-        //        }
         memcpy(dstSumDiv.data(), mulSubOnCoef.data(), sizeof (Ipp32fc)*blockSize);
         return  dstSumDiv;
     }
@@ -148,17 +144,6 @@ class SumSubMethod
     double currentAngleRad;
     ShPtrIpp32fcBuffer sumDivBuffer;
 };
-/*
-class ElipseLine : public QCPItemLine
-{
-    static const QColor blueColor;
-    static const QString DEGREE_UNICODE_SYMBOL;
-
-  public:
-    ElipseLine(const QPointF& posBegin, const QPointF& posEnd,
-               const QString& leftText, const QString& rightText,
-               QCustomPlot* parent);
-};*/
 
 /*!
  * \brief Класс посторения элипса по точкам полученным
@@ -186,7 +171,6 @@ class ElipsPlot: public QCustomPlot
     void customEvent(QEvent* event)override;
   private:
     QCPCurve* curve;
-//    QList<ElipseLine*>lines;
     QMutex mutex;
     ChannelData data;
     std::unique_ptr<SumSubMethod> sumSubMethod;

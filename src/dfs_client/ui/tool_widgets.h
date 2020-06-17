@@ -4,38 +4,44 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLineEdit>
+
+
 /*! \addtogroup client
  */
-///@{
-using UInt32Bandwth = quint32;
-using Uint32SampleRate = quint32;
 
-class ToolBarLineEdit: public QLineEdit /*,public IToolBarWidget*/
+
+class ToolBarLineEdit: public QLineEdit
 {
     Q_OBJECT
   public:
-    ToolBarLineEdit(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    ToolBarLineEdit(QWidget* parent = nullptr);
     quint16 getValue();
   signals:
     void changed();
 };
 
 
-class ToolBarComboBox: public QComboBox /*,public IToolBarWidget*/
+class ToolBarComboBox: public QComboBox
 {
     Q_OBJECT
   public:
-    ToolBarComboBox(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    ToolBarComboBox(QWidget* parent = nullptr);
   signals:
     void changed();
 };
 
+///@{
+using UInt32Bandwth = quint32;
+using Uint32SampleRate = quint32;
+/*!
+ * \brief Виджет для ввода полосы пропускания.
+ */
 class BandwithComboBox: public ToolBarComboBox
 {
     static const int BANDWITH_SIZE;
     static const quint32 bandwithArray[];
   public:
-    BandwithComboBox(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    BandwithComboBox(QWidget* parent = nullptr);
     static  QMap<UInt32Bandwth, Uint32SampleRate>bandwithAndSampleRateMap();
     inline quint32 getCurrentBandwith()
     {
@@ -45,22 +51,27 @@ class BandwithComboBox: public ToolBarComboBox
 
 };
 
-class SampleRateComboBox: public ToolBarComboBox
+/*!
+ * \brief Виджет для ввода размера блока DDC1.
+ */
+class SamplePerBufferComboBox: public ToolBarComboBox
 {
     static const int SAMPLES_PER_BUFFER_SIZE;
     static const quint16 samplesPerBufferArray[];
   public:
-    SampleRateComboBox(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    SamplePerBufferComboBox(QWidget* parent = nullptr);
     quint32 samplesPerBuffer();
 };
 
-
+/*!
+ * \brief Виджет для ввода данных аттенюатора.
+ */
 class AttenuatorComboBox: public ToolBarComboBox
 {
     static const int ATTENUATOR_SIZE;
     static const quint8 attenuatorArray[];
   public:
-    AttenuatorComboBox(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    AttenuatorComboBox(QWidget* parent = nullptr);
     quint32 getAttenuationLevel();
 };
 ///@}

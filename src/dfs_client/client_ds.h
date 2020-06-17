@@ -15,13 +15,15 @@ class QHostAddress;
 ///@{
 
 /*!
- * \brief Класс реализует отпраук команд для управления
- * устройством
+ * \brief Реализует отправку команд для удаленного
+ * управления устройством. Может работать одновременно
+ * только с одним устройством.Также принимает клиентские подключения
+ * для приема потока DDC1 в отдельном потоке.
  */
 class DeviceClient: public Client
 {
     Q_OBJECT
-    static quint8 _CLIENT_COUNTER;
+    static quint8 CLIENT_COUNTER;
     static const quint16 LISTENING_STREAMING_PORT = 9000;
   public:
     DeviceClient(const ConnectData& connectData, QObject* parent = nullptr);
@@ -53,14 +55,11 @@ class DeviceClient: public Client
   private:
     struct Impl;
     std::unique_ptr<Impl> d;
-  private:
-
-
-
 };
+
 /*!
-    * \brief Класс принимает входящие соединения для
-    * передающие поток ddc1
+    * \brief Принимает входящие соединения для
+    * от удаленного сервера для приема потока DDC1/
     */
 class SignalStreamServer: public net::Server
 {
@@ -74,11 +73,12 @@ class SignalStreamServer: public net::Server
     void createThread(net::ChannelHost* channelHost);
   private:
     std::map<StreamType, ShPtrRadioChannel> buffers;
-
 };
+
 /*!
-        * \brief Класс чтения потока ddc1 из сети
-        */
+* \brief Принимает данные потока DDC1 по сети в реальном времени
+* и записывает их в кольцевой буфер.
+*/
 class SignalStreamReader: public QObject
 {
     Q_OBJECT
@@ -95,7 +95,8 @@ class SignalStreamReader: public QObject
     struct Impl;
     std::unique_ptr<Impl>d;
 };
+using ShPtrDeviceClient = std::shared_ptr<DeviceClient>;
+
 ///@}
 
-using ShPtrDeviceClient = std::shared_ptr<DeviceClient>;
 #endif // RECEIVER_STATION_CLIENT_H

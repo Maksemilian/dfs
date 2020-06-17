@@ -27,6 +27,7 @@ class AddTaskCommand;
 
 class SendStreamDDC1;
 class ClientManager;
+
 /*
 class AbstractCommand: public QObjectUserData
 {

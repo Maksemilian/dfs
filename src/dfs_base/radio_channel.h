@@ -12,7 +12,8 @@ using PacketQueuePair = std::pair<PacketQueue, PacketQueue>;
 
 /*! \defgroup base Base
  * \image html class_base.jpg "Диаграмма классов модуля base"
- * \brief Модуль статической бибилотеки вспомогательных классов
+ * \brief Модуль статической бибилотеки вспомогательных классов.
+ *
  */
 
 /*!
@@ -93,7 +94,8 @@ class RadioChannel
     PacketQueue _queue;
     ChannelData _data;
 };
-///@}
 using ShPtrRadioChannel = std::shared_ptr<RadioChannel>;
+
+///@}
 
 #endif // RADIO_CHANNEL_H

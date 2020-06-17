@@ -29,7 +29,7 @@ using ShPtrRingBuffer = std::shared_ptr<RingBuffer<proto::receiver::Packet>>;
  * По умолчанию данный класс работает только с перым
  * набором приемников WRG35DDC1 в когерентом режиме.
  *
- * \todo 1)выбор устройства по индексу
+ * \todo 1)выбор устройства по индексу \n
  *       2)переключение режима работы с когерентного на одиночный
  */
 class DeviceClient: public QObject

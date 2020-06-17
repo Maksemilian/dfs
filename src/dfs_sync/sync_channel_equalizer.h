@@ -2,16 +2,17 @@
 #define SYNC_BLOCK_ALINEMENT_H
 
 #include "radio_channel.h"
-#include <QObject>
 #include "ippbase.h"
 
-/*! \addtogroup sync Sync
+#include <QObject>
+
+/*! \addtogroup sync
  */
 ///@{
 
 /*!
  * \brief Класс сдвигает данные канала на количество равное
- * целой части deltaPPS
+ * целой части разности DDC после последнего импульса PPS двух каналов.
  *
  * \attention Для выравнивания канала необходимо единожды проинициализировать
  * буфер сдвига методом initShiftBuffer
@@ -23,10 +24,8 @@ class ChannelEqualizer
     ChannelEqualizer(const ShPtrRadioChannel& channel, double deltaPPS);
 
     ~ChannelEqualizer() ;
-    //TODO double deltaStart=1
     /*!
      * \brief инициализирует буфера сдвига
-     *
      * Читает из канала данные и берет часть данных равную разнице
      * между размером блока пакета и целой частью deltaPPS.Взятые данные
      * инициализируют буфер сдвига.
@@ -34,13 +33,13 @@ class ChannelEqualizer
     void initShiftBuffer();
 
     /*!
-     * \brief метод сдвига канала на целую часть deltaPPS
-     *
-     * Выравнивание канала происходит за счет сдвига блока данных
-     * на величину равную размеру буфера сдвига вправо. При этом
+     * \brief Метод сдвига канала на целую часть deltaPPS.
+     * Выравнивание канала происходит за счет сдвига текущего принятого
+     * блока данных на величину равную размеру буфера сдвига вправо. При этом
      * в начало принятого пакета данных записваются данные буфера сдвига,
+     * полученные на основе предыдущего пакета.
      * после чего буфер сдвига инициализируется новыми данными с конца блока
-     * данных.
+     * текущего блока данных.
       */
     void shiftChannel();
   private:
@@ -59,5 +58,6 @@ class ChannelEqualizer
     struct Impl;
     std::unique_ptr<Impl>d;
 };
+
 ///@}
 #endif // SYNC_BLOCK_ALINEMENT_H

@@ -4,13 +4,20 @@
 
 #include <QWidget>
 class QComboBox;
+
 /*! \addtogroup client
  */
+
 ///@{
+
 using  UInt32LowFreq = quint32 ;
 using  UInt32HeighFreq = quint32 ;
-
-class PreselectorWidget: public QWidget /*,public IToolBarWidget*/
+/*!
+ * \brief Виджет для ввода данных преселектора.
+ * \todo PreselectorWidget сделать проверку
+ *  при которой нижняя частота не может быть больше верхней
+ */
+class PreselectorWidget: public QWidget
 {
     Q_OBJECT
 
@@ -19,7 +26,7 @@ class PreselectorWidget: public QWidget /*,public IToolBarWidget*/
     static const int PRESELECTOR_FREQUENCY_SIZE;
 
   public:
-    PreselectorWidget(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    PreselectorWidget(QWidget* parent = nullptr);
     void setWidgetData(const QPair<UInt32LowFreq, UInt32HeighFreq>& pair);
 
     QPair<UInt32LowFreq, UInt32HeighFreq>getPreselectors();
@@ -31,5 +38,6 @@ class PreselectorWidget: public QWidget /*,public IToolBarWidget*/
     QComboBox* cbLowFrequency;
     QComboBox* cbHighFrequency;
 };
+
 ///@}
 #endif // PRESELECTOR_WIDGET_H

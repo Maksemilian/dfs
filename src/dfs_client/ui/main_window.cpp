@@ -126,8 +126,6 @@ void MainWindow::onDeviceSetListNotReady()
     plot->stop();
 }
 
-
-
 void MainWindow::setCentralWidget(QWidget* widget)
 {
     centralWidget()->layout()->addWidget(widget);
@@ -183,9 +181,9 @@ void MainWindow::setTopToolBar(QToolBar* topToolBar)
 
     //Samples per Buffer
 
-    cbSamplesPerBuffer = new SampleRateComboBox(this);
+    cbSamplesPerBuffer = new SamplePerBufferComboBox(this);
     cbSamplesPerBuffer->setEnabled(false);
-    connect(cbSamplesPerBuffer, &SampleRateComboBox::changed, this, &MainWindow::widgetChanged);
+    connect(cbSamplesPerBuffer, &SamplePerBufferComboBox::changed, this, &MainWindow::widgetChanged);
 
     topToolBar->addWidget(leDDC1Frequency);
 

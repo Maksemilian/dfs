@@ -6,7 +6,12 @@
 /*! \addtogroup client
  */
 ///@{
-class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
+/*!
+ * \brief Виджет для ввода частоты.
+ * Позволяет вводить данные в следующих единицах измерения:
+ * Hz,kHz,MHz,GHz. Позволяет вводить частоту от 1000 Hz до 50MHz.
+ */
+class FrequencyLineEdit : public QLineEdit
 {
     Q_OBJECT
     typedef enum
@@ -31,7 +36,7 @@ class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
     static const double MAX_VALUE_IN_HZ;
 
   public:
-    FrequencyLineEdit(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
+    FrequencyLineEdit(QWidget* parent = nullptr);
 
     void setFrequencyValueInHz(quint32 frequency);
     quint32 getFrequencyValueInHz();
@@ -51,5 +56,6 @@ class FrequencyLineEdit : public QLineEdit/*,public IToolBarWidget*/
     int postfixLength = 0;
     int unit;
 };
+
 ///@}
 #endif // FREQUENCY_LINE_EDIT_H

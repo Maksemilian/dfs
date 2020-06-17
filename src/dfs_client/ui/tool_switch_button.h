@@ -6,18 +6,22 @@
 
 class QStateMachine;
 class QState;
-class MainWindow;
+
 /*! \addtogroup client
  */
 ///@{
-class SwitchButton : public QPushButton/*,public IToolBarWidget*/
+
+/*!
+ * \brief Виждет кнопки переключения.Храни два состояния
+ * - on и off и в зависимости от этих состояний на кнопке
+ * отображается разный текст. Внутренняя реализация сделана
+ * на основе класса конечного автомата QStateMachine.
+ */
+class SwitchButton : public QPushButton
 {
     Q_OBJECT
   public:
-    SwitchButton(/*MainWindow*mainWindow,*/QWidget* parent = nullptr);
-
-//    SwitchButton(QString nameOn,QString nameOff,bool clicked,
-//                 /*MainWindow*mainWindow,*/QWidget *parent=nullptr);
+    SwitchButton(QWidget* parent = nullptr);
 
     SwitchButton(const QString& nameOn, const QString& nameOff, bool clicked,
                  QWidget* parent = nullptr);
@@ -40,6 +44,7 @@ class SwitchButton : public QPushButton/*,public IToolBarWidget*/
     QState* stateFirst;
     QState* stateSecond;
 };
+
 ///@}
 
 #endif // SWITCH_BUTTON_H

@@ -9,6 +9,9 @@
 class QComboBox;
 
 //TODO rem
+///! \addtogroup client
+
+
 class AspectRatioLabel : public QLabel
 {
     Q_OBJECT
@@ -24,6 +27,10 @@ class AspectRatioLabel : public QLabel
     QPixmap pix;
 };
 
+///@{
+/*!
+ * \brief Виджет удаленного приемника.
+ */
 class DeviceWidget : public QWidget
 {
     Q_OBJECT
@@ -45,5 +52,5 @@ class DeviceWidget : public QWidget
     AspectRatioLabel* _status;
     QComboBox* _cbReceivers;
 };
-
+///@}
 #endif // DEVICE_SET_WIDGET_H

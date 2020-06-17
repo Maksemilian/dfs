@@ -7,7 +7,6 @@
 #include <QListWidget>
 #include <QQueue>
 
-using namespace std;
 
 class DeviceWidget;
 class QPushButton;
@@ -15,6 +14,12 @@ class SwitchButton;
 class IDeviceSettings;
 class QListWidgetItem;
 
+///! \addtogroup client
+
+///@{
+/*!
+ * \brief Виджет отображающий список виджетов DeviceWidget.
+ */
 class DeviceListWidget :
     public QWidget
 {
@@ -40,5 +45,5 @@ class DeviceListWidget :
     std::map<QListWidgetItem*, std::shared_ptr<DeviceClient> > _deviceses;
     std::shared_ptr<ClientManager>_clientManager;
 };
-
+///@}
 #endif // DEVICE_SET_WIDGET_LIST_H

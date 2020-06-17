@@ -25,8 +25,10 @@
  * \attention Данный класс использует барьер синхронизации -
  * условную переменную QWaitCondition. Это может приводить к замиранию
  * графического интерфейса при вызове в главном потоке.
- *
+ * \todo RingBuffer размер буфер должен приводится к числу
+ *   кратному степени двойки если число нечетное
  */
+
 template<class T>
 class RingBuffer
 {
@@ -110,17 +112,4 @@ class RingBuffer
     QWaitCondition _notEmpty;
 };
 ///@}
-//    bool get(int &index,Packet&packet){
-//        QReadLocker readLocker(&mutex);
-//        if(index<writeCounter){
-//            //qDebug()<<"Comp"<<index<<writeCounter;
-//            packet=array[index++ &mask];
-//            return true;
-//        }
-//        else
-//        {
-//            notEmpty.wait(&mutex,2);
-//            return false;
-//        }
-//    }
 #endif // RINGBUFFER_H

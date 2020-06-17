@@ -1,5 +1,9 @@
 #include "sync_calc_delta_pps.h"
 
+/*! \addtogroup sync
+ */
+///@{
+
 ostream& operator<<(ostream& out, const Packet& pct)
 {
     out << "pct_1:" << pct.block_number()
@@ -9,19 +13,12 @@ ostream& operator<<(ostream& out, const Packet& pct)
     return out;
 }
 
-/*! \addtogroup sync Sync
- */
-///@{
 
 double CalcDeltaPPS::findDeltaPPS()
 {
-    //        VectorIpp32fc outShiftBuffer(_data.blockSize);
     Packet pct1 ;
     Packet pct2 ;
     double deltaPPS = -1;
-    // while(deltaPPS<0){
-    //WARNING В ТЕКУЩЕЙ ВЕРСИИ ПРЕДПОЛАГАЕТСЯ ЧТО
-    // 1 канал стартовал раньше
 
     bool isPacket1Read = _channel1->readIn();
 
@@ -29,8 +26,6 @@ double CalcDeltaPPS::findDeltaPPS()
 
     if(isPacket1Read && isPacket2Read)
     {
-        //Packet& pct1 = _channel1->lastPacket();
-        //Packet& pct2 = _channel2->lastPacket();
         _channel1->getLastPacket(pct1);
         _channel2->getLastPacket(pct2);
 
@@ -42,7 +37,6 @@ double CalcDeltaPPS::findDeltaPPS()
 
             isPacket1Read = false;
             isPacket2Read = false;
-            //continue;//WARNING
         }
 
         if(pct1.time_of_week() == pct2.time_of_week())// 1 НОМЕРА СЕКУНД ОДИНАКОВЫЕ
@@ -55,8 +49,6 @@ double CalcDeltaPPS::findDeltaPPS()
         }
         else
         {
-//            isPacket1Read = false;
-//            continue;
         }
         cout << "SHIFT_VALUE:" << deltaPPS << endl;
         cout << "BS:" << _data.blockSize << " SR:" << _data.sampleRate << endl;
@@ -64,9 +56,6 @@ double CalcDeltaPPS::findDeltaPPS()
 
     }
     return deltaPPS;
-    //}
-    // return false;
-    //        return nullptr;
 }
 
 double CalcDeltaPPS::calcDeltaPPS(const Packet _pct1, const Packet _pct2) const

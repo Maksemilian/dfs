@@ -5,7 +5,13 @@
 using Preselectors = std::pair<quint32, quint32>;
 
 /*!
- * \brief Настройки устройства
+ * \addtogroup base
+ */
+
+///@{
+
+/*!
+ * \brief Структура содержит основные настройки устройства.
  */
 struct DeviceSettings
 {
@@ -19,5 +25,7 @@ struct DeviceSettings
     unsigned int samplesPerBuffer;
     bool powerEnabled;
 };
+
+///@}
 
 #endif // COH_G35_DS_SETTINGS_H

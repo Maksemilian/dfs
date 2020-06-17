@@ -19,9 +19,8 @@ const FrequencyLineEdit::Freq FrequencyLineEdit::Units[4] =
 const double FrequencyLineEdit::MIN_VALUE_IN_HZ = 1000.0;
 const double FrequencyLineEdit::MAX_VALUE_IN_HZ = 50000000.0;
 
-FrequencyLineEdit::FrequencyLineEdit(/*MainWindow*mainWindow,*/QWidget* parent):
+FrequencyLineEdit::FrequencyLineEdit(QWidget* parent):
     QLineEdit (parent)
-//    IToolBarWidget(mainWindow)
 {
     QFont font;
     font.setPixelSize(40);

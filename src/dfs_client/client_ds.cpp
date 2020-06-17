@@ -12,7 +12,7 @@
 #include <QHostAddress>
 
 //**************************************** Receiver Station Client*****************************************
-quint8 DeviceClient::_CLIENT_COUNTER = 0;
+quint8 DeviceClient::CLIENT_COUNTER = 0;
 
 struct DeviceClient::Impl
 {
@@ -32,9 +32,9 @@ DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     :    Client (connectData, parent),
          d(std::make_unique<Impl>())
 {
-    ++_CLIENT_COUNTER;
+    ++CLIENT_COUNTER;
     d->streamServer.listen(QHostAddress(connectData.address),
-                           LISTENING_STREAMING_PORT + _CLIENT_COUNTER);
+                           LISTENING_STREAMING_PORT + CLIENT_COUNTER);
 }
 
 void DeviceClient::sendCommand(proto::receiver::Command& command)
@@ -76,7 +76,7 @@ ShPtrRadioChannel DeviceClient::getDDC1Channel() const
 
 DeviceClient::~DeviceClient()
 {
-    --_CLIENT_COUNTER;
+    --CLIENT_COUNTER;
 }
 
 QString DeviceClient::getCurrentDeviceSetName()const
