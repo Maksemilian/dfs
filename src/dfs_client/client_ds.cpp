@@ -12,7 +12,6 @@
 #include <QHostAddress>
 
 //**************************************** Receiver Station Client*****************************************
-quint8 DeviceClient::CLIENT_COUNTER = 0;
 
 struct DeviceClient::Impl
 {
@@ -22,46 +21,22 @@ struct DeviceClient::Impl
     }
     QQueue<proto::receiver::CommandType>commandQueue;
     proto::receiver::DeviceSetInfo currentDeviceSetInfo;
-    SignalStreamServer streamServer;
 };
 
 /*! \addtogroup client
  */
 ///@{
+
 DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
     :    Client (connectData, parent),
          d(std::make_unique<Impl>())
 {
-    ++CLIENT_COUNTER;
-//    d->streamServer.setMaxPendingConnections(0);
-    d->streamServer.listen(
-//                QHostAddress(connectData.address),
-        QHostAddress::Any,
-        LISTENING_STREAMING_PORT + CLIENT_COUNTER);
-    qDebug() << "DSCl::Constr_Serv Port"
-             << d->streamServer.serverPort()
-             << LISTENING_STREAMING_PORT + CLIENT_COUNTER
-             << d->streamServer.isListening()
-             ;
 }
 
 void DeviceClient::sendCommand(proto::receiver::Command& command)
 {
-    if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
-    {
-        command.set_stream_port(d->streamServer.serverPort());
-//        command.set_stream_port(LISTENING_STREAMING_PORT);
-        qDebug() << "SendCommand::Start Sending DDC1 Stream:"
-                 << d->streamServer.serverPort()
-                 << command.stream_port()
-                 << command.ByteSize()
-                 << d->streamServer.isListening()
-                 ;
-    }
-
     d->commandQueue.enqueue(command.command_type());
     proto::receiver::ClientToHost clientToHost;
-    //TODO ПОНЯТЬ КАК РАБОТАЕТ
     clientToHost.mutable_command()->CopyFrom(command);
     // d->channel->writeToConnection(serializeMessage(clientToHost));
     sendMessage(clientToHost);
@@ -84,14 +59,8 @@ QStringList DeviceClient::receiverNameList()const
     return receiverNameList;
 }
 
-//ShPtrRadioChannel DeviceClient::getDDC1Channel() const
-//{
-//    return  d->streamServer.getChannel(SignalStreamServer::StreamType::ST_DDC1);
-//}
-
 DeviceClient::~DeviceClient()
 {
-    --CLIENT_COUNTER;
 }
 
 QString DeviceClient::getCurrentDeviceSetName()const
@@ -237,6 +206,7 @@ void DeviceClient::showCommandAnswer(proto::receiver::CommandType commandType)
             break;
     }
 }
+
 //TODO сервер должен отсылать сообщение с ошибкой
 QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 {
@@ -278,131 +248,131 @@ QString DeviceClient::errorString(proto::receiver::CommandType commandType)
 
 //********************* STREAM SERVER *****************
 
-#include "ring_buffer.h"
-#include "receiver.pb.h"
+//#include "ring_buffer.h"
+//#include "receiver.pb.h"
 
-#include <QThread>
+//#include <QThread>
 
-/*! \addtogroup client
- */
-///@{
-SignalStreamServer::SignalStreamServer(quint8 bufferSize)
-{
-    Q_UNUSED(bufferSize);
+///*! \addtogroup client
+// */
+/////@{
+//SignalStreamServer::SignalStreamServer(quint8 bufferSize)
+//{
+//    Q_UNUSED(bufferSize);
 
-    buffers[StreamType::ST_DDC1] =
-        std::make_shared<RadioChannel>();
-}
+//    buffers[StreamType::ST_DDC1] =
+//        std::make_shared<RadioChannel>();
+//}
 
-ShPtrRadioChannel SignalStreamServer::getChannel(StreamType type)
-{
-    if(type == StreamType::ST_DDC1)
-    {
-        return buffers[StreamType::ST_DDC1];
-    }
-    return nullptr;
-}
+//ShPtrRadioChannel SignalStreamServer::getChannel(StreamType type)
+//{
+//    if(type == StreamType::ST_DDC1)
+//    {
+//        return buffers[StreamType::ST_DDC1];
+//    }
+//    return nullptr;
+//}
 
-void SignalStreamServer::createSession(net::ChannelHost* channelHost)
-{
-    if(channelHost->sessionType() == SessionType::SESSION_SIGNAL_STREAM)
-    {
-        qDebug() << "STREAM SESSION";
-        createThread(channelHost);
-    }
-    else
-    {
-        qDebug() << "ERROR SESSION TYPE";
-    }
-}
+//void SignalStreamServer::createSession(net::ChannelHost* channelHost)
+//{
+//    if(channelHost->sessionType() == SessionType::SESSION_SIGNAL_STREAM)
+//    {
+//        qDebug() << "STREAM SESSION";
+//        createThread(channelHost);
+//    }
+//    else
+//    {
+//        qDebug() << "ERROR SESSION TYPE";
+//    }
+//}
 
-void SignalStreamServer::createThread(net::ChannelHost* channelHost)
-{
-    QThread* thread = new QThread;
+//void SignalStreamServer::createThread(net::ChannelHost* channelHost)
+//{
+//    QThread* thread = new QThread;
 
-    SignalStreamReader*   streamDDC1 =
-        new SignalStreamReader(channelHost,
-                               buffers[StreamType::ST_DDC1]->inBuffer());
-    streamDDC1->moveToThread(thread);
-    channelHost->moveToThread(thread);
+//    SignalStreamReader*   streamDDC1 =
+//        new SignalStreamReader(channelHost,
+//                               buffers[StreamType::ST_DDC1]->inBuffer());
+//    streamDDC1->moveToThread(thread);
+//    channelHost->moveToThread(thread);
 
-    connect(thread, &QThread::started,
-            streamDDC1, &SignalStreamReader::process);
+//    connect(thread, &QThread::started,
+//            streamDDC1, &SignalStreamReader::process);
 
-    connect(streamDDC1, &SignalStreamReader::finished,
-            thread, &QThread::quit);
+//    connect(streamDDC1, &SignalStreamReader::finished,
+//            thread, &QThread::quit);
 
-    connect(thread, &QThread::finished,
-            streamDDC1, &SignalStreamReader::deleteLater);
+//    connect(thread, &QThread::finished,
+//            streamDDC1, &SignalStreamReader::deleteLater);
 
-    connect(thread, &QThread::destroyed,
-            thread, &QThread::deleteLater);
+//    connect(thread, &QThread::destroyed,
+//            thread, &QThread::deleteLater);
 
-    thread->start();
-}
+//    thread->start();
+//}
 
-//************************** SIGNAL STREM READER **************************
+////************************** SIGNAL STREM READER **************************
 
-struct SignalStreamReader::Impl
-{
-    Impl(net::ChannelHost* channelHost,
-         std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddcBuffer):
-        stream(channelHost),
-        streamBuffer(ddcBuffer),
-        quit(true)
-    {
-    }
+//struct SignalStreamReader::Impl
+//{
+//    Impl(net::ChannelHost* channelHost,
+//         std::shared_ptr<RingBuffer<proto::receiver::Packet>>ddcBuffer):
+//        stream(channelHost),
+//        streamBuffer(ddcBuffer),
+//        quit(true)
+//    {
+//    }
 
-    std::unique_ptr<net::ChannelHost> stream;
-    std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer;
-    std::atomic<bool> quit;
-    qint32 key;
-};
+//    std::unique_ptr<net::ChannelHost> stream;
+//    std::shared_ptr<RingBuffer<proto::receiver::Packet>>streamBuffer;
+//    std::atomic<bool> quit;
+//    qint32 key;
+//};
 
-SignalStreamReader::SignalStreamReader(net::ChannelHost* channelHost,
-                                       const ShPtrPacketBuffer streamBuffer)
-    : d(std::make_unique<Impl>(channelHost, streamBuffer))
-{
+//SignalStreamReader::SignalStreamReader(net::ChannelHost* channelHost,
+//                                       const ShPtrPacketBuffer streamBuffer)
+//    : d(std::make_unique<Impl>(channelHost, streamBuffer))
+//{
 
-}
+//}
 
-SignalStreamReader::~SignalStreamReader()
-{
-    qDebug() << "STOP Stream Reader DDC1";
-    qDebug() << "DESTR::StreamReader";
-}
+//SignalStreamReader::~SignalStreamReader()
+//{
+//    qDebug() << "STOP Stream Reader DDC1";
+//    qDebug() << "DESTR::StreamReader";
+//}
 
 
-void SignalStreamReader::process()
-{
-    qDebug() << "START Stream Reader DDC1";
-    connect(d->stream.get(), &net::ChannelHost::messageReceived,
-            this, &SignalStreamReader::onMessageReceive);
+//void SignalStreamReader::process()
+//{
+//    qDebug() << "START Stream Reader DDC1";
+//    connect(d->stream.get(), &net::ChannelHost::messageReceived,
+//            this, &SignalStreamReader::onMessageReceive);
 
-    connect(d->stream.get(), &net::ChannelHost::finished,
-            this, &SignalStreamReader::finished);
-}
+//    connect(d->stream.get(), &net::ChannelHost::finished,
+//            this, &SignalStreamReader::finished);
+//}
 
-void SignalStreamReader::onMessageReceive(const QByteArray& buffer)
-{
-    proto::receiver::ClientToHost clientToHost;
+//void SignalStreamReader::onMessageReceive(const QByteArray& buffer)
+//{
+//    proto::receiver::ClientToHost clientToHost;
 
-    if(!clientToHost.ParseFromArray(buffer.constData(), buffer.size()))
-    {
-        qDebug() << "ERROR PARSE STREAM_READER HOST TO CLIENT";
-        return;
-    }
+//    if(!clientToHost.ParseFromArray(buffer.constData(), buffer.size()))
+//    {
+//        qDebug() << "ERROR PARSE STREAM_READER HOST TO CLIENT";
+//        return;
+//    }
 
-    if(clientToHost.has_packet())
-    {
-        d->streamBuffer->push(const_cast<proto::receiver::Packet&>
-                              (clientToHost.packet()));
-        qDebug()
-                << "BN:" << clientToHost.packet().block_number()
-                << "SR:" << clientToHost.packet().sample_rate()
-                << "TOW:" << clientToHost.packet().time_of_week()
-                << "DDC_C:" << clientToHost.packet().ddc_sample_counter()
-                << "ADC_C" << clientToHost.packet().adc_period_counter();
-    }
-}
+//    if(clientToHost.has_packet())
+//    {
+//        d->streamBuffer->push(const_cast<proto::receiver::Packet&>
+//                              (clientToHost.packet()));
+//        qDebug()
+//                << "BN:" << clientToHost.packet().block_number()
+//                << "SR:" << clientToHost.packet().sample_rate()
+//                << "TOW:" << clientToHost.packet().time_of_week()
+//                << "DDC_C:" << clientToHost.packet().ddc_sample_counter()
+//                << "ADC_C" << clientToHost.packet().adc_period_counter();
+//    }
+//}
 ///@}

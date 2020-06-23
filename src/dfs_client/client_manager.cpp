@@ -79,12 +79,6 @@ void ClientManager::onCommandSuccessed()
 
     if(successedCommand.command_type() == proto::receiver::START_DDC1)
     {
-//        std::vector<ShPtrRadioChannel> channels;
-//        for(auto& client : _clients)
-//        {
-//            channels.push_back(client->getDDC1Channel());
-//        }
-//        emit ready(channels);
         emit ready();
     }
     else if(successedCommand.command_type() == proto::receiver::STOP_DDC1)

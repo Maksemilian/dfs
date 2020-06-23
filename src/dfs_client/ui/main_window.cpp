@@ -38,7 +38,7 @@ MainWindow:: MainWindow(QWidget* parent):
     centralWidget()->setLayout(new QVBoxLayout);
     setObjectName("MainWindow");
 
-//    treeDevices = new DeviceMonitoring(_clientManager, this);
+    //    treeDevices = new DeviceMonitoring(_clientManager, this);
     deviceListWidget = new DeviceListWidget(_clientManager, this);
     setLeftDockWidget(deviceListWidget, "DeviceSetList");
 
@@ -78,9 +78,9 @@ MainWindow:: MainWindow(QWidget* parent):
 
     setCentralWidget(plot);
 
-//    streamServer.listen(
-//        QHostAddress::Any,
-//        9000);
+    streamServer.listen(
+        QHostAddress::Any,
+        LISTENING_STREAMING_PORT);
 
     connect(_clientManager.get(), &ClientManager::ready,
             this, &MainWindow::onDeviceSetListReady);
@@ -103,7 +103,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onDeviceSetListReady(/*
-    const std::vector<ShPtrRadioChannel>& channels*/)
+                                          const std::vector<ShPtrRadioChannel>& channels*/)
 {
     qDebug() << "START SYNC" << getDDC1Frequency()
              << getSampleRateForBandwith()
@@ -115,22 +115,31 @@ void MainWindow::onDeviceSetListReady(/*
                         getSamplesPerBuffer()
                        };
 
-//    std::vector<ShPtrRadioChannel> channels = streamServer.getRadioChannels();
-//    channels.front()->setChannelData(data);
-//    channels.back()->setChannelData(data);
+    std::vector<ShPtrRadioChannel> channels = streamServer.getRadioChannels();
+    if(channels.size() > 2)
+    {
+        channels.front()->setChannelData(data);
+        channels.back()->setChannelData(data);
+        //TODO Сделать создание синхронизации единожды
+        sync.reset(new Sync2D(channels.front(), channels.back(), data));
+        sync->subscribe(plot);
 
-//    sync.reset(new Sync2D(channels.front(), channels.back(), data));
-//    sync->subscribe(plot);
-
-//    sync->start();
-//    plot->start(data);
+        sync->start();
+        plot->start(data);
+    }
+    else
+    {
+        QMessageBox::warning(this, "Start sync proc", "Sync is available only for two device sets");
+    }
 }
 
 void MainWindow::onDeviceSetListNotReady()
 {
-    quit = true;
-    sync->stop();
-    plot->stop();
+    if(sync)
+    {
+        sync->stop();
+        plot->stop();
+    }
 }
 
 void MainWindow::setCentralWidget(QWidget* widget)
@@ -600,168 +609,3 @@ void MainWindow::saveSetting()
 }
 ///@}
 
-
-
-
-/*
-void MainWindow::onDeviceSetListReady(
-    const std::vector<ShPtrRadioChannel>& channels)
-//void PlotMonitoring::onDeviceSetListReady(const QList<DeviceSetWidget*>& dsList)
-{
-
-    //    Q_ASSERT_X(channels.size() == 2, "PlotMonitoring::onDeviceSetListReady",
-    //               "sync available only for 2 channel");
-    quit = false;
-    qDebug() << "START SYNC" << getDDC1Frequency()
-             << getSampleRateForBandwith()
-             << getSamplesPerBuffer();
-
-    ChannelData data = {getDDC1Frequency(),
-                        getSampleRateForBandwith(),
-                        getSamplesPerBuffer()
-                       };
-    channels.front()->setChannelData(data);
-    channels.back()->setChannelData(data);
-
-    sync.reset(new Sync2D(channels.front(), channels.back(), data));
-
-    elipsPlot->setSyncData(data);
-    qDebug() << "****PLOT MONITORIN"
-             << channels.back().use_count()
-             << channels.back().use_count()
-             << channels.back()->outBuffer().use_count()
-             << channels.back()->outBuffer().use_count();
-    QtConcurrent::run([this, channels]()
-    {
-        bool isRead1 = false;
-        bool isRead2 = false;
-
-        std::shared_ptr<RadioChannel>channel1 = channels.front();
-        std::shared_ptr<RadioChannel>channel2 = channels.back();
-
-        proto::receiver::Packet pct1;
-        proto::receiver::Packet pct2;
-        qDebug() << "PLOT MONITORING RUN";
-        while (!quit)
-        {
-            if(channel1->outBuffer()->pop(pct1))
-            {
-                isRead1 = true;
-            }
-
-            if(channel2->outBuffer()->pop(pct2))
-            {
-                isRead2 = true;
-            }
-
-            if(isRead1 && isRead2)
-            {
-                channelPlot->apply(pct1, pct2);
-                elipsPlot->apply(pct1, pct2);
-
-                isRead1 = false;
-                isRead2 = false;
-            }
-        }
-        qDebug() << "PLOT MONITORING STOP";
-    });
-}
-
-void MainWindow::onDeviceSetListNotReady()
-{
-    quit = true;
-    sync->stop();
-}
-*/
-
-/*
-
-void MainWindow::widgetChanged(IToolBarWidget *toolBarWidget)
-{
-    QWidget*widget= dynamic_cast<QWidget*>(toolBarWidget);
-    if(widget){
-        QVariant variant;
-        if (widget==pbPower){//pb Power
-            if(pbPower->currentState()){qDebug()<<"********COMMAND ON";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_ON));
-                if(command)
-                    command->execute();
-            }else {qDebug()<<"********COMMAND OFF";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_POWER_OFF));
-                if(command)
-                    command->execute();
-            }
-            return;
-        }else if(widget==pbAttenuatorEnable){//pb Atten
-            if(pbAttenuatorEnable->currentState()==true){qDebug()<<"ATTENUATOR PB";
-                AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
-                if(command)
-                    command->execute();
-
-                cbAttenuationLevel->setEnabled(true);
-            }else cbAttenuationLevel->setDisabled(true);
-
-            return;
-        }else if (widget==pbPreselectorEnable) {//pb Preselectors
-            if(pbPreselectorEnable->currentState()){
-                preselectorWidget->setEnabled(true);
-            }else {
-                preselectorWidget->setDisabled(true);
-                return;
-            }
-        }else if (widget==pbAdcNoiceBlanckerEnabled) {
-            pbAdcNoiceBlanckerEnabled->currentState()==false?
-                        leAdcNoiceBlanckerThreshold->setDisabled(true):
-                        leAdcNoiceBlanckerThreshold->setEnabled(true);
-        }else if(widget==cbAttenuationLevel){//cb Atten
-        }else if (widget==preselectorWidget) {// Preselectors Widget
-        }else if (widget==pbPreamplifierEnable) {//pb Pream
-        }else if (widget==leAdcNoiceBlanckerThreshold) {
-        }else if (widget==leDDC1Frequency){
-        }
-
-        AbstractCommand*command=dynamic_cast<AbstractCommand*>(widget->userData(USER_DATA_ID));
-        if(command)
-            command->execute();
-
-    }else qDebug()<<"BAD CAST TOOL WIDGET";
-}
-void MainWindow::setSettings(const MainWindowSettings::Data &receiverSettings)
-{
-    pbAttenuatorEnable->setCurrentState(receiverSettings.attenuatorEnable);
-
-    cbAttenuationLevel->setCurrentText(QString::number(receiverSettings.attenuator)+" Db");
-    cbAttenuationLevel->setEnabled(receiverSettings.attenuatorEnable);
-
-    pbPreselectorEnable->setCurrentState(receiverSettings.preselectorsEnable);
-
-    preselectorWidget->setWidgetData(receiverSettings.preselectors);
-
-    pbPreamplifierEnable->setCurrentState(receiverSettings.preamplifierEnable);
-
-    leAdcNoiceBlanckerThreshold->setText(QString::number(receiverSettings.adcNoiceBlanker.second));
-    leAdcNoiceBlanckerThreshold->setEnabled(receiverSettings.adcNoiceBlanker.first);
-
-    leDDC1Frequency->setFrequencyValueInHz(receiverSettings.ddc1Frequency);
-    cbDDC1Bandwith->setCurrentIndex(static_cast<int>(receiverSettings.ddc1TypeIndex));
-    cbSamplesPerBuffer->setCurrentText(QString::number(receiverSettings.samplesPerBuffer));
-}
-*/
-//************************** TEST ********************
-//    macroFreq->addCommand(FactoryCommand::getSettingsCommand(syncManager,this));
-//    macroFreq->addCommand(FactoryCommand::getRestartDdc1Command(syncManager,this));
-
-//    MacroCommand*macroCommand=FactoryCommand::getMacroCommand();
-//    macroCommand->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getStopDdc1Command(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getSettingsCommand(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getStartDdc1Command(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
-//    macroCommand->addCommand(FactoryCommand::getAddTaskCommand(widgetDirector,this));
-
-//    MacroCommand *macroSamplePerBuffer=FactoryCommand::getMacroCommand();
-//    macroSamplePerBuffer->addCommand(FactoryCommand::getSyncStopCommand(syncManager,this));
-//    macroSamplePerBuffer->addCommand(FactoryCommand::getSetDdc1Command(syncManager,this));
-//    macroSamplePerBuffer->addCommand(FactoryCommand::getSyncStartCommand(syncManager,this));
-//    cbSamplesPerBuffer->setUserData(USER_DATA_ID,FactoryCommand::getRestartDdc1Command(syncManager,this));
-//    cbSamplesPerBuffer->setUserData(USER_DATA_ID,macroSamplePerBuffer);

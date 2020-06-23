@@ -11,10 +11,10 @@
 QByteArray serializeMessage(const google::protobuf::Message& message)
 {
     int  byteSize = message.ByteSize();
-    //    char bytesArray[byteSize];
     std::vector<char> bytesArray(static_cast<size_t>(byteSize));
     message.SerializeToArray(bytesArray.data(), byteSize);
-    QByteArray baMessage(bytesArray.data(), byteSize); ///НЕ РАБОТАЕТ С REPEATED DATA ЧАСТЬ ДАННЫХ ОБРЕЗАЕТСЯ
+    //TODO НЕ РАБОТАЕТ С REPEATED DATA ЧАСТЬ ДАННЫХ ОБРЕЗАЕТСЯ
+    QByteArray baMessage(bytesArray.data(), byteSize);
     //qDebug()<<"Size:"<<byteSize<<baMessage.size()<<baMessage.length();
     return baMessage;
 }

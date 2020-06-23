@@ -37,6 +37,7 @@ class SimpleCommand : public AbstractCommand
 
 class StartSendingStream: public AbstractCommand
 {
+    static const quint16 LISTENING_STREAMING_PORT = 9000;
   public:
     StartSendingStream(ClientManager* deviceSet);
     void execute()override;

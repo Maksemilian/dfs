@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow,
 
     static const quint8 USER_DATA_POWER_ON = 2;
     static const quint8 USER_DATA_POWER_OFF = 3;
-
+    static const quint16 LISTENING_STREAMING_PORT = 9000;
   public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow()override;
@@ -134,9 +134,6 @@ class MainWindow : public QMainWindow,
     ElipsPlot* elipsPlot;//right dock idget
     std::unique_ptr<Sync2D> sync;
     StreamServer streamServer;
-    //TODO проверку остановки потока сделать
-    //по состоянию кнопки power
-    std::atomic_bool quit;
 };
 ///@}
 

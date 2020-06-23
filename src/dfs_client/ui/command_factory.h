@@ -1,6 +1,7 @@
 #ifndef FACTORY_COMMAND_H
 #define FACTORY_COMMAND_H
-#include "QObject"
+
+
 class IDeviceSettings ;
 class ClientManager;
 class AbstractCommand;
@@ -27,44 +28,6 @@ class AddTaskCommand;
 
 class SendStreamDDC1;
 class ClientManager;
-
-/*
-class AbstractCommand: public QObjectUserData
-{
-  public:
-    AbstractCommand() = default;
-    ~AbstractCommand() = default;
-    virtual void execute() = 0;
-};
-
-template <class Receiver, class Command>
-class SimpleCommand : public AbstractCommand
-{
-  public:
-    typedef void (Receiver::* Action) (Command&);
-    SimpleCommand(Receiver* r, Action a, Command c) :
-        _receiver(r), _action(a), _c(c) { }
-    virtual void execute()
-    {
-        (_receiver->*_action)(_c);
-    }
-  private:
-    Action _action;
-    Receiver* _receiver;
-    Command _c;
-};
-
-class MacroCommand: public AbstractCommand
-{
-  public:
-    void execute()override;
-    void addCommand(AbstractCommand* command);
-    void removeCommand(AbstractCommand* command);
-  private:
-    QList<AbstractCommand*>_commands;
-};
-*/
-
 
 class FactoryCommand
 {

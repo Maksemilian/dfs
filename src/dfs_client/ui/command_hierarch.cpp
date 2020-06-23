@@ -18,6 +18,7 @@ void StartSendingStream::execute()
 {
     proto::receiver::Command command;
     command.set_command_type(proto::receiver::START_SENDING_DDC1_STREAM);
+    command.set_stream_port(LISTENING_STREAMING_PORT);
     _iDeviceSet->setCommand(command);
 }
 

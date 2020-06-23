@@ -56,7 +56,8 @@ int main(int argc, char* argv[])
     }
 
     TimeReader::instance().start();
-    HostServer().listen(QHostAddress::Any, listenPort);
+    HostServer* srv = new HostServer();
+    srv->listen(QHostAddress::Any, listenPort);
 
     qDebug() << "Server Ready:" << listenPort;
 

@@ -1,7 +1,6 @@
 #ifndef RECEIVER_STATION_CLIENT_H
 #define RECEIVER_STATION_CLIENT_H
 
-#include "radio_channel.h"
 #include "server.h"
 #include "client.h"
 
@@ -23,8 +22,6 @@ class QHostAddress;
 class DeviceClient: public Client
 {
     Q_OBJECT
-    static quint8 CLIENT_COUNTER;
-    static const quint16 LISTENING_STREAMING_PORT = 9000;
   public:
     DeviceClient(const ConnectData& connectData, QObject* parent = nullptr);
     ~DeviceClient();
@@ -35,7 +32,6 @@ class DeviceClient: public Client
     QString getCurrentDeviceSetName()const;
 
     QStringList receiverNameList()const;
-//    ShPtrRadioChannel getDDC1Channel()const;
   signals:
     void commandSuccessed();
     void commandFailed(const QString& errorString);
@@ -56,47 +52,48 @@ class DeviceClient: public Client
     struct Impl;
     std::unique_ptr<Impl> d;
 };
-
-/*!
-    * \brief Принимает входящие соединения для
-    * от удаленного сервера для приема потока DDC1/
-    */
-class SignalStreamServer: public net::Server
-{
-    Q_OBJECT
-  public:
-    enum class StreamType {ST_DDC1};
-    SignalStreamServer(quint8 bufferSize = 16);
-    ShPtrRadioChannel getChannel(StreamType type);
-  private:
-    void createSession(net::ChannelHost* channelHost)override;
-    void createThread(net::ChannelHost* channelHost);
-  private:
-    std::map<StreamType, ShPtrRadioChannel> buffers;
-
-};
-
-/*!
-* \brief Принимает данные потока DDC1 по сети в реальном времени
-* и записывает их в кольцевой буфер.
-*/
-class SignalStreamReader: public QObject
-{
-    Q_OBJECT
-  public:
-    SignalStreamReader(net::ChannelHost* channelHost,
-                       const ShPtrPacketBuffer streamBuffer);
-    ~SignalStreamReader();
-    void process();
-  signals:
-    void finished();
-  private:
-    void onMessageReceive(const QByteArray& buffer);
-  private:
-    struct Impl;
-    std::unique_ptr<Impl>d;
-};
 using ShPtrDeviceClient = std::shared_ptr<DeviceClient>;
+
+///*!
+//    * \brief Принимает входящие соединения для
+//    * от удаленного сервера для приема потока DDC1/
+//    */
+//class SignalStreamServer: public net::Server
+//{
+//    Q_OBJECT
+//  public:
+//    enum class StreamType {ST_DDC1};
+//    SignalStreamServer(quint8 bufferSize = 16);
+//    ShPtrRadioChannel getChannel(StreamType type);
+//  private:
+//    void createSession(net::ChannelHost* channelHost)override;
+//    void createThread(net::ChannelHost* channelHost);
+//  private:
+//    std::map<StreamType, ShPtrRadioChannel> buffers;
+
+//};
+
+///*!
+//* \brief Принимает данные потока DDC1 по сети в реальном времени
+//* и записывает их в кольцевой буфер.
+//*/
+//class SignalStreamReader: public QObject
+//{
+//    Q_OBJECT
+//  public:
+//    SignalStreamReader(net::ChannelHost* channelHost,
+//                       const ShPtrPacketBuffer streamBuffer);
+//    ~SignalStreamReader();
+//    void process();
+//  signals:
+//    void finished();
+//  private:
+//    void onMessageReceive(const QByteArray& buffer);
+//  private:
+//    struct Impl;
+//    std::unique_ptr<Impl>d;
+//};
+
 
 ///@}
 
