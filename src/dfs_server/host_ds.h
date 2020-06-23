@@ -69,7 +69,7 @@ class DeviceClient: public QObject
 
 /*!
  * \brief Класс для отправки данных потока.
- * Данныеберутся из кольцевого буфера и отправляются по сети.
+ * Данные берутся из кольцевого буфера и отправляются по сети.
  */
 class SignalStreamWriter: public QObject
 {
