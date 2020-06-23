@@ -35,7 +35,8 @@ class ClientManager: public QObject
         return _clients.size();
     }
   signals:
-    void ready(const std::vector<ShPtrRadioChannel>& buffers);
+//    void ready(const std::vector<ShPtrRadioChannel>& buffers);
+    void ready();
     void notReady();
   private:
     void checkConnection();

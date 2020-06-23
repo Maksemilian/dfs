@@ -66,7 +66,8 @@ HEADERS += \
     client_ds.h \
     client.h \
     client_manager.h \
-    ui/plot.h
+    ui/plot.h \
+    stream_server.h
 
 SOURCES += \
     ui/main_window.cpp \
@@ -84,7 +85,8 @@ SOURCES += \
     client.cpp \
     client_manager.cpp \
     main.cpp \
-    ui/plot.cpp
+    ui/plot.cpp \
+    stream_server.cpp
 
 FORMS += \
     ui/main_window.ui \

@@ -31,7 +31,7 @@ GPP_DIR =C:/msys64/mingw32
 PROTO_INCL=$${LIBS_PATH}/proto/include
 
 INCLUDEPATH += $${PROTOBUF_DIR}/include
-LIBS += -L$${PROTOBUF_DIR}/lib -llibprotobuf
+#LIBS += -L$${PROTOBUF_DIR}/lib -llibprotobuf$${LIB_SUFFIX}
 
 PROTOC = $${PROTOBUF_DIR}/bin/protoc.exe
 GPP =$${GPP_DIR}/bin/g++.exe

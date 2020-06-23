@@ -315,9 +315,20 @@ void DeviceClient::readCommandPacket(const proto::receiver::Command& command)
             qWarning("UNUSED SET_DEVICE_MODE OPTION");
             break;
         case proto::receiver::START_SENDING_DDC1_STREAM:
-            qDebug() << "===== START_SENDING_DDC1_STREAM";
+            qDebug() << "===== START_SENDING_DDC1_STREAM "
+                     << "to remote client:"
+                     << d->channel->peerAddress()
+                     << command.stream_port()
+                     << command.command_type()
+                     << command.ByteSize();
+            if(command.stream_port() == 0)
+            {
+                throw std::runtime_error("port equ zero");
+            }
+
             startSendingDDC1Stream(d->channel->peerAddress(),
                                    static_cast<quint16>(command.stream_port()),
+//                                   9001,
                                    d->buffer);
             succesed = true;
             break;
@@ -441,6 +452,14 @@ void SignalStreamWriter::process()
                                  , _port, SessionType::SESSION_SIGNAL_STREAM);
 
     _streamSocket->waitForConnected(5000);
+    if(_streamSocket->isConnected())
+    {
+        qDebug() << "Connected to remote client" << _address.toIPv4Address();
+    }
+    else
+    {
+        qDebug() << "NOT CONNECTED";
+    }
 }
 
 void SignalStreamWriter::start()

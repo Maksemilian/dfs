@@ -3,6 +3,7 @@
 
 #include "i_device_settings.h"
 #include "client_manager.h"
+#include "stream_server.h"
 #include "sync_2d.h"
 #include <QMainWindow>
 #include <QMap>
@@ -99,7 +100,7 @@ class MainWindow : public QMainWindow,
     void hideReceiverSettingsTool();
     void showReceiverSettingsTool();
     void onDeviceSetListReady(
-        const std::vector<ShPtrRadioChannel>& channels);
+        /* const std::vector<ShPtrRadioChannel>& channels*/);
     void onDeviceSetListNotReady();
   private:
     Ui::MainWindow* ui;
@@ -132,6 +133,7 @@ class MainWindow : public QMainWindow,
     ChannelPlot* channelPlot; //central widget
     ElipsPlot* elipsPlot;//right dock idget
     std::unique_ptr<Sync2D> sync;
+    StreamServer streamServer;
     //TODO проверку остановки потока сделать
     //по состоянию кнопки power
     std::atomic_bool quit;

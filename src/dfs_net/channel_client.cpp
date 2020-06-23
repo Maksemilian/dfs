@@ -48,9 +48,12 @@ namespace net
         return false;
     }
 
-    void ChannelClient::connectToHost(const QString& address, quint16 port, SessionType sesionType)
+    void ChannelClient::connectToHost(const QString& address,
+                                      quint16 port, SessionType sesionType)
     {
-        qDebug() << "ChannelClient::connectToHost" << address << port << sesionType;
+        qDebug() << "ChannelClient::connectToHost" << address
+                 << "Port:" << port
+                 << "SessionType:" << sesionType;
         _sessionType = sesionType;
         _socket->connectToHost(address, port);
     }
@@ -64,7 +67,8 @@ namespace net
 
     void ChannelClient::waitForConnected(int time)
     {
-        _socket->waitForConnected(time);
+        bool stat = _socket->waitForConnected(time);
+        qDebug() << "StatWaitForConnected:" << stat;
     }
 
     void ChannelClient::waitForDisconnected(int time)

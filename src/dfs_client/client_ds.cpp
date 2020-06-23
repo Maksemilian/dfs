@@ -33,8 +33,16 @@ DeviceClient::DeviceClient(const ConnectData& connectData, QObject* parent)
          d(std::make_unique<Impl>())
 {
     ++CLIENT_COUNTER;
-    d->streamServer.listen(QHostAddress(connectData.address),
-                           LISTENING_STREAMING_PORT + CLIENT_COUNTER);
+//    d->streamServer.setMaxPendingConnections(0);
+    d->streamServer.listen(
+//                QHostAddress(connectData.address),
+        QHostAddress::Any,
+        LISTENING_STREAMING_PORT + CLIENT_COUNTER);
+    qDebug() << "DSCl::Constr_Serv Port"
+             << d->streamServer.serverPort()
+             << LISTENING_STREAMING_PORT + CLIENT_COUNTER
+             << d->streamServer.isListening()
+             ;
 }
 
 void DeviceClient::sendCommand(proto::receiver::Command& command)
@@ -42,6 +50,13 @@ void DeviceClient::sendCommand(proto::receiver::Command& command)
     if(command.command_type() == proto::receiver::START_SENDING_DDC1_STREAM)
     {
         command.set_stream_port(d->streamServer.serverPort());
+//        command.set_stream_port(LISTENING_STREAMING_PORT);
+        qDebug() << "SendCommand::Start Sending DDC1 Stream:"
+                 << d->streamServer.serverPort()
+                 << command.stream_port()
+                 << command.ByteSize()
+                 << d->streamServer.isListening()
+                 ;
     }
 
     d->commandQueue.enqueue(command.command_type());
@@ -69,10 +84,10 @@ QStringList DeviceClient::receiverNameList()const
     return receiverNameList;
 }
 
-ShPtrRadioChannel DeviceClient::getDDC1Channel() const
-{
-    return  d->streamServer.getChannel(SignalStreamServer::StreamType::ST_DDC1);
-}
+//ShPtrRadioChannel DeviceClient::getDDC1Channel() const
+//{
+//    return  d->streamServer.getChannel(SignalStreamServer::StreamType::ST_DDC1);
+//}
 
 DeviceClient::~DeviceClient()
 {
@@ -380,7 +395,8 @@ void SignalStreamReader::onMessageReceive(const QByteArray& buffer)
 
     if(clientToHost.has_packet())
     {
-        d->streamBuffer->push(const_cast<proto::receiver::Packet&>(clientToHost.packet()));
+        d->streamBuffer->push(const_cast<proto::receiver::Packet&>
+                              (clientToHost.packet()));
         qDebug()
                 << "BN:" << clientToHost.packet().block_number()
                 << "SR:" << clientToHost.packet().sample_rate()

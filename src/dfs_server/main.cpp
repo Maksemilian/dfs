@@ -1,5 +1,5 @@
 #include "host_server.h"
-#include "wrd_device_selector.h"
+#include "wrd_coh_g35_ds.h"
 #include "trmbl_tsip_reader.h"
 
 #include "G35DDCAPI.h"
@@ -49,10 +49,17 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    if(numberAvailableDeviceSet() == 0)
+    {
+        qDebug() << " Number Available Devise Set is zero";
+        return  -1;
+    }
+
     TimeReader::instance().start();
-    HostServer* streamServer = new HostServer();
-    streamServer->listen(QHostAddress::Any, listenPort);
-    qDebug() << "Listen" << listenPort;
+    HostServer().listen(QHostAddress::Any, listenPort);
+
+    qDebug() << "Server Ready:" << listenPort;
+
     return app.exec();
 }
 

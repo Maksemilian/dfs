@@ -85,8 +85,6 @@ namespace net
         _socket->flush();
     }
 
-//**************WRITE/READ****************
-
     qint64 Channel::writeToSocket(qint64 bytes)
     {
         qint64 totalWritten = 0;

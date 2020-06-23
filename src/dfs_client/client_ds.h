@@ -35,7 +35,7 @@ class DeviceClient: public Client
     QString getCurrentDeviceSetName()const;
 
     QStringList receiverNameList()const;
-    ShPtrRadioChannel getDDC1Channel()const;
+//    ShPtrRadioChannel getDDC1Channel()const;
   signals:
     void commandSuccessed();
     void commandFailed(const QString& errorString);
@@ -73,6 +73,7 @@ class SignalStreamServer: public net::Server
     void createThread(net::ChannelHost* channelHost);
   private:
     std::map<StreamType, ShPtrRadioChannel> buffers;
+
 };
 
 /*!

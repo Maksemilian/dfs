@@ -52,7 +52,7 @@ namespace net
              * \param buffer Массив байт принятых из сети
              */
         virtual void internalMessageReceive(const QByteArray& buffer) = 0;
-        ///**************WRITE/READ****************
+
       public:
         qint64 readFromSocket(qint64 bytes);
         qint64 writeToSocket(qint64 bytes);

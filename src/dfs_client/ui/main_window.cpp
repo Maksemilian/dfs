@@ -78,6 +78,10 @@ MainWindow:: MainWindow(QWidget* parent):
 
     setCentralWidget(plot);
 
+//    streamServer.listen(
+//        QHostAddress::Any,
+//        9000);
+
     connect(_clientManager.get(), &ClientManager::ready,
             this, &MainWindow::onDeviceSetListReady);
 
@@ -98,25 +102,28 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onDeviceSetListReady(
-    const std::vector<ShPtrRadioChannel>& channels)
+void MainWindow::onDeviceSetListReady(/*
+    const std::vector<ShPtrRadioChannel>& channels*/)
 {
     qDebug() << "START SYNC" << getDDC1Frequency()
              << getSampleRateForBandwith()
              << getSamplesPerBuffer();
 
+
     ChannelData data = {getDDC1Frequency(),
                         getSampleRateForBandwith(),
                         getSamplesPerBuffer()
                        };
-    channels.front()->setChannelData(data);
-    channels.back()->setChannelData(data);
 
-    sync.reset(new Sync2D(channels.front(), channels.back(), data));
-    sync->subscribe(plot);
+//    std::vector<ShPtrRadioChannel> channels = streamServer.getRadioChannels();
+//    channels.front()->setChannelData(data);
+//    channels.back()->setChannelData(data);
 
-    sync->start();
-    plot->start(data);
+//    sync.reset(new Sync2D(channels.front(), channels.back(), data));
+//    sync->subscribe(plot);
+
+//    sync->start();
+//    plot->start(data);
 }
 
 void MainWindow::onDeviceSetListNotReady()

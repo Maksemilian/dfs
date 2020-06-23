@@ -108,6 +108,7 @@ void Sync2D::process()
 
         if(isRead1 && isRead2)
         {
+
             d->_channel1->skip();
             blockEqualizer->shiftChannel();
 
