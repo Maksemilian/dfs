@@ -3,6 +3,10 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QMutex>
 
+/*! \addtogroup client
+ */
+///@{
+
 const QColor Plot::greenColor = QColor(0, 255, 0);
 const QColor Plot::blueColor = QColor(0, 0, 255);
 
@@ -13,6 +17,55 @@ const QColor Plot::graphColors[Plot::GRAPH_COLORS_COUNT] =
     QColor(0, 255, 0),
     QColor(0, 255, 255)
 };
+
+ChannelDataWidget::ChannelDataWidget(QCustomPlot* plot, QCPLayer* layer)
+    : QCPLayoutGrid()
+{
+    for(int i = 0, p = 0; i < ET_SIZE; i++)
+    {
+        QCPTextElement* labelTextElement = new QCPTextElement(plot);
+        labelTextElement->setLayer(layer);
+        labelTextElevents << labelTextElement;
+
+        switch (i)
+        {
+            case ET_NAME:
+                labelTextElement->setText("RN    :");
+                break;
+            case ET_BLOCK_NUMBER:
+                labelTextElement->setText("BN    :");
+                break;
+            case ET_DDC_SAMPLE_COUNTER:
+                labelTextElement->setText("DDC_SC:");
+                break;
+            case ET_ADC_PERIOD_COUNTER:
+                labelTextElement->setText("ADC_PC:");
+                break;
+        }
+
+        QCPTextElement* textValueElement = new QCPTextElement(plot);
+        textValueElement->setLayer(layer);
+        textValuetElevents << textValueElement;
+
+        addElement(0, p++, labelTextElement);
+        addElement(0, p++, textValueElement);
+        //        qDebug()<<0<<i<<"and"<<0<<i+1;
+
+    }
+}
+
+void ChannelDataWidget::setName(const QString& name)
+{
+    textValuetElevents[ET_NAME]->setText(name);
+}
+
+void ChannelDataWidget::setData(quint32 blockNumber, double ddcSampleCounter,
+                                quint64 adcPeriodCounter)
+{
+    textValuetElevents[ET_BLOCK_NUMBER]->setText(QString::number(blockNumber));
+    textValuetElevents[ET_DDC_SAMPLE_COUNTER]->setText(QString::number(ddcSampleCounter));
+    textValuetElevents[ET_ADC_PERIOD_COUNTER]->setText(QString::number(adcPeriodCounter));
+}
 
 SignalGraph::SignalGraph(QCPAxisRect* elipsAxis, int blockSize)
 {
@@ -335,242 +388,4 @@ void Plot::setDataOnPlots(const proto::receiver::Packet& pct1,
 
     QApplication::postEvent(this, new QEvent(QEvent::User));
 }
-
-//******************* DEL *********************
-//    plotLayout()->clear();
-//    legend = new QCPLegend;
-//    plotLayout()->removeAt(0);
-//    plotLayout()->addElement(0, 0, new PLotGraphAxis(this));
-//    plotLayout()->addElement(0, 1, new PlotCurveAxis(this));
-//    PLotGraphAxis* graphAxis  = new PLotGraphAxis(this);
-//    graphAxis->insetLayout()->addElement(legend, Qt::AlignRight);
-//    plotLayout()->addElement(0, 1, new QCPAxisRect(this));
-//    addIQGraph();
-//    setGraphRange();
-
-//    ChannelDataWidget* channelData = new ChannelDataWidget(this, legend->layer());
-//    ChannelDataWidget* channelData1 = new ChannelDataWidget(this, legend->layer());
-
-//    QCPAxisRect* graphAxis = qobject_cast<QCPAxisRect*>(plotLayout()->element(0, 1));
-//    graphAxis->insetLayout()->addElement(channelData, Qt::AlignRight | Qt::AlignTop);
-//    graphAxis->insetLayout()->addElement(channelData1, Qt::AlignRight | Qt::AlignTop);
-
-//void Plot::updateSignalData(int index,
-//                            const ChannelDataT& channelData1,
-//                            const ChannelDataT& channelData2)
-//{
-////    Q_UNUSED(index);
-////    channelDataList[0]->setData(channelData1.blockNumber,
-////                                channelData1.ddcCounter,
-////                                channelData1.adcCounter);
-
-
-////    channelDataList[1]->setData(channelData2.blockNumber,
-////                                channelData2.ddcCounter,
-////                                channelData2.adcCounter);
-//}
-
-//void Plot::updateElipse(const proto::receiver::Packet& pct1,
-//                        const proto::receiver::Packet& pct2)
-//{
-
-//}
-/*oid Plot::addElipse()
-{
-    //    QCPAxisRect* elipsAxis = qobject_cast<QCPAxisRect*>(plotLayout()->element(0, 1));
-    //    xAxis = elipsAxis->axis(QCPAxis::atBottom);
-    //    yAxis = elipsAxis->axis(QCPAxis::atLeft);
-
-    //    xAxis2 = elipsAxis->axis(QCPAxis::atTop);
-    //    yAxis2 = elipsAxis->axis(QCPAxis::atRight);
-
-    _curve = new QCPCurve(xAxis, yAxis);
-    _curve->setName("Elipse");
-    _curve->setPen(greenColor);
-
-
-    // X INIT
-    QCPRange xRange(LOWER_BORDER_X_AXIS, UPPER_BORDER_X_AXIS);
-    xAxis->setRange(xRange);
-    xAxis->setTicks(false);
-
-    xAxis2->setRange(xRange);
-    xAxis2->setVisible(true);
-    xAxis2->setTicks(false);
-
-    // Y INIT
-    QCPRange yRange(LOWER_BORDER_Y_AXIS, UPPER_BORDER_Y_AXIS);
-    yAxis->setRange(yRange);
-    yAxis->setTicks(false);
-
-    yAxis2->setRange(yRange);
-    yAxis2->setVisible(true);
-    yAxis2->setTicks(false);
-
-    QPointF posBegin1(LOWER_BORDER_X_AXIS, 0);
-    QPointF posEnd1(UPPER_BORDER_X_AXIS, 0);
-
-    QPointF posBegin2(0, -LOWER_BORDER_Y_AXIS);
-    QPointF posEnd2(0, LOWER_BORDER_Y_AXIS);
-
-    QPointF posBegin3(LOWER_BORDER_X_AXIS, LOWER_BORDER_Y_AXIS);
-    QPointF posEnd3(UPPER_BORDER_X_AXIS, UPPER_BORDER_Y_AXIS);
-
-    QPointF posBegin4(LOWER_BORDER_X_AXIS, UPPER_BORDER_Y_AXIS);
-    QPointF posEnd4(UPPER_BORDER_X_AXIS, LOWER_BORDER_X_AXIS);
-
-    lines << new ElipseLine(posBegin1, posEnd1, "180", "0", this);
-    lines << new ElipseLine(posBegin2, posEnd2, "90", "270", this);
-    lines << new ElipseLine(posBegin3, posEnd3, "235", "45", this);
-    lines << new ElipseLine(posBegin4, posEnd4, "135", "315", this);
-}*/
-
-//void Plot::setGraphRange()
-//{
-//    QCPAxisRect* elipsAxis =
-//        qobject_cast<QCPAxisRect*>(plotLayout()->element(0, 1));
-//    xAxis = elipsAxis->axis(QCPAxis::atBottom);
-//    yAxis = elipsAxis->axis(QCPAxis::atLeft);
-
-//    xAxis2 = elipsAxis->axis(QCPAxis::atTop);
-//    yAxis2 = elipsAxis->axis(QCPAxis::atRight);
-
-//    QCPRange xRange, yRange;
-//    xRange.lower = RANGE_SIGNAL_LOWER_BORDER_X_AXIS;
-//    xRange.upper = RANGE_SIGNAL_UPPER_BORDER_X_AXIS;
-
-//    yRange.lower = RANGE_SIGNAL_LOWER_BORDER_Y_AXIS;
-//    yRange.upper = RANGE_SIGNAL_UPPER_BORDER_Y_AXIS;
-
-//    xAxis->setRange(xRange);
-//    yAxis->setRange(yRange);
-
-//    xAxis2->setVisible(true);
-//    yAxis2->setVisible(true);
-
-//    xAxis2->setRange(xRange);
-//    yAxis2->setRange(yRange);
-//}
-
-//void Plot::updateGraph(const proto::receiver::Packet& pct1, const proto::receiver::Packet& pct2)
-//{
-//    ChannelData data = {0, 0, 8192};
-//    int INDEX = 0;
-//    quint32 COUNT_SIGNAL_COMPONENT = 2;
-//    std::unique_ptr<float[]>dataPairSingal(new float[data.blockSize*
-//                                           COUNT_SIGNAL_COMPONENT]);
-
-//    ChannelDataT channelData1(pct1.block_number(),
-//                              pct1.ddc_sample_counter(),
-//                              pct1.adc_period_counter());
-
-//    ChannelDataT channelData2(pct2.block_number(),
-//                              pct2.ddc_sample_counter(),
-//                              pct2.adc_period_counter());
-//    // qDebug()<<"BA_3";
-//    const float* data1 = pct1.sample().data();
-//    const float* data2 = pct2.sample().data();
-//    //В dataPairSingal заносятся I компоненты с канала 1 и 2
-//    for(quint32 i = 0; i < data.blockSize; i++)
-//    {
-//        dataPairSingal[i * 2] = data1[i * 2];
-//        dataPairSingal[i * 2 + 1] = data2[i * 2];
-//    }
-
-//    updateSignalData(INDEX, channelData1, channelData2);
-//    updateSignalComponent(INDEX, dataPairSingal.get(), data.blockSize);
-//}
-
-//void Plot::updateSignalComponent(int index,
-//                                 const float* data,
-//                                 quint32 dataSize)
-//{
-////    Q_ASSERT_X(graphId>=0&&graphId<this->graphCount(),"ChannelPlot::setDDC1Stream","index bount of range");
-//    Q_UNUSED(index);
-//    QVector<double>componentsI1(static_cast<int>(dataSize));
-//    QVector<double>componentsI2(static_cast<int>(dataSize));
-
-////    qDebug()<<"Data Size"<<dataSize;
-
-//    for(int i = 0; i < static_cast<int>(dataSize); i++)
-//    {
-//        componentsI1[i] = static_cast<double>(data[i * 2]);
-//        componentsI2[i] = static_cast<double>(data[i * 2 + 1]);
-//    }
-
-//    mutex.lock();
-//    graph(0)->setData(key, componentsI1);
-//    graph(1)->setData(key, componentsI2);
-//    mutex.unlock();
-
-//    QApplication::postEvent(this, new QEvent(QEvent::User));
-//}
-
-/*
-void Plot::addIQGraph()
-{
-    QCPAxisRect* elipsAxis = qobject_cast<QCPAxisRect*>(plotLayout()->element(0, 1));
-    xAxis = elipsAxis->axis(QCPAxis::atBottom);
-    yAxis = elipsAxis->axis(QCPAxis::atLeft);
-
-    xAxis2 = elipsAxis->axis(QCPAxis::atTop);
-    yAxis2 = elipsAxis->axis(QCPAxis::atRight);
-
-    IQGraph iqGraph;
-
-    QCPGraph* graph1 = addGraph(xAxis, yAxis);
-    graph1->setScatterStyle(QCPScatterStyle::ssCross);
-    graph1->setName("I_" + QString::number(0));
-    graph1->setPen(graphColors[0]);
-
-    iqGraph.first = graph1;
-
-    QCPGraph* graph2 = addGraph(xAxis, yAxis);
-    graph2->setScatterStyle(QCPScatterStyle::ssCross);
-    graph2->setName("Q_" + QString::number(0));
-    graph2->setPen(graphColors[1]);
-
-    iqGraph.second = graph2;
-    //    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-}
-*/
-
-//    QCPTextElement* legendTitle = new QCPTextElement(this);
-//    legendTitle->setLayer(legend->layer());
-//    legendTitle->setText("Engine Status");
-//    legendTitle->setFont(QFont("sans", 9, QFont::Bold));
-//    // then we add it to the QCPLegend (which is a subclass of QCPLayoutGrid):
-//    if (legend->hasElement(0, 0)) // if top cell isn't empty, insert an empty row at top
-//    {
-//        legend->insertRow(0);
-//    }
-//    legend->addElement(0, 0, legendTitle);
-
-//    QCPLegend* leg = new QCPLegend;
-//    leg->insertRow(0);
-
-//    QCPTextElement* el = new QCPTextElement(this, "TEXT", QFont("sans", 9, QFont::Bold));
-//    //el->setLayer(leg->layer());
-//    leg->addElement(0, 0, el);
-//    GraphAxis->insetLayout()->addElement(leg, Qt::AlignRight);
-//    for(int i = 0; i < 2; i++)
-//    {
-//        QCPGraph* graph = new QCPGraph(axisRect(GT_GRAPH)->axis(QCPAxis::atBottom),
-//                                       axisRect(GT_GRAPH)->axis(QCPAxis::atLeft));
-//        graph->setName("I_" + QString::number(i + 1));
-//        graph->setScatterStyle(QCPScatterStyle::ssCross);
-//        graph->setPen(graphColors[i]);
-//        //        ChannelDataWidget* channelData = new ChannelDataWidget(this, legend->layer());
-//        //        legend->addElement(i, 1, channelData);
-//        //        channelDataList << channelData;
-//    }
-
-//    for(int i = 0; i < static_cast<int>(blockSize); i++)
-//    {
-//        key.append(i);
-//    }
-
-//    componentType = CT_I;
-
-
-
+///@}

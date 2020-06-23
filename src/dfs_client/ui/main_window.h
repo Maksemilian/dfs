@@ -40,8 +40,6 @@ class PreselectorWidget;
 
 class SyncManager;
 
-class ChannelPlot;
-class ElipsPlot ;
 class Plot;
 
 class DeviceListWidget ;
@@ -125,13 +123,9 @@ class MainWindow : public QMainWindow,
 
     QMap<Qt::ToolBarArea, QToolBar*>toolBarMap;
 
-//    PlotMonitoring* plotMonitoring;
     DeviceListWidget* deviceListWidget;
-//    DeviceMonitoring* treeDevices;
     std::shared_ptr<ClientManager>_clientManager;
     Plot* plot;
-    ChannelPlot* channelPlot; //central widget
-    ElipsPlot* elipsPlot;//right dock idget
     std::unique_ptr<Sync2D> sync;
     StreamServer streamServer;
 };

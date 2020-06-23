@@ -6,7 +6,6 @@
 
 #include "radio_channel.h"
 #include "observer_packet.h"
-#include "plot_channel.h"
 
 #include "ring_buffer.h"
 #include "receiver.pb.h"
@@ -18,6 +17,51 @@ using namespace std;
 
 using IQGraph = std::pair<QCPGraph*, QCPGraph*>;
 class ElipseLine;
+
+/*! \addtogroup client
+ */
+///@{
+
+/*!
+ * \brief Класс построения графика сигнала ddc1 двух каналов
+ * \attention На данный момент на график выводятся два графика
+ * I компонент сигнала
+ */
+
+class ChannelDataWidget: public QCPLayoutGrid
+{
+    enum ElementType
+    {
+        ET_NAME = 0,
+        ET_BLOCK_NUMBER = 1,
+        ET_DDC_SAMPLE_COUNTER = 2,
+        ET_ADC_PERIOD_COUNTER = 3,
+        ET_SIZE = 4
+    };
+  public:
+    ChannelDataWidget(QCustomPlot* plot, QCPLayer* layer);
+    void apply(const proto::receiver::Packet& pct1,
+               const proto::receiver::Packet& pct2);
+    void setName(const QString& name);
+    void setData(quint32 blockNumber, double ddcSampleCounter, quint64 adcPeriodCounter);
+  private:
+    QList<QCPTextElement*>labelTextElevents;
+    QList<QCPTextElement*>textValuetElevents;
+};
+
+struct ChannelDataT
+{
+    ChannelDataT(unsigned int blockNumber,    double ddcCounter,    unsigned long long adcCounter):
+        blockNumber(blockNumber), ddcCounter(ddcCounter), adcCounter(adcCounter)
+    {
+
+    }
+
+    unsigned int blockNumber;
+    double ddcCounter;
+    unsigned long long adcCounter;
+};
+
 class SignalGraph
 {
     int RANGE_SIGNAL_LOWER_BORDER_X_AXIS = 0;
@@ -44,6 +88,10 @@ class SignalGraph
     QMutex mutex;
 };
 
+/*!
+ * \brief Класс посторения элипса по точкам полученным
+ * классом SumSubMethod
+ */
 class ElipseCurve
 {
     int LOWER_BORDER_X_AXIS = -750000;
@@ -171,6 +219,9 @@ class ElipseCurve
     std::unique_ptr<SumSubMethod> sumSubMethod;
 };
 
+/*!
+ * \brief Виджет для размещения элипса и графика двух вигналов DDC1
+ */
 class Plot: public QCustomPlot, public ObserverPacket
 {
     enum GraphType
@@ -203,5 +254,5 @@ class Plot: public QCustomPlot, public ObserverPacket
     std::atomic_bool quit;
     QFutureWatcher<void> fw;
 };
-
+///@}
 #endif // PLOT_H

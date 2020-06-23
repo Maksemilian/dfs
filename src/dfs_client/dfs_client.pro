@@ -52,8 +52,6 @@ RESOURCES += res.qrc
 
 HEADERS += \
     ui/main_window.h \
-    ui/plot_elipse.h \
-    ui/plot_channel.h \
     ui/tool_frequency_line_edit.h \
     ui/tool_widgets.h \
     ui/tool_switch_button.h \
@@ -71,8 +69,6 @@ HEADERS += \
 
 SOURCES += \
     ui/main_window.cpp \
-    ui/plot_elipse.cpp \
-    ui/plot_channel.cpp \
     ui/tool_widgets.cpp \
     ui/tool_switch_button.cpp \
     ui/tool_preselector_widget.cpp \

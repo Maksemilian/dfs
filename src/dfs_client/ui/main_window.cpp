@@ -10,8 +10,6 @@
 #include "tool_widgets.h"
 
 #include "plot.h"
-#include "plot_channel.h"
-#include "plot_elipse.h"
 
 #include "client_ds_ui.h"
 #include "client_ds_ui_list.h"
